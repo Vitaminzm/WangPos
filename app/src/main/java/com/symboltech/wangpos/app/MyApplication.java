@@ -7,7 +7,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.http.HttpStringClient;
-import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -51,35 +50,5 @@ public class MyApplication extends Application {
                 activity.finish();
             }
         }
-    }
-
-    /**上一个下键盘*/
-    public static HorizontalKeyBoard lastBoard;
-    /**上一个editview  自定义下键盘使用*/
-    public static EditText lastEditText;
-    /**上一个textview  自定义下键盘使用*/
-    public static TextView lastTextView;
-    public static HorizontalKeyBoard getLastBoard() {
-        return lastBoard;
-    }
-
-    public static void setLastBoard(HorizontalKeyBoard lastBoard) {
-        MyApplication.lastBoard = lastBoard;
-    }
-
-    public static EditText getLastEditText() {
-        return lastEditText;
-    }
-
-    public static void setLastEditText(EditText lastEditText) {
-        MyApplication.lastEditText = lastEditText;
-    }
-
-    public static TextView getLastTextView() {
-        return lastTextView;
-    }
-
-    public static void setLastTextView(TextView lastTextView) {
-        MyApplication.lastTextView = lastTextView;
     }
 }
