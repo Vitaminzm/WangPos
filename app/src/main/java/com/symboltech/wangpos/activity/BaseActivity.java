@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.utils.HttpWaitDialogUtils;
 
 /**
@@ -30,7 +29,6 @@ public abstract class BaseActivity extends Activity {
 		this.mContext = getApplicationContext();
 		waitdialog = new HttpWaitDialogUtils(this);
 		initView();
-		MyApplication.addActivity(this);
 		initData();
 	}
 
@@ -56,7 +54,7 @@ public abstract class BaseActivity extends Activity {
 	 * @Description: TODO
 	 */
 	protected void startwaitdialog() {
-		if (waitdialog != null) {
+		if (waitdialog != null && !waitdialog.isShowing()) {
 			try {
 				waitdialog.show();
 			} catch (Exception e) {
@@ -101,7 +99,6 @@ public abstract class BaseActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		recycleMemery();
-		MyApplication.delActivity(this);
 	}
 
 }

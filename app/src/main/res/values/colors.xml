@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimary">#2ab4b2</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#c0c6d1</color>
+
+    <color name="color_bg">#2b2b34</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
     <color name="gray">#c0c6d1</color>
     <color name="light_gray">#e7f0ff</color>
     <color name="light_gray_hint">#a0a9b8</color>
-    <color name="black">#000000</color>
     <color name="title_gray">#67768e</color>
+    <color name="edit_bg">#434952</color>
+    <color name="waring_yellow">#F39F2A</color>
+
+    <color name="popup_selected_color">#f3f3f3</color>
+    <color name="popup_default_bg">#00000000</color>
+    <drawable name="transparent">#00000000</drawable>
+    <color name="divider_color">#b8b8b8</color>
+    <color name="transparent">#00000000</color>
 </resources>

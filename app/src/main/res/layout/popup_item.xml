@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tv_pop"
+    android:layout_width="match_parent"
+    android:layout_height="60px"
+    android:background="@drawable/popupwindow_listview_item_background_selector"
+    android:gravity="center"
+    android:minHeight="?android:attr/listPreferredItemHeightSmall"
+    android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+    android:paddingRight="?android:attr/listPreferredItemPaddingRight"
+    android:textAppearance="?android:attr/textAppearanceListItemSmall"
+    android:textColor="#757575"
+    android:textSize="22px"
+    android:textStyle="bold"/>

@@ -35,14 +35,14 @@ import okhttp3.Response;
  * @see
  * @since 1.0
  */
-public class HttpStringClient {
-	private static HttpStringClient httpStringRequest;
+public class HttpServiceStringClient {
+	private static HttpServiceStringClient httpStringRequest;
 	private static OkHttpClient httpClient ;
-	private static final int TIMEOUT_MS_DEFAULT = 10 *1000;
+	private static final int TIMEOUT_MS_DEFAULT = 40 *1000;
 	private static final int MAX_RETRIES = 0;
 	private static final int BACKOFF_MULT = 0;
 
-	private HttpStringClient() {
+	private HttpServiceStringClient() {
 	}
 
     public void initHttpConfig() {
@@ -53,11 +53,11 @@ public class HttpStringClient {
 		httpClient = builder.build();
     }
 
-	public static HttpStringClient getinstance() {
+	public static HttpServiceStringClient getinstance() {
 		if (httpStringRequest == null) {
-			synchronized (HttpStringClient.class) {
+			synchronized (HttpServiceStringClient.class) {
 				if (httpStringRequest == null) {
-					httpStringRequest = new HttpStringClient();
+					httpStringRequest = new HttpServiceStringClient();
 				}
 			}
 		}
