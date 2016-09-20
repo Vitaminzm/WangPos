@@ -39,6 +39,7 @@ import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.DrawableEditText;
+import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +57,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Bind(R.id.about)ImageView about;
     @Bind(R.id.loginout)ImageView loginout;
 
+    HorizontalKeyBoard a;
     /** login db dao */
     private UserNameDao und;
     private ListView listview;
@@ -100,6 +102,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         setContentView(R.layout.activity_login);
         MyApplication.addActivity(this);
         ButterKnife.bind(this);
+        a=new HorizontalKeyBoard(this,this,edit_username);
+        new HorizontalKeyBoard(this,this,edit_password);
         edit_password.setOnFocusChangeListener(this);
         edit_username.setOnFocusChangeListener(this);
         edit_username.setOnDrawableClickListener(new OnDrawableClickListener() {

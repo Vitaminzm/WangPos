@@ -4,6 +4,6 @@
 
     <corners android:radius="8px" />
 
-    <solid android:color="@color/light_gray" />
+    <solid android:color="@color/key_normal_color" />
 
 </shape>

@@ -4,6 +4,6 @@
 
     <corners android:radius="8px" />
 
-    <solid android:color="@color/light_gray_hint" />
+    <solid android:color="@color/key_selected_color" />
 
 </shape>

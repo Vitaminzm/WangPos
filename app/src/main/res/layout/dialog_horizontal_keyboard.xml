@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+    android:layout_width="412dp"
     android:layout_height="458dp"
-    android:background="@drawable/key_selected_color"
+    android:background="@color/keyboard_bg_color"
     android:orientation="horizontal"
     android:paddingBottom="6dp"
     android:paddingLeft="13dp"
@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -32,7 +32,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_4"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -46,7 +46,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_7"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -60,7 +60,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_cancel"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -81,7 +81,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -95,7 +95,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_5"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -109,7 +109,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_8"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -123,7 +123,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_0"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -145,7 +145,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_3"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -159,7 +159,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_6"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -173,7 +173,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_9"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -187,7 +187,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_c"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="103dp"
             android:layout_marginBottom="7dp"
             android:layout_marginTop="7dp"
             android:layout_weight="1"
@@ -208,7 +208,7 @@
             <TextView
                 android:id="@+id/dialog_horizontal_keyboard_bt_back"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="103dp"
                 android:layout_marginTop="7dp"
                 android:layout_marginBottom="7dp"
                 android:layout_weight="1"
@@ -221,7 +221,7 @@
             <TextView
                 android:id="@+id/dialog_horizontal_keyboard_bt_dot"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="103dp"
                 android:layout_marginTop="7dp"
                 android:layout_marginBottom="7dp"
                 android:layout_weight="1"
@@ -234,7 +234,7 @@
             <TextView
                 android:id="@+id/dialog_horizontal_keyboard_bt_comfirm"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="103dp"
                 android:layout_marginBottom="7dp"
                 android:layout_marginTop="7dp"
                 android:layout_weight="1"
@@ -246,7 +246,7 @@
             <TextView
                 android:id="@+id/dialog_horizontal_keyboard_bt_cncle"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="103dp"
                 android:layout_marginBottom="7dp"
                 android:layout_marginTop="7dp"
                 android:layout_weight="1"

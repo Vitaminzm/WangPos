@@ -1,8 +1,5 @@
 package com.symboltech.wangpos.view;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -26,6 +23,9 @@ import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 
 public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTouchListener, OnDismissListener {
@@ -190,7 +190,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	public void show() {
 			try {
 				new Thread(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						try {
@@ -216,11 +216,11 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 					  mWindow.getDecorView().getLocationOnScreen(pos);
 				  }
 			  }
-			  float height = dpToPx(getContext(), 366);
+			  float height = dpToPx(getContext(), 500);
 
-			  Rect outRect = new Rect();  
+			  Rect outRect = new Rect();
 			  mContentView.getWindowVisibleDisplayFrame(outRect);
-			  
+
 			  length = 0;
 			  if(mObject instanceof Dialog) {
 				  length=(int)((pos[1]+mWindow.getDecorView().getHeight()-outRect.top)-(mScreenHeight-height));
@@ -320,12 +320,13 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	public static int getStatusBarHeight(Context context){
 	       Class<?> c = null; 
 			 Object obj = null; 
-			 Field field = null; 
+			 Field field = null;
 			 int x = 0,
 			 sbar = 0; 
 			 try { 
 				 c = Class.forName("com.android.internal.R$dimen");
-				 obj = c.newInstance(); field = c.getField("status_bar_height"); 
+				 obj = c.newInstance();
+				 field = c.getField("status_bar_height");
 				 x = Integer.parseInt(field.get(obj).toString()); 
 				 sbar = context.getResources().getDimensionPixelSize(x);
 			 } catch (Exception e1) {

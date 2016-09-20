@@ -5,6 +5,6 @@
     <!-- 圆角度 -->
     <dimen name="corners_radius">3dp</dimen>
     <!-- btn 配置-->
-    <dimen name="btn_width">145dp</dimen>
+    <dimen name="btn_width">150dp</dimen>
     <dimen name="btn_margin">9dp</dimen>
 </resources>
