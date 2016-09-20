@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:mykeyboard="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
+    android:background="@color/color_bg"
     tools:context="com.symboltech.wangpos.activity.LoginActivity">
 
     <LinearLayout

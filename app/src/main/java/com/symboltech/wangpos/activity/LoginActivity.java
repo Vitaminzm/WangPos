@@ -38,6 +38,7 @@ import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
+import com.symboltech.wangpos.view.DrawableEditText;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +48,7 @@ import butterknife.ButterKnife;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener, View.OnFocusChangeListener {
 
-    @Bind(R.id.edit_username)MyKeyboard edit_username;
+    @Bind(R.id.edit_username)DrawableEditText edit_username;
     @Bind(R.id.edit_password)EditText edit_password;
     @Bind(R.id.lock_info)LinearLayout lock_info;
 
@@ -160,7 +161,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if (hasFocus){
             ((EditText) v).setHintTextColor(getResources().getColor(R.color.colorPrimary));
         }else{
-            ((MyKeyboard)v).hideKeyboard();
             ((EditText) v).setHintTextColor(getResources().getColor(R.color.gray));
         }
     }
