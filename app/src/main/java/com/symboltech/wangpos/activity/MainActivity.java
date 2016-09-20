@@ -1,96 +1,183 @@
 package com.symboltech.wangpos.activity;
 
-import android.os.Bundle;
-import android.view.MotionEvent;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.http.HttpActionHandle;
-import com.symboltech.wangpos.http.HttpStringClient;
-import com.symboltech.wangpos.log.LogUtil;
-import com.symboltech.wangpos.result.InitializeInfResult;
+import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.view.MyscollView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 
-public class MainActivity extends BaseActivity {
-    @Bind(R.id.post_id)
-    Button  post;
+public class MainActivity extends BaseActivity implements View.OnClickListener {
+    @Bind(R.id.view_pager) ViewPager view_pager;
+    @Bind(R.id.myscollview) MyscollView myscollView;
 
     @Override
     protected void initData() {
-
-    }
-
-    @OnClick({R.id.post_id,R.id.get_id})
-    public void post(View view){
-            startwaitdialog();
-        view.setOnTouchListener(new View.OnTouchListener() {
+        myscollView.setView_pager(view_pager);
+        view_pager.setPageTransformer(true, new DepthPageTransformer());
+        view_pager.setAdapter(new HorizontalPagerAdapter(getApplicationContext(), this));
+        view_pager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                myscollView.setOffset(position, positionOffset);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                myscollView.setPosition(view_pager.getCurrentItem());
             }
         });
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-               closewaitdialog();
-            }
-        },9000);
-//        String ret="{\"retcode\":\"00\",\"retmsg\":\"成功\",\"data\":{\"brandgoodslist\":[{\"brandcode\":\"0201273\",\"brandname\":null,\"id\":\"1\",\"code\":\"100103\",\"barcode\":\"100103\",\"sptype\":\"0\",\"spmode\":\"3\",\"goodsname\":\"麦当劳汉堡\",\"pic\":\"http://192.168.7.246:82\",\"price\":\"12.50\",\"unit\":null},{\"brandcode\":\"0201273\",\"brandname\":null,\"id\":\"2\",\"code\":\"10004002\",\"barcode\":\"10004002\",\"sptype\":\"0\",\"spmode\":\"3\",\"goodsname\":\"麦当劳可乐\",\"pic\":\"http://192.168.7.246:82\",\"price\":\"9\",\"unit\":null}],\"paymentslist\":[{\"id\":\"1\",\"name\":\"现金\",\"type\":\"1\",\"couponid\":\"\",\"changetype\":\"0\",\"rate\":\"1\",\"visibled\":\"1\"},{\"id\":\"2\",\"name\":\"微信\",\"type\":\"5\",\"couponid\":\"\",\"changetype\":\"0\",\"rate\":\"1\",\"visibled\":\"0\"},{\"id\":\"3\",\"name\":\"支付宝\",\"type\":\"4\",\"couponid\":\"\",\"changetype\":\"0\",\"rate\":\"1\",\"visibled\":\"0\"},{\"id\":\"5\",\"name\":\"银联卡\",\"type\":\"3\",\"couponid\":\"\",\"changetype\":\"0\",\"rate\":\"1\",\"visibled\":\"0\"},{\"id\":\"6\",\"name\":\"优惠券\",\"type\":\"6\",\"couponid\":\"\",\"changetype\":\"2\",\"rate\":\"1\",\"visibled\":\"0\"},{\"id\":\"7\",\"name\":\"手工补录\",\"type\":\"101\",\"couponid\":\"\",\"changetype\":\"2\",\"rate\":\"1\",\"visibled\":\"0\"},{\"id\":\"8\",\"name\":\"商务卡补录\",\"type\":\"102\",\"couponid\":\"\",\"changetype\":\"2\",\"rate\":\"1\",\"visibled\":\"0\"},{\"id\":\"9\",\"name\":\"微信补录\",\"type\":\"103\",\"couponid\":\"\",\"changetype\":\"2\",\"rate\":\"1\",\"visibled\":\"0\"}],\"promlist\":[],\"refundreasonlist\":[{\"id\":1,\"name\":\"顾客要求退货\",\"showinx\":1,\"status\":0,\"modifierid\":1,\"modifiername\":\"系统管理员\",\"modifydate\":\"2016-05-17T11:43:35\"}],\"salemanlist\":[{\"person_id\":\"2\",\"person_name\":\"冯兆奎\",\"personcode\":\"10004001\"}]}}";
-//        Gson gson = new GsonBuilder().serializeNulls().create();
-//        InitializeInfResult result = null;
-//        result = gson.fromJson(ret, InitializeInfResult.class);
-//        if(result != null){
-//            LogUtil.i("lgs", result.getCode()+"---"+result.getInitializeInfo().getBrandgoodslist().size());
-//        }
-//        Map<String, String> map = new HashMap<String, String>();
-//        map.put("topid", "5");
-//        HttpStringClient.getinstance().getForObject(Logresult.class.getName(),"http://route.showapi.com/213-4", map, Logresult.class , new HttpActionHandle<Logresult>(){
-//
-//            @Override
-//            public void handleActionStart() {
-//
-//            }
-//
-//            @Override
-//            public void handleActionFinish() {
-//
-//            }
-//
-//            @Override
-//            public void handleActionError(String actionName, String errmsg) {
-//                LogUtil.i("lgs", errmsg);
-//            }
-//
-//            @Override
-//            public void handleActionSuccess(String actionName, Logresult result) {
-//                if(result == null){
-//                    LogUtil.i("lgs", "null----");
-//                }else{
-//                    LogUtil.i("lgs", result.toString());
-//                }
-//            }
-//        });
     }
-
 
     @Override
     protected void initView() {
+        MyApplication.addActivity(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
     }
 
     @Override
     protected void recycleMemery() {
+        MyApplication.delActivity(this);
     }
 
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id){
+            case R.id.rl_lockscreen:
+                lockscreen();
+                break;
+
+        }
+    }
+
+    /**
+     *
+     * @author CWI-APST emial:26873204@qq.com
+     * @Description: TODO(lockscreen)
+     */
+    private void lockscreen() {
+        // TODO Auto-generated method stub
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_LOCKSCREEN);
+        startActivity(intent);
+        this.finish();
+    }
+    public class HorizontalPagerAdapter extends PagerAdapter {
+
+        public Context mContext;
+        public LayoutInflater mLayoutInflater;
+        public List<View> views;
+        public View.OnClickListener onClickListener;
+
+        public HorizontalPagerAdapter(Context context, View.OnClickListener onClickListener) {
+            super();
+            mContext = context;
+            mLayoutInflater = LayoutInflater.from(mContext);
+            this.onClickListener = onClickListener;
+            initView();
+        }
+
+        public void initView() {
+            views = new ArrayList<View>();
+            View v1 = mLayoutInflater.inflate(R.layout.view_button_main, null);
+            ButterKnife.findById(v1, R.id.rl_member).setOnClickListener(onClickListener);
+            ButterKnife.findById(v1, R.id.rl_pay).setOnClickListener(onClickListener);
+            ButterKnife.findById(v1, R.id.rl_billprint).setOnClickListener(onClickListener);
+            ButterKnife.findById(v1, R.id.rl_sendcarcoupon).setOnClickListener(onClickListener);
+            ButterKnife.findById(v1, R.id.rl_lockscreen).setOnClickListener(onClickListener);
+            ButterKnife.findById(v1, R.id.rl_change).setOnClickListener(onClickListener);
+            views.add(v1);
+            View v2 = mLayoutInflater.inflate(R.layout.view_button_offline_main, null);
+            ButterKnife.findById(v2, R.id.rl_upload).setOnClickListener(onClickListener);
+            ButterKnife.findById(v2, R.id.rl_offline).setOnClickListener(onClickListener);
+            ButterKnife.findById(v2, R.id.rl_weichat).setOnClickListener(onClickListener);
+            ButterKnife.findById(v2, R.id.rl_bank).setOnClickListener(onClickListener);
+            ButterKnife.findById(v2, R.id.rl_salereturn).setOnClickListener(onClickListener);
+            views.add(v2);
+        }
+
+        @Override
+        public int getCount() {
+            return views.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object o) {
+            return view == o;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            View view = views.get(position);
+            container.addView(view);
+            return view;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((View) object);
+        }
+    }
+
+    public class DepthPageTransformer implements ViewPager.PageTransformer {
+        private static final float MIN_SCALE = 0.85f;
+        private static final float MIN_ALPHA = 0.5f;
+
+        @SuppressLint("NewApi")
+        public void transformPage(View view, float position)
+        {
+            int pageWidth = view.getWidth();
+            int pageHeight = view.getHeight();
+
+
+            if (position < -1) {
+                view.setAlpha(0);
+            } else if (position <= 1) //a页滑动至b页 ； a页从 0.0 -1 ；b页从1 ~ 0.0
+            {
+                float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
+                float vertMargin = pageHeight * (1 - scaleFactor) / 2;
+                float horzMargin = pageWidth * (1 - scaleFactor) / 2;
+                if (position < 0)
+                {
+                    view.setTranslationX(horzMargin - vertMargin / 2);
+                } else
+                {
+                    view.setTranslationX(-horzMargin + vertMargin / 2);
+                }
+
+                // Scale the page down (between MIN_SCALE and 1)
+                view.setScaleX(scaleFactor);
+                view.setScaleY(scaleFactor);
+
+                // Fade the page relative to its size.
+                view.setAlpha(MIN_ALPHA + (scaleFactor - MIN_SCALE)
+                        / (1 - MIN_SCALE) * (1 - MIN_ALPHA));
+
+            } else {
+                view.setAlpha(0);
+            }
+        }
+    }
 }

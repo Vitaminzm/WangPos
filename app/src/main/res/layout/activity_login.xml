@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/color_bg"
+    xmlns:mykeyboard="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     tools:context="com.symboltech.wangpos.activity.LoginActivity">
 
     <LinearLayout
@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="114dp"
             android:layout_gravity="center"
             android:textSize="46sp"
             android:text="@string/intelligentPOS"/>
@@ -23,7 +23,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="90dp"
             android:gravity="center"
             android:orientation="horizontal">
             <TextView
@@ -37,7 +37,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:text="0001"
                 android:textSize="17sp"/>
         </LinearLayout>
 
@@ -48,6 +47,8 @@
             android:orientation="vertical"
             android:layout_marginTop="20dp">
             <LinearLayout
+                android:id="@+id/lock_info"
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="57dp"
                 android:layout_marginLeft="34dp"
@@ -56,8 +57,8 @@
                 android:gravity="center"
                 android:background="@color/edit_bg">
             <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
                 android:src="@mipmap/icon_lock"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -67,7 +68,6 @@
                     android:text="@string/lock_info"/>
             </LinearLayout>
             <com.symboltech.wangpos.view.DrawableEditText
-                android:visibility="gone"
                 android:id="@+id/edit_username"
                 android:layout_width="match_parent"
                 android:layout_height="57dp"
@@ -85,7 +85,7 @@
                 android:textColorHint="@color/colorPrimary"
                 android:background="@drawable/edittext_bg_selector"
                 android:hint="@string/username_hint"/>
-            <EditText
+            <com.symboltech.wangpos.view.DrawableEditText
                 android:id="@+id/edit_password"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
@@ -128,17 +128,17 @@
             android:layout_gravity="right">
             <ImageView
                 android:id="@+id/about"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="34dp"
-                android:background="@drawable/btn_icon_about_selector"/>
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginRight="34dp"
+                android:src="@drawable/btn_icon_about_selector"/>
 
             <ImageView
                 android:id="@+id/loginout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="28dp"
-                android:background="@drawable/btn_logout_selector"/>
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_marginRight="28dp"
+                android:src="@drawable/btn_logout_selector"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

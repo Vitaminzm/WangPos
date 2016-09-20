@@ -8,9 +8,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -38,7 +38,6 @@ import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
-import com.symboltech.wangpos.view.DrawableEditText;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +47,9 @@ import butterknife.ButterKnife;
 
 public class LoginActivity extends BaseActivity implements View.OnClickListener, View.OnFocusChangeListener {
 
-    @Bind(R.id.edit_username)DrawableEditText edit_username;
+    @Bind(R.id.edit_username)MyKeyboard edit_username;
     @Bind(R.id.edit_password)EditText edit_password;
+    @Bind(R.id.lock_info)LinearLayout lock_info;
 
     @Bind(R.id.login)TextView login;
     @Bind(R.id.about)ImageView about;
@@ -86,12 +86,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         loginrole = getIntent().getIntExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
         LogUtil.i("lgs", ""+Utils.px2dip(getApplicationContext(),200));
         LogUtil.i("lgs", ""+Utils.px2dip(getApplicationContext(),160));
+//        about.setDrawingCacheEnabled(true);
+//        Bitmap b = about.getDrawingCache();
+//        int w = b.getWidth();
+//        int h = b.getHeight();
+
         switchrole();
     }
 
     @Override
     protected void initView() {
         setContentView(R.layout.activity_login);
+        MyApplication.addActivity(this);
         ButterKnife.bind(this);
         edit_password.setOnFocusChangeListener(this);
         edit_username.setOnFocusChangeListener(this);
@@ -113,8 +119,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void switchrole() {
         // TODO Auto-generated method stub
         if (loginrole == ConstantData.LOGIN_WITH_CASHIER) {
+            lock_info.setVisibility(View.GONE);
+            edit_username.setVisibility(View.VISIBLE);
             iscashier = true;
         } else if (loginrole == ConstantData.LOGIN_WITH_LOCKSCREEN) {
+            lock_info.setVisibility(View.VISIBLE);
+            edit_username.setVisibility(View.GONE);
             iscashier = false;
         }
     }
@@ -122,12 +132,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
+        MyApplication.delActivity(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.login:
+//        LogUtil.i("lgs", "" + w+"-----"+ h);
+                LogUtil.i("lgs", "" + about.getWidth()+"-----"+ about.getHeight());
                 if (iscashier) {
                     poslogin();// 登录
                 } else {
@@ -147,6 +160,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if (hasFocus){
             ((EditText) v).setHintTextColor(getResources().getColor(R.color.colorPrimary));
         }else{
+            ((MyKeyboard)v).hideKeyboard();
             ((EditText) v).setHintTextColor(getResources().getColor(R.color.gray));
         }
     }
@@ -284,6 +298,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             public void handleActionFinish() {
                 // TODO Auto-generated method stub
                 closewaitdialog();
+                startforcashier();
             }
 
             @Override

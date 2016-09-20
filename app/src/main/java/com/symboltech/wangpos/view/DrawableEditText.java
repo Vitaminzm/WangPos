@@ -46,7 +46,7 @@ public class DrawableEditText extends EditText {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (getCompoundDrawables()[2] != null) {
-			if (event.getX() > (getWidth() - getTotalPaddingRight()+ 60) && (event.getX() < ((getWidth() - getPaddingRight())))) {
+			if (event.getX() > (getWidth() - getTotalPaddingRight()+ 60) && (event.getX() < ((getWidth() - getPaddingRight())+80))) {
 				if (onDrawableClickListener != null) {
 					onDrawableClickListener.onDrawableclick();
 				}

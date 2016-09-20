@@ -5,6 +5,7 @@
     <color name="colorAccent">#c0c6d1</color>
 
     <color name="color_bg">#2b2b34</color>
+    <color name="scoll_color">#6b6b71</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="gray">#c0c6d1</color>
@@ -19,4 +20,21 @@
     <drawable name="transparent">#00000000</drawable>
     <color name="divider_color">#b8b8b8</color>
     <color name="transparent">#00000000</color>
+
+    <!-- button bg 通用配置 -->
+    <color name="orange">#e85a43</color>
+    <color name="orange_hint">#ad4d3e</color>
+    <color name="yellow">#f39f2a</color>
+    <color name="yellow_hint">#b2751e</color>
+    <color name="red">#e85a43</color>
+    <color name="red_hint">#ad4d3e</color>
+    <color name="blue">#2daee9</color>
+    <color name="blue_hint">#2181ad</color>
+    <color name="green">#2ab4b2</color>
+    <color name="green_hint">#2c8988</color>
+
+    <drawable name="key_normal_color">#e7f0ff</drawable>
+    <drawable name="key_selected_color">#B9C0CC</drawable>
+    <drawable name="opkey_selected_color">#cbcfd5</drawable>
+    <drawable name="keyboard_bg_color">#2b2b34</drawable>
 </resources>
