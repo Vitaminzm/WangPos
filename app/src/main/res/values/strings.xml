@@ -2,7 +2,8 @@
     <string name="app_name">旺POS</string>
     <string name="exception_opt">服务器数据异常</string>
     <string name="intelligentPOS">智能POS系统</string>
-    <string name="cash_Level">收款台号：</string>
+    <string name="desk_code">收款台：</string>
+    <string name="cashier_name">收款员：</string>
     <string name="username_hint">输入用户名</string>
     <string name="password_hint">输入密码</string>
     <string name="login">登       录</string>

@@ -16,59 +16,60 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/dialog_horizontal_keyboard_bt_1"
-            android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
-            android:layout_weight="1"
-            android:background="@drawable/light_gray_corner_bt_selector"
-            android:gravity="center"
-            android:tag="1"
-            android:text="1"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/dialog_horizontal_keyboard_bt_4"
-            android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
-            android:layout_weight="1"
-            android:background="@drawable/light_gray_corner_bt_selector"
-            android:gravity="center"
-            android:tag="4"
-            android:text="4"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
-
-        <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_7"
             android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
             android:gravity="center"
             android:tag="7"
             android:text="7"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
 
         <TextView
-            android:id="@+id/dialog_horizontal_keyboard_bt_cancel"
+            android:id="@+id/dialog_horizontal_keyboard_bt_4"
             android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
             android:gravity="center"
-            android:text="取消"
-            android:textColor="@color/white"
-            android:textSize="24sp" />
+            android:tag="4"
+            android:text="4"
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
+
+        <TextView
+            android:id="@+id/dialog_horizontal_keyboard_bt_1"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
+            android:layout_weight="1"
+            android:background="@drawable/light_gray_corner_bt_selector"
+            android:gravity="center"
+            android:tag="1"
+            android:text="1"
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
+
+        <TextView
+            android:id="@+id/dialog_horizontal_keyboard_bt_00"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
+            android:layout_weight="1"
+            android:background="@drawable/light_gray_corner_bt_selector"
+            android:gravity="center"
+            android:tag="00"
+            android:text="00"
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
     </LinearLayout>
 
     <LinearLayout
@@ -79,60 +80,60 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/dialog_horizontal_keyboard_bt_2"
-            android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
-            android:layout_weight="1"
-            android:background="@drawable/light_gray_corner_bt_selector"
-            android:gravity="center"
-            android:tag="2"
-            android:text="2"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/dialog_horizontal_keyboard_bt_5"
-            android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
-            android:layout_weight="1"
-            android:background="@drawable/light_gray_corner_bt_selector"
-            android:gravity="center"
-            android:tag="5"
-            android:text="5"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
-
-        <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_8"
             android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
             android:gravity="center"
             android:tag="8"
             android:text="8"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
+
+        <TextView
+            android:id="@+id/dialog_horizontal_keyboard_bt_5"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
+            android:layout_weight="1"
+            android:background="@drawable/light_gray_corner_bt_selector"
+            android:gravity="center"
+            android:tag="5"
+            android:text="5"
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
+
+        <TextView
+            android:id="@+id/dialog_horizontal_keyboard_bt_2"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
+            android:layout_weight="1"
+            android:background="@drawable/light_gray_corner_bt_selector"
+            android:gravity="center"
+            android:tag="2"
+            android:text="2"
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
 
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_0"
             android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
             android:gravity="center"
             android:tag="0"
             android:text="0"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
     </LinearLayout>
 
     <LinearLayout
@@ -143,59 +144,61 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/dialog_horizontal_keyboard_bt_3"
-            android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
-            android:layout_weight="1"
-            android:background="@drawable/light_gray_corner_bt_selector"
-            android:gravity="center"
-            android:tag="3"
-            android:text="3"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
-
-        <TextView
-            android:id="@+id/dialog_horizontal_keyboard_bt_6"
-            android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
-            android:layout_weight="1"
-            android:background="@drawable/light_gray_corner_bt_selector"
-            android:gravity="center"
-            android:tag="6"
-            android:text="6"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
-
-        <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_9"
             android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
             android:gravity="center"
             android:tag="9"
             android:text="9"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
 
         <TextView
-            android:id="@+id/dialog_horizontal_keyboard_bt_c"
+            android:id="@+id/dialog_horizontal_keyboard_bt_6"
             android:layout_width="match_parent"
-            android:layout_height="103dp"
-            android:layout_marginBottom="7dp"
-            android:layout_marginTop="7dp"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
             android:gravity="center"
-            android:text="C"
-            android:textColor="@color/white"
-            android:textSize="24sp" />
+            android:tag="6"
+            android:text="6"
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
+
+        <TextView
+            android:id="@+id/dialog_horizontal_keyboard_bt_3"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
+            android:layout_weight="1"
+            android:background="@drawable/light_gray_corner_bt_selector"
+            android:gravity="center"
+            android:tag="3"
+            android:text="3"
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
+
+        <TextView
+            android:id="@+id/dialog_horizontal_keyboard_bt_dot"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/key_height"
+            android:layout_marginBottom="@dimen/key_margin"
+            android:layout_marginTop="@dimen/key_margin"
+            android:layout_weight="1"
+            android:background="@drawable/light_gray_corner_bt_selector"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:tag="."
+            android:text="·"
+            android:textColor="@color/keyboard_bg_color"
+            android:textSize="@dimen/font_size" />
     </LinearLayout>
 
     <LinearLayout
@@ -206,51 +209,50 @@
         android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/dialog_horizontal_keyboard_bt_back"
+                android:id="@+id/dialog_horizontal_keyboard_bt_cancle"
                 android:layout_width="match_parent"
-                android:layout_height="103dp"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="7dp"
+                android:layout_height="@dimen/key_height"
+                android:layout_marginTop="@dimen/key_margin"
+                android:layout_marginBottom="@dimen/key_margin"
                 android:layout_weight="1"
-                android:background="@drawable/light_gray_corner_bt_selector"
+                android:background="@drawable/dialog_orange_corner_bt_selector"
                 android:gravity="center"
-                android:text="←"
-                android:textColor="@android:color/black"
+                android:text="取消"
+                android:textColor="@color/white"
                 android:textSize="24sp" />
 
             <TextView
-                android:id="@+id/dialog_horizontal_keyboard_bt_dot"
+                android:id="@+id/dialog_horizontal_keyboard_bt_clean"
                 android:layout_width="match_parent"
-                android:layout_height="103dp"
-                android:layout_marginTop="7dp"
-                android:layout_marginBottom="7dp"
+                android:layout_height="@dimen/key_height"
+                android:layout_marginTop="@dimen/key_margin"
+                android:layout_marginBottom="@dimen/key_margin"
                 android:layout_weight="1"
-                android:background="@drawable/light_gray_corner_bt_selector"
+                android:background="@drawable/dialog_orange_corner_bt_selector"
                 android:gravity="center"
-                android:tag="."
-                android:text="•"
-                android:textColor="@android:color/black"
-                android:textSize="24sp" />
+                android:text="C"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size" />
             <TextView
-                android:id="@+id/dialog_horizontal_keyboard_bt_comfirm"
+                android:id="@+id/dialog_horizontal_keyboard_bt_c"
                 android:layout_width="match_parent"
-                android:layout_height="103dp"
-                android:layout_marginBottom="7dp"
-                android:layout_marginTop="7dp"
+                android:layout_height="@dimen/key_height"
+                android:layout_marginBottom="@dimen/key_margin"
+                android:layout_marginTop="@dimen/key_margin"
                 android:layout_weight="1"
-                android:background="@drawable/light_gray_corner_bt_selector"
+                android:background="@drawable/dialog_orange_corner_bt_selector"
                 android:gravity="center"
-                android:text="确认"
+                android:text="回退"
                 android:textColor="@color/white"
                 android:textSize="24sp" />
             <TextView
-                android:id="@+id/dialog_horizontal_keyboard_bt_cncle"
+                android:id="@+id/dialog_horizontal_keyboard_bt_confirm"
                 android:layout_width="match_parent"
-                android:layout_height="103dp"
-                android:layout_marginBottom="7dp"
-                android:layout_marginTop="7dp"
+                android:layout_height="@dimen/key_height"
+                android:layout_marginBottom="@dimen/key_margin"
+                android:layout_marginTop="@dimen/key_margin"
                 android:layout_weight="1"
-                android:background="@drawable/light_gray_corner_bt_selector"
+                android:background="@drawable/dialog_title_blue_corner_bt_selector"
                 android:gravity="center"
                 android:text="确认"
                 android:textColor="@color/white"

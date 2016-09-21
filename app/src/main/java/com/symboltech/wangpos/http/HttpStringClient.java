@@ -5,9 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.result.BaseResult;
+import com.symboltech.wangpos.utils.SpSaveUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +45,7 @@ public class HttpStringClient {
 	private static final int BACKOFF_MULT = 0;
 
 	private HttpStringClient() {
+		initHttpConfig();
 	}
 
     public void initHttpConfig() {
@@ -89,17 +92,17 @@ public class HttpStringClient {
 
 		Map<String, String> param = map;
 		if (param == null) {
-			param = new HashMap<String, String>();
+			param = new HashMap<>();
 		}
-		param.put("token", "11");
+		param.put("token", SpSaveUtils.read(MyApplication.context, ConstantData.LOGIN_TOKEN, ""));
 		FormBody.Builder builder = new FormBody.Builder();
 
 		Set<Map.Entry<String, String>> set = param.entrySet();
 		for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
 			Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
-			LogUtil.i("lgs",entry.getKey()+ entry.getValue());
 			builder.add(entry.getKey(), entry.getValue());
 		}
+		LogUtil.i("lgs","map-----"+param.toString());
 		FormBody formBody = builder.build();
 		Request request = new Request.Builder()
 				.url(url)
@@ -116,6 +119,9 @@ public class HttpStringClient {
 			public void onResponse(Call call, Response response) throws IOException {
 				T result = null;
 				if(response.isSuccessful()){
+					if(!MyApplication.isNetConnect()) {
+						MyApplication.setNetConnect(true);
+					}
 					try {
 						String re =  response.body().string();
 						LogUtil.i("lgs", "response==========" +re);
@@ -141,6 +147,9 @@ public class HttpStringClient {
 					e.printStackTrace();
 				}
 				}else{
+					if(MyApplication.isNetConnect()) {
+						MyApplication.setNetConnect(false);
+					}
 					httpactionhandler.handleActionError(actionname, response.message());
 				}
 				httpactionhandler.handleActionFinish();

@@ -20,33 +20,37 @@ public class InitializeConfig {
 	 * @param info  包括 商品列表、 收款方式列表、促销信息 、 退货原因、营业员信息
 	 */
 	public static void initialize(Context context, InitializeInfo info) {
-		//商品信息
 		if(info.getBrandgoodslist() == null || info.getBrandgoodslist().size() == 0) {
 			Toast.makeText(context, "商品初始化失败", Toast.LENGTH_SHORT).show();
+			SpSaveUtils.delete(context,  ConstantData.BRANDGOODSLIST);
 		}else {
 			SpSaveUtils.saveObject(context, ConstantData.BRANDGOODSLIST, info.getBrandgoodslist());
 		}
 		//收款方式
 		if(info.getPaymentslist() == null || info.getPaymentslist().size() == 0) {
 			Toast.makeText(context, "收款方式初始化失败", Toast.LENGTH_SHORT).show();
+			SpSaveUtils.delete(context,  ConstantData.PAYMENTSLIST);
 		}else {
 			SpSaveUtils.saveObject(context, ConstantData.PAYMENTSLIST, info.getPaymentslist());
 		}
 		//促销信息
 		if(info.getPromlist() == null || info.getPromlist().size() == 0) {
 			//Toast.makeText(context, "促销信息初始化失败", Toast.LENGTH_SHORT).show();
+			SpSaveUtils.delete(context,  ConstantData.PROMOTIONINFOLIST);
 		}else {
 			SpSaveUtils.saveObject(context, ConstantData.PROMOTIONINFOLIST, info.getPromlist());
 		}
 		//退货原因
 		if(info.getRefundreasonlist() == null || info.getRefundreasonlist().size() == 0) {
 			Toast.makeText(context, "退款原因初始化失败", Toast.LENGTH_SHORT).show();
+			SpSaveUtils.delete(context,  ConstantData.REFUNDREASONLIST);
 		}else {
 			SpSaveUtils.saveObject(context, ConstantData.REFUNDREASONLIST, info.getRefundreasonlist());
 		}
 		//营业员
 		if(info.getSalemanlist() == null || info.getSalemanlist().size() == 0) {
 			Toast.makeText(context, "营业员初始化失败", Toast.LENGTH_SHORT).show();
+			SpSaveUtils.delete(context,  ConstantData.SALEMANLIST);
 		}else {
 			SpSaveUtils.saveObject(context, ConstantData.SALEMANLIST, info.getSalemanlist());
 		}

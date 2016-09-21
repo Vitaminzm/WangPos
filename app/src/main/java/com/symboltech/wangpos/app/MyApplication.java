@@ -3,8 +3,6 @@ package com.symboltech.wangpos.app;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.symboltech.wangpos.http.HttpStringClient;
 import com.symboltech.wangpos.utils.SpSaveUtils;
@@ -21,25 +19,27 @@ public class MyApplication extends Application {
     /** APP context */
     public static Context context;
     /** activity manange list */
-    public static List<Activity> activityList = new LinkedList<Activity>();
-    private static  String host_config = "192.168.5.155:81";
+    public static List<Activity> activityList = new LinkedList<>();
+    private static  String host_config = "210.14.129.60:81";
     private static String billId;
     private static String last_billid;
 
+    /**是否是脱机模式 */
+    private static boolean isOffLineMode = false;
+    /**网络是否连接*/
+    private static boolean isNetConnect = true;
+    /**上传状态*/
+    private static int uploadStatus = ConstantData.UPLOAD_SUCCESS;
     @Override
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
-        HttpStringClient.getinstance().initHttpConfig();
     }
 
     /*----------------------------------------------------------------*/
     /**
      * activity
      *
-     * @author CWI-APST emial:26873204@qq.com
-     * @Description: TODO(activity manage)
-     * @param activity
      */
     public static void addActivity(Activity activity) {
         activityList.add(activity);
@@ -104,6 +104,29 @@ public class MyApplication extends Application {
             MyApplication.billId = billId;
             SpSaveUtils.write(MyApplication.context, ConstantData.RECEIPT_NUMBER, billId);
         }
+    }
 
+    public static int getUploadStatus() {
+        return uploadStatus;
+    }
+
+    public static void setUploadStatus(int uploadStatus) {
+        MyApplication.uploadStatus = uploadStatus;
+    }
+
+    public static boolean isOffLineMode() {
+        return isOffLineMode;
+    }
+
+    public static void setOffLineMode(boolean isOffLineMode) {
+        MyApplication.isOffLineMode = isOffLineMode;
+    }
+
+    public static boolean isNetConnect() {
+        return isNetConnect;
+    }
+
+    public static void setNetConnect(boolean isNetConnect) {
+        MyApplication.isNetConnect = isNetConnect;
     }
 }

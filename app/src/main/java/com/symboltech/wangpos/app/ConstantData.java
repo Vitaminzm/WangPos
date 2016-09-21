@@ -15,6 +15,11 @@ public class ConstantData {
 	/** 基数,用于配置常量参数 */
 	public static final int BASE_CODE = 0x200;
 
+	/** 更换pos状态*/
+	public static final String UPDATE_STATUS = "update_status";
+	/** 第一次进入 */
+	public static final String LOGIN_FIRST = "login_first";
+
 	/** 收银员登录 */
 	public static final int LOGIN_WITH_CASHIER = BASE_CODE + 1;
 

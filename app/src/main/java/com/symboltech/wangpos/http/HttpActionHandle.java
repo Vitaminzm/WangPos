@@ -14,19 +14,19 @@ package com.symboltech.wangpos.http;
  */
 public abstract class HttpActionHandle<T>  {
 	//请求动作开始调用
-	public abstract  void handleActionStart();
+	public void handleActionStart(){
+
+	}
 
 	//请求动作结束调用
-	public abstract void handleActionFinish();
+	public void handleActionFinish(){
+
+	}
 
 	//请求动作错误调用
-	public void handleActionError(String actionName, String errmsg){
-
-	}
+	public abstract void handleActionError(String actionName, String errmsg);
 
 	//请求动作成功时调用
-	public void handleActionSuccess(String actionName, T result){
-
-	}
+	public abstract void handleActionSuccess(String actionName, T result);
 
 }

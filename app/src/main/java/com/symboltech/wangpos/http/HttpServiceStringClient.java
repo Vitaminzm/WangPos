@@ -5,9 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.result.BaseResult;
+import com.symboltech.wangpos.utils.SpSaveUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -36,13 +38,14 @@ import okhttp3.Response;
  * @since 1.0
  */
 public class HttpServiceStringClient {
-	private static HttpServiceStringClient httpStringRequest;
-	private static OkHttpClient httpClient ;
+	private static HttpServiceStringClient httpServiceStringRequest;
+	private static OkHttpClient httpServiceClient ;
 	private static final int TIMEOUT_MS_DEFAULT = 40 *1000;
 	private static final int MAX_RETRIES = 0;
 	private static final int BACKOFF_MULT = 0;
 
 	private HttpServiceStringClient() {
+		initHttpConfig();
 	}
 
     public void initHttpConfig() {
@@ -50,18 +53,18 @@ public class HttpServiceStringClient {
 				.connectTimeout(TIMEOUT_MS_DEFAULT, TimeUnit.MILLISECONDS)
 				.writeTimeout(TIMEOUT_MS_DEFAULT, TimeUnit.MILLISECONDS)
 				.readTimeout(TIMEOUT_MS_DEFAULT, TimeUnit.MILLISECONDS);
-		httpClient = builder.build();
+		httpServiceClient = builder.build();
     }
 
 	public static HttpServiceStringClient getinstance() {
-		if (httpStringRequest == null) {
+		if (httpServiceStringRequest == null) {
 			synchronized (HttpServiceStringClient.class) {
-				if (httpStringRequest == null) {
-					httpStringRequest = new HttpServiceStringClient();
+				if (httpServiceStringRequest == null) {
+					httpServiceStringRequest = new HttpServiceStringClient();
 				}
 			}
 		}
-		return httpStringRequest;
+		return httpServiceStringRequest;
 	}
 
 	/**
@@ -70,7 +73,7 @@ public class HttpServiceStringClient {
 	 * @return
 	 */
 	public OkHttpClient getRequestClient() {
-		return httpClient;
+		return httpServiceClient;
 	}
 
 	/**
@@ -91,13 +94,12 @@ public class HttpServiceStringClient {
 		if (param == null) {
 			param = new HashMap<String, String>();
 		}
-		param.put("token", "11");
+		param.put("token", SpSaveUtils.read(MyApplication.context, ConstantData.LOGIN_TOKEN, ""));
 		FormBody.Builder builder = new FormBody.Builder();
 
 		Set<Map.Entry<String, String>> set = param.entrySet();
 		for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
 			Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
-			LogUtil.i("lgs",entry.getKey()+ entry.getValue());
 			builder.add(entry.getKey(), entry.getValue());
 		}
 		FormBody formBody = builder.build();
@@ -116,9 +118,12 @@ public class HttpServiceStringClient {
 			public void onResponse(Call call, Response response) throws IOException {
 				T result = null;
 				if(response.isSuccessful()){
+					if(!MyApplication.isNetConnect()) {
+						MyApplication.setNetConnect(true);
+					}
 					try {
 						String re =  response.body().string();
-						LogUtil.i("lgs", "response==========" +re);
+						LogUtil.i("lgs", "response====service======" +re);
 						result = gson.fromJson(re, clz);
 						if(result != null){
 							if(((BaseResult) result).getCode()!= null)
@@ -141,6 +146,9 @@ public class HttpServiceStringClient {
 					e.printStackTrace();
 				}
 				}else{
+					if(MyApplication.isNetConnect()) {
+						MyApplication.setNetConnect(false);
+					}
 					httpactionhandler.handleActionError(actionname, response.message());
 				}
 				httpactionhandler.handleActionFinish();
@@ -211,7 +219,7 @@ public class HttpServiceStringClient {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		httpClient.newCall(request).enqueue(callBack);
+		httpServiceClient.newCall(request).enqueue(callBack);
 	}
 
 }

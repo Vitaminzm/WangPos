@@ -65,6 +65,7 @@ public class SplashActivity extends BaseActivity {
      */
     private synchronized void goHome() {
         Intent intent = new Intent(this, LoginActivity.class);
+        intent.putExtra(ConstantData.LOGIN_FIRST, true);
         intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
         startActivity(intent);
         this.finish();

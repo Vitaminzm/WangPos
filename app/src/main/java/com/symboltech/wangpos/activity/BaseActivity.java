@@ -34,15 +34,12 @@ public abstract class BaseActivity extends Activity {
 
 	/**
 	 * 开启dialog
-	 * @author CWI-APST email:26873204@qq.com
-	 * @Description: TODO
 	 */
 	protected void closewaitdialog() {
 		if (waitdialog != null && waitdialog.isShowing()) {
 			try {
 				waitdialog.dismiss();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -50,15 +47,13 @@ public abstract class BaseActivity extends Activity {
 
 	/**
 	 * 关闭dialog
-	 * @author CWI-APST email:26873204@qq.com
-	 * @Description: TODO
+	 *
 	 */
 	protected void startwaitdialog() {
 		if (waitdialog != null && !waitdialog.isShowing()) {
 			try {
 				waitdialog.show();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -66,22 +61,19 @@ public abstract class BaseActivity extends Activity {
 
 	/**
 	 * 
-	 * @author CWI-APST email:26873204@qq.com
-	 * @Description: 初始化数据
+	 * 初始化数据
 	 */
 	protected abstract void initData();
 
 	/**
 	 * 
-	 * @author CWI-APST email:26873204@qq.com
-	 * @Description: 初始化UI
+	 *  初始化UI
 	 */
 	protected abstract void initView();
 
 	/**
 	 * 
-	 * @author CWI-APST email:26873204@qq.com
-	 * @Description: TODO 用于资源回收
+	 *  用于资源回收
 	 */
 	protected abstract void recycleMemery();
 

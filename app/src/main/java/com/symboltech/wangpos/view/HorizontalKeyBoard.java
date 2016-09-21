@@ -31,17 +31,19 @@ import java.lang.reflect.Method;
 public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTouchListener, OnDismissListener {
 
 	private Context context;
-	private EditText editText;
+	private EditText editText1, editText2;
 	private TextView textView;
 	private KeyBoardListener listener;
-	private TextView bt0, bt1, bt2, bt3, bt4, bt5, bt6, bt7, bt8, bt9;
-	private TextView dot, clean, back, cancel, comfirm;
+	private TextView bt0, bt1, bt2, bt3, bt4, bt5, bt6, bt7, bt8, bt9, bt00;
+	private TextView dot, clean, back, cancle, confirm;
 	/**编辑框触发键盘*/
 	private final int FLAG_EDIT = 0;
 	/**文本框触发键盘*/
 	private final int FLAG_TEXT = 1;
 	/**自动触发键盘*/
 	private final int FLAG_NULL = 2;
+	/**编辑框触发键盘*/
+	private final int FLAG_EDIT2 = 3;
 	private int flag = FLAG_EDIT;
 	private String defalutStr = "";   //默认文本
 	
@@ -55,7 +57,6 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	private View mContentView;
 	private WindowManager mManager;
 	boolean isFocusOutside = true;
-	int isActivity = 0;
 	/**
 	 * 
 	 * @param context 上下文
@@ -84,7 +85,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
 		this.mObject = mWindow;
-		this.editText = editText;
+		this.editText1 = editText;
 		this.listener = listener;
 		flag = FLAG_EDIT;
 		initView();
@@ -100,32 +101,43 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
 		this.mObject = mWindow;
-		this.editText = editText;
+		this.editText1 = editText;
 		flag = FLAG_EDIT;
 		initView();
 	}
 	/**
+	 *
 	 * @param context 上下文
 	 * @param mWindow 当前activity或者dialog（不能放其他）
-	 * @param editText 编辑框
+	 * @param editText1 编辑框1
+     * @param editText2 编辑框2
+	 * @param listener 确定按钮监听, 不监听传null
 	 */
-	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText,int isActivity) {
+	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText1,EditText editText2, KeyBoardListener listener) {
 		super(context, R.style.keyboard_dialog);
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
 		this.mObject = mWindow;
-		this.editText = editText;
-		this.isActivity = isActivity;
+		this.listener = listener;
+		this.editText1 = editText1;
+		this.editText2 = editText2;
 		flag = FLAG_EDIT;
 		initView();
 	}
-	
+
+	/**
+	 *
+	 * @param context 上下文
+	 * @param mWindow 当前activity或者dialog（不能放其他）
+	 * @param editText
+	 * @param isFocusOutside 点击外部是否消失
+	 */
 	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText, boolean isFocusOutside) {
 		super(context, R.style.keyboard_dialog);
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
 		this.mObject = mWindow;
-		this.editText = editText;
+		this.editText1 = editText;
 		flag = FLAG_EDIT;
 		this.isFocusOutside = isFocusOutside;
 		initView();
@@ -176,11 +188,12 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		bt7 = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_7);
 		bt8 = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_8);
 		bt9 = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_9);
+		bt00 = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_00);
 		dot = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_dot);
-		back = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_back);
-		cancel = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_cancel);
-		clean = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_c);
-		comfirm = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_comfirm);
+		back = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_c);
+		cancle = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_cancle);
+		clean = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_clean);
+		confirm = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_confirm);
 		initEvent();
 		initSetting();
 		initScreenParams(context);
@@ -202,18 +215,18 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 				}).start();
 			} catch (Exception e) {
 		}
+		mWindow.setWindowAnimations(R.style.AnimationFade); //设置窗口弹出动画
 		if(null != mContentView){
 			  int[] pos=new int[2];
 			  if(mObject instanceof Dialog) {
 				  mWindow.getDecorView().getLocationOnScreen(pos);
 			  }else {
 				  if(flag == FLAG_EDIT) {
-					  editText.getLocationOnScreen(pos);
+					  editText1.getLocationOnScreen(pos);
+				  }else if(flag == FLAG_EDIT2){
+					  editText2.getLocationOnScreen(pos);
 				  }else if(flag == FLAG_TEXT) {
 					  textView.getLocationOnScreen(pos);
-				  }
-				  if(isActivity == 1){
-					  mWindow.getDecorView().getLocationOnScreen(pos);
 				  }
 			  }
 			  float height = dpToPx(getContext(), 500);
@@ -226,13 +239,12 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 				  length=(int)((pos[1]+mWindow.getDecorView().getHeight()-outRect.top)-(mScreenHeight-height));
 			  }else {
 				  if(flag == FLAG_EDIT) {
-					  length=(int)((pos[1]+editText.getMeasuredHeight()-outRect.top)-(mScreenHeight-height));
+					  length=(int)((pos[1]+editText1.getMeasuredHeight()-outRect.top)-(mScreenHeight-height));
+				  }else if(flag == FLAG_EDIT2) {
+					  length=(int)((pos[1]+editText2.getMeasuredHeight()-outRect.top)-(mScreenHeight-height));
 				  }else if(flag == FLAG_TEXT) {
 					  length=(int)((pos[1]+textView.getMeasuredHeight()-outRect.top)-(mScreenHeight-height));
 				  }
-			  }
-			  if(isActivity == 1){
-				  length=(int)((pos[1]+mWindow.getDecorView().getHeight()-outRect.top)-(mScreenHeight-height));
 			  }
 			  if(length>0){
 				 if(!(mObject instanceof Dialog)){
@@ -339,13 +351,18 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	private void initSetting() {
 		((Activity) context).getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		try {
-			if(editText != null) {
+			if(editText1 != null) {
 				Class<EditText> cls = EditText.class;
 				Method setShowSoftInputOnFocus = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
 				setShowSoftInputOnFocus.setAccessible(true);
-				setShowSoftInputOnFocus.invoke(editText, false);
+				setShowSoftInputOnFocus.invoke(editText1, false);
 			}
-
+			if(editText2 != null) {
+				Class<EditText> cls = EditText.class;
+				Method setShowSoftInputOnFocus = cls.getMethod("setShowSoftInputOnFocus", boolean.class);
+				setShowSoftInputOnFocus.setAccessible(true);
+				setShowSoftInputOnFocus.invoke(editText2, false);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -371,8 +388,11 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	}
 
 	private void initEvent() {
-		if(editText != null) {
-			editText.setOnTouchListener(this);
+		if(editText1 != null) {
+			editText1.setOnTouchListener(this);
+		}
+		if(editText2 != null) {
+			editText2.setOnTouchListener(this);
 		}
 		if(textView != null) {
 			textView.setOnTouchListener(this);
@@ -387,26 +407,33 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		bt7.setOnClickListener(this);
 		bt8.setOnClickListener(this);
 		bt9.setOnClickListener(this);
+		bt00.setOnClickListener(this);
 		dot.setOnClickListener(this);
 		back.setOnClickListener(this);
-		cancel.setOnClickListener(this);
+		cancle.setOnClickListener(this);
 		clean.setOnClickListener(this);
-		comfirm.setOnClickListener(this);
+		confirm.setOnClickListener(this);
 	}
 
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == back.getId()) {
-			if(flag == FLAG_EDIT && editText.getSelectionStart() > 0) {
-				editText.getText().delete(editText.getSelectionStart() - 1, editText.getSelectionStart());
+			if(flag == FLAG_EDIT && editText1.getSelectionStart() > 0) {
+				editText1.getText().delete(editText1.getSelectionStart() - 1, editText1.getSelectionStart());
+			}else if(flag == FLAG_EDIT2 && editText2.getSelectionStart() > 0) {
+				editText2.getText().delete(editText2.getSelectionStart() - 1, editText2.getSelectionStart());
 			}else if(flag == FLAG_TEXT && textView.getText() != null) {
 				textView.getEditableText().delete(textView.getText().length() - 1, textView.getText().length());
 			}
-		}else if(v.getId() == cancel.getId()) {
+		}else if(v.getId() == cancle.getId()) {
 			if(flag == FLAG_EDIT) {
-				editText.setText(defalutStr);
+				editText1.setText(defalutStr);
 				if(defalutStr != null)
-					editText.setSelection(defalutStr.length());
+					editText1.setSelection(defalutStr.length());
+			}else if(flag == FLAG_EDIT2) {
+				editText2.setText(defalutStr);
+				if(defalutStr != null)
+					editText2.setSelection(defalutStr.length());
 			}else if(flag == FLAG_TEXT) {
 				textView.setText(defalutStr);
 			}
@@ -416,13 +443,18 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 				listener.onCancel();
 			}
 		}else if(v.getId() == clean.getId()) {
-			if(flag == FLAG_EDIT && editText.getSelectionStart() > 0) {
-				editText.getText().clear();
+			if(flag == FLAG_EDIT && editText1.getSelectionStart() > 0) {
+				editText1.getText().clear();
+			}else if(flag == FLAG_EDIT2 && editText2.getSelectionStart() > 0) {
+				editText2.getText().clear();
 			}else if(flag == FLAG_TEXT && textView.getText() != null) {
 				textView.setText("");
 			}
-		}else if(v.getId() == comfirm.getId()) {
-			if(flag == FLAG_EDIT && (TextUtils.isEmpty(editText.getText().toString()) || "".equals(editText.getText().toString()))) {
+		}else if(v.getId() == confirm.getId()) {
+			if(flag == FLAG_EDIT && (TextUtils.isEmpty(editText1.getText().toString()) || "".equals(editText1.getText().toString()))) {
+				Toast.makeText(context, "请输入数据", Toast.LENGTH_SHORT).show();
+				return;
+			}else if(flag == FLAG_EDIT2 && (TextUtils.isEmpty(editText2.getText().toString()) || "".equals(editText2.getText().toString()))) {
 				Toast.makeText(context, "请输入数据", Toast.LENGTH_SHORT).show();
 				return;
 			}else if(flag == FLAG_TEXT && (TextUtils.isEmpty(textView.getText().toString()) || "".equals(textView.getText().toString()))) {
@@ -432,7 +464,9 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 			if(listener != null) {
 				listener.onComfirm();
 				if(flag == FLAG_EDIT) {
-					listener.onValue(editText.getText().toString().trim());
+					listener.onValue(editText1.getText().toString().trim());
+				}else if(flag == FLAG_EDIT2) {
+					listener.onValue(editText2.getText().toString().trim());
 				}else if(flag == FLAG_TEXT) {
 					listener.onValue(textView.getText().toString().trim());
 				}
@@ -440,8 +474,10 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 			dismiss();
 		}else {
 			if(flag == FLAG_EDIT) {
-				editText.getText().insert(editText.getSelectionStart(), (String) v.getTag());
-			}else if(flag == FLAG_TEXT) {
+				editText1.getText().insert(editText1.getSelectionStart(), (String) v.getTag());
+			}else if(flag == FLAG_EDIT2) {
+				editText2.getText().insert(editText2.getSelectionStart(), (String) v.getTag());
+			} else if (flag == FLAG_TEXT) {
 				textView.getEditableText().insert(textView.getText() == null ? 0 : textView.getText().length(), (String) v.getTag());
 			}
 		}
@@ -457,18 +493,35 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	public boolean onTouch(View v, MotionEvent event) {
 		// TODO Auto-generated method stub
 		if(event.getAction() == MotionEvent.ACTION_DOWN) {
-			if(editText != null && editText.getId() == v.getId()) {
-				editText.requestFocus();
-				if(editText.getCompoundDrawables()[2] != null && event.getX() > (editText.getWidth() - editText.getTotalPaddingRight()) && (event.getX() < ((editText.getWidth() - editText.getPaddingRight())))) {
+			if(editText1 != null && editText1.getId() == v.getId()) {
+				flag = FLAG_EDIT;
+				editText1.requestFocus();
+				if(isShowing()) {
+					return true;
+				}
+				if(editText1.getCompoundDrawables()[2] != null && event.getX() > (editText1.getWidth() - editText1.getTotalPaddingRight()+ 60) && (event.getX() < ((editText1.getWidth() - editText1.getPaddingRight()+ 80)))) {
 					return false;
 				}else {
-					defalutStr = editText.getText().toString();
+					defalutStr = editText1.getText().toString();
 					if(defalutStr != null)
-						editText.setSelection(defalutStr.length());
-					//editText.setText("");
+						editText1.setSelection(defalutStr.length());
 					show();
 				}
+			}else if(editText2 != null && editText2.getId() == v.getId()) {
+				flag = FLAG_EDIT2;
+				editText2.requestFocus();
+				if(isShowing()) {
+					return true;
+				}
+				defalutStr = editText2.getText().toString();
+				if(defalutStr != null)
+					editText2.setSelection(defalutStr.length());
+				show();
 			}else if(textView != null && textView.getId() == v.getId()) {
+				if(isShowing()) {
+					return true;
+				}
+				flag = FLAG_TEXT;
 				if(textView.getCompoundDrawables()[2] != null && event.getX() > (textView.getWidth() - textView.getTotalPaddingRight()) && (event.getX() < ((textView.getWidth() - textView.getPaddingRight())))) {
 					return false;
 				}else {
