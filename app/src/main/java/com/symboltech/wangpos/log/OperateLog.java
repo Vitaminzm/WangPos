@@ -22,6 +22,7 @@ import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.msg.entity.LogInfo;
 import com.symboltech.wangpos.msg.entity.OptLogInfo;
+import com.symboltech.wangpos.result.LogResult;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -258,8 +259,8 @@ public class OperateLog {
 				int num = count / AppConfigFile.OPERATE_LOG_SIZE;
 				String fileName = time +"-"+ num;
 				File fileTemp = new File(context.getFilesDir(), fileName);
-				//if(!fileTemp.getName().equals(file.getName()))
-					//send2server(file.getName(), data.toString()+"]");
+				if(!fileTemp.getName().equals(file.getName()))
+					send2server(file.getName(), data.toString()+"]");
 			}else{
 				file.delete();
 			}
@@ -267,48 +268,48 @@ public class OperateLog {
 		
 	}
 	
-//	/**
-//	 * 上传日志，成功后删除
-//	 * @param filename 发送文件名
-//	 * @param data 发送数组
-//	 */
-//	public static void send2server(String filename, String data){
-//		Map<String, String> map = new HashMap<String, String>();
-//		map.put("signid", filename);
-//		map.put("operations", data);
-//		HttpRequestUtil.getinstance().saveOperationLog(map, LogResult.class, new HttpActionHandle<LogResult>(){
-//
-//			@Override
-//			public void handleActionStart() {
-//
-//			}
-//
-//			@Override
-//			public void handleActionFinish() {
-//
-//			}
-//
-//			@Override
-//			public void handleActionError(String actionName,
-//					String errmsg) {
-//				ToastUtils.sendtoastbyhandler(handler, errmsg);
-//			}
-//
-//			@Override
-//			public void handleActionSuccess(String actionName,
-//					LogResult result) {
-//				if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
-//					LogInfo info = result.getLogInfo();
-//					if(info == null || info.getSignid()== null){
-//						return;
-//					}
-//					File file = new File(context.getFilesDir(), "Log");
-//					File fileResult = new File(file, info.getSignid());
-//					fileResult.delete();
-//				}else{
-//					ToastUtils.sendtoastbyhandler(handler, result.getMsg());
-//				}
-//			}
-//		});
-//	}
+	/**
+	 * 上传日志，成功后删除
+	 * @param filename 发送文件名
+	 * @param data 发送数组
+	 */
+	public static void send2server(String filename, String data){
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("signid", filename);
+		map.put("operations", data);
+		HttpRequestUtil.getinstance().saveOperationLog(map, LogResult.class, new HttpActionHandle<LogResult>(){
+
+			@Override
+			public void handleActionStart() {
+
+			}
+
+			@Override
+			public void handleActionFinish() {
+
+			}
+
+			@Override
+			public void handleActionError(String actionName,
+					String errmsg) {
+				ToastUtils.sendtoastbyhandler(handler, errmsg);
+			}
+
+			@Override
+			public void handleActionSuccess(String actionName,
+					LogResult result) {
+				if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
+					LogInfo info = result.getLogInfo();
+					if(info == null || info.getSignid()== null){
+						return;
+					}
+					File file = new File(context.getFilesDir(), "Log");
+					File fileResult = new File(file, info.getSignid());
+					fileResult.delete();
+				}else{
+					ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+				}
+			}
+		});
+	}
 }
