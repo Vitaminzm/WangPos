@@ -1,16 +1,20 @@
 package com.symboltech.wangpos.result;
 
+import com.google.gson.annotations.SerializedName;
+import com.symboltech.wangpos.msg.entity.LogInfo;
+
 /**
  * Created by symbol on 2016/9/5.
  */
 public class Logresult extends BaseResult {
-    public String data;
+    @SerializedName("data")
+    private LogInfo logInfo;
 
-    public String getData() {
-        return data;
+    public LogInfo getLogInfo() {
+        return logInfo;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setLogInfo(LogInfo logInfo) {
+        this.logInfo = logInfo;
     }
 }
