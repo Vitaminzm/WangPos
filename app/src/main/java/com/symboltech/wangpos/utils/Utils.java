@@ -21,6 +21,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.http.conn.util.InetAddressUtils;
 
@@ -591,6 +593,14 @@ public class Utils {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
+    public static boolean isNumeric(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        Matcher isNum = pattern.matcher(str);
+        if( !isNum.matches() ){
+            return false;
+        }
+        return true;
+    }
     /**
      * 判断手机号是否符合手机号标准 只判断位数
      *
@@ -604,7 +614,7 @@ public class Utils {
         if(mobiles.length() != 11){
             return false;
         }else{
-            return true;
+            return isNumeric(mobiles);
         }
 //		Pattern p = Pattern.compile("^((13[0-9])|(15[^4,\\D])|(18[0-9])|(17[0-1,8]))\\d{8}$");
 //		Matcher m = p.matcher(mobiles);

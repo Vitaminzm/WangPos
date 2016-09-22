@@ -180,10 +180,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rl_lockscreen:
                 lockscreen();
                 break;
-
+            case R.id.rl_member:
+                memberAccess();
+                break;
         }
     }
-
+    private void memberAccess(){
+        Intent intent = new Intent(this, MemberAccessActivity.class);
+        startActivity(intent);
+    }
     /**
      * lockscreen
      */

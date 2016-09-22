@@ -22,8 +22,10 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.config.InitializeConfig;
 import com.symboltech.wangpos.db.dao.LoginDao;
 import com.symboltech.wangpos.db.dao.UserNameDao;
+import com.symboltech.wangpos.dialog.UniversalHintDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.interfaces.OnDrawableClickListener;
 import com.symboltech.wangpos.log.LogUtil;
@@ -54,15 +56,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Bind(R.id.edit_username)DrawableEditText edit_username;
     @Bind(R.id.edit_password)EditText edit_password;
-    @Bind(R.id.lock_info)LinearLayout lock_info;
+    @Bind(R.id.ll_lock_info)LinearLayout ll_lock_info;
     @Bind(R.id.ll_desk_code)LinearLayout ll_desk_code;
     @Bind(R.id.ll_cashier_name)LinearLayout ll_cashier_name;
-    @Bind(R.id.cashier_name)TextView cashier_name;
-    @Bind(R.id.desk_code)TextView desk_code;
+    @Bind(R.id.text_cashier_name)TextView text_cashier_name;
+    @Bind(R.id.text_desk_code)TextView text_desk_code;
 
-    @Bind(R.id.login)TextView login;
-    @Bind(R.id.about)ImageView about;
-    @Bind(R.id.loginout)ImageView loginout;
+    @Bind(R.id.text_login)TextView text_login;
+    @Bind(R.id.imageview_about)ImageView imageview_about;
+    @Bind(R.id.imageview_loginout)ImageView imageview_loginout;
 
     /** login db dao */
     private UserNameDao und;
@@ -140,9 +142,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 showPopupList();
             }
         });
-        login.setOnClickListener(this);
-        about.setOnClickListener(this);
-        loginout.setOnClickListener(this);
+        text_login.setOnClickListener(this);
+        imageview_about.setOnClickListener(this);
+        imageview_loginout.setOnClickListener(this);
 
         listview = (ListView) LayoutInflater.from(this).inflate(R.layout.popup_list, null);
         listview.setOnItemClickListener(this);
@@ -156,19 +158,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         String deskCode = SpSaveUtils.read(LoginActivity.this, ConstantData.CASHIER_DESK_CODE, "");
         if(!StringUtil.isEmpty(deskCode)){
             ll_desk_code.setVisibility(View.VISIBLE);
-            desk_code.setText(deskCode);
+            text_desk_code.setText(deskCode);
         }
         if (loginrole == ConstantData.LOGIN_WITH_CASHIER) {
-            lock_info.setVisibility(View.GONE);
+            ll_lock_info.setVisibility(View.GONE);
             edit_username.setVisibility(View.VISIBLE);
             iscashier = true;
         } else if (loginrole == ConstantData.LOGIN_WITH_LOCKSCREEN) {
             String cashierName = SpSaveUtils.read(LoginActivity.this, ConstantData.CASHIER_NAME, "");
             if(!StringUtil.isEmpty(cashierName)){
                 ll_cashier_name.setVisibility(View.VISIBLE);
-                cashier_name.setText(deskCode);
+                text_cashier_name.setText(deskCode);
             }
-            lock_info.setVisibility(View.VISIBLE);
+            ll_lock_info.setVisibility(View.VISIBLE);
             edit_username.setVisibility(View.GONE);
             iscashier = false;
         }
@@ -183,14 +185,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.login:
+            case R.id.text_login:
+                UniversalHintDialog uhd = new UniversalHintDialog(LoginActivity.this,
+                        null, null, new DialogFinishCallBack() {
+
+                    @Override
+                    public void finish() {
+                    }
+                });
+                uhd.show();
                 if (iscashier) {
                     poslogin();// 登录
                 } else {
                     posunlock();// 解锁
                 }
                 break;
-            case R.id.loginout:
+            case R.id.imageview_loginout:
                 Intent service = new Intent(getApplicationContext(), RunTimeService.class);
                 stopService(service);
                 this.finish();

@@ -40,20 +40,6 @@ public class StringUtil {
 			return printText;
 		}
 	}
-	
-
-	/**
-	 * 判断字符串是否为手机号码
-	 * 
-	 * @param str
-	 * @return
-	 */
-	public static boolean isPhoneNumber(String str) {
-		if (str == null) {
-			return false;
-		}
-		return str.matches("^(13|15|18)[0-9]{9}$");
-	}
 
 	/**
 	 * 判断字符串去除两端空格后是否为空串

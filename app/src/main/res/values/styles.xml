@@ -17,6 +17,21 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="alert_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowCloseOnTouchOutside">false</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <!-- login dialog bg -->
+    <style name="dialog_login_bg">
+        <item name="android:background">#00000000</item>
+        <item name="android:windowBackground">@color/fifty_percent_transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+    </style>
+
     <style name="PopupAnimation" parent="android:Animation">
         <item name="android:windowEnterAnimation">@anim/popup_enter</item>
         <item name="android:windowExitAnimation">@anim/popup_exit</item>

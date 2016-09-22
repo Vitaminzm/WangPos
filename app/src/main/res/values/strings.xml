@@ -10,4 +10,22 @@
     <string name="waring_null_username">用户名为空</string>
     <string name="waring_null_password">密码为空</string>
     <string name="lock_info">锁屏状态中</string>
+    <string name="member_telephone_not_member">该手机号不是会员</string>
+    <string name="add_member_succedd">添加会员成功</string>
+
+    <!-- 会员验证方式-->
+    <string name="phone_number">手机号</string>
+    <string name="vip_card">会员卡</string>
+    <string name="scan_QR">扫码</string>
+
+    <string name="member_id_is_not_null">会员ID不能为空</string>
+    <string name="please_input_right_phoneNo">请输入正确的手机号码</string>
+    <string name="please_swip_card">请刷卡</string>
+    <string name="please_input_phoneNo">请输入手机号</string>
+    <string name="add_or_verify_member">验证/新增会员</string>
+    <string name="other_verify_type">其他验证方式</string>
+    <string name="yes">是</string>
+    <string name="no">否</string>
+    <string name="change_mode_off_tips">智能pos已断网\n是否进入脱机销售模式？</string>
+    <string name="change_mode_on_tips">智能pos网络已恢复\n是否进入正常销售模式？</string>
 </resources>

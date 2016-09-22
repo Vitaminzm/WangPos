@@ -201,20 +201,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	
 	@Override
 	public void show() {
-			try {
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-				}).start();
-			} catch (Exception e) {
-		}
+		super.show();
 		mWindow.setWindowAnimations(R.style.AnimationFade); //设置窗口弹出动画
 		if(null != mContentView){
 			  int[] pos=new int[2];
@@ -255,7 +242,6 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 				 }
 			  }
 		  }
-		super.show();
 	}
 	
 	private LayoutParams getParams(int speed) {

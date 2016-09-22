@@ -40,7 +40,17 @@
             android:name=".activity.LoginActivity"
             android:launchMode="singleTop" >
         </activity>
+
         <service android:name=".service.RunTimeService" />
+
+        <activity
+            android:name=".activity.MemberAccessActivity"
+            android:launchMode="singleTop">
+        </activity>
+        <activity
+            android:name="com.symboltech.zxing.app.CaptureActivity"
+            android:launchMode="singleTop" >
+        </activity>
     </application>
 
-</manifest>
+    </manifest>
