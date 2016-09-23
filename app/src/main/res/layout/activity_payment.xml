@@ -70,6 +70,8 @@
         android:id="@+id/goods_listview"
         android:layout_width="match_parent"
         android:layout_height="280dp"
+        android:scrollbars="none"
+        android:listSelector="@android:color/transparent"
         android:layout_below="@id/input_money"/>
 
 
