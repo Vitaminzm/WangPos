@@ -66,13 +66,12 @@
             android:text="@string/yuan"/>
     </LinearLayout>
 
-    <ListView
+    <com.baoyz.swipemenulistview.SwipeMenuListView
         android:id="@+id/goods_listview"
         android:layout_width="match_parent"
         android:layout_height="280dp"
-        android:layout_below="@id/input_money">
+        android:layout_below="@id/input_money"/>
 
-    </ListView>
 
     <RadioGroup
         android:id="@+id/radioGroup_function"
