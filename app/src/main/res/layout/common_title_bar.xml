@@ -8,7 +8,7 @@
         android:id="@+id/title_icon_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/icon_about"
+        android:src="@mipmap/title_icon_back"
         android:scaleType="centerCrop"
         android:layout_centerVertical="true"
         android:layout_marginLeft="17dp"/>

@@ -9,7 +9,7 @@
     <dimen name="btn_margin">9dp</dimen>
     <!-- 自定义键盘-->
     <dimen name="font_size">40sp</dimen>
-    <dimen name="key_height">103dp</dimen>
-    <dimen name="key_margin">7dp</dimen>
+    <dimen name="key_height">100dp</dimen>
+    <dimen name="key_margin">6dp</dimen>
 
 </resources>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/view_bg_color"
+    tools:context="com.symboltech.wangpos.activity.PaymentActivity">
+
+    <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
+    <FrameLayout
+        android:id="@+id/view_sales_info"
+        android:layout_below="@id/common_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/view_sales_info" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/input_money"
+        android:layout_below="@id/view_sales_info"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="57dp"
+            android:paddingRight="37dp"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:textColor="@color/view_font_red_color"
+            android:text="￥"/>
+        <LinearLayout
+            android:layout_width="206dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="25dp">
+
+            <EditText
+                android:id="@+id/edit_input_money"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="20sp"
+                android:textColorHint="@color/hint_color"
+                android:textColor="@color/edit_font_color"
+                android:singleLine="true"
+                android:hint="@string/please_input_money"
+                android:background="@null"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="3dp"
+                android:layout_marginTop="5dp"
+                android:background="@color/view_black_line_color"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="17dp"
+            android:layout_gravity="center"
+            android:textColor="@color/font_color"
+            android:text="@string/yuan"/>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/goods_listview"
+        android:layout_width="match_parent"
+        android:layout_height="280dp"
+        android:layout_below="@id/input_money">
+
+    </ListView>
+
+    <RadioGroup
+        android:id="@+id/radioGroup_function"
+        android:layout_below="@id/goods_listview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/radio_select_good"
+            android:layout_width="wrap_content"
+            android:button="@null"
+            android:checked="true"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="center"
+            android:drawableTop="@drawable/btn_select_good_selector"
+            android:drawablePadding="10dp"
+            android:textColor="@drawable/btn_font_color_selector"
+            android:text="@string/select_good"/>
+        <RadioButton
+            android:id="@+id/radio_add_score_good"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:button="@null"
+            android:gravity="center"
+            android:layout_marginLeft="30dp"
+            android:drawableTop="@drawable/btn_add_score_good_selector"
+            android:drawablePadding="10dp"
+            android:textColor="@drawable/btn_font_color_selector"
+            android:text="@string/add_score_good"/>
+        <RadioButton
+            android:id="@+id/radio_look_member"
+            android:layout_width="wrap_content"
+            android:button="@null"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="center"
+            android:drawableTop="@drawable/btn_look_member_selector"
+            android:drawablePadding="10dp"
+            android:layout_marginLeft="30dp"
+            android:textColor="@drawable/btn_font_color_selector"
+            android:text="@string/look_member"/>
+        <RadioButton
+            android:id="@+id/radio_add_salesman"
+            android:layout_width="wrap_content"
+            android:button="@null"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="center"
+            android:layout_marginLeft="40dp"
+            android:drawableTop="@drawable/btn_add_saleman_selector"
+            android:drawablePadding="10dp"
+            android:textColor="@drawable/btn_font_color_selector"
+            android:text="@string/add_saleman"/>
+    </RadioGroup>
+    <FrameLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/view_bill_info" />
+    </FrameLayout>
+</RelativeLayout>

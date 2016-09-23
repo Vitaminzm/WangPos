@@ -186,14 +186,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.text_login:
-                UniversalHintDialog uhd = new UniversalHintDialog(LoginActivity.this,
-                        null, null, new DialogFinishCallBack() {
-
-                    @Override
-                    public void finish() {
-                    }
-                });
-                uhd.show();
                 if (iscashier) {
                     poslogin();// 登录
                 } else {
@@ -324,7 +316,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      */
     private void loginforhttp(final String username, final String password) {
         Map<String, String> map = new HashMap<>();
-        map.put("machinecode", MachineUtils.getUid(MyApplication.context));
+
+        map.put("machinecode", "0055DA1009B4");//MachineUtils.getUid(MyApplication.context)
         map.put("personcode", username);
         map.put("password", MD5Utils.md5(password));
         LogUtil.i("lgs", "MachineUtils.getUid==========" + MachineUtils.getUid(MyApplication.context));
@@ -337,7 +330,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
             @Override
             public void handleActionFinish() {
-                closewaitdialog();startforcashier();
+                closewaitdialog();
+                startforcashier();
             }
 
             @Override

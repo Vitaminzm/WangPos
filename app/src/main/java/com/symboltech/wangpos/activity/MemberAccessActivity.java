@@ -10,6 +10,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
@@ -19,12 +21,14 @@ import com.symboltech.wangpos.dialog.UniversalHintDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
+import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.result.AllMemeberInfoResult;
 import com.symboltech.wangpos.result.MemberInfoResult;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
+import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
 
 import java.lang.ref.WeakReference;
@@ -33,19 +37,41 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
-public class MemberAccessActivity extends BaseActivity {
+public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
     @Bind(R.id.imageview_phone)ImageView imageview_phone;
     @Bind(R.id.edit_phone_number)EditText edit_phone_number;
     @Bind(R.id.view_line)View view_line;
-    @Bind(R.id.text_phone_number)TextView text_phone_number;
-    @Bind(R.id.text_vip_card)TextView text_vip_card;
-    @Bind(R.id.text_sacn_QR)TextView text_sacn_QR;
+
+    @Bind(R.id.radioGroup_type)RadioGroup radioGroup_type;
+    @Bind(R.id.text_phone_number)RadioButton text_phone_number;
+
     @Bind(R.id.ll_phone_number)LinearLayout ll_phone_number;
     @Bind(R.id.ll_swaip_card)LinearLayout ll_swaip_card;
+
+    @Bind(R.id.title_text_content)TextView title_text_content;
     private MemberInfo memberinfo;
+    private Animation left_In_Animation;
+    private Animation right_In_Animation;
+    private HorizontalKeyBoard keyBoard;
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        switch (checkedId){
+            case R.id.text_phone_number:
+                verifyByPhone();
+                break;
+            case R.id.text_vip_card:
+                verifyByVipCard();
+                break;
+            case R.id.text_sacn_QR:
+                verifyByQR();
+                break;
+        }
+    }
 
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
@@ -64,11 +90,13 @@ public class MemberAccessActivity extends BaseActivity {
             }
         }
     }
-    private Animation right_In_Animation;
+
     MyHandler handler = new MyHandler(this);
     @Override
     protected void initData() {
+        title_text_content.setText(getString(R.string.number_access));
         right_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
+        left_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in);
     }
 
     @Override
@@ -88,6 +116,31 @@ public class MemberAccessActivity extends BaseActivity {
                 }
             }
         });
+        keyBoard = new HorizontalKeyBoard(this, this, edit_phone_number, new KeyBoardListener(){
+
+            @Override
+            public void onComfirm() {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onValue(String value) {
+                memberverifymethod(ConstantData.MEMBER_VERIFY_BY_QR, value);
+            }
+        });
+        radioGroup_type.setOnCheckedChangeListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        text_phone_number.setChecked(true);
+        verifyByPhone();
     }
 
     @Override
@@ -96,26 +149,16 @@ public class MemberAccessActivity extends BaseActivity {
         MyApplication.delActivity(this);
     }
 
-    @OnClick(R.id.title_icon_back)
-    public void back(View view){
-        this.finish();
-    }
-
-    @OnClick({R.id.text_add_or_verify_member, R.id.text_phone_number, R.id.text_vip_card, R.id.text_sacn_QR})
+    @OnClick({R.id.text_add_or_verify_member, R.id.title_icon_back})
     public void click(View view){
         int id = view.getId();
         switch (id){
             case R.id.text_add_or_verify_member:
-
+                keyBoard.dismiss();
+                memberverifymethod(ConstantData.MEMBER_VERIFY_BY_QR, edit_phone_number.getText().toString());
                 break;
-            case R.id.text_phone_number:
-                verifyByPhone();
-                break;
-            case R.id.text_vip_card:
-                verifyByVipCard();
-                break;
-            case R.id.text_sacn_QR:
-                verifyByQR();
+            case R.id.title_icon_back:
+                this.finish();
                 break;
         }
     }
@@ -141,28 +184,11 @@ public class MemberAccessActivity extends BaseActivity {
             });
             ll_phone_number.startAnimation(right_In_Animation);
         }
-
-       // ll_phone_number.setVisibility(View.VISIBLE);
-
-        Drawable phone_number_drawable= getResources().getDrawable(R.mipmap.phone_number_after);
-        phone_number_drawable.setBounds(0, 0, phone_number_drawable.getMinimumWidth(), phone_number_drawable.getMinimumHeight());
-        text_phone_number.setTextColor(getResources().getColor(R.color.red));
-        text_phone_number.setCompoundDrawables(null, phone_number_drawable, null, null);
-
-        Drawable scan_qr_drawable= getResources().getDrawable(R.mipmap.scan_qr_before);
-        scan_qr_drawable.setBounds(0, 0, scan_qr_drawable.getMinimumWidth(), scan_qr_drawable.getMinimumHeight());
-        text_sacn_QR.setTextColor(getResources().getColor(R.color.green));
-        text_sacn_QR.setCompoundDrawables(null, scan_qr_drawable, null, null);
-
-        Drawable vip_card_drawable= getResources().getDrawable(R.mipmap.vip_card_before);
-        vip_card_drawable.setBounds(0, 0, vip_card_drawable.getMinimumWidth(), vip_card_drawable.getMinimumHeight());
-        text_vip_card.setTextColor(getResources().getColor(R.color.green));
-        text_vip_card.setCompoundDrawables(null, vip_card_drawable, null, null);
     }
 
     public void verifyByVipCard() {
         if(ll_swaip_card.getVisibility() == View.GONE){
-            right_In_Animation.setAnimationListener(new Animation.AnimationListener() {
+            left_In_Animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
                     ll_phone_number.setVisibility(View.GONE);
@@ -179,39 +205,11 @@ public class MemberAccessActivity extends BaseActivity {
 
                 }
             });
-            ll_swaip_card.startAnimation(right_In_Animation);
+            ll_swaip_card.startAnimation(left_In_Animation);
         }
-        Drawable phone_number_drawable= getResources().getDrawable(R.mipmap.phone_number_before);
-        phone_number_drawable.setBounds(0, 0, phone_number_drawable.getMinimumWidth(), phone_number_drawable.getMinimumHeight());
-        text_phone_number.setTextColor(getResources().getColor(R.color.green));
-        text_phone_number.setCompoundDrawables(null, phone_number_drawable, null, null);
-
-        Drawable scan_qr_drawable= getResources().getDrawable(R.mipmap.scan_qr_before);
-        scan_qr_drawable.setBounds(0, 0, scan_qr_drawable.getMinimumWidth(), scan_qr_drawable.getMinimumHeight());
-        text_sacn_QR.setTextColor(getResources().getColor(R.color.green));
-        text_sacn_QR.setCompoundDrawables(null, scan_qr_drawable, null, null);
-
-        Drawable vip_card_drawable = getResources().getDrawable(R.mipmap.vip_card_after);
-        vip_card_drawable.setBounds(0, 0, vip_card_drawable.getMinimumWidth(), vip_card_drawable.getMinimumHeight());
-        text_vip_card.setTextColor(getResources().getColor(R.color.red));
-        text_vip_card.setCompoundDrawables(null, vip_card_drawable, null, null);
     }
 
     public void verifyByQR(){
-        Drawable phone_number_drawable= getResources().getDrawable(R.mipmap.phone_number_before);
-        phone_number_drawable.setBounds(0, 0, phone_number_drawable.getMinimumWidth(), phone_number_drawable.getMinimumHeight());
-        text_phone_number.setTextColor(getResources().getColor(R.color.green));
-        text_phone_number.setCompoundDrawables(null, phone_number_drawable, null, null);
-
-        Drawable scan_qr_drawable= getResources().getDrawable(R.mipmap.scan_qr_after);
-        scan_qr_drawable.setBounds(0, 0, scan_qr_drawable.getMinimumWidth(), scan_qr_drawable.getMinimumHeight());
-        text_sacn_QR.setTextColor(getResources().getColor(R.color.red));
-        text_sacn_QR.setCompoundDrawables(null, scan_qr_drawable, null, null);
-
-        Drawable vip_card_drawable = getResources().getDrawable(R.mipmap.vip_card_before);
-        vip_card_drawable.setBounds(0, 0, vip_card_drawable.getMinimumWidth(), vip_card_drawable.getMinimumHeight());
-        text_vip_card.setTextColor(getResources().getColor(R.color.green));
-        text_vip_card.setCompoundDrawables(null, vip_card_drawable, null, null);
         Intent intent_qr = new Intent(this, CaptureActivity.class);
         startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
     }
@@ -248,9 +246,6 @@ public class MemberAccessActivity extends BaseActivity {
 
     /**
      * 会员验证
-     *
-     * @author CWI-APST emial:26873204@qq.com
-     * @Description: TODO(member verify method)
      * @param verifyType
      *            会员验证类型
      * @param verifyValue
@@ -275,8 +270,6 @@ public class MemberAccessActivity extends BaseActivity {
 
     /**
      *
-     * @author CWI-APST emial:26873204@qq.com
-     * @Description: TODO(member verify by server)
      * @param verifyType
      *            会员验证类型
      * @param verifyValue
@@ -300,14 +293,12 @@ public class MemberAccessActivity extends BaseActivity {
 
                     @Override
                     public void handleActionError(String actionName, String errmsg) {
-                        // TODO Auto-generated method stub
                         ToastUtils.sendtoastbyhandler(handler, errmsg);
                         closewaitdialog();
                     }
 
                     @Override
                     public void handleActionSuccess(String actionName, final MemberInfoResult result) {
-                        // TODO Auto-generated method stub
                         if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
                             //OperateLog.getInstance().saveLog2File(OptLogEnum.MEMBER_VERIFY_SUCCCESS.getOptLogCode(), getString(R.string.member_verify_succcess));
                             memberinfo = result.getDatamapclass().getMemberinfo();

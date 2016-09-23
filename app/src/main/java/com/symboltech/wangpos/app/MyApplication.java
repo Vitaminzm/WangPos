@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.symboltech.wangpos.http.HttpStringClient;
+import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="412dp"
-    android:layout_height="458dp"
+    android:layout_height="440dp"
     android:background="@color/keyboard_bg_color"
     android:orientation="horizontal"
     android:paddingBottom="6dp"

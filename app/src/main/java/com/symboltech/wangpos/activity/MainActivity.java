@@ -22,6 +22,7 @@ import com.symboltech.wangpos.config.InitializeConfig;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.result.TicketFormatResult;
 import com.symboltech.wangpos.service.RunTimeService;
@@ -183,12 +184,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rl_member:
                 memberAccess();
                 break;
+            case R.id.rl_sendcarcoupon:
+                break;
+            case R.id.rl_pay:
+                payment();
+                break;
         }
     }
     private void memberAccess(){
         Intent intent = new Intent(this, MemberAccessActivity.class);
         startActivity(intent);
     }
+
+    /**
+     * lockscreen
+     */
+    private void payment() {
+        Intent intent = new Intent(this, PaymentActivity.class);
+        startActivity(intent);
+    }
+
     /**
      * lockscreen
      */

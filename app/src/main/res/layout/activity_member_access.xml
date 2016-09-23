@@ -5,7 +5,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.symboltech.wangpos.activity.MemberAccessActivity">
+
     <include layout="@layout/common_title_bar" />
+
     <LinearLayout
         android:id="@+id/ll_phone_number"
         android:layout_width="match_parent"
@@ -14,6 +16,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
             android:layout_marginLeft="62dp"
             android:layout_marginTop="62dp"
             android:layout_marginRight="62dp">
@@ -29,6 +33,7 @@
                 android:layout_marginLeft="60dp"
                 android:gravity="center_vertical"
                 android:textSize="17sp"
+                android:singleLine="true"
                 android:textColorHint="@color/hint_color"
                 android:textColor="@color/edit_font_color"
                 android:hint="@string/please_input_phoneNo"
@@ -80,43 +85,48 @@
         android:layout_gravity="center"
         android:gravity="center"/>
 
-    <LinearLayout
+    <RadioGroup
+        android:id="@+id/radioGroup_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
         android:layout_gravity="center"
         android:orientation="horizontal">
-        <TextView
+        <RadioButton
             android:id="@+id/text_phone_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
+            android:button="@null"
             android:gravity="center"
-            android:drawableTop="@mipmap/phone_number_after"
+            android:checked="true"
+            android:drawableTop="@drawable/btn_phone_number_selector"
             android:drawablePadding="10dp"
-            android:textColor="@color/red"
+            android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/phone_number"/>
-        <TextView
+        <RadioButton
             android:id="@+id/text_vip_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
+            android:button="@null"
             android:gravity="center"
             android:layout_marginLeft="56dp"
-            android:drawableTop="@mipmap/vip_card_before"
+            android:drawableTop="@drawable/btn_vip_card_selector"
             android:drawablePadding="10dp"
-            android:textColor="@color/green"
+            android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/vip_card"/>
-        <TextView
+        <RadioButton
             android:id="@+id/text_sacn_QR"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
+            android:button="@null"
             android:gravity="center"
             android:layout_marginLeft="56dp"
-            android:drawableTop="@mipmap/scan_qr_before"
+            android:drawableTop="@drawable/btn_scan_qr_selector"
             android:drawablePadding="10dp"
-            android:textColor="@color/green"
+            android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/scan_QR"/>
-    </LinearLayout>
+    </RadioGroup>
 </LinearLayout>
