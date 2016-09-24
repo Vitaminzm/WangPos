@@ -4,7 +4,7 @@
 
     <corners android:radius="8px" />
     <!-- 橙色 -->
-    <solid android:color="@color/orange" />
+    <solid android:color="@color/view_font_red_color" />
 
     <size
         android:height="100px"

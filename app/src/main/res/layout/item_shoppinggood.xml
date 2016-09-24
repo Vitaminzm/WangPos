@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="10dp"
-    android:paddingBottom="10dp"
+    android:paddingLeft="@dimen/margin_30"
+    android:paddingRight="@dimen/margin_30"
+    android:paddingTop="@dimen/margin_20"
+    android:paddingBottom="@dimen/margin_20"
     android:background="@color/white"
-    android:layout_height="74dp">
+    android:layout_height="@dimen/height_130">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         android:id="@+id/text_good_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:textSize="13sp"
+        android:textSize="@dimen/font_size_24"
         android:text="秋冬蓝色风衣"
         android:gravity="center"
         android:textColor="@color/font_color"/>
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:textSize="11sp"
+            android:textSize="@dimen/font_size_20"
             android:text="123412123/积分商品"
             android:gravity="center"
             android:textColor="@color/font_color"/>
@@ -45,43 +45,43 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
+                android:textSize="@dimen/font_size_24"
                 android:text="@string/money"
                 android:textColor="@color/font_color"/>
             <TextView
                 android:id="@+id/text_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="17sp"
+                android:textSize="@dimen/font_size_30"
                 android:layout_marginLeft="5dp"
                 android:text="0"
                 android:textColor="@color/view_font_red_color"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
+                android:textSize="@dimen/font_size_24"
                 android:layout_marginLeft="5dp"
                 android:text="@string/yuan"
                 android:textColor="@color/font_color"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
-                android:layout_marginLeft="10dp"
+                android:textSize="@dimen/font_size_24"
+                android:layout_marginLeft="@dimen/margin_20"
                 android:text="@string/score"
                 android:textColor="@color/font_color"/>
             <TextView
                 android:id="@+id/text_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="17sp"
+                android:textSize="@dimen/font_size_30"
                 android:layout_marginLeft="5dp"
                 android:text="0"
                 android:textColor="@color/view_font_red_color"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
+                android:textSize="@dimen/font_size_24"
                 android:layout_marginLeft="5dp"
                 android:text="@string/fen"
                 android:textColor="@color/font_color"/>
@@ -103,7 +103,7 @@
                 android:id="@+id/text_good_count"
                 android:layout_width="30dp"
                 android:layout_height="wrap_content"
-                android:textSize="13sp"
+                android:textSize="@dimen/font_size_24"
                 android:singleLine="true"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"

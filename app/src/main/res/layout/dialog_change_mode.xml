@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="285dp"
-    android:layout_height="210dp"
+    android:layout_width="@dimen/height_600"
+    android:layout_height="@dimen/height_367"
     android:background="@color/color_bg"
     android:shadowColor="#7f000000"
     android:shadowDx="5"
@@ -13,12 +13,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/margin_35"
         android:background="@color/white"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:paddingLeft="48dp"
-        android:paddingRight="48dp"
+        android:paddingLeft="@dimen/margin_70"
+        android:paddingRight="@dimen/margin_70"
         android:visibility="visible" >
 
         <TextView
@@ -28,38 +28,38 @@
             android:gravity="center_horizontal"
             android:text="@string/change_mode_off_tips"
             android:textColor="@color/yellow"
-            android:textSize="24sp"
+            android:textSize="@dimen/font_size_42"
             android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/margin_35"
             android:orientation="horizontal" >
 
             <TextView
                 android:id="@+id/dialog_change_mode_no"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="23dp"
+                android:layout_marginRight="@dimen/margin_40"
                 android:layout_weight="1"
                 android:background="@drawable/orange_corner_bt_selector"
                 android:gravity="center"
                 android:text="@string/no"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="@dimen/font_size_35" />
 
             <TextView
                 android:id="@+id/dialog_change_mode_yes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="23dp"
+                android:layout_marginLeft="@dimen/margin_40"
                 android:layout_weight="1"
                 android:background="@drawable/blue_corner_bt_selector"
                 android:gravity="center"
                 android:text="@string/yes"
                 android:textColor="@color/white"
-                android:textSize="20sp" />
+                android:textSize="@dimen/font_size_35" />
         </LinearLayout>
     </LinearLayout>
 

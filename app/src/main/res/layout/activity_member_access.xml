@@ -18,9 +18,9 @@
             android:layout_height="wrap_content"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:layout_marginLeft="62dp"
-            android:layout_marginTop="62dp"
-            android:layout_marginRight="62dp">
+            android:layout_marginLeft="@dimen/margin_110"
+            android:layout_marginTop="@dimen/margin_110"
+            android:layout_marginRight="@dimen/margin_110">
             <ImageView
                 android:id="@+id/imageview_phone"
                 android:layout_width="wrap_content"
@@ -30,9 +30,9 @@
                 android:id="@+id/edit_phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp"
+                android:layout_marginLeft="@dimen/margin_100"
                 android:gravity="center_vertical"
-                android:textSize="17sp"
+                android:textSize="@dimen/big_font_size"
                 android:singleLine="true"
                 android:textColorHint="@color/hint_color"
                 android:textColor="@color/edit_font_color"
@@ -43,19 +43,19 @@
         <View
             android:id="@+id/view_line"
             android:layout_marginTop="8dp"
-            android:layout_width="342dp"
+            android:layout_width="@dimen/line_600"
             android:layout_height="2dp"
             android:layout_gravity="center"
             android:background="@color/line_color"/>
         <TextView
             android:id="@+id/text_add_or_verify_member"
             android:layout_marginTop="25dp"
-            android:layout_width="377dp"
-            android:layout_height="46dp"
+            android:layout_width="@dimen/height_660"
+            android:layout_height="@dimen/height_80"
             android:layout_gravity="center"
             android:text="@string/add_or_verify_member"
             android:gravity="center"
-            android:textSize="17sp"
+            android:textSize="@dimen/big_font_size"
             android:textColor="@color/white"
             android:background="@drawable/login_bt_selector"/>
     </LinearLayout>
@@ -68,7 +68,7 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="@dimen/height_350"
             android:gravity="center"
             android:textSize="25sp"
             android:textColor="@color/font_color"
@@ -78,8 +78,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="17sp"
-        android:layout_marginTop="62dp"
+        android:textSize="@dimen/big_font_size"
+        android:layout_marginTop="@dimen/margin_110"
         android:textColor="@color/font_color"
         android:text="@string/other_verify_type"
         android:layout_gravity="center"
@@ -89,7 +89,7 @@
         android:id="@+id/radioGroup_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="@dimen/margin_50"
         android:layout_gravity="center"
         android:orientation="horizontal">
         <RadioButton
@@ -101,7 +101,7 @@
             android:gravity="center"
             android:checked="true"
             android:drawableTop="@drawable/btn_phone_number_selector"
-            android:drawablePadding="10dp"
+            android:drawablePadding="@dimen/margin_20"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/phone_number"/>
         <RadioButton
@@ -111,9 +111,9 @@
             android:background="@null"
             android:button="@null"
             android:gravity="center"
-            android:layout_marginLeft="56dp"
+            android:layout_marginLeft="@dimen/margin_100"
             android:drawableTop="@drawable/btn_vip_card_selector"
-            android:drawablePadding="10dp"
+            android:drawablePadding="@dimen/margin_20"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/vip_card"/>
         <RadioButton
@@ -123,9 +123,9 @@
             android:background="@null"
             android:button="@null"
             android:gravity="center"
-            android:layout_marginLeft="56dp"
+            android:layout_marginLeft="@dimen/margin_100"
             android:drawableTop="@drawable/btn_scan_qr_selector"
-            android:drawablePadding="10dp"
+            android:drawablePadding="@dimen/margin_20"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/scan_QR"/>
     </RadioGroup>

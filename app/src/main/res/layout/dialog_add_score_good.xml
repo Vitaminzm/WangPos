@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/height_600"
+    android:layout_height="@dimen/height_500"
+    android:background="@color/white" >
+
+    <RelativeLayout
+        android:id="@+id/title_bar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_70"
+        android:background="@color/color_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_score_good"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_font_size"
+            android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/imageview_close"
+            android:layout_marginRight="@dimen/margin_40"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/title_icon_back"/>
+    </RelativeLayout>
+
+    <GridView
+        android:layout_below="@id/title_bar"
+        android:id="@+id/gridview_score_good"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_230"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/margin_30"
+        android:layout_marginRight="@dimen/margin_30"
+        android:layout_marginLeft="@dimen/margin_30"
+        android:cacheColorHint="@color/transparent"
+        android:listSelector="@drawable/gridview_selector"
+        android:numColumns="2"
+        android:scrollbars="none"/>
+    <TextView
+        android:id="@+id/text_confirm"
+        android:layout_width="match_parent"
+        android:layout_marginRight="@dimen/margin_30"
+        android:layout_marginLeft="@dimen/margin_30"
+        android:layout_height="@dimen/height_80"
+        android:layout_marginBottom="30dp"
+        android:gravity="center"
+        android:focusable="true"
+        android:layout_alignParentBottom="true"
+        android:text="@string/confirm"
+        android:background="@drawable/login_bt_selector"
+        android:textColor="@android:color/white"
+        />
+</RelativeLayout>

@@ -14,16 +14,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
-            android:layout_marginTop="114dp"
+            android:layout_marginTop="@dimen/margin_200"
             android:layout_gravity="center"
-            android:textSize="46sp"
+            android:textSize="@dimen/font_size_80"
             android:text="@string/intelligentPOS"/>
 
         <LinearLayout
             android:id="@+id/ll_desk_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="65dp"
+            android:layout_marginTop="@dimen/margin_114"
             android:gravity="center"
             android:visibility="invisible"
             android:orientation="horizontal">
@@ -31,14 +31,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textSize="@dimen/big_font_size"
                 android:text="@string/desk_code"/>
             <TextView
                 android:id="@+id/text_desk_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="17sp"/>
+                android:textSize="@dimen/big_font_size"/>
         </LinearLayout>
 
         <LinearLayout
@@ -53,14 +53,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textSize="@dimen/big_font_size"
                 android:text="@string/cashier_name"/>
             <TextView
                 android:id="@+id/text_cashier_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:textSize="17sp"/>
+                android:textSize="@dimen/big_font_size"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,15 +71,15 @@
                 android:id="@+id/ll_lock_info"
                 android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="57dp"
-                android:layout_marginLeft="34dp"
-                android:layout_marginRight="34dp"
+                android:layout_height="@dimen/height_100"
+                android:layout_marginLeft="@dimen/margin_60"
+                android:layout_marginRight="@dimen/margin_60"
                 android:orientation="horizontal"
                 android:gravity="center"
                 android:background="@color/edit_bg">
             <ImageView
-                android:layout_width="34dp"
-                android:layout_height="34dp"
+                android:layout_width="@dimen/margin_60"
+                android:layout_height="@dimen/margin_60"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/icon_lock"/>
                 <TextView
@@ -92,14 +92,14 @@
             <com.symboltech.wangpos.view.DrawableEditText
                 android:id="@+id/edit_username"
                 android:layout_width="match_parent"
-                android:layout_height="57dp"
-                android:layout_marginLeft="34dp"
-                android:layout_marginRight="34dp"
+                android:layout_height="@dimen/height_100"
+                android:layout_marginLeft="@dimen/margin_60"
+                android:layout_marginRight="@dimen/margin_60"
                 android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textSize="@dimen/big_font_size"
                 android:paddingRight="30dp"
                 android:singleLine="true"
-                android:paddingLeft="23dp"
+                android:paddingLeft="@dimen/margin_40"
                 android:gravity="center"
                 android:drawablePadding="30dp"
                 android:drawableLeft="@drawable/icon_username_bg_selector"
@@ -111,15 +111,15 @@
                 android:id="@+id/edit_password"
                 android:inputType="textPassword"
                 android:layout_width="match_parent"
-                android:layout_height="57dp"
-                android:paddingLeft="23dp"
+                android:layout_height="@dimen/height_100"
+                android:paddingLeft="@dimen/margin_40"
                 android:singleLine="true"
                 android:gravity="center"
-                android:layout_marginLeft="34dp"
-                android:layout_marginRight="34dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginLeft="@dimen/margin_60"
+                android:layout_marginRight="@dimen/margin_60"
+                android:layout_marginTop="@dimen/margin_20"
                 android:textColor="@color/white"
-                android:textSize="17sp"
+                android:textSize="@dimen/big_font_size"
                 android:paddingRight="120dp"
                 android:drawablePadding="30dp"
                 android:drawableLeft="@drawable/icon_password_bg_selector"
@@ -131,36 +131,36 @@
         <TextView
             android:id="@+id/text_login"
             android:layout_width="match_parent"
-            android:layout_height="46dp"
+            android:layout_height="@dimen/height_80"
             android:layout_marginTop="68dp"
-            android:layout_marginLeft="23dp"
-            android:layout_marginRight="23dp"
+            android:layout_marginLeft="@dimen/margin_40"
+            android:layout_marginRight="@dimen/margin_40"
             android:gravity="center"
             android:focusable="true"
             android:background="@drawable/login_bt_selector"
             android:textColor="@android:color/white"
-            android:textSize="17sp"
+            android:textSize="@dimen/big_font_size"
             android:text="@string/login"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="@dimen/margin_50"
             android:layout_gravity="right">
             <ImageView
                 android:id="@+id/imageview_about"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:layout_marginRight="34dp"
+                android:layout_width="@dimen/height_60"
+                android:layout_height="@dimen/height_60"
+                android:layout_marginRight="@dimen/margin_60"
                 android:scaleType="centerCrop"
                 android:src="@drawable/btn_icon_about_selector"/>
 
             <ImageView
                 android:id="@+id/imageview_loginout"
-                android:layout_width="34dp"
-                android:layout_height="34dp"
-                android:layout_marginRight="28dp"
+                android:layout_width="@dimen/height_60"
+                android:layout_height="@dimen/height_60"
+                android:layout_marginRight="@dimen/margin_50"
                 android:scaleType="centerCrop"
                 android:src="@drawable/btn_icon_logout_selector"/>
         </LinearLayout>

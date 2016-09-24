@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="@color/color_bg"
-    android:layout_height="56dp">
+    android:layout_height="@dimen/height_100">
 
     <ImageView
         android:id="@+id/title_icon_back"
@@ -11,7 +11,7 @@
         android:src="@mipmap/title_icon_back"
         android:scaleType="centerCrop"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="17dp"/>
+        android:layout_marginLeft="@dimen/margin_30"/>
 
     <TextView
         android:id="@+id/title_text_content"

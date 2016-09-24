@@ -40,6 +40,11 @@
         <activity android:name="com.symboltech.zxing.app.CaptureActivity" />
 
         <service android:name=".service.RunTimeService" />
+
+        <activity android:name=".activity.CheckOutActivity" >
+        </activity>
+        <activity android:name=".activity.MemberEquityActivity" >
+        </activity>
     </application>
 
 </manifest>

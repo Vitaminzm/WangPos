@@ -5,11 +5,67 @@
     <!-- 圆角度 -->
     <dimen name="corners_radius">3dp</dimen>
     <!-- btn 配置-->
-    <dimen name="btn_width">145dp</dimen>
+    <dimen name="btn_width">145dp</dimen><!-- -->
     <dimen name="btn_margin">9dp</dimen>
     <!-- 自定义键盘-->
     <dimen name="font_size">40sp</dimen>
     <dimen name="key_height">100dp</dimen>
     <dimen name="key_margin">6dp</dimen>
+
+    <dimen name="big_font_size">17sp</dimen>
+
+    <!-- 登录界面-->
+    <dimen name="font_size_80">46sp</dimen>
+    <dimen name="font_size_42">24sp</dimen>
+    <dimen name="font_size_40">23sp</dimen>
+    <dimen name="font_size_36">21sp</dimen>
+    <dimen name="font_size_35">20sp</dimen>
+    <dimen name="font_size_30">17sp</dimen>
+    <dimen name="font_size_24">14sp</dimen>
+    <dimen name="font_size_20">12sp</dimen>
+
+    <dimen name="margin_200">114dp</dimen>
+    <dimen name="margin_114">65dp</dimen>
+    <dimen name="margin_110">62dp</dimen>
+    <dimen name="margin_100">57dp</dimen>
+    <dimen name="margin_95">54dp</dimen>
+    <dimen name="margin_70">40dp</dimen>
+    <dimen name="margin_65">37dp</dimen>
+    <dimen name="margin_60">34dp</dimen>
+    <dimen name="margin_55">31dp</dimen>
+    <dimen name="margin_50">28dp</dimen>
+    <dimen name="margin_45">25dp</dimen>
+    <dimen name="margin_40">23dp</dimen>
+    <dimen name="margin_35">20dp</dimen>
+    <dimen name="margin_30">17dp</dimen>
+    <dimen name="margin_20">11dp</dimen>
+    <dimen name="margin_15">8dp</dimen>
+
+
+    <dimen name="height_660">377dp</dimen>
+    <dimen name="height_600">342dp</dimen>
+    <dimen name="height_500">285dp</dimen>
+    <dimen name="height_490">280dp</dimen>
+    <dimen name="height_400">228dp</dimen>
+    <dimen name="height_367">210dp</dimen>
+    <dimen name="height_350">200dp</dimen>
+    <dimen name="height_320">182dp</dimen>
+    <dimen name="height_280">160dp</dimen>
+    <dimen name="height_260">148dp</dimen>
+    <dimen name="height_230">130dp</dimen>
+    <dimen name="height_220">125dp</dimen>
+    <dimen name="height_185">106dp</dimen>
+    <dimen name="height_140">81dp</dimen>
+    <dimen name="height_130">74dp</dimen>
+    <dimen name="height_100">57dp</dimen>
+    <dimen name="height_90">51dp</dimen>
+    <dimen name="height_80">46dp</dimen>
+    <dimen name="height_70">40dp</dimen>
+    <dimen name="height_60">34dp</dimen>
+    <dimen name="height_30">17dp</dimen>
+
+    <dimen name="line_680">388dp</dimen>
+    <dimen name="line_600">342dp</dimen>
+    <dimen name="line_360">206dp</dimen>
 
 </resources>

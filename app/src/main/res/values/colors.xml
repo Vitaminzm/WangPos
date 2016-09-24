@@ -50,7 +50,7 @@
     <color name="hint_color">#99000000</color>
     <color name="edit_font_color">#cc000000</color>
     <color name="line_color">#6c6c6c</color>
-    <color name="font_color">#c8000000</color>
+    <color name="font_color">#c8000000</color><!--85%-->
 
     <!-- 二维码 -->
     <color name="viewfinder_mask">#60000000</color>
