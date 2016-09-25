@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/height_600"
+    android:layout_height="@dimen/height_500"
+    android:background="@color/white" >
+
+    <RelativeLayout
+        android:id="@+id/title_bar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_70"
+        android:background="@color/color_bg">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/selected_plate"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_font_size"
+            android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/imageview_close"
+            android:layout_marginRight="@dimen/margin_40"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/title_icon_back"/>
+    </RelativeLayout>
+
+    <com.symboltech.wangpos.view.MyRadioGroup
+        android:id="@+id/select_mode"
+        android:layout_below="@id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_50"
+        android:layout_marginRight="@dimen/margin_50"
+        android:layout_marginTop="@dimen/margin_45"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/btn_bind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/radio_bt_selector"
+                android:button="@null"
+                android:checked="true"
+                android:gravity="center" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/height_140"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/bing_plate"
+                    android:textColor="@color/font_color"
+                    android:layout_marginRight="@dimen/margin_30"
+                    android:textSize="@dimen/font_size_24" />
+
+                <Spinner
+                    android:id="@+id/bind_palte"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_80"
+                    android:background="@drawable/plate_spinner_selector"
+                    android:dropDownWidth="260dp"
+                    android:spinnerMode="dropdown"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_24" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_30"
+            android:orientation="horizontal" >
+
+            <RadioButton
+                android:id="@+id/btn_emporary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/radio_bt_selector"
+                android:button="@null"
+                android:gravity="center" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="@dimen/height_140"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginRight="@dimen/margin_30"
+                    android:text="@string/temporary_plate"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_24" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_80"
+                    android:orientation="horizontal" >
+
+                    <Spinner
+                        android:id="@+id/emporary_plate"
+                        android:layout_width="@dimen/height_100"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:background="@drawable/plate_spinner_selector"
+                        android:dropDownWidth="90dp"
+                        android:spinnerMode="dropdown"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_size_24" />
+
+                    <EditText
+                        android:id="@+id/et_emporary_plate"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/margin_30"
+                        android:background="@drawable/plate_edittext_selector"
+                        android:gravity="center"
+                        android:hint="@string/please_input_plate"
+                        android:singleLine="true"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_size_24" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </com.symboltech.wangpos.view.MyRadioGroup>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/margin_65"
+        android:layout_marginLeft="@dimen/margin_65"
+        android:layout_marginBottom="@dimen/margin_35"
+        android:orientation="horizontal"
+        android:layout_height="@dimen/height_80">
+        <TextView
+            android:id="@+id/text_cancle_pay"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/cancle"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_marginRight="@dimen/margin_30"
+            android:background="@drawable/btn_red_bg"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/text_submit_order"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/confirm"
+            android:background="@drawable/btn_green_bg"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</RelativeLayout>

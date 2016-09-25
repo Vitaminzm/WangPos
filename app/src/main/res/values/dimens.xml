@@ -25,10 +25,12 @@
     <dimen name="font_size_20">12sp</dimen>
 
     <dimen name="margin_200">114dp</dimen>
+    <dimen name="margin_155">88dp</dimen>
     <dimen name="margin_114">65dp</dimen>
     <dimen name="margin_110">62dp</dimen>
     <dimen name="margin_100">57dp</dimen>
     <dimen name="margin_95">54dp</dimen>
+    <dimen name="margin_80">46dp</dimen>
     <dimen name="margin_70">40dp</dimen>
     <dimen name="margin_65">37dp</dimen>
     <dimen name="margin_60">34dp</dimen>
@@ -40,6 +42,8 @@
     <dimen name="margin_30">17dp</dimen>
     <dimen name="margin_20">11dp</dimen>
     <dimen name="margin_15">8dp</dimen>
+    <dimen name="margin_10">5dp</dimen>
+    <dimen name="margin_5">3dp</dimen>
 
 
     <dimen name="height_660">377dp</dimen>
@@ -49,19 +53,24 @@
     <dimen name="height_400">228dp</dimen>
     <dimen name="height_367">210dp</dimen>
     <dimen name="height_350">200dp</dimen>
+    <dimen name="height_322">184dp</dimen>
     <dimen name="height_320">182dp</dimen>
+    <dimen name="height_302">172dp</dimen>
     <dimen name="height_280">160dp</dimen>
     <dimen name="height_260">148dp</dimen>
     <dimen name="height_230">130dp</dimen>
     <dimen name="height_220">125dp</dimen>
     <dimen name="height_185">106dp</dimen>
     <dimen name="height_140">81dp</dimen>
+    <dimen name="height_160">91dp</dimen>
     <dimen name="height_130">74dp</dimen>
+    <dimen name="height_120">68dp</dimen>
     <dimen name="height_100">57dp</dimen>
     <dimen name="height_90">51dp</dimen>
     <dimen name="height_80">46dp</dimen>
     <dimen name="height_70">40dp</dimen>
     <dimen name="height_60">34dp</dimen>
+    <dimen name="height_50">28dp</dimen>
     <dimen name="height_30">17dp</dimen>
 
     <dimen name="line_680">388dp</dimen>

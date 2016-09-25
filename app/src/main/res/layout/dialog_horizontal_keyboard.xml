@@ -252,7 +252,7 @@
                 android:layout_marginBottom="@dimen/key_margin"
                 android:layout_marginTop="@dimen/key_margin"
                 android:layout_weight="1"
-                android:background="@drawable/blue_corner_bt_selector"
+                android:background="@drawable/green_corner_bt_selector"
                 android:gravity="center"
                 android:text="确认"
                 android:textColor="@color/white"

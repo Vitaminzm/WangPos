@@ -1,10 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context="com.symboltech.wangpos.activity.MemberEquityActivity">
 
+    <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
+
+    <LinearLayout
+        android:id="@+id/ll_member_hold_coupon"
+        android:layout_below="@id/common_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_30"
+        android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_30"
+            android:textColor="@color/font_color"
+            android:layout_centerVertical="true"
+            android:text="@string/member_hold_coupon"
+            android:gravity="center"/>
+        <ImageView
+            android:id="@+id/imageview_qr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:src="@mipmap/icon_qr"/>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_marginTop="@dimen/margin_30"
+        android:layout_marginBottom="@dimen/margin_30"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/height_80"
+        android:scrollbars="none"
+        android:listSelector="@drawable/gridview_selector"
+        android:cacheColorHint="@color/transparent" />
+        <View
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:background="@color/view_line_color"
+            android:layout_alignParentBottom="true"
+            android:layout_height="1dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_below="@id/ll_member_hold_coupon"
+        android:orientation="vertical"
+        android:layout_marginRight="@dimen/margin_30"
+        android:layout_marginLeft="@dimen/margin_30"
+        android:layout_marginBottom="@dimen/margin_40"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_30"
+            android:textColor="@color/font_color"
+            android:layout_centerVertical="true"
+            android:text="@string/score_deduction"
+            android:gravity="center"/>
+        <LinearLayout
+            android:layout_marginTop="@dimen/margin_30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_24"
+                android:text="@string/hole"
+                android:textColor="@color/font_color"/>
+            <TextView
+                android:id="@+id/text_hold_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_36"
+                android:layout_marginLeft="@dimen/margin_80"
+                android:text="0"
+                android:textColor="@color/red"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_24"
+                android:layout_marginLeft="@dimen/margin_65"
+                android:text="@string/fen"
+                android:textColor="@color/font_color"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_24"
+                android:layout_marginLeft="@dimen/margin_20"
+                android:text="(最多使用"
+                android:textColor="@color/title_gray"/>
+            <TextView
+                android:id="@+id/text_max_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_24"
+                android:text="0"
+                android:textColor="@color/title_gray"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_24"
+                android:text="分)"
+                android:textColor="@color/title_gray"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/margin_30"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_24"
+                android:text="@string/uesed"
+                android:textColor="@color/font_color"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_30"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/text_used_score"
+                    android:layout_width="@dimen/height_160"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_36"
+                    android:gravity="center"
+                    android:hint="请输入积分"
+                    android:text="0"
+                    android:background="@null"
+                    android:singleLine="true"
+                    android:textColorHint="@color/hint_color"
+                    android:textColor="@color/edit_font_color"/>
+                <View
+                    android:layout_width="@dimen/height_160"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/gray"/>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_24"
+                android:layout_marginLeft="@dimen/margin_30"
+                android:text="@string/fen"
+                android:textColor="@color/font_color"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/margin_155"
+                android:textSize="@dimen/font_size_24"
+                android:text="@string/deduction"
+                android:textColor="@color/font_color"/>
+            <TextView
+                android:id="@+id/text_deduction_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_36"
+                android:layout_marginLeft="@dimen/margin_50"
+                android:text="0"
+                android:textColor="@color/red"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_24"
+                android:layout_marginLeft="@dimen/margin_20"
+                android:text="@string/yuan"
+                android:textColor="@color/font_color"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/text_confirm"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/margin_30"
+        android:layout_marginLeft="@dimen/margin_30"
+        android:layout_marginBottom="@dimen/margin_40"
+        android:layout_width="match_parent"
+        android:text="@string/confirm"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@color/green"
+        android:layout_height="@dimen/height_80" />
 </RelativeLayout>

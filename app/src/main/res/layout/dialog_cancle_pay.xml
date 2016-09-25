@@ -50,7 +50,7 @@
             android:textSize="@dimen/font_size_36"
             android:layout_marginLeft="@dimen/margin_30"
             android:text="0"
-            android:textColor="@color/view_font_red_color"/>
+            android:textColor="@color/red"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/margin_65"
         android:layout_marginLeft="@dimen/margin_65"
-        android:layout_marginBottom="@dimen/margin_20"
+        android:layout_marginBottom="@dimen/margin_35"
         android:orientation="horizontal"
         android:layout_height="@dimen/height_80">
         <TextView
@@ -86,14 +86,14 @@
             android:gravity="center"
             android:textColor="@color/white"
             android:layout_marginRight="@dimen/margin_30"
-            android:background="@drawable/orange_corner_bt_selector"
+            android:background="@drawable/btn_red_bg"
             android:layout_height="match_parent" />
         <TextView
             android:id="@+id/text_submit_order"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="@string/confirm"
-            android:background="@drawable/login_bt_selector"
+            android:background="@drawable/btn_green_bg"
             android:textColor="@color/white"
             android:gravity="center"
             android:layout_height="match_parent" />

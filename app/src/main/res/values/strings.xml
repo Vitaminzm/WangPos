@@ -36,6 +36,7 @@
     <string name="salesman">销售员：</string>
     <string name="total_money">总计金额</string>
     <string name="consume_score">消耗积分</string>
+    <string name="consume_score_m">消耗积分：</string>
     <string name="yuan">元</string>
     <string name="fen">分</string>
     <string name="confirm_order">确认订单</string>
@@ -75,6 +76,9 @@
     <!-- -->
 
     <string name="already_pay">已支付</string>
+    <string name="cancled_pay">已撤销</string>
+    <string name="cancleing_pay">撤销中</string>
+    <string name="cancled">撤销</string>
 
     <!--会员权益 -->
     <string name="member_hold_coupon">会员持券</string>
@@ -85,15 +89,19 @@
     <!--支付详情 -->
     <string name="payment_info">支付详情</string>
     <string name="order_info">账单信息</string>
-    <string name="order_id">订单编号</string>
-    <string name="order_time">订单时间</string>
-    <string name="order_money">订单金额</string>
+    <string name="order_id">订单编号：</string>
+    <string name="order_time">订单时间：</string>
+    <string name="order_money">订单金额：</string>
     <string name="coupon">代金券</string>
+    <string name="coupon_m">代金券：</string>
     <string name="real_pay">实际支付</string>
     <string name="score_info">积分信息</string>
     <string name="add_score">新增积分</string>
+    <string name="add_score_m">新增积分：</string>
+    <string name="now_score_m">当前积分：</string>
     <string name="score_exchange">积分抵现</string>
     <string name="send_coupon">交易发券</string>
+    <string name="print_coupon">打印优惠券</string>
     <string name="selected_plate">选择停车牌</string>
     <string name="done">完成</string>
 
@@ -123,8 +131,7 @@
     <string name="return_order_time">退货时间</string>
     <string name="return_real_money">退货金额</string>
     <string name="score_return">积分返还</string>
-    <string name="change:">找零:</string>
-    <string name="change">找零</string>
+    <string name="change">找零:</string>
     <string name="return_used_score">退货耗分</string>
     <string name="score_good_return">积分商品返还</string>
     <string name="score_deduction_return">积分抵现返还</string>
@@ -149,6 +156,7 @@
     <string name="add_used_score_total">增耗积分总额</string>
     <string name="score_ditch">积分渠道</string>
     <string name="score_deduction_cash">积分抵现</string>
+    <string name="score_deduction_cash_m">积分抵现：</string>
     <string name="submit_return_order">体检退货单</string>
     <string name="used_score_account">消耗积分额度</string>
 
