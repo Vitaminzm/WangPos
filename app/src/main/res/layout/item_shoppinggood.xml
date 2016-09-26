@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/margin_30"
-    android:paddingRight="@dimen/margin_30"
-    android:paddingTop="@dimen/margin_20"
-    android:paddingBottom="@dimen/margin_20"
+    android:paddingLeft="@dimen/margin_rz"
+    android:paddingRight="@dimen/margin_rz"
+    android:paddingTop="@dimen/margin_tz"
+    android:paddingBottom="@dimen/margin_tz"
     android:background="@color/white"
-    android:layout_height="@dimen/height_130">
+    android:layout_height="@dimen/height_orz">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         android:id="@+id/text_good_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:textSize="@dimen/font_size_24"
+        android:textSize="@dimen/font_size_tf"
         android:text="秋冬蓝色风衣"
         android:gravity="center"
         android:textColor="@color/font_color"/>
@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:textSize="@dimen/font_size_20"
+            android:textSize="@dimen/font_size_tz"
             android:text="123412123/积分商品"
             android:gravity="center"
             android:textColor="@color/font_color"/>
@@ -45,43 +45,43 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:text="@string/money"
                 android:textColor="@color/font_color"/>
             <TextView
                 android:id="@+id/text_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_30"
+                android:textSize="@dimen/font_size_rz"
                 android:layout_marginLeft="5dp"
                 android:text="0"
                 android:textColor="@color/red"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:layout_marginLeft="5dp"
                 android:text="@string/yuan"
                 android:textColor="@color/font_color"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
-                android:layout_marginLeft="@dimen/margin_20"
+                android:textSize="@dimen/font_size_tf"
+                android:layout_marginLeft="@dimen/margin_tz"
                 android:text="@string/score"
                 android:textColor="@color/font_color"/>
             <TextView
                 android:id="@+id/text_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_30"
+                android:textSize="@dimen/font_size_rz"
                 android:layout_marginLeft="5dp"
                 android:text="0"
                 android:textColor="@color/red"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:layout_marginLeft="5dp"
                 android:text="@string/fen"
                 android:textColor="@color/font_color"/>
@@ -101,9 +101,9 @@
                 android:background="@drawable/cart_quantity_minus_selector" />
             <TextView
                 android:id="@+id/text_good_count"
-                android:layout_width="30dp"
+                android:layout_width="40dp"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:singleLine="true"
                 android:layout_marginLeft="2dp"
                 android:layout_marginRight="2dp"

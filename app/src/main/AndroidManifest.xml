@@ -45,7 +45,21 @@
         </activity>
         <activity android:name=".activity.MemberEquityActivity" >
         </activity>
-        <activity android:name=".activity.PaymentDetialActivity" >
+        <activity android:name=".activity.PaymentDetailActivity" >
+        </activity>
+        <activity android:name=".activity.ReturnGoodsByNormalActivity" >
+        </activity>
+        <activity android:name=".activity.ReturnMoneyByNormalActivity" >
+        </activity>
+        <activity android:name=".activity.ReturnGoodSucceedActivity" >
+        </activity>
+        <activity android:name=".activity.MemberDetailActivity" >
+        </activity>
+        <activity android:name=".activity.ReturnGoodsByOrderActivity" >
+        </activity>
+        <activity android:name=".activity.ReturnMoneyByOrderActivity" >
+        </activity>
+        <activity android:name=".activity.WorkLogActivity" >
         </activity>
     </application>
 

@@ -2,13 +2,13 @@
     android:layout_width="fill_parent"
     android:orientation="vertical"
     android:background="@color/view_bg_color"
-    android:layout_height="@dimen/height_140">
+    android:layout_height="@dimen/height_ofz">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height_70"
+            android:layout_height="@dimen/height_sz"
             android:gravity="center"
-            android:layout_marginLeft="@dimen/margin_30"
-            android:layout_marginRight="@dimen/margin_30">
+            android:layout_marginLeft="@dimen/margin_rz"
+            android:layout_marginRight="@dimen/margin_rz">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -16,7 +16,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_24"
+                    android:textSize="@dimen/font_size_tf"
                     android:layout_gravity="center"
                     android:textColor="@color/font_color"
                     android:text="@string/desk_code_no"/>
@@ -24,7 +24,7 @@
                     android:id="@+id/text_desk_code"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_24"
+                    android:textSize="@dimen/font_size_tf"
                     android:layout_gravity="center"
                     android:textColor="@color/font_color"/>
             </LinearLayout>
@@ -36,7 +36,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_24"
+                    android:textSize="@dimen/font_size_tf"
                     android:layout_gravity="center"
                     android:textColor="@color/font_color"
                     android:text="@string/bill_id"/>
@@ -44,7 +44,7 @@
                     android:id="@+id/text_bill_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_24"
+                    android:textSize="@dimen/font_size_tf"
                     android:layout_gravity="center"
                     android:textColor="@color/font_color"
                     android:text="                "/>
@@ -54,8 +54,8 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:gravity="center"
-        android:layout_marginLeft="@dimen/margin_30"
-        android:layout_marginRight="@dimen/margin_30">
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_rz">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -63,7 +63,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:layout_gravity="center"
                 android:textColor="@color/font_color"
                 android:text="@string/cashier_name"/>
@@ -71,7 +71,7 @@
                 android:id="@+id/text_cashier_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:layout_gravity="center"
                 android:textColor="@color/font_color"/>
         </LinearLayout>
@@ -83,7 +83,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:layout_gravity="center"
                 android:textColor="@color/font_color"
                 android:text="@string/salesman"/>
@@ -91,15 +91,16 @@
                 android:id="@+id/text_saleman_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:layout_gravity="center"
                 android:textColor="@color/font_color"
                 android:text="                "/>
         </LinearLayout>
     </RelativeLayout>
     <View
+        android:id="@+id/view_line"
         android:layout_gravity="center"
-        android:layout_width="@dimen/line_680"
+        android:layout_width="@dimen/line_xez"
         android:background="@color/view_line_color"
         android:layout_height="1dp"/>
 </LinearLayout>

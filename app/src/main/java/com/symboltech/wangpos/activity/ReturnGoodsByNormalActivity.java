@@ -1,5 +1,6 @@
 package com.symboltech.wangpos.activity;
 
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -15,7 +16,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class PaymentDetialActivity extends BaseActivity {
+public class ReturnGoodsByNormalActivity extends BaseActivity {
 
     @Bind(R.id.title_text_content)TextView title_text_content;
     static class MyHandler extends Handler {
@@ -39,12 +40,12 @@ public class PaymentDetialActivity extends BaseActivity {
     MyHandler handler = new MyHandler(this);
     @Override
     protected void initData() {
-        title_text_content.setText(getString(R.string.payment_info));
+        title_text_content.setText(getString(R.string.normal_return));
     }
 
     @Override
     protected void initView() {
-        setContentView(R.layout.activity_payment_detial);
+        setContentView(R.layout.activity_return_goods_by_normal);
         MyApplication.addActivity(this);
         ButterKnife.bind(this);
     }

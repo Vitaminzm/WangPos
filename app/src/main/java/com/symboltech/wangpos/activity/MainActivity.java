@@ -182,25 +182,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 lockscreen();
                 break;
             case R.id.rl_member:
-                memberAccess();
+                gotoFunction(MemberAccessActivity.class);
                 break;
             case R.id.rl_sendcarcoupon:
                 break;
             case R.id.rl_pay:
-                payment();
+                gotoFunction(PaymentActivity.class);
+                break;
+            case R.id.rl_salereturn:
+                gotoFunction(ReturnGoodsByNormalActivity.class);
                 break;
         }
     }
-    private void memberAccess(){
-        Intent intent = new Intent(this, MemberAccessActivity.class);
-        startActivity(intent);
-    }
-
     /**
-     * lockscreen
+     * gotoFunction
      */
-    private void payment() {
-        Intent intent = new Intent(this, PaymentActivity.class);
+    private void gotoFunction(Class t) {
+        Intent intent = new Intent(this,t);
         startActivity(intent);
     }
 

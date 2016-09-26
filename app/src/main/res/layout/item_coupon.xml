@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/height_322"
+    android:layout_width="@dimen/height_rtt"
     android:layout_marginRight="20dp"
     android:background="@mipmap/bg_orange_coupon"
     android:layout_height="wrap_content">
@@ -12,7 +12,7 @@
         <TextView
             android:text="￥"
             android:textStyle="bold"
-            android:textSize="@dimen/font_size_36"
+            android:textSize="@dimen/font_size_rx"
             android:textColor="@color/orange"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -21,16 +21,16 @@
             android:layout_height="wrap_content"
             android:id="@+id/item_coupon_money"
             android:layout_width="wrap_content"
-            android:layout_marginLeft="@dimen/margin_10"
-            android:layout_marginRight="@dimen/margin_10"
+            android:layout_marginLeft="@dimen/margin_oz"
+            android:layout_marginRight="@dimen/margin_oz"
             android:text="110"
-            android:textSize="@dimen/font_size_42"
+            android:textSize="@dimen/font_size_ft"
             android:textColor="@color/orange" />
         <TextView
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:text="@string/yuan"
-            android:textSize="@dimen/font_size_36"
+            android:textSize="@dimen/font_size_rx"
             android:textStyle="bold"
             android:textColor="@color/orange" />
         <com.symboltech.wangpos.view.TextScrollView
@@ -45,7 +45,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:textColor="@color/orange"
-            android:textSize="@dimen/font_size_36"
+            android:textSize="@dimen/font_size_rx"
             android:textStyle="bold" />
     </LinearLayout>
     <ImageView

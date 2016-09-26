@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_marginTop="@dimen/margin_40"
+    android:layout_marginTop="@dimen/margin_fz"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -13,32 +13,32 @@
             android:id="@+id/text_payment_type"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_24"
+            android:textSize="@dimen/font_size_tf"
             android:text="@string/bank"
             android:textColor="@color/font_color"/>
         <TextView
             android:id="@+id/text_payment_money"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_36"
-            android:layout_marginLeft="@dimen/margin_15"
+            android:textSize="@dimen/font_size_rx"
+            android:layout_marginLeft="@dimen/margin_ov"
             android:text="0"
             android:textColor="@color/red"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_24"
+            android:textSize="@dimen/font_size_tf"
             android:layout_marginLeft="5dp"
             android:text="@string/yuan"
             android:textColor="@color/font_color"/>
     </LinearLayout>
     <TextView
         android:id="@+id/text_cancle"
-        android:layout_width="@dimen/height_120"
-        android:layout_height="@dimen/height_50"
+        android:layout_width="@dimen/height_otz"
+        android:layout_height="@dimen/height_vz"
         android:gravity="center"
         android:layout_alignParentRight="true"
-        android:textSize="@dimen/font_size_24"
+        android:textSize="@dimen/font_size_tf"
         android:textColor="@color/white"
         android:text="@string/cancled"
         android:background="@color/green"/>

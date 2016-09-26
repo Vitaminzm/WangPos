@@ -4,11 +4,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/view_bg_color"
-    tools:context="com.symboltech.wangpos.activity.PaymentDetailActivity">
+    tools:context="com.symboltech.wangpos.activity.ReturnGoodSucceedActivity">
     <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
 
     <LinearLayout
+        android:id="@+id/ll_info"
+        android:layout_marginTop="@dimen/margin_sz"
+        android:layout_marginBottom="@dimen/margin_xz"
         android:layout_below="@id/common_title_bar"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@mipmap/add_member_success"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_ft"
+            android:layout_marginLeft="@dimen/margin_fv"
+            android:textStyle="bold"
+            android:textColor="@color/green"
+            android:text="@string/return_succeed"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/text_confirm"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginBottom="@dimen/margin_fz"
+        android:layout_width="match_parent"
+        android:text="@string/done"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:background="@color/green"
+        android:layout_height="@dimen/height_ez" />
+    <LinearLayout
+        android:layout_below="@id/ll_info"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginRight="@dimen/margin_rz"
@@ -17,7 +51,7 @@
         android:paddingLeft="@dimen/margin_fz"
         android:paddingTop="@dimen/margin_ov"
         android:orientation="vertical"
-        android:layout_above="@+id/ll_member_hold_coupon">
+        android:layout_above="@+id/text_confirm">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,10 +67,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/font_size_tf"
-                android:text="@string/order_id"
+                android:text="@string/return_order_number_m"
                 android:textColor="@color/font_color"/>
             <TextView
-                android:id="@+id/text_order_id"
+                android:id="@+id/text_return_order_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/font_size_tf"
@@ -53,10 +87,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/font_size_tf"
-                android:text="@string/order_time"
+                android:text="@string/return_order_time_m"
                 android:textColor="@color/font_color"/>
             <TextView
-                android:id="@+id/text_order_time"
+                android:id="@+id/text_return_order_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/font_size_tf"
@@ -77,10 +111,69 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/font_size_tf"
-                    android:text="@string/order_money"
+                    android:text="@string/return_money_m"
                     android:textColor="@color/font_color"/>
                 <TextView
-                    android:id="@+id/text_order_money"
+                    android:id="@+id/text_return_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:text="0"
+                    android:textColor="@color/font_color"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:layout_marginLeft="@dimen/margin_oz"
+                    android:text="@string/yuan"
+                    android:textColor="@color/font_color"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="@dimen/margin_ov"
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:text="@string/return_coupon_m"
+                    android:textColor="@color/font_color"/>
+                <TextView
+                    android:id="@+id/text_return_coupon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:text="0"
+                    android:textColor="@color/font_color"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:layout_marginLeft="@dimen/margin_oz"
+                    android:text="@string/yuan"
+                    android:textColor="@color/font_color"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_marginTop="@dimen/margin_ov"
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:text="@string/return_real_money_m"
+                    android:textColor="@color/font_color"/>
+                <TextView
+                    android:id="@+id/text_return_real_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/font_size_tf"
@@ -105,10 +198,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/font_size_tf"
-                    android:text="@string/coupon_m"
+                    android:text="@string/score_return_m"
                     android:textColor="@color/font_color"/>
                 <TextView
-                    android:id="@+id/text_coupon"
+                    android:id="@+id/text_return_score"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/font_size_tf"
@@ -123,73 +216,14 @@
                     android:textColor="@color/font_color"/>
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_marginTop="@dimen/margin_ov"
-                android:orientation="horizontal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="@string/order_time"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="0"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:layout_marginLeft="@dimen/margin_oz"
-                    android:text="@string/yuan"
-                    android:textColor="@color/font_color"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_marginTop="@dimen/margin_ov"
-                android:orientation="horizontal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="@string/order_time"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="0"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:layout_marginLeft="@dimen/margin_oz"
-                    android:text="@string/yuan"
-                    android:textColor="@color/font_color"/>
-            </LinearLayout>
-        </LinearLayout>
-
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_size_rz"
             android:layout_marginTop="@dimen/margin_ov"
-            android:text="@string/pay_info"
+            android:text="@string/return_info"
             android:textColor="@color/red"/>
-        <com.symboltech.wangpos.view.GridViewForScrollView
+        <GridView
             android:id="@+id/activity_payment_gridview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -224,9 +258,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_tf"
-                        android:text="@string/add_score_m"
+                        android:text="@string/return_used_score_m"
                         android:textColor="@color/font_color"/>
                     <TextView
+                        android:id="@+id/text_return_used_score"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_tf"
@@ -243,9 +278,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_tf"
-                        android:text="@string/consume_score_m"
+                        android:text="@string/score_good_return_m"
                         android:textColor="@color/font_color"/>
                     <TextView
+                        android:id="@+id/text_score_good_return"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_tf"
@@ -267,28 +303,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_tf"
-                        android:text="@string/score_deduction_cash_m"
+                        android:text="@string/score_deduction_return_m"
                         android:textColor="@color/font_color"/>
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="0"
-                        android:textColor="@color/font_color"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_marginTop="@dimen/margin_ov"
-                    android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="@string/now_score_m"
-                        android:textColor="@color/font_color"/>
-                    <TextView
+                        android:id="@+id/text_score_deduction_return"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_tf"
@@ -299,72 +317,4 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/text_confirm"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/margin_rz"
-        android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_marginBottom="@dimen/margin_fz"
-        android:layout_width="match_parent"
-        android:text="@string/done"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:background="@drawable/btn_green_bg"
-        android:layout_height="@dimen/height_ez" />
-
-    <LinearLayout
-        android:id="@+id/ll_function"
-        android:layout_width="match_parent"
-        android:layout_above="@id/text_confirm"
-        android:layout_marginRight="@dimen/margin_rz"
-        android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_marginBottom="@dimen/margin_rz"
-        android:orientation="horizontal"
-        android:layout_height="@dimen/height_ez">
-        <TextView
-            android:id="@+id/text_print_coupon"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/print_coupon"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:layout_marginRight="@dimen/margin_rz"
-            android:background="@drawable/btn_blue_bg"
-            android:layout_height="match_parent" />
-        <TextView
-            android:id="@+id/text_selected_plate"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/selected_plate"
-            android:background="@drawable/btn_blue_bg"
-            android:textColor="@color/white"
-            android:gravity="center"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/ll_member_hold_coupon"
-        android:layout_above="@id/ll_function"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_rz"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_rz"
-            android:textColor="@color/font_color"
-            android:layout_centerVertical="true"
-            android:text="@string/send_coupon"
-            android:gravity="center"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_marginTop="@dimen/margin_rz"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/height_ez"
-            android:scrollbars="none"
-            android:listSelector="@drawable/gridview_selector"
-            android:cacheColorHint="@color/transparent" />
-    </LinearLayout>
 </RelativeLayout>

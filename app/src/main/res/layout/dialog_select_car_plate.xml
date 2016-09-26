@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/height_600"
-    android:layout_height="@dimen/height_500"
+    android:layout_width="@dimen/height_xzz"
+    android:layout_height="@dimen/height_vzz"
     android:background="@color/white" >
 
     <RelativeLayout
         android:id="@+id/title_bar"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_70"
+        android:layout_height="@dimen/height_sz"
         android:background="@color/color_bg">
 
         <TextView
@@ -20,12 +20,12 @@
             android:layout_centerInParent="true"/>
         <ImageView
             android:id="@+id/imageview_close"
-            android:layout_marginRight="@dimen/margin_40"
+            android:layout_marginRight="@dimen/margin_fz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/title_icon_back"/>
+            android:src="@mipmap/close"/>
     </RelativeLayout>
 
     <com.symboltech.wangpos.view.MyRadioGroup
@@ -33,9 +33,9 @@
         android:layout_below="@id/title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_50"
-        android:layout_marginRight="@dimen/margin_50"
-        android:layout_marginTop="@dimen/margin_45"
+        android:layout_marginLeft="@dimen/margin_vz"
+        android:layout_marginRight="@dimen/margin_vz"
+        android:layout_marginTop="@dimen/margin_fv"
         android:layout_gravity="center_horizontal"
         android:orientation="vertical" >
 
@@ -60,30 +60,30 @@
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="@dimen/height_140"
+                    android:layout_width="@dimen/height_ofz"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="@string/bing_plate"
                     android:textColor="@color/font_color"
-                    android:layout_marginRight="@dimen/margin_30"
-                    android:textSize="@dimen/font_size_24" />
+                    android:layout_marginRight="@dimen/margin_rz"
+                    android:textSize="@dimen/font_size_tf" />
 
                 <Spinner
                     android:id="@+id/bind_palte"
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_80"
+                    android:layout_height="@dimen/height_ez"
                     android:background="@drawable/plate_spinner_selector"
                     android:dropDownWidth="260dp"
                     android:spinnerMode="dropdown"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_size_24" />
+                    android:textSize="@dimen/font_size_tf" />
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/margin_30"
+            android:layout_marginTop="@dimen/margin_rz"
             android:orientation="horizontal" >
 
             <RadioButton
@@ -103,42 +103,42 @@
                 android:orientation="horizontal" >
 
                 <TextView
-                    android:layout_width="@dimen/height_140"
+                    android:layout_width="@dimen/height_ofz"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="@dimen/margin_30"
+                    android:layout_marginRight="@dimen/margin_rz"
                     android:text="@string/temporary_plate"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_size_24" />
+                    android:textSize="@dimen/font_size_tf" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/height_80"
+                    android:layout_height="@dimen/height_ez"
                     android:orientation="horizontal" >
 
                     <Spinner
                         android:id="@+id/emporary_plate"
-                        android:layout_width="@dimen/height_100"
+                        android:layout_width="@dimen/height_ozz"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:background="@drawable/plate_spinner_selector"
                         android:dropDownWidth="90dp"
                         android:spinnerMode="dropdown"
                         android:textColor="@color/font_color"
-                        android:textSize="@dimen/font_size_24" />
+                        android:textSize="@dimen/font_size_tf" />
 
                     <EditText
                         android:id="@+id/et_emporary_plate"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
-                        android:layout_marginLeft="@dimen/margin_30"
+                        android:layout_marginLeft="@dimen/margin_rz"
                         android:background="@drawable/plate_edittext_selector"
                         android:gravity="center"
                         android:hint="@string/please_input_plate"
                         android:singleLine="true"
                         android:textColor="@color/font_color"
-                        android:textSize="@dimen/font_size_24" />
+                        android:textSize="@dimen/font_size_tf" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
@@ -146,11 +146,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/margin_65"
-        android:layout_marginLeft="@dimen/margin_65"
-        android:layout_marginBottom="@dimen/margin_35"
+        android:layout_marginRight="@dimen/margin_xv"
+        android:layout_marginLeft="@dimen/margin_xv"
+        android:layout_marginBottom="@dimen/margin_rv"
         android:orientation="horizontal"
-        android:layout_height="@dimen/height_80">
+        android:layout_height="@dimen/height_ez">
         <TextView
             android:id="@+id/text_cancle_pay"
             android:layout_width="0dp"
@@ -158,7 +158,7 @@
             android:text="@string/cancle"
             android:gravity="center"
             android:textColor="@color/white"
-            android:layout_marginRight="@dimen/margin_30"
+            android:layout_marginRight="@dimen/margin_rz"
             android:background="@drawable/btn_red_bg"
             android:layout_height="match_parent" />
         <TextView

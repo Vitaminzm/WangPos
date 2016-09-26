@@ -19,40 +19,41 @@
         android:id="@+id/input_money"
         android:layout_below="@id/view_sales_info"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_140"
+        android:layout_height="@dimen/height_ofz"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/margin_100"
-            android:paddingRight="@dimen/margin_65"
+            android:paddingLeft="@dimen/margin_ozz"
+            android:paddingRight="@dimen/margin_xv"
             android:textSize="25sp"
             android:textStyle="bold"
             android:layout_gravity="center"
             android:textColor="@color/red"
             android:text="￥"/>
         <LinearLayout
-            android:layout_width="@dimen/line_360"
+            android:layout_width="@dimen/line_txz"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_marginBottom="@dimen/margin_35"
-            android:layout_marginTop="@dimen/margin_45">
+            android:layout_marginBottom="@dimen/margin_ov"
+            android:layout_marginTop="@dimen/margin_fv">
 
             <EditText
                 android:id="@+id/edit_input_money"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:textSize="@dimen/font_size_35"
+                android:textSize="@dimen/font_size_rv"
                 android:textColorHint="@color/hint_color"
                 android:textColor="@color/edit_font_color"
                 android:singleLine="true"
                 android:hint="@string/please_input_money"
                 android:background="@null"/>
             <View
+                android:id="@+id/view_line"
                 android:layout_width="match_parent"
-                android:layout_height="3dp"
+                android:layout_height="2dp"
                 android:layout_marginTop="5dp"
                 android:background="@color/view_black_line_color"/>
         </LinearLayout>
@@ -60,31 +61,30 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/margin_30"
+            android:paddingLeft="@dimen/margin_rz"
             android:layout_gravity="center"
             android:textColor="@color/font_color"
             android:text="@string/yuan"/>
     </LinearLayout>
 
-    <com.baoyz.swipemenulistview.SwipeMenuListView
-        android:id="@+id/goods_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="none"
-        android:layout_above="@id/radioGroup_function"
-        android:listSelector="@android:color/transparent"
-        android:layout_below="@id/input_money"/>
 
+    <FrameLayout
+        android:id="@+id/fl_bill_info"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/view_bill_info" />
+    </FrameLayout>
 
     <RadioGroup
         android:id="@+id/radioGroup_function"
         android:layout_above="@id/fl_bill_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="5dp"
+        android:paddingTop="10dp"
         android:paddingBottom="5dp"
-        android:paddingLeft="@dimen/margin_55"
-        android:paddingRight="@dimen/margin_55"
+        android:paddingLeft="@dimen/margin_vv"
+        android:paddingRight="@dimen/margin_vv"
         android:orientation="horizontal">
         <RadioButton
             android:id="@+id/radio_select_good"
@@ -93,9 +93,8 @@
             android:checked="true"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:gravity="center"
             android:drawableTop="@drawable/btn_select_good_selector"
-            android:drawablePadding="@dimen/margin_20"
+            android:drawablePadding="@dimen/margin_ov"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/select_good"/>
         <RadioButton
@@ -104,10 +103,9 @@
             android:layout_height="wrap_content"
             android:background="@null"
             android:button="@null"
-            android:gravity="center"
-            android:layout_marginLeft="@dimen/margin_55"
+            android:layout_marginLeft="@dimen/margin_fv"
             android:drawableTop="@drawable/btn_add_score_good_selector"
-            android:drawablePadding="@dimen/margin_20"
+            android:drawablePadding="@dimen/margin_ov"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/add_score_good"/>
         <RadioButton
@@ -116,10 +114,9 @@
             android:button="@null"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:gravity="center"
             android:drawableTop="@drawable/btn_look_member_selector"
-            android:drawablePadding="@dimen/margin_20"
-            android:layout_marginLeft="@dimen/margin_55"
+            android:drawablePadding="@dimen/margin_ov"
+            android:layout_marginLeft="@dimen/margin_fv"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/look_member"/>
         <RadioButton
@@ -128,18 +125,20 @@
             android:button="@null"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:gravity="center"
-            android:layout_marginLeft="@dimen/margin_70"
+            android:layout_marginLeft="@dimen/margin_vv"
             android:drawableTop="@drawable/btn_add_saleman_selector"
-            android:drawablePadding="@dimen/margin_20"
+            android:drawablePadding="@dimen/margin_ov"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/add_saleman"/>
     </RadioGroup>
-    <FrameLayout
-        android:id="@+id/fl_bill_info"
-        android:layout_alignParentBottom="true"
+    <com.baoyz.swipemenulistview.SwipeMenuListView
+        android:id="@+id/goods_listview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <include layout="@layout/view_bill_info" />
-    </FrameLayout>
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:scrollbars="none"
+        android:layout_above="@id/radioGroup_function"
+        android:listSelector="@android:color/transparent"
+        android:layout_below="@id/input_money"/>
 </RelativeLayout>

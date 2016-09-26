@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/height_600"
-    android:layout_height="@dimen/height_500"
+    android:layout_width="@dimen/height_xzz"
+    android:layout_height="@dimen/height_vzz"
     android:background="@color/white" >
 
     <RelativeLayout
         android:id="@+id/title_bar"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_70"
+        android:layout_height="@dimen/height_sz"
         android:background="@color/color_bg">
 
         <TextView
@@ -20,23 +20,23 @@
             android:layout_centerInParent="true"/>
         <ImageView
             android:id="@+id/imageview_close"
-            android:layout_marginRight="@dimen/margin_40"
+            android:layout_marginRight="@dimen/margin_fz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/title_icon_back"/>
+            android:src="@mipmap/close"/>
     </RelativeLayout>
 
     <GridView
         android:layout_below="@id/title_bar"
         android:id="@+id/gridview_saleman"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_230"
+        android:layout_height="@dimen/height_trz"
         android:gravity="center"
-        android:layout_marginTop="@dimen/margin_30"
-        android:layout_marginRight="@dimen/margin_60"
-        android:layout_marginLeft="@dimen/margin_60"
+        android:layout_marginTop="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_xz"
+        android:layout_marginLeft="@dimen/margin_xz"
         android:cacheColorHint="@color/transparent"
         android:listSelector="@drawable/gridview_selector"
         android:numColumns="2"
@@ -44,10 +44,10 @@
     <TextView
         android:id="@+id/text_confirm"
         android:layout_width="match_parent"
-        android:layout_marginRight="@dimen/margin_30"
-        android:layout_marginLeft="@dimen/margin_30"
-        android:layout_height="@dimen/height_80"
-        android:layout_marginBottom="@dimen/margin_55"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_height="@dimen/height_ez"
+        android:layout_marginBottom="@dimen/margin_vv"
         android:gravity="center"
         android:focusable="true"
         android:layout_alignParentBottom="true"

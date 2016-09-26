@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/view_bg_color"
     tools:context="com.symboltech.wangpos.activity.CheckOutActivity">
     <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
 
@@ -10,13 +11,13 @@
         android:id="@+id/rl_order_total_money"
         android:layout_width="match_parent"
         android:layout_below="@id/common_title_bar"
-        android:layout_marginRight="@dimen/margin_30"
-        android:layout_marginLeft="@dimen/margin_30"
-        android:layout_height="@dimen/height_100">
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_height="@dimen/height_ozz">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:textSize="@dimen/font_size_30"
+            android:textSize="@dimen/font_size_rz"
             android:textColor="@color/font_color"
             android:gravity="center"
             android:text="@string/order_total_money"/>
@@ -32,14 +33,14 @@
                 android:id="@+id/text_order_total_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_40"
+                android:textSize="@dimen/font_size_fz"
                 android:textColor="@color/red"
-                android:layout_marginRight="@dimen/margin_15"
+                android:layout_marginRight="@dimen/margin_ov"
                 android:text="0" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_30"
+                android:textSize="@dimen/font_size_rz"
                 android:textColor="@color/font_color"
                 android:text="@string/yuan"/>
         </LinearLayout>
@@ -55,9 +56,9 @@
         android:id="@+id/rl_member_equity"
         android:layout_below="@id/rl_order_total_money"
         android:layout_width="match_parent"
-        android:layout_marginRight="@dimen/margin_30"
-        android:layout_marginLeft="@dimen/margin_30"
-        android:layout_height="@dimen/height_140">
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_height="@dimen/height_ofz">
 
         <ImageView
             android:id="@+id/imageview_more"
@@ -74,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:textSize="@dimen/font_size_30"
+                android:textSize="@dimen/font_size_rz"
                 android:textColor="@color/font_color"
                 android:gravity="center"
                 android:text="@string/member_equity"/>
@@ -88,21 +89,21 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_24"
+                    android:textSize="@dimen/font_size_tf"
                     android:text="@string/coupon_deduction"
                     android:textColor="@color/font_color"/>
                 <TextView
                     android:id="@+id/text_coupon_deduction_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_30"
+                    android:textSize="@dimen/font_size_rz"
                     android:layout_marginLeft="5dp"
                     android:text="0"
                     android:textColor="@color/red"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_24"
+                    android:textSize="@dimen/font_size_tf"
                     android:layout_marginLeft="5dp"
                     android:text="@string/yuan"
                     android:textColor="@color/font_color"/>
@@ -110,22 +111,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_24"
-                    android:layout_marginLeft="@dimen/margin_100"
+                    android:textSize="@dimen/font_size_tf"
+                    android:layout_marginLeft="@dimen/margin_ozz"
                     android:text="@string/score_deduction"
                     android:textColor="@color/font_color"/>
                 <TextView
                     android:id="@+id/text_score_deduction_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_30"
+                    android:textSize="@dimen/font_size_rz"
                     android:layout_marginLeft="5dp"
                     android:text="0"
                     android:textColor="@color/red"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_24"
+                    android:textSize="@dimen/font_size_tf"
                     android:layout_marginLeft="5dp"
                     android:text="@string/fen"
                     android:textColor="@color/font_color"/>
@@ -142,18 +143,18 @@
         android:id="@+id/rl_payment"
         android:layout_below="@id/rl_member_equity"
         android:layout_width="match_parent"
-        android:layout_marginRight="@dimen/margin_30"
-        android:layout_marginLeft="@dimen/margin_30"
-        android:layout_height="@dimen/height_185">
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_height="@dimen/height_oev">
         <RelativeLayout
             android:id="@+id/rl_wait_money"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/margin_30"
+            android:layout_marginTop="@dimen/margin_rz"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_30"
+                android:textSize="@dimen/font_size_rz"
                 android:textColor="@color/font_color"
                 android:gravity="center"
                 android:text="@string/wait_money"/>
@@ -169,14 +170,14 @@
                     android:id="@+id/text_wait_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_40"
+                    android:textSize="@dimen/font_size_fz"
                     android:textColor="@color/red"
-                    android:layout_marginRight="@dimen/margin_15"
+                    android:layout_marginRight="@dimen/margin_ov"
                     android:text="0" />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_30"
+                    android:textSize="@dimen/font_size_rz"
                     android:textColor="@color/font_color"
                     android:text="@string/yuan"/>
             </LinearLayout>
@@ -187,37 +188,38 @@
             android:layout_below="@id/rl_wait_money"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_30"
+            android:layout_marginTop="@dimen/margin_rz"
             android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/text_pay_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_15"
-                android:textSize="@dimen/font_size_30"
+                android:layout_marginTop="@dimen/margin_ov"
+                android:textSize="@dimen/font_size_rz"
                 android:textColor="@color/font_color"
                 android:gravity="center"
                 android:text="@string/pay_money"/>
             <LinearLayout
                 android:layout_toRightOf="@id/text_pay_money"
-                android:layout_width="@dimen/line_360"
+                android:layout_width="@dimen/line_txz"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginLeft="@dimen/margin_60">
+                android:layout_marginLeft="@dimen/margin_xz">
 
                 <EditText
                     android:id="@+id/edit_input_money"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:textSize="@dimen/font_size_35"
+                    android:textSize="@dimen/font_size_rv"
                     android:textColorHint="@color/hint_color"
                     android:textColor="@color/edit_font_color"
                     android:singleLine="true"
                     android:hint="@string/please_input_money"
                     android:background="@null"/>
                 <View
+                    android:id="@+id/view_line"
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
                     android:layout_marginTop="5dp"
@@ -227,10 +229,10 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_15"
+                android:layout_marginTop="@dimen/margin_ov"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="center"
-                android:textSize="@dimen/font_size_30"
+                android:textSize="@dimen/font_size_rz"
                 android:textColor="@color/font_color"
                 android:text="@string/yuan"/>
         </RelativeLayout>
@@ -247,14 +249,14 @@
         android:id="@+id/ll_pay_type_ditch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_30"
-        android:layout_marginRight="@dimen/margin_30"
-        android:layout_marginLeft="@dimen/margin_30"
+        android:layout_marginTop="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
         android:orientation="vertical">
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_30"
+            android:textSize="@dimen/font_size_rz"
             android:textColor="@color/font_color"
             android:gravity="center"
             android:text="@string/pay_type_ditch"/>
@@ -268,28 +270,15 @@
             android:scrollbars="none"/>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listview_pay_info"
-        android:layout_below="@id/ll_pay_type_ditch"
-        android:layout_above="@id/ll_function"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/margin_30"
-        android:layout_marginLeft="@dimen/margin_30"
-        android:scrollbars="none"
-        android:layout_marginTop="@dimen/margin_30"
-        android:listSelector="@drawable/gridview_selector"
-        android:cacheColorHint="@color/transparent"/>
-
     <LinearLayout
         android:id="@+id/ll_function"
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/margin_30"
-        android:layout_marginLeft="@dimen/margin_30"
-        android:layout_marginBottom="@dimen/margin_40"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginBottom="@dimen/margin_fz"
         android:orientation="horizontal"
-        android:layout_height="@dimen/height_80">
+        android:layout_height="@dimen/height_ez">
         <TextView
             android:id="@+id/text_cancle_pay"
             android:layout_width="0dp"
@@ -297,7 +286,7 @@
             android:text="@string/cancle_pay"
             android:gravity="center"
             android:textColor="@color/white"
-            android:layout_marginRight="@dimen/margin_30"
+            android:layout_marginRight="@dimen/margin_rz"
             android:background="@drawable/btn_red_bg"
             android:layout_height="match_parent" />
         <TextView
@@ -310,4 +299,16 @@
             android:gravity="center"
             android:layout_height="match_parent" />
     </LinearLayout>
+    <ListView
+        android:id="@+id/listview_pay_info"
+        android:layout_below="@id/ll_pay_type_ditch"
+        android:layout_above="@id/ll_function"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:scrollbars="none"
+        android:layout_marginTop="@dimen/margin_rz"
+        android:listSelector="@drawable/gridview_selector"
+        android:cacheColorHint="@color/transparent"/>
 </RelativeLayout>

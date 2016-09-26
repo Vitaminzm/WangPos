@@ -2,12 +2,12 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:background="@color/white"
-    android:layout_height="@dimen/height_130">
+    android:layout_height="@dimen/height_orz">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/margin_40"
+        android:paddingLeft="@dimen/margin_fz"
         android:paddingTop="16dp"
         android:paddingBottom="14dp"
         android:orientation="vertical">
@@ -19,21 +19,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_24"
+            android:textSize="@dimen/font_size_tf"
             android:text="@string/total_money"
             android:textColor="@color/font_color"/>
         <TextView
             android:id="@+id/text_total_money"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_30"
+            android:textSize="@dimen/font_size_rz"
             android:layout_marginLeft="8dp"
             android:text="0"
             android:textColor="@color/red"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_24"
+            android:textSize="@dimen/font_size_tf"
             android:layout_marginLeft="8dp"
             android:text="@string/yuan"
             android:textColor="@color/font_color"/>
@@ -46,21 +46,21 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:text="@string/consume_score"
                 android:textColor="@color/font_color"/>
             <TextView
                 android:id="@+id/text_consume_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_30"
+                android:textSize="@dimen/font_size_rz"
                 android:layout_marginLeft="8dp"
                 android:text="0"
                 android:textColor="@color/red"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_24"
+                android:textSize="@dimen/font_size_tf"
                 android:layout_marginLeft="8dp"
                 android:text="@string/fen"
                 android:textColor="@color/font_color"/>
@@ -69,10 +69,10 @@
 
     <TextView
         android:id="@+id/text_confirm"
-        android:layout_width="@dimen/height_280"
+        android:layout_width="@dimen/height_tez"
         android:layout_height="match_parent"
         android:text="@string/confirm_order"
-        android:textSize="@dimen/font_size_36"
+        android:textSize="@dimen/font_size_rx"
         android:textColor="@color/white"
         android:gravity="center"
         android:background="@drawable/login_bt_selector"

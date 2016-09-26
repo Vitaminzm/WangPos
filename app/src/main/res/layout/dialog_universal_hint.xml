@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/height_500"
-    android:layout_height="@dimen/height_400"
+    android:layout_width="@dimen/height_vzz"
+    android:layout_height="@dimen/height_fzz"
     android:background="#f5f5f5"
     android:shadowColor="#7f000000"
     android:shadowDx="5"
@@ -12,7 +12,7 @@
 
     <ImageView
         android:layout_width="fill_parent"
-        android:layout_height="@dimen/height_30"
+        android:layout_height="@dimen/height_rz"
         android:background="@color/color_bg" />
 
     <LinearLayout
@@ -22,30 +22,30 @@
         android:orientation="vertical" >
 
         <ImageView
-            android:layout_marginTop="@dimen/margin_20"
+            android:layout_marginTop="@dimen/margin_tz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@mipmap/add_member_success"/>
         <TextView
             android:id="@+id/tv_universalhint_title"
-            android:layout_marginTop="@dimen/margin_50"
+            android:layout_marginTop="@dimen/margin_vz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textColor="@color/black"
             android:text="@string/member_telephone_not_member"
-            android:textSize="@dimen/font_size_24" />
+            android:textSize="@dimen/font_size_tf" />
 
         <TextView
             android:id="@+id/tv_universalhint_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="@dimen/margin_30"
+            android:layout_marginTop="@dimen/margin_rz"
             android:gravity="center_horizontal"
             android:textColor="@color/green"
             android:text="@string/add_member_succedd"
-            android:textSize="@dimen/font_size_40" />
+            android:textSize="@dimen/font_size_fz" />
     </LinearLayout>
 
 </LinearLayout>

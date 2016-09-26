@@ -104,6 +104,7 @@
     <string name="print_coupon">打印优惠券</string>
     <string name="selected_plate">选择停车牌</string>
     <string name="done">完成</string>
+    <string name="edit">编辑</string>
 
     <!--选择停车牌 -->
     <string name="bing_plate">已绑定车牌</string>
@@ -117,6 +118,7 @@
     <string name="return_handperson">退款经手人</string>
     <string name="please_select_retuern_good">请选择退款商品</string>
     <string name="please_select_handperson">请选择经手人</string>
+    <string name="confirm_return_order">确认退货单</string>
 
     <!--普通退货单详情-->
     <string name="return_order_info">退货单详情</string>
@@ -128,18 +130,30 @@
     <!--退款成功-->
     <string name="return_succeed">退款成功</string>
     <string name="return_order_number">退货单号</string>
+    <string name="return_order_number_m">退货单号：</string>
     <string name="return_order_time">退货时间</string>
-    <string name="return_real_money">退货金额</string>
+    <string name="return_order_time_m">退货时间：</string>
+    <string name="return_money_m">退货金额：</string>
+    <string name="return_real_money">实际退款</string>
+    <string name="return_real_money_m">实际退款：</string>
     <string name="score_return">积分返还</string>
+    <string name="score_return_m">积分返还：</string>
+    <string name="return_coupon_m">回收券：</string>
     <string name="change">找零:</string>
     <string name="return_used_score">退货耗分</string>
+    <string name="return_used_score_m">退货耗分：</string>
     <string name="score_good_return">积分商品返还</string>
+    <string name="score_good_return_m">积分商品返还：</string>
     <string name="score_deduction_return">积分抵现返还</string>
+    <string name="score_deduction_return_m">积分抵现返还：</string>
 
     <!--会员详情-->
     <string name="member_info">会员详情</string>
     <string name="member_name">姓名</string>
+    <string name="member_name_m">姓名：</string>
     <string name="member_card_no">卡号</string>
+    <string name="member_card_no_m">卡号：</string>
+    <string name="member_score_m">积分：</string>
     <string name="sale_info">消费信息</string>
     <string name="sale_total">消费总计</string>
     <string name="sale_times">消费次数</string>
@@ -150,6 +164,9 @@
     <string name="member_activate">会员激活</string>
 
     <!--选单退货单详情-->
+    <string name="return_order">选单退货</string>
+
+    <!--选单退货单详情-->
     <string name="return_ditch">退款渠道</string>
     <string name="remark">备注</string>
     <string name="add_used_score">增耗积分</string>
@@ -157,11 +174,11 @@
     <string name="score_ditch">积分渠道</string>
     <string name="score_deduction_cash">积分抵现</string>
     <string name="score_deduction_cash_m">积分抵现：</string>
-    <string name="submit_return_order">体检退货单</string>
+    <string name="submit_return_order">提交退货单</string>
     <string name="used_score_account">消耗积分额度</string>
 
     <!--本班班报-->
-    <string name="job_report">退款渠道</string>
+    <string name="job_report">本班报表</string>
     <string name="shop">备注</string>
     <string name="return_count">退款笔数</string>
     <string name="collection_count">收款笔数</string>

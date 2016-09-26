@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/height_600"
-    android:layout_height="@dimen/height_500"
+    android:layout_width="@dimen/height_xzz"
+    android:layout_height="@dimen/height_vzz"
     android:background="@color/white" >
 
     <RelativeLayout
         android:id="@+id/title_bar"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_70"
+        android:layout_height="@dimen/height_sz"
         android:background="@color/color_bg">
 
         <TextView
@@ -20,19 +20,19 @@
             android:layout_centerInParent="true"/>
         <ImageView
             android:id="@+id/imageview_close"
-            android:layout_marginRight="@dimen/margin_40"
+            android:layout_marginRight="@dimen/margin_fz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/title_icon_back"/>
+            android:src="@mipmap/close"/>
     </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/ll_already_pay"
-        android:layout_marginTop="@dimen/margin_40"
-        android:layout_marginRight="@dimen/margin_95"
-        android:layout_marginLeft="@dimen/margin_95"
+        android:layout_marginTop="@dimen/margin_fz"
+        android:layout_marginRight="@dimen/margin_nv"
+        android:layout_marginLeft="@dimen/margin_nv"
         android:layout_below="@id/title_bar"
         android:orientation="horizontal"
         android:layout_width="match_parent"
@@ -40,21 +40,21 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_24"
+            android:textSize="@dimen/font_size_tf"
             android:text="@string/already_pay"
             android:textColor="@color/font_color"/>
         <TextView
             android:id="@+id/text_money"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_36"
-            android:layout_marginLeft="@dimen/margin_30"
+            android:textSize="@dimen/font_size_rx"
+            android:layout_marginLeft="@dimen/margin_rz"
             android:text="0"
             android:textColor="@color/red"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_24"
+            android:textSize="@dimen/font_size_tf"
             android:layout_marginLeft="5dp"
             android:text="@string/yuan"
             android:textColor="@color/font_color"/>
@@ -63,21 +63,21 @@
         android:layout_below="@id/ll_already_pay"
         android:id="@+id/gridview_saleman"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_230"
+        android:layout_height="@dimen/height_trz"
         android:gravity="center"
-        android:layout_marginRight="@dimen/margin_95"
-        android:layout_marginLeft="@dimen/margin_95"
+        android:layout_marginRight="@dimen/margin_nv"
+        android:layout_marginLeft="@dimen/margin_nv"
         android:cacheColorHint="@color/transparent"
         android:listSelector="@drawable/gridview_selector"
         android:scrollbars="none"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/margin_65"
-        android:layout_marginLeft="@dimen/margin_65"
-        android:layout_marginBottom="@dimen/margin_35"
+        android:layout_marginRight="@dimen/margin_xv"
+        android:layout_marginLeft="@dimen/margin_xv"
+        android:layout_marginBottom="@dimen/margin_rv"
         android:orientation="horizontal"
-        android:layout_height="@dimen/height_80">
+        android:layout_height="@dimen/height_ez">
         <TextView
             android:id="@+id/text_cancle_pay"
             android:layout_width="0dp"
@@ -85,7 +85,7 @@
             android:text="@string/cancle"
             android:gravity="center"
             android:textColor="@color/white"
-            android:layout_marginRight="@dimen/margin_30"
+            android:layout_marginRight="@dimen/margin_rz"
             android:background="@drawable/btn_red_bg"
             android:layout_height="match_parent" />
         <TextView
