@@ -302,18 +302,18 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                         if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
                             //OperateLog.getInstance().saveLog2File(OptLogEnum.MEMBER_VERIFY_SUCCCESS.getOptLogCode(), getString(R.string.member_verify_succcess));
                             memberinfo = result.getDatamapclass().getMemberinfo();
-                            //getAllMemberInfo(.memberinfo.getId(), memberinfo.getIschecked(), verifyType);
+                            getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
                         } else if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK_ADD_MEMBER)) {
                             //OperateLog.getInstance().saveLog2File(OptLogEnum.MEMBER_ADD_SUCCESS.getOptLogCode(), getString(R.string.member_add_success));
                             UniversalHintDialog uhd = new UniversalHintDialog(MemberAccessActivity.this, null, null,
                                     new DialogFinishCallBack() {
                                     @Override
-                                    public void finish() {
+                                    public void finish(int p) {
                                         if (result.getDatamapclass() != null
                                                 && result.getDatamapclass().getMemberinfo() != null
                                                 && !StringUtil.isEmpty(result.getDatamapclass().getMemberinfo().getId())) {
                                             memberinfo = result.getDatamapclass().getMemberinfo();
-                                            //getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
+                                            getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
                                         } else {
                                             closewaitdialog();
                                             ToastUtils.sendtoastbyhandler(handler, getString(R.string.member_id_is_not_null));
@@ -356,12 +356,12 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     @Override
                     public void handleActionSuccess(String actionName, AllMemeberInfoResult result) {
                         if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-//                            Intent shoppingCardIntent = new Intent(MainActivity.this, ShoppingCartActivity.class);
-//                            shoppingCardIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
-//                            shoppingCardIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
-//                            shoppingCardIntent.putExtra(ConstantData.MEMBER_IS_SECOND_VERIFY, isChecked);
-//                            shoppingCardIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
-//                            MainActivity.this.startActivity(shoppingCardIntent);
+                            Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
+                            paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
+                            paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
+                            paymentIntent.putExtra(ConstantData.MEMBER_IS_SECOND_VERIFY, isChecked);
+                            paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
+                            MemberAccessActivity.this.startActivity(paymentIntent);
                         } else {
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                         }

@@ -10,5 +10,5 @@ import android.widget.EditText;
 */
 public interface DialogFinishCallBack {
 
-	public void finish();
+	public void finish(int position);
 }

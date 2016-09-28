@@ -103,7 +103,7 @@
             android:checked="true"
             android:drawableTop="@drawable/btn_phone_number_selector"
             android:drawablePadding="@dimen/margin_tz"
-            android:textColor="@drawable/btn_font_color_selector"
+            android:textColor="@drawable/radiobt_font_color_selector"
             android:text="@string/phone_number"/>
         <RadioButton
             android:id="@+id/text_vip_card"
@@ -115,7 +115,7 @@
             android:layout_marginLeft="@dimen/margin_ozz"
             android:drawableTop="@drawable/btn_vip_card_selector"
             android:drawablePadding="@dimen/margin_tz"
-            android:textColor="@drawable/btn_font_color_selector"
+            android:textColor="@drawable/radiobt_font_color_selector"
             android:text="@string/vip_card"/>
         <RadioButton
             android:id="@+id/text_sacn_QR"
@@ -127,7 +127,7 @@
             android:layout_marginLeft="@dimen/margin_ozz"
             android:drawableTop="@drawable/btn_scan_qr_selector"
             android:drawablePadding="@dimen/margin_tz"
-            android:textColor="@drawable/btn_font_color_selector"
+            android:textColor="@drawable/radiobt_font_color_selector"
             android:text="@string/scan_QR"/>
     </RadioGroup>
 </LinearLayout>

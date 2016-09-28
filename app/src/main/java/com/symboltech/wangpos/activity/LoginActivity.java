@@ -155,7 +155,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * start by role
      */
     private void switchrole() {
-        String deskCode = SpSaveUtils.read(LoginActivity.this, ConstantData.CASHIER_DESK_CODE, "");
+        String deskCode = SpSaveUtils.read(this, ConstantData.CASHIER_DESK_CODE, "");
         if(!StringUtil.isEmpty(deskCode)){
             ll_desk_code.setVisibility(View.VISIBLE);
             text_desk_code.setText(deskCode);
@@ -165,10 +165,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             edit_username.setVisibility(View.VISIBLE);
             iscashier = true;
         } else if (loginrole == ConstantData.LOGIN_WITH_LOCKSCREEN) {
-            String cashierName = SpSaveUtils.read(LoginActivity.this, ConstantData.CASHIER_NAME, "");
+            String cashierName = SpSaveUtils.read(this, ConstantData.CASHIER_NAME, "");
             if(!StringUtil.isEmpty(cashierName)){
                 ll_cashier_name.setVisibility(View.VISIBLE);
-                text_cashier_name.setText(deskCode);
+                text_cashier_name.setText(cashierName);
             }
             ll_lock_info.setVisibility(View.VISIBLE);
             edit_username.setVisibility(View.GONE);
@@ -331,7 +331,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             @Override
             public void handleActionFinish() {
                 closewaitdialog();
-                startforcashier();
+               // startforcashier();
             }
 
             @Override
@@ -373,9 +373,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_ID, logininfo.getShopinfo().getId());
         SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_CODE, logininfo.getShopinfo().getCode());
         SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_NAME, logininfo.getShopinfo().getName());
-        SpSaveUtils.write(MyApplication.context, ConstantData.MALL_ID, logininfo.getMallinfo().getId());
-        SpSaveUtils.write(MyApplication.context, ConstantData.MALL_CODE, logininfo.getMallinfo().getCode());
-        SpSaveUtils.write(MyApplication.context, ConstantData.MALL_NAME, logininfo.getMallinfo().getName());
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_NAME, logininfo.getPerson_name());
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_ID, logininfo.getPerson_id());
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_CODE, logininfo.getPersoncode());

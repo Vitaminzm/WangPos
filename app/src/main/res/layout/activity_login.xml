@@ -23,7 +23,7 @@
             android:id="@+id/ll_desk_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_oof"
+            android:layout_marginTop="@dimen/margin_nv"
             android:gravity="center"
             android:visibility="invisible"
             android:orientation="horizontal">
@@ -63,6 +63,7 @@
                 android:textSize="@dimen/big_font_size"/>
         </LinearLayout>
         <LinearLayout
+            android:layout_marginTop="@dimen/margin_oz"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"

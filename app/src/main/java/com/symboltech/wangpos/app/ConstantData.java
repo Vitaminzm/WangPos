@@ -15,11 +15,6 @@ public class ConstantData {
 	/** 基数,用于配置常量参数 */
 	public static final int BASE_CODE = 0x200;
 
-	/** 更换pos状态*/
-	public static final String UPDATE_STATUS = "update_status";
-	/** 第一次进入 */
-	public static final String LOGIN_FIRST = "login_first";
-
 	/** 收银员登录 */
 	public static final int LOGIN_WITH_CASHIER = BASE_CODE + 1;
 
@@ -74,6 +69,9 @@ public class ConstantData {
 	/** 会员验证不验证 */
 	public static final int VERIFY_MEMBER_NO = BASE_CODE + 18;
 
+	/** 会员验证 方式  */
+	public static final String MEMBER_VERIFY= "member_type";
+
 	/** 会员验证SMS */
 	public static final int VERIFY_MEMBER_BY_SMS = BASE_CODE + 19;
 
@@ -104,6 +102,12 @@ public class ConstantData {
 	/** 预备会员 */
 	public static final int MEMBER_IS_PREPARE_VERITY = BASE_CODE + 28;
 
+	/**会员权益启动码*/
+	public static final int MEMBER_EQUITY_REQUEST_CODE = BASE_CODE + 29;
+
+	/**会员权益结果*/
+	public static final int MEMBER_EQUITY_RESULT_CODE = BASE_CODE + 30;
+
 	/**在线状态*/
 	public static final int ONLINE_STATE = 0;
 
@@ -115,6 +119,9 @@ public class ConstantData {
 
 	/** login进入key */
 	public static final String LOGIN_WITH_CHOOSE_KEY = "login_with_choose_key";
+
+	/** 第一次进入 */
+	public static final String LOGIN_FIRST = "login_first";
 
 	/** http 请求成功 */
 	public static final String HTTP_RESPONSE_OK = "00";
@@ -137,23 +144,14 @@ public class ConstantData {
 	/** 当前小票号 */
 	public static final String RECEIPT_NUMBER_LAST = "receipt_number_last";
 
-	/** 门店ID */
-	public static final String MALL_ID = "mall_id";
-
-	/** 门店代码 */
-	public static final String MALL_CODE = "mall_code";
-
-	/** 门店名称 */
-	public static final String MALL_NAME = "mall_name";
-
 	/** 店铺ID */
-	public static final String SHOP_ID = "shop_id";
+	public static final String SHOP_ID = "mall_id";
 
 	/** 店铺代码 */
-	public static final String SHOP_CODE = "shop_code";
+	public static final String SHOP_CODE = "mall_code";
 
 	/** 店铺名称 */
-	public static final String SHOP_NAME = "shop_name";
+	public static final String SHOP_NAME = "mall_name";
 
 	/** 舍零方式 */
 	public static final String MALL_MONEY_OMIT = "mall_money_omit";
@@ -296,9 +294,6 @@ public class ConstantData {
 	/** 购物单详情 */
 	public static final String ORDER_INFO = "order_info";
 
-	/** 银行卡详情 */
-	public static final String BANK_INFO = "bank_info";
-
 	/** 脱机模式标记 */
 	public static final String OFFLINE_MODE = "offline_mode";
 
@@ -307,8 +302,8 @@ public class ConstantData {
 	/** 会员是否是二次验证会员 */
 	public static final String MEMBER_IS_SECOND_VERIFY = "member_is_second_verify";
 
-	/** 会员验证 方式  */
-	public static final String MEMBER_VERIFY= "member_type";
+	/** 会员权益  */
+	public static final String MEMBER_EQUITY= "member_equity";
 
 	/** 会员验证 方式 磁卡RFID */
 	public static final String MEMBER_VERIFY_BY_MAGCARD = "0";
@@ -346,6 +341,12 @@ public class ConstantData {
 	/** 上传脱机数据*/
 	public static final String UPLOAD_OFFLINE_DATA = "upload_offline_data";
 
+	/** 更换pos状态*/
+	public static final String UPDATE_STATUS = "update_status";
+
+	/** 通过日志上传离线数据*/
+	public static final String UPLOAD_OFFLINE_DATA_BYLOG = "upload_offline_data_bylog";
+
 	/**pos 状态   登出*/
 	public static final String POS_STATUS_LOGOUT = "-1";
 
@@ -375,4 +376,10 @@ public class ConstantData {
 
 	/**查询报表类型 - 全部*/
 	public static final int LOG_ALL = -1;
+
+	/** receive 打印机正常 */
+	public static final String PRINTER_RUN_OK = "printer_run_ok";
+
+	/** receive 打印机err */
+	public static final String PRINTER_RUN_ERR = "printer_run_err";
 }

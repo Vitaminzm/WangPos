@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/close"/>
+            android:src="@drawable/icon_close_selector"/>
     </RelativeLayout>
 
     <LinearLayout

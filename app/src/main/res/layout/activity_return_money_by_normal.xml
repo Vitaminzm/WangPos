@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_size_tf"
             android:layout_gravity="center"
-            android:text="@string/return_good"
+            android:text="@string/return_reason"
             android:layout_marginLeft="@dimen/margin_fz"
             android:layout_marginRight="@dimen/margin_fz"
             android:textColor="@color/font_color"/>

@@ -1,10 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/view_bg_color"
     tools:context="com.symboltech.wangpos.activity.ReturnGoodsByOrderActivity">
 
+    <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
+    <FrameLayout
+        android:id="@+id/view_sales_info"
+        android:layout_below="@id/common_title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <include layout="@layout/view_sales_info" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_bill_info"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+
+        android:layout_height="wrap_content">
+        <include layout="@layout/view_return_bill_info" />
+    </FrameLayout>
+    <com.baoyz.swipemenulistview.SwipeMenuListView
+        android:id="@+id/goods_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:scrollbars="none"
+        android:layout_above="@id/fl_bill_info"
+        android:listSelector="@android:color/transparent"
+        android:layout_below="@id/view_sales_info"/>
 </RelativeLayout>

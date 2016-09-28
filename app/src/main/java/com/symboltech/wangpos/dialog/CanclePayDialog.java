@@ -69,7 +69,7 @@ public class CanclePayDialog extends Dialog {
 	@Override
 	public void dismiss() {
 		super.dismiss();
-		finishcallback.finish();
+		finishcallback.finish(0);
 	}
 	private void setdata() {
 		handler.sendEmptyMessageDelayed(3, 1000 * 3);

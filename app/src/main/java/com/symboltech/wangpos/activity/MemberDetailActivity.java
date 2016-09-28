@@ -8,7 +8,10 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.msg.entity.AllMemberInfo;
+import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.utils.ToastUtils;
 
 import java.lang.ref.WeakReference;
@@ -19,7 +22,16 @@ import butterknife.OnClick;
 
 public class MemberDetailActivity extends BaseActivity {
 
-    @Bind(R.id.title_text_content)TextView title_text_content;
+    @Bind(R.id.title_text_content)
+    TextView title_text_content;
+
+    @Bind(R.id.text_member_name)
+    TextView text_member_name;
+    @Bind(R.id.text_member_card_no)
+    TextView text_member_card_no;
+    @Bind(R.id.text_member_score)
+    TextView text_member_score;
+
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
 
@@ -38,10 +50,19 @@ public class MemberDetailActivity extends BaseActivity {
         }
     }
 
+    //会员信息
+    private AllMemberInfo memberBigdate;
     MyHandler handler = new MyHandler(this);
     @Override
     protected void initData() {
         title_text_content.setText(getString(R.string.member_info));
+        memberBigdate = (AllMemberInfo) getIntent().getSerializableExtra(ConstantData.ALLMEMBERINFO);
+        MemberInfo memberInfo = memberBigdate.getMember();
+        if(memberInfo != null){
+            text_member_name.setText(memberInfo.getMembername());
+            text_member_card_no.setText(memberInfo.getMemberno());
+            text_member_score.setText(memberInfo.getCent_total());
+        }
     }
 
     @Override

@@ -111,6 +111,8 @@ public class HttpStringClient {
 		requestPost(url, param, request, new Callback() {
 			@Override
 			public void onFailure(Call call, IOException e) {
+				e.printStackTrace();
+				LogUtil.i("lgs", "======================================="+e.getCause());
 				httpactionhandler.handleActionError(actionname, e.getMessage());
 				httpactionhandler.handleActionFinish();
 			}
@@ -222,5 +224,6 @@ public class HttpStringClient {
 		}
 		httpClient.newCall(request).enqueue(callBack);
 	}
+
 
 }

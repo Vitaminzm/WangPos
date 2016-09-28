@@ -24,6 +24,7 @@
     <dimen name="font_size_tf">14sp</dimen>
     <dimen name="font_size_tz">12sp</dimen>
 
+    <dimen name="margin_rrz">188dp</dimen>
     <dimen name="margin_tzz">114dp</dimen>
     <dimen name="margin_ovv">88dp</dimen>
     <dimen name="margin_oof">65dp</dimen>
@@ -70,8 +71,10 @@
     <dimen name="height_otz">68dp</dimen>
     <dimen name="height_ozz">57dp</dimen>
     <dimen name="height_nz">51dp</dimen>
+    <dimen name="height_ef">48dp</dimen>
     <dimen name="height_ez">46dp</dimen>
     <dimen name="height_sz">40dp</dimen>
+    <dimen name="height_xv">37dp</dimen>
     <dimen name="height_xz">34dp</dimen>
     <dimen name="height_vz">28dp</dimen>
     <dimen name="height_rz">17dp</dimen>

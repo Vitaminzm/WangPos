@@ -8,17 +8,14 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_horizontal_margin"
     tools:context=".MainActivity">
-
-
-    <com.symboltech.wangpos.view.MyViewPager
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
     <com.symboltech.wangpos.view.MyscollView
         android:id="@+id/myscollview"
         android:layout_alignParentBottom="true"
         android:layout_width="fill_parent"
         android:layout_height="42dp" />
-
+    <com.symboltech.wangpos.view.MyViewPager
+        android:id="@+id/view_pager"
+        android:layout_above="@id/myscollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>

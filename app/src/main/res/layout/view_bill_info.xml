@@ -9,12 +9,12 @@
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/margin_fz"
         android:paddingTop="16dp"
+        android:gravity="center"
         android:paddingBottom="14dp"
         android:orientation="vertical">
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
@@ -39,9 +39,9 @@
             android:textColor="@color/font_color"/>
     </LinearLayout>
         <LinearLayout
+            android:id="@+id/ll_used_score"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
@@ -68,7 +68,7 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/text_confirm"
+        android:id="@+id/text_confirm_order"
         android:layout_width="@dimen/height_tez"
         android:layout_height="match_parent"
         android:text="@string/confirm_order"

@@ -31,7 +31,7 @@
             android:textSize="@dimen/font_size_rz"
             android:textColor="@color/font_color"
             android:gravity="center"
-            android:text="@string/member_equity"/>
+            android:text="@string/member_info"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -158,7 +158,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:textColor="@color/font_color"
-                android:text="@string/sale_total"
+                android:singleLine="true"
                 android:gravity="center"/>
             <View
                 android:layout_width="1dp"
@@ -169,8 +169,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:textColor="@color/font_color"
-                android:text="@string/unit_price"
                 android:textSize="@dimen/font_size_tf"
+                android:singleLine="true"
                 android:gravity="center"
                 android:layout_height="match_parent" />
             <View
@@ -182,8 +182,8 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:textColor="@color/font_color"
-                android:text="@string/unit_price"
                 android:textSize="@dimen/font_size_tf"
+                android:singleLine="true"
                 android:gravity="center"
                 android:layout_height="match_parent" />
         </LinearLayout>
@@ -227,42 +227,47 @@
                 android:background="@drawable/green_corner_right_bt_shape"
                 android:layout_height="match_parent" />
         </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height_sz">
-            <TextView
-                android:id="@+id/time"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:textColor="@color/font_color"
-                android:gravity="center"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/view_line_colors"/>
-            <TextView
-                android:id="@+id/money"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_size_tf"
-                android:gravity="center"
-                android:layout_height="match_parent" />
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/view_line_colors"/>
-            <TextView
-                android:id="@+id/used_coupon"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_size_tf"
-                android:gravity="center"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_xv">
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/font_color"
+                    android:gravity="center"/>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/view_line_colors"/>
+                <TextView
+                    android:id="@+id/money"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_tf"
+                    android:gravity="center"
+                    android:layout_height="match_parent" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/view_line_colors"/>
+                <TextView
+                    android:id="@+id/used_coupon"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_tf"
+                    android:gravity="center"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </RelativeLayout>
+
         <View
             android:layout_gravity="center"
             android:layout_width="match_parent"
@@ -293,7 +298,6 @@
                 android:listSelector="@drawable/gridview_selector"
                 android:cacheColorHint="@color/transparent" />
             <View
-                android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:background="@color/view_line_color"
                 android:layout_alignParentBottom="true"

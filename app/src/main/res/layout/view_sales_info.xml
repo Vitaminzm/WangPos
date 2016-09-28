@@ -19,7 +19,7 @@
                     android:textSize="@dimen/font_size_tf"
                     android:layout_gravity="center"
                     android:textColor="@color/font_color"
-                    android:text="@string/desk_code_no"/>
+                    android:text="@string/desk_code"/>
                 <TextView
                     android:id="@+id/text_desk_code"
                     android:layout_width="wrap_content"

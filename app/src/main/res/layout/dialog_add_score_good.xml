@@ -12,6 +12,7 @@
         android:background="@color/color_bg">
 
         <TextView
+            android:id="@+id/text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/add_score_good"
@@ -25,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/close"/>
+            android:src="@drawable/icon_close_selector"/>
     </RelativeLayout>
 
     <GridView
@@ -33,6 +34,8 @@
         android:id="@+id/gridview_score_good"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_trz"
+        android:horizontalSpacing="@dimen/margin_tz"
+        android:verticalSpacing="@dimen/margin_tz"
         android:gravity="center"
         android:layout_marginTop="@dimen/margin_rz"
         android:layout_marginRight="@dimen/margin_rz"

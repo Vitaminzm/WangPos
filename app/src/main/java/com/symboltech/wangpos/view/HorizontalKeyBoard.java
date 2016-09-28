@@ -451,8 +451,10 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 				listener.onComfirm();
 				if(flag == FLAG_EDIT) {
 					listener.onValue(editText1.getText().toString().trim());
+					editText1.setSelection(editText1.getText().toString().trim().length());
 				}else if(flag == FLAG_EDIT2) {
 					listener.onValue(editText2.getText().toString().trim());
+					editText2.setSelection(editText2.getText().toString().trim().length());
 				}else if(flag == FLAG_TEXT) {
 					listener.onValue(textView.getText().toString().trim());
 				}

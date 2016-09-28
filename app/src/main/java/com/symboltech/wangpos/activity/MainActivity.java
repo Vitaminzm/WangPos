@@ -113,7 +113,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //            dao.deleteOrderbyState();
             getconfigInfo();
             //获取小票格式
-            getTickdatas();
+          //  getTickdatas();
            // uploadOfflineData(true);
         }
     }
@@ -187,12 +187,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rl_sendcarcoupon:
                 break;
             case R.id.rl_pay:
-                gotoFunction(PaymentActivity.class);
+                gotoPay();
                 break;
             case R.id.rl_salereturn:
                 gotoFunction(ReturnGoodsByNormalActivity.class);
                 break;
         }
+    }
+    public void gotoPay(){
+        Intent intent = new Intent(this,PaymentActivity.class);
+        intent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_ACCOUNTS);
+        startActivity(intent);
     }
     /**
      * gotoFunction
@@ -251,14 +256,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void handleActionError(String actionName, String errmsg) {
-                // TODO Auto-generated method stub
                 ToastUtils.sendtoastbyhandler(handler, errmsg);
             }
 
             @Override
             public void handleActionSuccess(String actionName,
                                             TicketFormatResult result) {
-                // TODO Auto-generated method stub
                 if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
                     if (result.getTicketformat() != null && result.getTicketformat().getTickdatas() != null
                             && result.getTicketformat().getTickdatas().size() > 0) {
