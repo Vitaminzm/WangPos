@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.adapter;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class PaymentTypeAdapter extends BaseAdapter {
 	private PayMentsInfo payType;
 	private LayoutInflater inflater;
 
+	private Handler mHandler = new Handler();
 	/**
 	 * 获取支付方式
 	 * @return
@@ -35,6 +37,25 @@ public class PaymentTypeAdapter extends BaseAdapter {
 	public void setPayTpye(int position){
 		payType = paymentsInfo.get(position);
 		notifyDataSetChanged();
+	}
+
+	public void setPayTpyeNull(){
+		if(payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.CASH){
+			mHandler.postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					payType = null;
+					//支付宝，微钱包会稍后使用ID，所以ID不能置空
+					notifyDataSetChanged();
+				}
+			}, 300);
+		}else{
+			payType = null;
+			//支付宝，微钱包会稍后使用ID，所以ID不能置空
+			notifyDataSetChanged();
+		}
 	}
 
 	public PaymentTypeAdapter(Context context, List<PayMentsInfo> datas) {

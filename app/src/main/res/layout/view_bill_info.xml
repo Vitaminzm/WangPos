@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/margin_fz"
         android:paddingTop="16dp"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:paddingBottom="14dp"
         android:orientation="vertical">
     <LinearLayout

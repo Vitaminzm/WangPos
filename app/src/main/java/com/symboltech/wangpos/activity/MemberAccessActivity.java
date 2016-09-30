@@ -58,6 +58,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     private Animation right_In_Animation;
     private HorizontalKeyBoard keyBoard;
 
+    private String verify_type = ConstantData.MEMBER_VERIFY_BY_PHONE;
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId){
@@ -130,7 +131,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
             @Override
             public void onValue(String value) {
-                memberverifymethod(ConstantData.MEMBER_VERIFY_BY_QR, value);
+                memberverifymethod(ConstantData.MEMBER_VERIFY_BY_PHONE, value);
             }
         });
         radioGroup_type.setOnCheckedChangeListener(this);
@@ -155,7 +156,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         switch (id){
             case R.id.text_add_or_verify_member:
                 keyBoard.dismiss();
-                memberverifymethod(ConstantData.MEMBER_VERIFY_BY_QR, edit_phone_number.getText().toString());
+                memberverifymethod(verify_type, edit_phone_number.getText().toString());
                 break;
             case R.id.title_icon_back:
                 this.finish();
@@ -165,6 +166,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     public void verifyByPhone(){
         if(ll_phone_number.getVisibility() == View.GONE){
+            verify_type = ConstantData.MEMBER_VERIFY_BY_PHONE;
             right_In_Animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {
@@ -188,6 +190,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     public void verifyByVipCard() {
         if(ll_swaip_card.getVisibility() == View.GONE){
+            verify_type = ConstantData.MEMBER_VERIFY_BY_MEMBERCARD;
             left_In_Animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
                 public void onAnimationStart(Animation animation) {

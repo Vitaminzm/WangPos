@@ -123,6 +123,15 @@ public class ConstantData {
 	/** 第一次进入 */
 	public static final String LOGIN_FIRST = "login_first";
 
+	/** 班报日报标记 */
+	public static final String FLAG = "flag";
+
+	/** 班报标记 */
+	public static final String JOB = "job";
+
+	/** 日报标记 */
+	public static final String DAY = "day";
+
 	/** http 请求成功 */
 	public static final String HTTP_RESPONSE_OK = "00";
 

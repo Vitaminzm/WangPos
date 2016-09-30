@@ -261,9 +261,10 @@
             android:gravity="center"
             android:text="@string/pay_type_ditch"/>
         <GridView
+            android:paddingTop="@dimen/margin_oz"
             android:id="@+id/activity_payment_gridview"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:cacheColorHint="@color/transparent"
             android:listSelector="@drawable/gridview_selector"
             android:numColumns="4"
@@ -299,16 +300,31 @@
             android:gravity="center"
             android:layout_height="match_parent" />
     </LinearLayout>
-    <ListView
-        android:id="@+id/listview_pay_info"
+    <LinearLayout
         android:layout_below="@id/ll_pay_type_ditch"
         android:layout_above="@id/ll_function"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
-        android:scrollbars="none"
-        android:layout_marginTop="@dimen/margin_rz"
-        android:listSelector="@drawable/gridview_selector"
-        android:cacheColorHint="@color/transparent"/>
+        android:background="@drawable/icon_bg_scroll"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_marginTop="@dimen/margin_rz"
+            android:layout_marginLeft="@dimen/margin_rz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_rz"
+            android:textColor="@color/font_color"
+            android:text="@string/pay_info"/>
+        <ListView
+            android:id="@+id/listview_pay_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:layout_marginTop="@dimen/margin_rz"
+            android:divider="@null"
+            android:listSelector="@drawable/gridview_selector"
+            android:cacheColorHint="@color/transparent"/>
+    </LinearLayout>
 </RelativeLayout>

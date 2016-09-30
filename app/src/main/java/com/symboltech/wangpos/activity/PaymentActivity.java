@@ -304,6 +304,21 @@ public class PaymentActivity extends BaseActivity {
         goodsAdapter.notifyDataSetChanged();
     }
 
+    protected void addcartScoregoods(String value, int position, int tag) {
+        GoodsInfo goodsInfo = null;
+        GoodsInfo gs = memberBigdate.getGoodslist().get(position);
+        try {
+            goodsInfo = (GoodsInfo) gs.clone();
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
+        goodsInfo.setSalecount("1");
+        if(tag == ConstantData.GOOD_PRICE_CAN_CHANGE){
+            goodsInfo.setPrice(MoneyAccuracyUtils.formatMoneyByTwo(value));
+        }
+        shopCarList.add(goodsInfo);
+        goodsAdapter.notifyDataSetChanged();
+    }
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
@@ -325,8 +340,7 @@ public class PaymentActivity extends BaseActivity {
                     new AddScoreGoodDialog(PaymentActivity.this, memberBigdate.getGoodslist(), new DialogFinishCallBack() {
                         @Override
                         public void finish(int p) {
-                            shopCarList.add(memberBigdate.getGoodslist().get(p));
-                            goodsAdapter.notifyDataSetChanged();
+                            addcartScoregoods(null, p, ConstantData.GOOD_PRICE_NO_CHANGE);
                         }
                     }).show();
                 }else{
@@ -385,6 +399,10 @@ public class PaymentActivity extends BaseActivity {
         if (enterFlag == ConstantData.ENTER_CASHIER_BY_ACCOUNTS) {
             submitgoodsorderforhttp(false);
         }else{
+            if(sumintegral > ArithDouble.parseDouble(memberBigdate.getMember().getCent_total())){
+                ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_score_notfull));
+                return;
+            }
             submitgoodsorderforhttp(true);
         }
     }

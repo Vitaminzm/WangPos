@@ -55,6 +55,7 @@
     <string name="warning_no_input_format">输入格式不正确</string>
     <string name="warning_select_saleman">请选择一个销售员</string>
     <string name="warning_select_good">请选择一个商品</string>
+    <string name="warning_score_notfull">积分不足</string>
     <string name="cart_goods_sum_not_zero">数量不能为零 </string>
     <!-- 结账界面-->
     <string name="confirm">确认</string>
@@ -64,6 +65,7 @@
     <string name="member_equity">会员权益</string>
     <string name="coupon_deduction">优惠券抵扣</string>
     <string name="score_deduction">积分抵扣</string>
+    <string name="score_deduction_m">积分抵扣：</string>
     <string name="wait_money">待付金额</string>
     <string name="pay_money">支付金额</string>
     <string name="pay_type_ditch">支付渠道</string>
@@ -73,11 +75,16 @@
     <string name="submit_order">提交订单</string>
     <string name="waring_format_msg">输入格式异常</string>
     <string name="waring_money_over">输入金额过大</string>
+    <string name="waring_money_not_zero">输入金额不能为零</string>
+    <string name="waring_msg_pay_success">支付已经完成</string>
+    <string name="waring_msg_large">支付金额超出订单总额</string>
+    <string name="waring_msg_pay_failed">支付尚未完成</string>
 
     <string name="weichat">微钱宝</string>
     <string name="alipay">支付宝</string>
     <string name="bank">银行卡</string>
     <string name="cash">现  金</string>
+    <string name="payment_type_change">找零</string>
     <string name="weichat_pay">微钱宝支付：</string>
     <string name="alipay_pay">支付宝支付：</string>
     <string name="bank_pay">银行卡支付：</string>
@@ -104,6 +111,7 @@
     <string name="coupon">代金券</string>
     <string name="coupon_m">代金券：</string>
     <string name="real_pay">实际支付</string>
+    <string name="real_pay_m">实际支付：</string>
     <string name="score_info">积分信息</string>
     <string name="add_score">新增积分</string>
     <string name="add_score_m">新增积分：</string>
@@ -114,6 +122,9 @@
     <string name="selected_plate">选择停车牌</string>
     <string name="done">完成</string>
     <string name="edit">编辑</string>
+    <string name="waring_no_coupon_msg">没有获得优惠券</string>
+    <string name="waring_please_selected">请选择一张优惠券</string>
+    <string name="waring_cannot_print_msg">当前券不可打印</string>
 
     <!--选择停车牌 -->
     <string name="bing_plate">已绑定车牌</string>
@@ -148,7 +159,8 @@
     <string name="score_return">积分返还</string>
     <string name="score_return_m">积分返还：</string>
     <string name="return_coupon_m">回收券：</string>
-    <string name="change">找零:</string>
+    <string name="change">找零</string>
+    <string name="change_m">找零:</string>
     <string name="return_used_score">退货耗分</string>
     <string name="return_used_score_m">退货耗分：</string>
     <string name="score_good_return">积分商品返还</string>
@@ -190,6 +202,7 @@
 
     <!--本班班报-->
     <string name="job_report">本班报表</string>
+    <string name="day_report">本日报表</string>
     <string name="shop">店铺</string>
     <string name="shop_m">店铺：</string>
     <string name="return_count">退款笔数</string>

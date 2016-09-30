@@ -192,7 +192,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rl_salereturn:
                 gotoFunction(ReturnGoodsByNormalActivity.class);
                 break;
+            case R.id.rl_change:
+                gotoWorkLog();
+                break;
         }
+    }
+
+    public void gotoWorkLog(){
+        Intent intent = new Intent(this,WorkLogActivity.class);
+        intent.putExtra(ConstantData.FLAG, ConstantData.DAY);
+        startActivity(intent);
     }
     public void gotoPay(){
         Intent intent = new Intent(this,PaymentActivity.class);

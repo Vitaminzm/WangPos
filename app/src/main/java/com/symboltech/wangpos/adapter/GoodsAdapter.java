@@ -93,6 +93,7 @@ public class GoodsAdapter extends BaseAdapter {
 		}else {
 			holder = (Viewholder) convertView.getTag();
 		}
+		goods.get(position).setInx((position + 1) + "");
 		holder.imageview_quantity_plus.setTag(position);
 		holder.imageview_quantity_minus.setTag(position);
 		holder.text_good_name.setText(goodsInfo.getGoodsname());

@@ -19,237 +19,201 @@
         android:background="@color/green"
         android:layout_height="@dimen/height_ez" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_below="@id/common_title_bar"
-        android:layout_margin="@dimen/margin_rz"
-        android:orientation="vertical"
+        android:layout_above="@id/text_member_activate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_rz"
-            android:textColor="@color/font_color"
-            android:gravity="center"
-            android:text="@string/member_info"/>
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_rz"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:text="@string/member_name_m"
-                android:textColor="@color/font_color"/>
-            <TextView
-                android:id="@+id/text_member_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:layout_marginLeft="5dp"
-                android:textColor="@color/font_color"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_rz"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:text="@string/member_card_no_m"
-                android:textColor="@color/font_color"/>
-            <TextView
-                android:id="@+id/text_member_card_no"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:layout_marginLeft="5dp"
-                android:textColor="@color/font_color"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_rz"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:text="@string/member_score_m"
-                android:textColor="@color/font_color"/>
-            <TextView
-                android:id="@+id/text_member_score"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:layout_marginLeft="5dp"
-                android:textColor="@color/font_color"/>
-        </LinearLayout>
-        <View
-            android:id="@+id/view_line"
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:background="@color/view_line_color"
-            android:layout_marginTop="@dimen/margin_rz"
-            android:layout_height="1dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_rz"
-            android:textColor="@color/font_color"
-            android:layout_marginTop="@dimen/margin_rz"
-            android:layout_marginBottom="@dimen/margin_rz"
-            android:gravity="center"
-            android:text="@string/sale_info"/>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_sz">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:textColor="@color/white"
-                android:text="@string/sale_total"
-                android:textSize="@dimen/font_size_tf"
-                android:gravity="center"
-                android:background="@drawable/green_corner_left_bt_shape"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/view_line_colors"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:background="@color/green"
-                android:textColor="@color/white"
-                android:text="@string/sale_times"
-                android:textSize="@dimen/font_size_tf"
-                android:gravity="center"
-                android:layout_height="match_parent" />
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/view_line_colors"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:text="@string/unit_price"
-                android:textSize="@dimen/font_size_tf"
-                android:gravity="center"
-                android:background="@drawable/green_corner_right_bt_shape"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_sz">
-            <TextView
-                android:id="@+id/text_sale_total"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:textColor="@color/font_color"
-                android:singleLine="true"
-                android:gravity="center"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/view_line_colors"/>
-            <TextView
-                android:id="@+id/text_sale_times"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_size_tf"
-                android:singleLine="true"
-                android:gravity="center"
-                android:layout_height="match_parent" />
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/view_line_colors"/>
-            <TextView
-                android:id="@+id/text_unit_price"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_size_tf"
-                android:singleLine="true"
-                android:gravity="center"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_sz">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:textColor="@color/white"
-                android:text="@string/time"
-                android:textSize="@dimen/font_size_tf"
-                android:gravity="center"
-                android:background="@drawable/green_corner_left_bt_shape"/>
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/view_line_colors"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:background="@color/green"
-                android:textColor="@color/white"
-                android:text="@string/count"
-                android:textSize="@dimen/font_size_tf"
-                android:gravity="center"
-                android:layout_height="match_parent" />
-            <View
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:background="@color/view_line_colors"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:text="@string/used_coupon"
-                android:textSize="@dimen/font_size_tf"
-                android:gravity="center"
-                android:background="@drawable/green_corner_right_bt_shape"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-        <RelativeLayout
+            android:layout_margin="@dimen/margin_rz"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_rz"
+                android:textColor="@color/font_color"
+                android:gravity="center"
+                android:text="@string/member_info"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_rz"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:text="@string/member_name_m"
+                    android:textColor="@color/font_color"/>
+                <TextView
+                    android:id="@+id/text_member_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/font_color"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_rz"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:text="@string/member_card_no_m"
+                    android:textColor="@color/font_color"/>
+                <TextView
+                    android:id="@+id/text_member_card_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/font_color"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_rz"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:text="@string/member_score_m"
+                    android:textColor="@color/font_color"/>
+                <TextView
+                    android:id="@+id/text_member_score"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="@color/font_color"/>
+            </LinearLayout>
+            <View
+                android:id="@+id/view_line"
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:background="@color/view_line_color"
+                android:layout_marginTop="@dimen/margin_rz"
+                android:layout_height="1dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_rz"
+                android:textColor="@color/font_color"
+                android:layout_marginTop="@dimen/margin_rz"
+                android:layout_marginBottom="@dimen/margin_rz"
+                android:gravity="center"
+                android:text="@string/sale_info"/>
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/height_xv">
+                android:layout_height="@dimen/height_sz">
                 <TextView
-                    android:id="@+id/time"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:text="@string/sale_total"
+                    android:textSize="@dimen/font_size_tf"
+                    android:gravity="center"
+                    android:background="@drawable/green_corner_left_bt_shape"/>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/view_line_colors"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/green"
+                    android:textColor="@color/white"
+                    android:text="@string/sale_times"
+                    android:textSize="@dimen/font_size_tf"
+                    android:gravity="center"
+                    android:layout_height="match_parent" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/view_line_colors"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/white"
+                    android:text="@string/unit_price"
+                    android:textSize="@dimen/font_size_tf"
+                    android:gravity="center"
+                    android:background="@drawable/green_corner_right_bt_shape"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_sz">
+                <TextView
+                    android:id="@+id/text_sale_total"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:textColor="@color/font_color"
+                    android:singleLine="true"
                     android:gravity="center"/>
                 <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="@color/view_line_colors"/>
                 <TextView
-                    android:id="@+id/money"
+                    android:id="@+id/text_sale_times"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_tf"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:layout_height="match_parent" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/view_line_colors"/>
+                <TextView
+                    android:id="@+id/text_unit_price"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_tf"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_sz">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/white"
+                    android:text="@string/time"
+                    android:textSize="@dimen/font_size_tf"
+                    android:gravity="center"
+                    android:background="@drawable/green_corner_left_bt_shape"/>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/view_line_colors"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:background="@color/green"
+                    android:textColor="@color/white"
+                    android:text="@string/count"
                     android:textSize="@dimen/font_size_tf"
                     android:gravity="center"
                     android:layout_height="match_parent" />
@@ -258,79 +222,124 @@
                     android:layout_height="match_parent"
                     android:background="@color/view_line_colors"/>
                 <TextView
-                    android:id="@+id/used_coupon"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:textColor="@color/font_color"
+                    android:textColor="@color/white"
+                    android:text="@string/used_coupon"
                     android:textSize="@dimen/font_size_tf"
                     android:gravity="center"
+                    android:background="@drawable/green_corner_right_bt_shape"
                     android:layout_height="match_parent" />
             </LinearLayout>
-        </RelativeLayout>
-
-        <View
-            android:layout_gravity="center"
-            android:layout_width="match_parent"
-            android:background="@color/view_line_color"
-            android:layout_marginTop="@dimen/margin_rz"
-            android:layout_height="1dp"/>
-        <LinearLayout
-            android:id="@+id/ll_member_hold_coupon"
-            android:layout_marginTop="@dimen/margin_oz"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_rz"
-                android:textColor="@color/font_color"
-                android:layout_centerVertical="true"
-                android:text="@string/member_hold_coupon"
-                android:gravity="center"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:layout_marginTop="@dimen/margin_rz"
-                android:layout_marginBottom="@dimen/margin_rz"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_ez"
-                android:scrollbars="none"
-                android:listSelector="@drawable/gridview_selector"
-                android:cacheColorHint="@color/transparent" />
-            <View
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:background="@color/view_line_color"
-                android:layout_alignParentBottom="true"
-                android:layout_height="1dp"/>
-        </LinearLayout>
-        <LinearLayout
-            android:layout_marginTop="@dimen/margin_oz"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_rz"
-                android:textColor="@color/font_color"
-                android:layout_centerVertical="true"
-                android:text="@string/good_recommend"
-                android:gravity="center"/>
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/height_xv">
+                    <TextView
+                        android:id="@+id/time"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="match_parent"
+                        android:textColor="@color/font_color"
+                        android:gravity="center"/>
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/view_line_colors"/>
+                    <TextView
+                        android:id="@+id/money"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_size_tf"
+                        android:gravity="center"
+                        android:layout_height="match_parent" />
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/view_line_colors"/>
+                    <TextView
+                        android:id="@+id/used_coupon"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_size_tf"
+                        android:gravity="center"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+            </RelativeLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:layout_marginTop="@dimen/margin_rz"
-                android:layout_marginBottom="@dimen/margin_rz"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/height_ez"
-                android:scrollbars="none"
-                android:listSelector="@drawable/gridview_selector"
-                android:cacheColorHint="@color/transparent" />
             <View
                 android:layout_gravity="center"
                 android:layout_width="match_parent"
                 android:background="@color/view_line_color"
-                android:layout_alignParentBottom="true"
+                android:layout_marginTop="@dimen/margin_rz"
                 android:layout_height="1dp"/>
+            <LinearLayout
+                android:id="@+id/ll_member_hold_coupon"
+                android:layout_marginTop="@dimen/margin_oz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_rz"
+                    android:textColor="@color/font_color"
+                    android:layout_centerVertical="true"
+                    android:text="@string/member_hold_coupon"
+                    android:gravity="center"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycleview_hold_coupon"
+                    android:layout_marginTop="@dimen/margin_rz"
+                    android:layout_marginBottom="@dimen/margin_rz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    android:listSelector="@drawable/gridview_selector"
+                    android:cacheColorHint="@color/transparent" />
+                <View
+                    android:layout_width="match_parent"
+                    android:background="@color/view_line_color"
+                    android:layout_alignParentBottom="true"
+                    android:layout_height="1dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/margin_oz"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_rz"
+                    android:textColor="@color/font_color"
+                    android:layout_centerVertical="true"
+                    android:text="@string/good_recommend"
+                    android:gravity="center"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycleview_recommend_good"
+                    android:layout_marginTop="@dimen/margin_rz"
+                    android:layout_marginBottom="@dimen/margin_rz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/height_ez"
+                    android:scrollbars="none"
+                    android:listSelector="@drawable/gridview_selector"
+                    android:cacheColorHint="@color/transparent" />
+                <View
+                    android:layout_gravity="center"
+                    android:layout_width="match_parent"
+                    android:background="@color/view_line_color"
+                    android:layout_alignParentBottom="true"
+                    android:layout_height="1dp"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
+
 </RelativeLayout>

@@ -7,131 +7,52 @@
     tools:context="com.symboltech.wangpos.activity.PaymentDetailActivity">
     <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_below="@id/common_title_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_above="@+id/ll_member_hold_coupon"
+        android:background="@drawable/icon_bg_scroll"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_marginTop="@dimen/margin_ov"
-        android:paddingLeft="@dimen/margin_fz"
-        android:paddingTop="@dimen/margin_ov"
-        android:orientation="vertical"
-        android:layout_above="@+id/ll_member_hold_coupon">
-        <TextView
-            android:layout_width="wrap_content"
+        android:layout_marginTop="@dimen/margin_tz"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_marginTop="@dimen/margin_ov"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_rz"
-            android:text="@string/order_info"
-            android:textColor="@color/green"/>
-        <LinearLayout
-            android:layout_marginTop="@dimen/margin_ov"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:paddingLeft="@dimen/margin_fz"
+            android:paddingTop="@dimen/margin_ov"
+            android:orientation="vertical">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:text="@string/order_id"
-                android:textColor="@color/font_color"/>
-            <TextView
-                android:id="@+id/text_order_id"
+                android:textSize="@dimen/font_size_rz"
+                android:text="@string/order_info"
+                android:textColor="@color/green"/>
+            <LinearLayout
+                android:layout_marginTop="@dimen/margin_ov"
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:text="0"
-                android:textColor="@color/font_color"/>
-        </LinearLayout>
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:text="@string/order_id"
+                    android:textColor="@color/font_color"/>
+                <TextView
+                    android:id="@+id/text_order_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_tf"
+                    android:text="0"
+                    android:textColor="@color/font_color"/>
+            </LinearLayout>
 
-        <LinearLayout
-            android:layout_marginTop="@dimen/margin_ov"
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
+            <LinearLayout
+                android:layout_marginTop="@dimen/margin_ov"
+                android:orientation="horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:text="@string/order_time"
-                android:textColor="@color/font_color"/>
-            <TextView
-                android:id="@+id/text_order_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_tf"
-                android:text="0"
-                android:textColor="@color/font_color"/>
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_marginTop="@dimen/margin_ov"
-                android:orientation="horizontal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="@string/order_money"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:id="@+id/text_order_money"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="0"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:layout_marginLeft="@dimen/margin_oz"
-                    android:text="@string/yuan"
-                    android:textColor="@color/font_color"/>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/ll_coupon"
-                android:layout_marginTop="@dimen/margin_ov"
-                android:orientation="horizontal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="@string/coupon_m"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:id="@+id/text_coupon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="0"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:layout_marginLeft="@dimen/margin_oz"
-                    android:text="@string/yuan"
-                    android:textColor="@color/font_color"/>
-            </LinearLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_marginTop="@dimen/margin_ov"
-                android:orientation="horizontal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content">
                 <TextView
                     android:layout_width="wrap_content"
@@ -140,167 +61,261 @@
                     android:text="@string/order_time"
                     android:textColor="@color/font_color"/>
                 <TextView
+                    android:id="@+id/text_order_time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/font_size_tf"
                     android:text="0"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:layout_marginLeft="@dimen/margin_oz"
-                    android:text="@string/yuan"
                     android:textColor="@color/font_color"/>
             </LinearLayout>
             <LinearLayout
-                android:layout_marginTop="@dimen/margin_ov"
                 android:orientation="horizontal"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="@string/order_time"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="0"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:layout_marginLeft="@dimen/margin_oz"
-                    android:text="@string/yuan"
-                    android:textColor="@color/font_color"/>
+                <LinearLayout
+                    android:layout_marginTop="@dimen/margin_ov"
+                    android:orientation="horizontal"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="@string/order_money"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:id="@+id/text_order_money"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="0"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:layout_marginLeft="@dimen/margin_oz"
+                        android:text="@string/yuan"
+                        android:textColor="@color/font_color"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_coupon"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/margin_ov"
+                    android:orientation="horizontal"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="@string/coupon_m"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:id="@+id/text_coupon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="0"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:layout_marginLeft="@dimen/margin_oz"
+                        android:text="@string/yuan"
+                        android:textColor="@color/font_color"/>
+                </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_marginTop="@dimen/margin_ov"
+                    android:orientation="horizontal"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="@string/real_pay_m"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:id="@+id/text_real_pay_money"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="0"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:layout_marginLeft="@dimen/margin_oz"
+                        android:text="@string/yuan"
+                        android:textColor="@color/font_color"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/ll_score_deduction"
+                    android:visibility="gone"
+                    android:layout_marginTop="@dimen/margin_ov"
+                    android:orientation="horizontal"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="@string/score_deduction_m"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:id="@+id/text_score_deduction"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="0"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:layout_marginLeft="@dimen/margin_oz"
+                        android:text="@string/yuan"
+                        android:textColor="@color/font_color"/>
+                </LinearLayout>
+            </LinearLayout>
 
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_rz"
-            android:layout_marginTop="@dimen/margin_ov"
-            android:text="@string/pay_info"
-            android:textColor="@color/red"/>
-        <com.symboltech.wangpos.view.GridViewForScrollView
-            android:id="@+id/activity_payment_gridview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:cacheColorHint="@color/transparent"
-            android:listSelector="@drawable/gridview_selector"
-            android:numColumns="2"
-            android:scrollbars="none"/>
-
-        <LinearLayout
-            android:id="@+id/ll_score_info"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/font_size_rz"
                 android:layout_marginTop="@dimen/margin_ov"
-                android:text="@string/score_info"
+                android:text="@string/pay_info"
                 android:textColor="@color/red"/>
+            <GridView
+                android:id="@+id/activity_payment_gridview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:cacheColorHint="@color/transparent"
+                android:listSelector="@drawable/gridview_selector"
+                android:numColumns="2"
+                android:scrollbars="none"/>
+
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/ll_score_info"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_rz"
                     android:layout_marginTop="@dimen/margin_ov"
+                    android:text="@string/score_info"
+                    android:textColor="@color/red"/>
+                <LinearLayout
                     android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="@string/add_score_m"
-                        android:textColor="@color/font_color"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="0"
-                        android:textColor="@color/font_color"/>
+                    <LinearLayout
+                        android:layout_marginTop="@dimen/margin_ov"
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="@string/add_score_m"
+                            android:textColor="@color/font_color"/>
+                        <TextView
+                            android:id="@+id/text_add_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="0"
+                            android:textColor="@color/font_color"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_marginTop="@dimen/margin_ov"
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="@string/consume_score_m"
+                            android:textColor="@color/font_color"/>
+                        <TextView
+                            android:id="@+id/text_used_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="0"
+                            android:textColor="@color/font_color"/>
+                    </LinearLayout>
                 </LinearLayout>
                 <LinearLayout
-                    android:layout_marginTop="@dimen/margin_ov"
                     android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="@string/consume_score_m"
-                        android:textColor="@color/font_color"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="0"
-                        android:textColor="@color/font_color"/>
-                </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <LinearLayout
-                    android:layout_marginTop="@dimen/margin_ov"
-                    android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="@string/score_deduction_cash_m"
-                        android:textColor="@color/font_color"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="0"
-                        android:textColor="@color/font_color"/>
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_marginTop="@dimen/margin_ov"
-                    android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="@string/now_score_m"
-                        android:textColor="@color/font_color"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="@dimen/font_size_tf"
-                        android:text="0"
-                        android:textColor="@color/font_color"/>
+                    <LinearLayout
+                        android:layout_marginTop="@dimen/margin_ov"
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="@string/score_deduction_cash_m"
+                            android:textColor="@color/font_color"/>
+                        <TextView
+                            android:id="@+id/text_deduction_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="0"
+                            android:textColor="@color/font_color"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_marginTop="@dimen/margin_ov"
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="@string/now_score_m"
+                            android:textColor="@color/font_color"/>
+                        <TextView
+                            android:id="@+id/text_now_score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="0"
+                            android:textColor="@color/font_color"/>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
+
 
     <TextView
-        android:id="@+id/text_confirm"
+        android:id="@+id/text_done"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
@@ -315,7 +330,7 @@
     <LinearLayout
         android:id="@+id/ll_function"
         android:layout_width="match_parent"
-        android:layout_above="@id/text_confirm"
+        android:layout_above="@id/text_done"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginBottom="@dimen/margin_rz"
@@ -360,9 +375,10 @@
             android:gravity="center"/>
 
         <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycleview_send_coupon"
             android:layout_marginTop="@dimen/margin_rz"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/height_ez"
+            android:layout_height="wrap_content"
             android:scrollbars="none"
             android:listSelector="@drawable/gridview_selector"
             android:cacheColorHint="@color/transparent" />
