@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.activity;
 
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -16,9 +17,12 @@ import com.symboltech.wangpos.adapter.PaymentTypeAdapter;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoAdapter;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.dialog.CanclePayDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.CancleCallback;
+import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
@@ -173,7 +177,7 @@ public class CheckOutActivity extends BaseActivity {
                     return;
                 }
                 double money = ArithDouble.parseDouble(edit_input_money.getText().toString());
-                if(money <= 0){
+                if (money <= 0) {
                     ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_money_not_zero));
                     return;
                 }
@@ -184,6 +188,7 @@ public class CheckOutActivity extends BaseActivity {
         });
         getPayType();
         paymentTypeInfoadapter = new PaymentTypeInfoAdapter(getApplicationContext(), payMentsCancle);
+        paymentTypeInfoadapter.registerDataSetObserver(new PaymentTypeInfoObserver());
         listview_pay_info.setAdapter(paymentTypeInfoadapter);
     }
 
@@ -219,9 +224,6 @@ public class CheckOutActivity extends BaseActivity {
                         addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
                     }
                 }
-                waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
         }
     }
@@ -230,9 +232,6 @@ public class CheckOutActivity extends BaseActivity {
         if (info != null) {
             paymentTypeInfoadapter.add(info);
             paymentTypeAdapter.setPayTpyeNull();
-            waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
             return;
         }
         PayMentsCancleInfo payMentsInfo = new PayMentsCancleInfo();
@@ -316,6 +315,12 @@ public class CheckOutActivity extends BaseActivity {
         int id = view.getId();
         switch (id){
             case R.id.text_cancle_pay:
+                new CanclePayDialog(this, payMentsCancle, new CancleCallback() {
+                    @Override
+                    public void doResult() {
+                        deletepayMentsInfo();
+                    }
+                }).show();
                 break;
             case R.id.text_submit_order:
                 payments.clear();
@@ -346,8 +351,8 @@ public class CheckOutActivity extends BaseActivity {
                 //增加优惠券
                 if (orderCoupon > 0.0) {
                     PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
-                    payMentsInfoCoupon.setId(getPayTypeId(PaymentTypeEnum.CARD));
-                    payMentsInfoCoupon.setType(PaymentTypeEnum.CARD.getStyletype());
+                    payMentsInfoCoupon.setId(getPayTypeId(PaymentTypeEnum.COUPON));
+                    payMentsInfoCoupon.setType(PaymentTypeEnum.COUPON.getStyletype());
                     payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.add(orderCoupon, orderCouponOverrage)));
                     payMentsInfoCoupon.setOverage(String.valueOf(orderCouponOverrage));
                     payments.add(payMentsInfoCoupon);
@@ -389,15 +394,79 @@ public class CheckOutActivity extends BaseActivity {
                 intent.putExtra(ConstantData.GET_ORDER_SCORE_INFO, orderScore);
                 intent.putExtra(ConstantData.USE_INTERRAL, (Serializable)exchangeInfo);
 
-                intent.putExtra(ConstantData.GET_ORDER_CARD_OVERAGE, orderCouponOverrage);
-                intent.putExtra(ConstantData.GET_ORDER_CARD_INFO, orderCoupon);
+                intent.putExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, orderCouponOverrage);
+                intent.putExtra(ConstantData.GET_ORDER_COUPON_INFO, orderCoupon);
                 intent.putExtra(ConstantData.CAN_USED_COUPON, (Serializable)coupons);
                 startActivityForResult(intent, ConstantData.MEMBER_EQUITY_REQUEST_CODE);
                 break;
             case R.id.title_icon_back:
+                if(ArithDouble.sub(orderTotleValue, waitPayValue) > 0){
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_pay_return_failed));
+                    return;
+                }
                 this.finish();
                 break;
         }
+    }
+
+    // 清空左面的显示支付方式（已经撤销的）
+    public void deletepayMentsInfo() {
+        double cancle = 0;
+        for (int i = 0; i < payMentsCancle.size(); i++) {
+            PayMentsCancleInfo info = payMentsCancle.get(i);
+            if (info.getIsCancle()) {
+                cancle = ArithDouble.add(cancle, ArithDouble.parseDouble(info.getMoney()));
+                payMentsCancle.remove(i);
+                i--;
+            }
+        }
+        if(cancle > 0){
+            //如果有找零，对找零做处理
+            for (int i = 0; i < payMentsCancle.size(); i++) {
+                PayMentsCancleInfo info = payMentsCancle.get(i);
+                if (info.getType().equals(PaymentTypeEnum.LING.getStyletype())) {
+                    if(cancle >= ArithDouble.parseDouble(info.getMoney())){
+                        payMentsCancle.remove(i);
+                    }else{
+                        info.setMoney(""+ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), cancle));
+                    }
+                    break;
+                }
+            }
+        }
+
+        paymentTypeInfoadapter.notifyDataSetChanged();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == ConstantData.MEMBER_EQUITY_RESULT_CODE){
+            if(requestCode == ConstantData.MEMBER_EQUITY_REQUEST_CODE){
+                orderScoreOverrage = data.getDoubleExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, 0.0);
+                // 使用的积分抵扣金额
+                orderScore = ArithDouble.sub(data.getDoubleExtra(ConstantData.GET_ORDER_SCORE_INFO, 0.0), orderScoreOverrage);
+                if (orderScore > 0) {
+                    text_score_deduction_money.setText(orderScore + "");
+                }
+                exchangeInfo = (ExchangeInfo) data.getSerializableExtra(ConstantData.USE_INTERRAL);
+                // 使用的卡券
+                // 获取使用卡券信息
+                coupons = (List<CouponInfo>) data.getSerializableExtra(ConstantData.CAN_USED_COUPON);
+                orderCouponOverrage = data.getDoubleExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, 0.0);
+                orderCoupon = ArithDouble.sub(data.getDoubleExtra(ConstantData.GET_ORDER_COUPON_INFO, 0.0), orderCouponOverrage);
+                if (orderCoupon > 0.0) {
+                    text_coupon_deduction_money.setText(orderCoupon + "");
+                }
+                // 设置实付金额和待付金额
+                waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+
+            }
+        }else {
+            paymentTypeAdapter.setPayTpyeNull();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void commitOrder() {
@@ -556,5 +625,21 @@ public class CheckOutActivity extends BaseActivity {
             }
         }
         return null;
+    }
+
+    class PaymentTypeInfoObserver extends DataSetObserver{
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+        }
+
+        @Override
+        public void onInvalidated() {
+            // TODO Auto-generated method stub
+            super.onInvalidated();
+        }
     }
 }

@@ -156,6 +156,10 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_sz">
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/view_line_colors"/>
                 <TextView
                     android:id="@+id/text_sale_total"
                     android:layout_width="0dp"
@@ -190,6 +194,10 @@
                     android:singleLine="true"
                     android:gravity="center"
                     android:layout_height="match_parent" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/view_line_colors"/>
             </LinearLayout>
             <LinearLayout
                 android:orientation="horizontal"
@@ -238,6 +246,10 @@
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/height_xv">
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/view_line_colors"/>
                     <TextView
                         android:id="@+id/time"
                         android:layout_width="0dp"
@@ -269,7 +281,12 @@
                         android:textSize="@dimen/font_size_tf"
                         android:gravity="center"
                         android:layout_height="match_parent" />
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/view_line_colors"/>
                 </LinearLayout>
+
             </RelativeLayout>
 
             <View
@@ -309,6 +326,7 @@
                     android:layout_height="1dp"/>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/ll_member_recommand_goods"
                 android:visibility="gone"
                 android:layout_marginTop="@dimen/margin_oz"
                 android:layout_width="match_parent"

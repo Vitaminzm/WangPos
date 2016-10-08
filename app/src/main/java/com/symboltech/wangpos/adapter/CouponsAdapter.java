@@ -61,24 +61,11 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.ViewHold
 			}
 		}
 	}
-	
-	public void addAllByshow(Collection<CouponInfo> collection){
-		if(couponinfos != null && couponinfos.size() >0 && collection != null){
-			for(int i=0;i<couponinfos.size();i++){
-				if(isExit(collection, couponinfos.get(i))){
-					if(!isSelect(i))
-						addSelect(i);
-				}
-			}
-			notifyDataSetChanged();
-		}
-		
-	}
-	
-	public boolean isExit(Collection<CouponInfo> collection, CouponInfo couponInfo){
+
+	public boolean isExit(CouponInfo couponInfo){
 		boolean ret = false;
-		if(collection != null && collection.size() >0 && couponInfo != null){
-			for(CouponInfo info:collection){
+		if(couponinfos != null && couponinfos.size() >0 && couponInfo != null){
+			for(CouponInfo info:couponinfos){
 				if(info != null){
 					if(info.getCouponno().equals(couponInfo.getCouponno())){
 						ret = true;
@@ -127,8 +114,8 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.ViewHold
 		return false;
 	}
 	
-	public void addAll(Collection<CouponInfo> collection){
-		couponinfos.addAll(collection);
+	public void add(CouponInfo collection){
+		couponinfos.add(collection);
 		notifyDataSetChanged();
 	}
 	

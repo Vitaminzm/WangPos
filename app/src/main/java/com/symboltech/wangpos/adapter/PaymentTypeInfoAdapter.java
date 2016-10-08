@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.CashierInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.utils.ArithDouble;
@@ -69,8 +70,8 @@ public class PaymentTypeInfoAdapter extends BaseAdapter {
 		}else {
 			holder = (Viewholder) convertView.getTag();
 		}
-		holder.tv_name.setText(StringUtil.formatRString(8,paymentsInfo.get(position).getName()+":"));
-		holder.tv_value.setText(StringUtil.formatRString(8, paymentsInfo.get(position).getMoney()));
+		holder.tv_name.setText(paymentsInfo.get(position).getName()+":");
+		holder.tv_value.setText(paymentsInfo.get(position).getMoney());
 		return convertView;
 	}
 	

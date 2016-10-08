@@ -256,10 +256,10 @@ public class ConstantData {
 	public static final String GET_ORDER_VALUE_INFO = "get_order_value_info";
 
 	/** 可用纸券 */
-	public static final String GET_ORDER_CARD_INFO = "get_order_cash_info";
+	public static final String GET_ORDER_COUPON_INFO = "get_order_cash_info";
 
 	/** 可用纸券溢余 */
-	public static final String GET_ORDER_CARD_OVERAGE = "get_order_cash_overage";
+	public static final String GET_ORDER_COUPON_OVERAGE = "get_order_cash_overage";
 
 	/** 可用积分 */
 	public static final String GET_ORDER_SCORE_INFO = "get_order_score_info";

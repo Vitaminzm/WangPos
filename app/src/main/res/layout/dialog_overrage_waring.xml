@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cancle_pay"
+            android:text="@string/overrage_waring"
             android:textColor="@color/white"
             android:textSize="@dimen/big_font_size"
             android:layout_centerInParent="true"/>
@@ -36,51 +36,32 @@
         android:layout_below="@id/title_bar"
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_above="@+id/linearLayout">
+
         <TextView
+            android:id="@+id/text_msg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_tf"
-            android:text="@string/already_pay"
-            android:textColor="@color/font_color"/>
-        <TextView
-            android:id="@+id/text_money"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_rx"
+            android:textSize="@dimen/font_size_ft"
             android:layout_marginLeft="@dimen/margin_rz"
             android:text="0"
             android:textColor="@color/red"/>
-        <TextView
-            android:id="@+id/text_info"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_tf"
-            android:layout_marginLeft="5dp"
-            android:text="@string/yuan"
-            android:textColor="@color/font_color"/>
+
     </LinearLayout>
-    <ListView
-        android:layout_below="@id/ll_already_pay"
-        android:id="@+id/listview_canclepay"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_trz"
-        android:gravity="center"
-        android:layout_marginRight="@dimen/margin_nv"
-        android:layout_marginLeft="@dimen/margin_nv"
-        android:cacheColorHint="@color/transparent"
-        android:listSelector="@drawable/gridview_selector"
-        android:scrollbars="none"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/margin_xv"
         android:layout_marginLeft="@dimen/margin_xv"
-        android:layout_marginBottom="@dimen/margin_rv"
+        android:layout_marginBottom="@dimen/margin_fz"
         android:orientation="horizontal"
-        android:layout_height="@dimen/height_ez">
+        android:layout_height="@dimen/height_ez"
+        android:id="@+id/linearLayout">
         <TextView
-            android:id="@+id/text_cancle_pay"
+            android:id="@+id/text_cancle"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="@string/cancle"
@@ -90,7 +71,7 @@
             android:background="@drawable/btn_red_bg"
             android:layout_height="match_parent" />
         <TextView
-            android:id="@+id/text_submit_order"
+            android:id="@+id/text_confirm"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:text="@string/confirm"

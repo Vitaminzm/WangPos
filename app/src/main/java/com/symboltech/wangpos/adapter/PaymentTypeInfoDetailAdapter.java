@@ -48,7 +48,7 @@ public class PaymentTypeInfoDetailAdapter extends BaseAdapter {
 		Viewholder holder = null;
 		if(convertView == null) {
 			holder = new Viewholder();
-			convertView = mLayoutInflater.inflate(R.layout.item_payment_info, null);
+			convertView = mLayoutInflater.inflate(R.layout.item_payment_datail_info, null);
 			holder.tv_name = (TextView) convertView.findViewById(R.id.name_key);
 			holder.tv_value = (TextView) convertView.findViewById(R.id.name_value);
 			convertView.setTag(holder);

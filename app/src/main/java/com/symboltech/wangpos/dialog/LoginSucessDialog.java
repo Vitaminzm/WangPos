@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
@@ -21,9 +20,6 @@ import com.symboltech.wangpos.utils.ToastUtils;
  */
 public class LoginSucessDialog extends Dialog {
 	private Context context;
-	private String title, info;
-	private TextView tv_universalhint_title;
-	private TextView tv_universalhint_msg;
 	private DialogFinishCallBack finishcallback;
 	/** refresh UI By handler */
 	public Handler handler = new Handler() {
@@ -41,59 +37,25 @@ public class LoginSucessDialog extends Dialog {
 		};
 	};
 
-	/**
-	 *
-	 * @param context
-	 * @param mtitle
-	 *            标题
-	 * @param minfo
-	 *            内容
-	 */
-	public LoginSucessDialog(Context context, String mtitle, String minfo, DialogFinishCallBack callback) {
+	public LoginSucessDialog(Context context, DialogFinishCallBack callback) {
 		super(context, R.style.dialog_login_bg);
 		this.context = context;
-		this.title = mtitle;
-		this.info = minfo;
 		this.finishcallback = callback;
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog_universal_hint);
-		this.setCanceledOnTouchOutside(true);
-		initUI();
-		setdata();
+		setContentView(R.layout.dialog_login_seccess);
+		this.setCanceledOnTouchOutside(false);
+		handler.sendEmptyMessageDelayed(3, 2000);
 	}
 
 	@Override
 	public void dismiss() {
 		super.dismiss();
-		finishcallback.finish(0);
+		if(finishcallback != null)
+			finishcallback.finish(0);
+		handler.removeCallbacksAndMessages(null);
 	}
-	private void setdata() {
-		handler.sendEmptyMessageDelayed(3, 1000 * 3);
-//		if (!StringUtil.isEmpty(title)) {
-//			tv_universalhint_title.setVisibility(View.VISIBLE);
-//			tv_universalhint_title.setText(title);
-//		} else {
-//			tv_universalhint_title.setVisibility(View.GONE);
-//		}
-//
-//		if (!StringUtil.isEmpty(info)) {
-//			tv_universalhint_msg.setVisibility(View.VISIBLE);
-//			tv_universalhint_msg.setText(info);
-//		} else {
-//			tv_universalhint_msg.setVisibility(View.GONE);
-//		}
-//		if (isfinish) {
-//
-//		}
-	}
-
-	private void initUI() {
-		tv_universalhint_title = (TextView) findViewById(R.id.tv_universalhint_title);
-		tv_universalhint_msg = (TextView) findViewById(R.id.tv_universalhint_msg);
-	}
-
 }

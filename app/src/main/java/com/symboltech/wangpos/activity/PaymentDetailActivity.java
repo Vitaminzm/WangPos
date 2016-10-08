@@ -1,6 +1,5 @@
 package com.symboltech.wangpos.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -8,13 +7,10 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CouponsAdapter;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoDetailAdapter;
@@ -32,7 +28,6 @@ import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.GridViewForScrollView;
-import com.symboltech.zxing.decoding.Intents;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -48,6 +43,8 @@ public class PaymentDetailActivity extends BaseActivity {
 
     @Bind(R.id.title_text_content)
     TextView title_text_content;
+    @Bind(R.id.title_icon_back)
+    ImageView title_icon_back;
 
     @Bind(R.id.text_order_id)
     TextView text_order_id;
@@ -82,7 +79,7 @@ public class PaymentDetailActivity extends BaseActivity {
     TextView text_add_score;
 
     @Bind(R.id.activity_payment_gridview)
-    GridView activity_payment_gridview;
+    GridViewForScrollView activity_payment_gridview;
     private PaymentTypeInfoDetailAdapter paymentTypeInfoDetailAdapter;
 
     @Bind(R.id.recycleview_send_coupon)
@@ -116,6 +113,7 @@ public class PaymentDetailActivity extends BaseActivity {
     protected void initData() {
         inflater = LayoutInflater.from(mContext);
         couponInfos = new ArrayList<>();
+        title_icon_back.setVisibility(View.GONE);
         title_text_content.setText(getString(R.string.payment_info));
         text_order_id.setText(bill.getBillid());
         text_order_time.setText(bill.getSaletime());
@@ -140,7 +138,7 @@ public class PaymentDetailActivity extends BaseActivity {
                     text_score_deduction.setText("" + scoreDeduction);
                     ll_score_deduction.setVisibility(View.VISIBLE);
                 }
-            } else if (info.getType().equals(PaymentTypeEnum.CARD.getStyletype())) {
+            } else if (info.getType().equals(PaymentTypeEnum.COUPON.getStyletype())) {
                 card_coupon = ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage()));
                 if(ArithDouble.parseDouble(info.getOverage()) > 0){
                     text_coupon.setText("" + ArithDouble.parseDouble(info.getMoney())+"(溢余"+ArithDouble.parseDouble(info.getOverage())+")");
@@ -182,7 +180,7 @@ public class PaymentDetailActivity extends BaseActivity {
             totalPoint = ArithDouble.sub(awardPoint, ArithDouble.add(deductPoint, usedPoint));
             text_now_score.setText(ArithDouble.add(ArithDouble.parseDouble(bill.getMember().getCent_total()), totalPoint)+"");
         }
-        MyLayoutManager linearLayoutManagerHold = new MyLayoutManager(this);
+        MemberDetailActivity.MyLayoutManager linearLayoutManagerHold = new MemberDetailActivity.MyLayoutManager(this);
         linearLayoutManagerHold.setOrientation(LinearLayoutManager.HORIZONTAL);
         recycleview_send_coupon.setLayoutManager(linearLayoutManagerHold);
         if(bill.getGrantcouponlist() != null && bill.getGrantcouponlist().size() > 0){
@@ -204,7 +202,6 @@ public class PaymentDetailActivity extends BaseActivity {
         }else {
             ll_member_hold_coupon.setVisibility(View.GONE);
         }
-
     }
 
     private void addPayTypeInfo(String name, double changeMoney) {
@@ -231,13 +228,10 @@ public class PaymentDetailActivity extends BaseActivity {
         MyApplication.delActivity(this);
     }
 
-    @OnClick({R.id.title_icon_back, R.id.text_print_coupon, R.id.text_selected_plate, R.id.text_done})
+    @OnClick({R.id.text_print_coupon, R.id.text_selected_plate, R.id.text_done})
     public void click(View view){
         int id = view.getId();
         switch (id){
-            case R.id.title_icon_back:
-                this.finish();
-                break;
             case R.id.text_print_coupon:
                 couponInfos.clear();
                 if(sendAdapter == null){
@@ -325,87 +319,5 @@ public class PaymentDetailActivity extends BaseActivity {
     private void printCoupon(String data) {
         final String[] codes = data.split(";");
         //TODO
-    }
-
-    public static class MyLayoutManager extends LinearLayoutManager {
-
-        @SuppressWarnings("UnusedDeclaration")
-        public MyLayoutManager(Context context) {
-            super(context);
-        }
-
-        @SuppressWarnings("UnusedDeclaration")
-        public MyLayoutManager(Context context, int orientation, boolean reverseLayout) {
-            super(context, orientation, reverseLayout);
-        }
-
-        private int[] mMeasuredDimension = new int[2];
-
-
-        @Override
-        public void onMeasure(RecyclerView.Recycler recycler, RecyclerView.State state, int widthSpec, int heightSpec) {
-            final int widthMode = View.MeasureSpec.getMode(widthSpec);
-            final int heightMode = View.MeasureSpec.getMode(heightSpec);
-            final int widthSize = View.MeasureSpec.getSize(widthSpec);
-            final int heightSize = View.MeasureSpec.getSize(heightSpec);
-            int width = 0;
-            int height = 0;
-            for (int i = 0; i < getItemCount(); i++) {
-
-                try {
-                    measureScrapChild(recycler, i,
-                            widthSpec,
-                            View.MeasureSpec.makeMeasureSpec(i, View.MeasureSpec.UNSPECIFIED),
-                            mMeasuredDimension);
-                } catch (IndexOutOfBoundsException e) {
-
-                    e.printStackTrace();
-                }
-
-                if (getOrientation() == HORIZONTAL) {
-                    width = width + mMeasuredDimension[0];
-                    if (i == 0) {
-                        height = mMeasuredDimension[1];
-                    }
-                } else {
-                    height = height + mMeasuredDimension[1];
-                    if (i == 0) {
-                        width = mMeasuredDimension[0];
-                    }
-                }
-            }
-            switch (widthMode) {
-                case View.MeasureSpec.EXACTLY:
-                case View.MeasureSpec.AT_MOST:
-                case View.MeasureSpec.UNSPECIFIED:
-            }
-
-            switch (heightMode) {
-                case View.MeasureSpec.EXACTLY:
-                    height = heightSize;
-                case View.MeasureSpec.AT_MOST:
-                case View.MeasureSpec.UNSPECIFIED:
-            }
-            setMeasuredDimension(widthSpec, height);
-
-        }
-
-        private void measureScrapChild(RecyclerView.Recycler recycler, int position, int widthSpec, int heightSpec, int[] measuredDimension) {
-            View view = recycler.getViewForPosition(position);
-            if (view != null) {
-                RecyclerView.LayoutParams p = (RecyclerView.LayoutParams) view.getLayoutParams();
-                int childHeightSpec = ViewGroup.getChildMeasureSpec(heightSpec,
-                        getPaddingTop() + getPaddingBottom(), p.height);
-                view.measure(widthSpec, childHeightSpec);
-                measuredDimension[0] = view.getMeasuredWidth() + p.leftMargin + p.rightMargin;
-                measuredDimension[1] = view.getMeasuredHeight() + p.bottomMargin + p.topMargin;
-                recycler.recycleView(view);
-            }
-        }
-
-        @Override
-        public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
-            super.onLayoutChildren(recycler, state);
-        }
     }
 }

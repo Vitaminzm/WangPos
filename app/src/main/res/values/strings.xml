@@ -14,6 +14,11 @@
     <string name="member_telephone_not_member">该手机号不是会员</string>
     <string name="add_member_succedd">添加会员成功</string>
 
+    <!-- login -->
+    <string name="login_err_title">登录失败</string>
+    <string name="login_success">登录成功</string>
+    <string name="login_input_err">用户名或密码不正确，请重新输入</string>
+
     <!-- 会员通道-->
     <string name="number_access">会员通道</string>
     <string name="phone_number">手机号</string>
@@ -78,12 +83,22 @@
     <string name="waring_money_not_zero">输入金额不能为零</string>
     <string name="waring_msg_pay_success">支付已经完成</string>
     <string name="waring_msg_large">支付金额超出订单总额</string>
-    <string name="waring_msg_pay_failed">支付尚未完成</string>
+    <string name="waring_msg_pay_failed">支付尚未完成！</string>
+    <string name="waring_msg_pay_cancle_failed">交易进行中,请稍后</string>
+    <string name="waring_msg_pay_return_failed">含有未撤销的交易！</string>
+    <string name="waring_coupon_over_msg">优惠券已经超出,不能使用!</string>
+    <string name="waring_score_over_msg">积分大于待支付金额!</string>
+    <string name="waring_paytype_err_msg">该款台没有该收款方式</string>
+    <string name="waring_scan_coupon_msg">不能重复扫描同一张纸券</string>
+    <string name="waring_msg">输入的值不能大于可用值！</string>
+    <string name="waring_cannot_use_msg">当前积分不能抵扣</string>
+
 
     <string name="weichat">微钱宝</string>
     <string name="alipay">支付宝</string>
     <string name="bank">银行卡</string>
     <string name="cash">现  金</string>
+    <string name="recorded">补  录</string>
     <string name="payment_type_change">找零</string>
     <string name="weichat_pay">微钱宝支付：</string>
     <string name="alipay_pay">支付宝支付：</string>
@@ -224,7 +239,31 @@
     <string name="count_total">笔数合计</string>
     <string name="times">笔</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="overrage_waring">优惠券溢余</string>
+    <string name="waring_coupons_over_msg1">本笔交易可用优惠券</string>
+    <string name="waring_coupons_over_msg2">已选择</string>
+
+    <string name="waring_cancle_msg">撤销中</string>
+    <string name="waring_cancle_failed_msg">撤销失败</string>
+    <string name="thirdpay_pay_err">交易失败</string>
+    <string name="thirdpay_cancle_err">撤销失败</string>
+    <string name="thirdpay_returngood_err">退货失败</string>
+    <string name="thirdpay_paying">交易中...</string>
+    <string name="thirdpay_wait_pay">等待付款......</string>
+    <string name="thirdpay_succeed_enter">付款中, 请输入密码</string>
+    <string name="thirdpay_query_trade_no_null">获取流水号失败，请从主页查询</string>
+    <string name="thirdpay_cancle_succeed">撤销成功</string>
+    <string name="thirdpay_salesreturn_succee_ing">退款中.....</string>
+    <string name="thirdpay_salesreturn_fail">退款失败，\n是否确认退货单？</string>
+    <string name="thirdpay_salesreturn_succeed">退款成功</string>
+    <string name="thirdpay_paying_running">正在处理交易中，请稍后再试</string>
+    <string name="thirdpay_succeed">交易成功</string>
+
+
+    <string name="print_order">打票</string>
+    <string name="pay_bu_print_bill">补打小票</string>
+    <string name="pay_bu_print_slip">补打签购单</string>
+    <string name="please_input_order_no">请输入订单号</string>
+    <string name="pleae_order_number">请输入正确订单号</string>
 
 </resources>

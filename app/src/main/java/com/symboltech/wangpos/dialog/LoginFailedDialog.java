@@ -6,10 +6,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.utils.ToastUtils;
 
 /**
@@ -20,35 +18,39 @@ import com.symboltech.wangpos.utils.ToastUtils;
  * @version 1.0
  */
 public class LoginFailedDialog extends Dialog {
-	private TextView text_confirm;
-
-	/**
-	 *
-	 * @param context
-	 * @param mtitle
-	 *            标题
-	 * @param minfo
-	 *            内容
-	 */
-	public LoginFailedDialog(Context context, String mtitle, String minfo, DialogFinishCallBack callback) {
+	public Context context;
+	public Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+				case ToastUtils.TOAST_WHAT:
+					ToastUtils.showtaostbyhandler(context, msg);
+					break;
+				case 3:
+					LoginFailedDialog.this.dismiss();
+					break;
+				default:
+					break;
+			}
+		};
+	};
+	public LoginFailedDialog(Context context) {
 		super(context, R.style.dialog_login_bg);
+		this.context = context;
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog_universal_hint);
-		this.setCanceledOnTouchOutside(true);
-		initUI();
+		setContentView(R.layout.dialog_login_failed);
+		this.setCanceledOnTouchOutside(false);
+		handler.sendEmptyMessageDelayed(3, 2000);
 	}
 
 	@Override
 	public void dismiss() {
 		super.dismiss();
+		handler.removeCallbacksAndMessages(null);
 	}
 
-	private void initUI() {
-		text_confirm = (TextView) findViewById(R.id.tv_universalhint_title);
-	}
 
 }

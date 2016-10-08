@@ -14,10 +14,12 @@ import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CouponsAdapter;
+import com.symboltech.wangpos.adapter.RecommandGoodAdapter;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.msg.entity.AllMemberInfo;
 import com.symboltech.wangpos.msg.entity.CouponInfo;
+import com.symboltech.wangpos.msg.entity.GoodsInfo;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.utils.ToastUtils;
 
@@ -44,9 +46,12 @@ public class MemberDetailActivity extends BaseActivity {
     @Bind(R.id.ll_member_hold_coupon)
     LinearLayout ll_member_hold_coupon;
     private CouponsAdapter holdAdapter;
+
+    @Bind(R.id.ll_member_recommand_goods)
+    LinearLayout ll_member_recommand_goods;
     @Bind(R.id.recycleview_recommend_good)
     RecyclerView recycleview_recommend_good;
-
+    private RecommandGoodAdapter recommandGoodAdapter;
 
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
@@ -79,20 +84,30 @@ public class MemberDetailActivity extends BaseActivity {
             text_member_name.setText(memberInfo.getMembername());
             text_member_card_no.setText(memberInfo.getMemberno());
             text_member_score.setText(memberInfo.getCent_total());
-            couponlist = memberBigdate.getCouponlist();
-            MyLayoutManager linearLayoutManagerHold = new MyLayoutManager(this);
-            linearLayoutManagerHold.setOrientation(LinearLayoutManager.HORIZONTAL);
-            recycleview_hold_coupon.setLayoutManager(linearLayoutManagerHold);
-            MyLayoutManager linearLayoutManagerHold2 = new MyLayoutManager(this);
-            linearLayoutManagerHold2.setOrientation(LinearLayoutManager.HORIZONTAL);
-            recycleview_recommend_good.setLayoutManager(linearLayoutManagerHold2);
-            if (couponlist != null && couponlist.size() > 0){
-                ll_member_hold_coupon.setVisibility(View.VISIBLE);
-                holdAdapter = new CouponsAdapter(couponlist, 0, this);
-                recycleview_hold_coupon.setAdapter(holdAdapter);
-            }else {
-                ll_member_hold_coupon.setVisibility(View.GONE);
-            }
+        }
+
+        couponlist = memberBigdate.getCouponlist();
+        MyLayoutManager linearLayoutManagerHold = new MyLayoutManager(this);
+        linearLayoutManagerHold.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recycleview_hold_coupon.setLayoutManager(linearLayoutManagerHold);
+        MyLayoutManager linearLayoutManagerHold2 = new MyLayoutManager(this);
+        linearLayoutManagerHold2.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recycleview_recommend_good.setLayoutManager(linearLayoutManagerHold2);
+        if (couponlist != null && couponlist.size() > 0){
+            ll_member_hold_coupon.setVisibility(View.VISIBLE);
+            holdAdapter = new CouponsAdapter(couponlist, 0, this);
+            recycleview_hold_coupon.setAdapter(holdAdapter);
+        }else {
+            ll_member_hold_coupon.setVisibility(View.GONE);
+        }
+
+        List<GoodsInfo> goods = memberBigdate.getGoodslist();
+        if (goods != null && goods.size() > 0) {
+            recommandGoodAdapter = new RecommandGoodAdapter(goods, this);
+            recycleview_recommend_good.setAdapter(recommandGoodAdapter);
+            ll_member_recommand_goods.setVisibility(View.VISIBLE);
+        }else{
+            ll_member_recommand_goods.setVisibility(View.GONE);
         }
     }
 

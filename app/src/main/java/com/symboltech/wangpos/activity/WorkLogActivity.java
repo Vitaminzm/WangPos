@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.nineoldandroids.view.ViewHelper;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.ReportTableAdapter;
 import com.symboltech.wangpos.app.ConstantData;
@@ -28,6 +29,7 @@ import com.symboltech.wangpos.msg.entity.TotalReportInfo;
 import com.symboltech.wangpos.result.ReportResult;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.view.DecoratorViewPager;
 import com.symboltech.wangpos.view.ScllorTabView;
 
 import java.lang.ref.WeakReference;
@@ -48,7 +50,7 @@ public class WorkLogActivity extends BaseActivity {
     @Bind(R.id.text_total)TextView text_total;
     @Bind(R.id.text_desk_code)TextView text_desk_code;
     @Bind(R.id.text_shop)TextView text_shop;
-    @Bind(R.id.view_pager_statistics)ViewPager view_pager_statistics;
+    @Bind(R.id.view_pager_statistics)DecoratorViewPager view_pager_statistics;
     @Bind(R.id.scllortabview)ScllorTabView scllortabview;
 
     private ReportInfo reportInfo; // 报表数据
@@ -291,33 +293,27 @@ public class WorkLogActivity extends BaseActivity {
     }
 
     public static class DepthPageTransformer implements ViewPager.PageTransformer {
-        private static final float MIN_SCALE = 0.75f;
-
+        /**
+         * position参数指明给定页面相对于屏幕中心的位置。它是一个动态属性，会随着页面的滚动而改变。当一个页面填充整个屏幕是，它的值是0，
+         * 当一个页面刚刚离开屏幕的右边时，它的值是1。当两个也页面分别滚动到一半时，其中一个页面的位置是-0.5，另一个页面的位置是0.5。基于屏幕上页面的位置
+         * ，通过使用诸如setAlpha()、setTranslationX()、或setScaleY()方法来设置页面的属性，来创建自定义的滑动动画。
+         */
+        @Override
         public void transformPage(View view, float position) {
-            int pageWidth = view.getWidth();
+            if (position <= 0) {
+                //从右向左滑动为当前View
 
-            if (position < -1) { // [-Infinity,-1)
-                // This page is way off-screen to the left.
-                view.setAlpha(0);
-            } else if (position <= 0) { // [-1,0]
-                // Use the default slide transition when moving to the left page
-                view.setAlpha(1);
-                view.setTranslationX(0);
-                view.setScaleX(1);
-                view.setScaleY(1);
-            } else if (position <= 1) { // (0,1]
-                // Fade the page out.
-                view.setAlpha(1 - position);
-                // Counteract the default slide transition
-                view.setTranslationX(pageWidth * -position);
-                // Scale the page down (between MIN_SCALE and 1)
-                float scaleFactor = MIN_SCALE
-                        + (1 - MIN_SCALE) * (1 - Math.abs(position));
-                view.setScaleX(scaleFactor);
-                view.setScaleY(scaleFactor);
-            } else { // (1,+Infinity]
-                // This page is way off-screen to the right.
-                view.setAlpha(0);
+                //设置旋转中心点；
+                ViewHelper.setPivotX(view, view.getMeasuredWidth());
+                ViewHelper.setPivotY(view, view.getMeasuredHeight() * 0.5f);
+
+                //只在Y轴做旋转操作
+                ViewHelper.setRotationY(view, 90f * position);
+            } else if (position <= 1) {
+                //从左向右滑动为当前View
+                ViewHelper.setPivotX(view, 0);
+                ViewHelper.setPivotY(view, view.getMeasuredHeight() * 0.5f);
+                ViewHelper.setRotationY(view, 90f * position);
             }
         }
     }

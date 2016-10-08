@@ -51,10 +51,13 @@
     <dimen name="height_xzz">342dp</dimen>
     <dimen name="height_vzz">285dp</dimen>
     <dimen name="height_fnz">280dp</dimen>
+    <dimen name="height_fez">274dp</dimen>
     <dimen name="height_fzz">228dp</dimen>
+    <dimen name="height_rsz">211dp</dimen>
     <dimen name="height_rxs">210dp</dimen>
     <dimen name="height_rxz">205dp</dimen>
     <dimen name="height_rvz">200dp</dimen>
+    <dimen name="height_rrz">188dp</dimen>
     <dimen name="height_rtt">184dp</dimen>
     <dimen name="height_rtz">182dp</dimen>
     <dimen name="height_roz">177dp</dimen>

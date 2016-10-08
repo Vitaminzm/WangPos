@@ -11,16 +11,17 @@
         android:layout_below="@id/common_title_bar"
         android:layout_above="@+id/ll_member_hold_coupon"
         android:background="@drawable/icon_bg_scroll"
+        android:layout_marginBottom="@dimen/margin_ov"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginTop="@dimen/margin_tz"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
         <LinearLayout
-            android:layout_marginTop="@dimen/margin_ov"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/margin_fz"
+            android:layout_marginLeft="@dimen/margin_fz"
+            android:layout_marginRight="@dimen/margin_fz"
             android:paddingTop="@dimen/margin_ov"
             android:orientation="vertical">
             <TextView
@@ -196,13 +197,16 @@
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/font_size_rz"
                 android:layout_marginTop="@dimen/margin_ov"
+                android:layout_marginBottom="@dimen/margin_ov"
                 android:text="@string/pay_info"
                 android:textColor="@color/red"/>
-            <GridView
+            <com.symboltech.wangpos.view.GridViewForScrollView
                 android:id="@+id/activity_payment_gridview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:cacheColorHint="@color/transparent"
+                android:horizontalSpacing = "@dimen/margin_rz"
+                android:verticalSpacing = "@dimen/margin_tz"
                 android:listSelector="@drawable/gridview_selector"
                 android:numColumns="2"
                 android:scrollbars="none"/>

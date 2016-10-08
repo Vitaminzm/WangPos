@@ -65,7 +65,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/title_icon_back"/>
+            android:src="@mipmap/icon_more"/>
         <LinearLayout
             android:orientation="vertical"
             android:layout_toLeftOf="@id/imageview_more"
@@ -312,6 +312,7 @@
         <TextView
             android:layout_marginTop="@dimen/margin_rz"
             android:layout_marginLeft="@dimen/margin_rz"
+            android:layout_marginBottom="@dimen/margin_tz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_size_rz"
@@ -322,8 +323,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="none"
-            android:layout_marginTop="@dimen/margin_rz"
-            android:divider="@null"
+            android:divider="@color/transparent"
+            android:dividerHeight = "@dimen/margin_ov"
             android:listSelector="@drawable/gridview_selector"
             android:cacheColorHint="@color/transparent"/>
     </LinearLayout>

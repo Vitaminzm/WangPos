@@ -8,6 +8,10 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_xv">
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/view_line_colors"/>
         <TextView
             android:id="@+id/text_sale_total"
             android:layout_width="0dp"
@@ -43,6 +47,10 @@
             android:singleLine="true"
             android:gravity="center"
             android:layout_height="match_parent" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="@color/view_line_colors"/>
     </LinearLayout>
     <View
         android:layout_width="match_parent"
