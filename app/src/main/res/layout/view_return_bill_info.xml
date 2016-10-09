@@ -20,12 +20,12 @@
         android:paddingLeft="@dimen/margin_fz"
         android:layout_toRightOf="@id/text_total"
         android:paddingTop="16dp"
+        android:gravity="center"
         android:paddingBottom="14dp"
         android:orientation="vertical">
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:orientation="horizontal">
         <TextView
             android:layout_width="wrap_content"
@@ -50,9 +50,9 @@
             android:textColor="@color/font_color"/>
     </LinearLayout>
         <LinearLayout
+            android:id="@+id/ll_return_score"
             android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"

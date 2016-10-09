@@ -19,10 +19,13 @@
         android:layout_below="@id/view_sales_info"
         android:orientation="vertical"
         android:layout_margin="@dimen/margin_rz"
+        android:background="@drawable/icon_bg_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:layout_marginTop="@dimen/margin_fz"
+            android:layout_marginLeft="@dimen/margin_fz"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -33,8 +36,6 @@
                 android:textSize="@dimen/font_size_tf"
                 android:layout_gravity="center"
                 android:text="@string/return_good"
-                android:layout_marginLeft="@dimen/margin_fz"
-                android:layout_marginRight="@dimen/margin_fz"
                 android:textColor="@color/font_color"/>
             <EditText
                 android:id="@+id/edit_return_good"
@@ -49,6 +50,8 @@
                 android:textColor="@color/font_color"/>
         </LinearLayout>
         <LinearLayout
+            android:layout_marginTop="@dimen/margin_fz"
+            android:layout_marginLeft="@dimen/margin_fz"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -59,8 +62,6 @@
                 android:textSize="@dimen/font_size_tf"
                 android:layout_gravity="center"
                 android:text="@string/return_money"
-                android:layout_marginLeft="@dimen/margin_fz"
-                android:layout_marginRight="@dimen/margin_fz"
                 android:textColor="@color/font_color"/>
             <EditText
                 android:id="@+id/edit_return_money"
@@ -83,6 +84,9 @@
                 android:textColor="@color/font_color"/>
         </LinearLayout>
         <LinearLayout
+            android:layout_marginTop="@dimen/margin_fz"
+            android:layout_marginLeft="@dimen/margin_fz"
+            android:layout_marginBottom="@dimen/margin_sz"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
@@ -93,15 +97,13 @@
                 android:textSize="@dimen/font_size_tf"
                 android:layout_gravity="center"
                 android:text="@string/return_handperson"
-                android:layout_marginLeft="@dimen/margin_fz"
-                android:layout_marginRight="@dimen/margin_fz"
                 android:textColor="@color/font_color"/>
             <EditText
                 android:id="@+id/edit_return_handperson"
                 android:layout_width="@dimen/height_rxz"
                 android:layout_height="@dimen/height_xz"
                 android:gravity="center"
-                android:text="asdasda"
+                android:hint="@string/return_handperson"
                 android:singleLine="true"
                 android:background="@drawable/edittext_bg_selector"
                 android:textSize="@dimen/font_size_rz"

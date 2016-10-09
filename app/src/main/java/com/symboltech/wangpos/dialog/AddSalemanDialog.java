@@ -11,11 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.adapter.AddGoodAdapter;
 import com.symboltech.wangpos.adapter.AddSalemanAdapter;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.msg.entity.CashierInfo;
-import com.symboltech.wangpos.msg.entity.GoodsInfo;
 
 import java.util.List;
 

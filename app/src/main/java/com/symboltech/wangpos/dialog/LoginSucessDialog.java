@@ -1,15 +1,12 @@
 package com.symboltech.wangpos.dialog;
 
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
-import com.symboltech.wangpos.utils.ToastUtils;
 
 /**
  * Description 通用提示dialog
@@ -22,20 +19,7 @@ public class LoginSucessDialog extends Dialog {
 	private Context context;
 	private DialogFinishCallBack finishcallback;
 	/** refresh UI By handler */
-	public Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case ToastUtils.TOAST_WHAT:
-				ToastUtils.showtaostbyhandler(context, msg);
-				break;
-			case 3:
-				LoginSucessDialog.this.dismiss();
-				break;
-			default:
-				break;
-			}
-		};
-	};
+	public Handler handler = new Handler();
 
 	public LoginSucessDialog(Context context, DialogFinishCallBack callback) {
 		super(context, R.style.dialog_login_bg);

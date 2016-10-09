@@ -20,6 +20,8 @@ import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.config.InitializeConfig;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
+import com.symboltech.wangpos.dialog.ChangeManagerDialog;
+import com.symboltech.wangpos.dialog.ReturnDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
@@ -185,24 +187,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 gotoFunction(MemberAccessActivity.class);
                 break;
             case R.id.rl_sendcarcoupon:
+
                 break;
             case R.id.rl_pay:
                 gotoPay();
                 break;
             case R.id.rl_salereturn:
-                gotoFunction(ReturnGoodsByNormalActivity.class);
+                new ReturnDialog(this).show();
                 break;
             case R.id.rl_change:
-                gotoWorkLog();
+                new ChangeManagerDialog(this).show();
                 break;
         }
     }
 
-    public void gotoWorkLog(){
-        Intent intent = new Intent(this,WorkLogActivity.class);
-        intent.putExtra(ConstantData.FLAG, ConstantData.DAY);
-        startActivity(intent);
-    }
     public void gotoPay(){
         Intent intent = new Intent(this,PaymentActivity.class);
         intent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_ACCOUNTS);

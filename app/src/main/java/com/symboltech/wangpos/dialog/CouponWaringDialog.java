@@ -29,21 +29,6 @@ public class CouponWaringDialog extends Dialog implements View.OnClickListener {
 	private TextView text_confirm;
 	private TextView text_msg;
 	private DialogFinishCallBack finishcallback;
-	/** refresh UI By handler */
-	public Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case ToastUtils.TOAST_WHAT:
-				ToastUtils.showtaostbyhandler(context, msg);
-				break;
-			case 3:
-				CouponWaringDialog.this.dismiss();
-				break;
-			default:
-				break;
-			}
-		};
-	};
 
 	public CouponWaringDialog(Context context, String couponMoney, String money,  DialogFinishCallBack callback) {
 		super(context, R.style.dialog_login_bg);
@@ -57,7 +42,7 @@ public class CouponWaringDialog extends Dialog implements View.OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dialog_overrage_waring);
-		this.setCanceledOnTouchOutside(true);
+		this.setCanceledOnTouchOutside(false);
 		initUI();
 		setdata();
 	}

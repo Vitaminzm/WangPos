@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/height_xzz"
+    android:layout_height="@dimen/height_fzz"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#f5f5f5"
+    android:shadowColor="#7f000000"
+    android:shadowDx="5"
+    android:shadowDy="5"
+    android:shadowRadius="10"
+    android:orientation="vertical"
+    android:layout_gravity="center">
+
+    <RelativeLayout
+        android:id="@+id/title_bar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_sz"
+        android:background="@color/color_bg">
+
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/returns"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_font_size"
+            android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/imageview_close"
+            android:layout_marginRight="@dimen/margin_fz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/icon_close_selector"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_function"
+        android:layout_below="@id/title_bar"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="@dimen/margin_sz"
+        android:layout_marginRight="@dimen/margin_sz"
+        android:layout_height="fill_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/text_return_normal"
+            android:layout_marginTop="@dimen/margin_vz"
+            android:layout_width="@dimen/height_fez"
+            android:layout_height="@dimen/height_ez"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="@string/return_normal"
+            android:background="@drawable/btn_green_bg"
+            android:textSize="@dimen/font_size_rz" />
+        <TextView
+            android:id="@+id/text_return_order"
+            android:layout_marginTop="@dimen/margin_vz"
+            android:layout_width="@dimen/height_fez"
+            android:layout_height="@dimen/height_ez"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:text="@string/return_order"
+            android:background="@drawable/btn_blue_bg"
+            android:textSize="@dimen/font_size_rz" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll_function_return_order"
+        android:layout_below="@id/title_bar"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="@dimen/margin_sz"
+        android:layout_marginRight="@dimen/margin_sz"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/edit_input_order_no"
+            android:gravity="center"
+            android:hint="@string/please_input_order_no"
+            android:textColorHint="@color/hint_color"
+            android:textColor="@color/font_color"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/font_size_tf"
+            android:layout_height="@dimen/height_sz" />
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/margin_sz"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_ez">
+
+            <TextView
+                android:id="@+id/text_cancle"
+                android:layout_width="@dimen/height_ttz"
+                android:layout_height="@dimen/height_ez"
+                android:text="@string/cancle"
+                android:gravity="center"
+                android:textSize="@dimen/font_size_rz"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_red_bg"/>
+            <TextView
+                android:id="@+id/text_confirm"
+                android:layout_marginLeft="@dimen/margin_rz"
+                android:layout_width="@dimen/height_ttz"
+                android:layout_height="@dimen/height_ez"
+                android:text="@string/confirm"
+                android:gravity="center"
+                android:textSize="@dimen/font_size_rz"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_green_bg"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_status"
+        android:visibility="gone"
+        android:layout_below="@id/title_bar"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="@dimen/margin_sz"
+        android:layout_marginRight="@dimen/margin_sz"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/spin_kit"
+            android:layout_marginRight="@dimen/margin_vz"
+            style="@style/SpinKitView.FadingCircle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:SpinKit_Color="@color/colorPrimary" />
+        <TextView
+            android:id="@+id/text_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/colorPrimary"
+            android:text="@string/order_searching"
+            android:textSize="@dimen/font_size_fz" />
+
+    </LinearLayout>
+</RelativeLayout>

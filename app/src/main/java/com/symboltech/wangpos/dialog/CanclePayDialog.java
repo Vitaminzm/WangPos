@@ -10,12 +10,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CanclePayAdapter;
 import com.symboltech.wangpos.interfaces.CancleCallback;
-import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;

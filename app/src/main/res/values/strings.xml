@@ -86,6 +86,7 @@
     <string name="waring_msg_pay_failed">支付尚未完成！</string>
     <string name="waring_msg_pay_cancle_failed">交易进行中,请稍后</string>
     <string name="waring_msg_pay_return_failed">含有未撤销的交易！</string>
+    <string name="waring_msg_pay_return_no">没有可以撤销的交易</string>
     <string name="waring_coupon_over_msg">优惠券已经超出,不能使用!</string>
     <string name="waring_score_over_msg">积分大于待支付金额!</string>
     <string name="waring_paytype_err_msg">该款台没有该收款方式</string>
@@ -147,16 +148,25 @@
     <string name="please_input_plate">请输入车牌号</string>
 
     <!--普通退货 -->
-    <string name="normal_return">普通退货</string>
+    <string name="return_normal">普通退货</string>
     <string name="return_good">退款商品</string>
     <string name="return_money">退款金额</string>
     <string name="return_handperson">退款经手人</string>
     <string name="please_select_retuern_good">请选择退款商品</string>
     <string name="please_select_handperson">请选择经手人</string>
     <string name="confirm_return_order">确认退货单</string>
+    <string name="order_searching">查询中...</string>
+    <string name="order_seach_success">查询中成功</string>
+    <string name="waring_putfull_roder">请补全退货单</string>
+    <string name="waring_return_moeny_right_err">请填写正确的金额</string>
+    <string name="waring_return_moeny_null">退款金额不能为0</string>
+    <string name="cannot_support">不支持</string>
+    <string name="return_msg">退款</string>
+    <string name="waring_return_moeny_mate_err">退款金额不匹配</string>
 
     <!--普通退货单详情-->
     <string name="return_order_info">退货单详情</string>
+    <string name="returns">退货</string>
     <string name="return_reason">退款原因</string>
     <string name="return_info">退款信息</string>
     <string name="return_total_money">退款总额</string>
@@ -265,5 +275,21 @@
     <string name="pay_bu_print_slip">补打签购单</string>
     <string name="please_input_order_no">请输入订单号</string>
     <string name="pleae_order_number">请输入正确订单号</string>
+
+    <string name="change_job">交班</string>
+    <string name="change_job_report">班报</string>
+    <string name="change_day_report">日报</string>
+    <string name="change_manager">切换操作员</string>
+
+    <!-- 会员激活-->
+    <string name="please_input_name">请输入姓名</string>
+    <string name="please_input_shenfen">请输入身份证号</string>
+    <string name="please_input_phone">请输入手机号</string>
+    <string name="please_input_code">请输入验证码</string>
+    <string name="shenfen">身份证</string>
+    <string name="phone">手机号</string>
+    <string name="code">验证码</string>
+    <string name="send_code">发送验证码</string>
+    <string name="param_null">参数不能为空</string>
 
 </resources>

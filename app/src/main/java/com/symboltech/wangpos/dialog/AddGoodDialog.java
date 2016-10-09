@@ -32,10 +32,6 @@ public class AddGoodDialog extends Dialog implements View.OnClickListener {
 	private AddGoodAdapter adapter;
 	private List<GoodsInfo> datas;
 
-	/**
-	 *
-	 * @param context
-	 */
 	public AddGoodDialog(Context context, List<GoodsInfo> datas, DialogFinishCallBack callback) {
 		super(context, R.style.dialog_login_bg);
 		this.context = context;

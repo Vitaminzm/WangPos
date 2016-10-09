@@ -315,6 +315,10 @@ public class CheckOutActivity extends BaseActivity {
         int id = view.getId();
         switch (id){
             case R.id.text_cancle_pay:
+                if(ArithDouble.sub(orderTotleValue, waitPayValue) <= 0){
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_pay_return_no));
+                    return;
+                }
                 new CanclePayDialog(this, payMentsCancle, new CancleCallback() {
                     @Override
                     public void doResult() {

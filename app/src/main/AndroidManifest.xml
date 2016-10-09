@@ -61,6 +61,8 @@
         </activity>
         <activity android:name=".activity.WorkLogActivity" >
         </activity>
+        <activity android:name=".activity.MemberActivateActivity" >
+        </activity>
     </application>
 
 </manifest>

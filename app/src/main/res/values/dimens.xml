@@ -32,6 +32,7 @@
     <dimen name="margin_ozz">57dp</dimen>
     <dimen name="margin_nv">54dp</dimen>
     <dimen name="margin_ez">46dp</dimen>
+    <dimen name="margin_sv">42dp</dimen>
     <dimen name="margin_sz">40dp</dimen>
     <dimen name="margin_xv">37dp</dimen>
     <dimen name="margin_xz">34dp</dimen>
@@ -67,7 +68,9 @@
     <dimen name="height_txz">148dp</dimen>
     <dimen name="height_trz">130dp</dimen>
     <dimen name="height_ttz">125dp</dimen>
+    <dimen name="height_tzz">114dp</dimen>
     <dimen name="height_oev">106dp</dimen>
+    <dimen name="height_osz">97dp</dimen>
     <dimen name="height_oxz">91dp</dimen>
     <dimen name="height_ofz">81dp</dimen>
     <dimen name="height_orz">74dp</dimen>

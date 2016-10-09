@@ -8,9 +8,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.MyApplication;
@@ -30,6 +30,7 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 	private EditText edit_input_order_no;
 	private TextView text_title, text_print_order, text_print_slip, text_cancle, text_confirm;
 	private LinearLayout ll_function_print_order, ll_function;
+	private ImageView imageview_close;
 	private GeneralEditListener gel;
 
 	public Handler handler = new Handler() {
@@ -55,7 +56,7 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog_login_failed);
+		setContentView(R.layout.dialog_print_order);
 		this.setCanceledOnTouchOutside(true);
 		initUI();
 		initData();
@@ -69,6 +70,7 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 
 	private void initUI() {
 		edit_input_order_no = (EditText) findViewById(R.id.edit_input_order_no);
+		imageview_close = (ImageView) findViewById(R.id.imageview_close);
 		text_title = (TextView) findViewById(R.id.text_title);
 		text_print_order = (TextView) findViewById(R.id.text_print_order);
 		text_print_slip = (TextView) findViewById(R.id.text_print_slip);
@@ -80,6 +82,7 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 		text_print_slip.setOnClickListener(this);
 		text_cancle.setOnClickListener(this);
 		text_confirm.setOnClickListener(this);
+		imageview_close.setOnClickListener(this);
 
 	}
 
@@ -106,14 +109,14 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 						gel.editinput(edit_input_order_no.getText().toString().trim());
 						this.dismiss();
 					}else{
-						Toast.makeText(context, R.string.waring_format_msg, Toast.LENGTH_SHORT).show();
+						ToastUtils.sendtoastbyhandler(handler, context.getString(R.string.waring_format_msg));
 					}
 				} else {
 					if (!StringUtil.isEmpty(MyApplication.getLast_billid())) {
 						gel.editinput(MyApplication.getLast_billid());
 						this.dismiss();
 					} else {
-						Toast.makeText(context, R.string.pleae_order_number, Toast.LENGTH_SHORT).show();
+						ToastUtils.sendtoastbyhandler(handler,context.getString(R.string.pleae_order_number));
 					}
 				}
 				break;
@@ -123,6 +126,9 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 				ll_function_print_order.setVisibility(View.VISIBLE);
 				break;
 			case R.id.text_print_slip:
+				break;
+			case R.id.imageview_close:
+				dismiss();
 				break;
 		}
 	}

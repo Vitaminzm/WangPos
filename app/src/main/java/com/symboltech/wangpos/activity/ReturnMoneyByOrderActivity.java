@@ -44,7 +44,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity {
 
     @Override
     protected void initView() {
-        setContentView(R.layout.activity_return_goods_by_normal);
+        setContentView(R.layout.activity_return_money_by_order);
         MyApplication.addActivity(this);
         ButterKnife.bind(this);
     }

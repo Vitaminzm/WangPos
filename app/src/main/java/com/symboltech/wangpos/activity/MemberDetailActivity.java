@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBarActivity;
@@ -124,12 +125,17 @@ public class MemberDetailActivity extends BaseActivity {
         MyApplication.delActivity(this);
     }
 
-    @OnClick({R.id.title_icon_back})
+    @OnClick({R.id.title_icon_back, R.id.text_member_activate})
     public void click(View view){
         int id = view.getId();
         switch (id){
             case R.id.title_icon_back:
                 this.finish();
+                break;
+            case R.id.text_member_activate:
+                Intent intent = new Intent(this, MemberActivateActivity.class);
+                intent.putExtra(ConstantData.ALLMEMBERINFO , memberBigdate.getMember());
+                startActivity(intent);
                 break;
         }
     }

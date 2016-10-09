@@ -521,9 +521,7 @@ public class PaymentActivity extends BaseActivity {
 
         @Override
         public void onInvalidated() {
-            // TODO Auto-generated method stub
             super.onInvalidated();
         }
-
     }
 }

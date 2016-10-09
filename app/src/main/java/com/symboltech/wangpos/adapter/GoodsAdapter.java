@@ -29,6 +29,7 @@ public class GoodsAdapter extends BaseAdapter {
 	private List<GoodsInfo> goods;
 	private LayoutInflater inflater;
 	public int position;
+	private Boolean flag = true;//数量是否允许增减
 	public CompentOnTouch compentOntouch;
 	Handler mHandler = new Handler(){
 		@Override
@@ -49,6 +50,14 @@ public class GoodsAdapter extends BaseAdapter {
 			super.handleMessage(msg);
 		}
 	};
+	public GoodsAdapter(Context context, List<GoodsInfo> goods, Boolean flag) {
+		super();
+		inflater = LayoutInflater.from(context);
+		this.context = context;
+		this.goods = goods;
+		this.flag = flag;
+		compentOntouch = new CompentOnTouch();
+	}
 	public GoodsAdapter(Context context, List<GoodsInfo> goods) {
 		super();
 		inflater = LayoutInflater.from(context);
@@ -87,8 +96,10 @@ public class GoodsAdapter extends BaseAdapter {
 			holder.imageview_quantity_plus = (ImageView) convertView.findViewById(R.id.imageview_quantity_plus);
 			holder.imageview_quantity_minus = (ImageView) convertView.findViewById(R.id.imageview_quantity_minus);
 			holder.ll_score_info = (LinearLayout) convertView.findViewById(R.id.ll_score_info);
-			holder.imageview_quantity_plus.setOnTouchListener(compentOntouch);
-			holder.imageview_quantity_minus.setOnTouchListener(compentOntouch);
+			if(flag){
+				holder.imageview_quantity_plus.setOnTouchListener(compentOntouch);
+				holder.imageview_quantity_minus.setOnTouchListener(compentOntouch);
+			}
 			convertView.setTag(holder);
 		}else {
 			holder = (Viewholder) convertView.getTag();
