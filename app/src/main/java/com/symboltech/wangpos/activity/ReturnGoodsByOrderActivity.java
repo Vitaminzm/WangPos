@@ -19,6 +19,7 @@ import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
+import com.symboltech.wangpos.msg.entity.CashierInfo;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.BaseResult;
@@ -28,6 +29,7 @@ import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
+import com.symboltech.wangpos.view.ListViewForScrollView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -70,13 +72,15 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
     LinearLayout ll_return_score;
 
     @Bind(R.id.goods_listview)
-    ListView goods_listview;
+    ListViewForScrollView goods_listview;
     private GoodsAdapter goodsAdapter;
     ArrayList<GoodsInfo> shopCarList = new ArrayList<>();
 
     private MemberInfo member;
     private BillInfo billInfo;
     private boolean flag = false;//商品金额是否已经处理过
+    private List<CashierInfo> sales;
+
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
 
@@ -110,7 +114,9 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
         text_desk_code.setText(billInfo.getOldposno());
         text_bill_id.setText(billInfo.getOldbillid());
         text_cashier_name.setText(billInfo.getCashiername());
-        text_saleman_name.setText(billInfo.getSalemanname());
+        sales = (List<CashierInfo>) SpSaveUtils.getObject(MyApplication.context, ConstantData.SALEMANLIST);
+        if(sales != null && sales.size() > 0&& billInfo.getSaleman()!= null)
+            text_saleman_name.setText(getSalemanNameByid(billInfo.getSaleman()));
         if(billInfo.getGoodslist() != null && billInfo.getGoodslist().size() > 0){
             shopCarList.addAll(billInfo.getGoodslist());
         }
@@ -144,13 +150,23 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
                 score += (usedFen+grantFen);
             }
         }
-        if(score > 0 ){
-            text_return_score.setText(score+"");
+        if(score != 0 ){
+            text_return_score.setText(Math.abs(score)+"");
         }else{
             ll_return_score.setVisibility(View.GONE);
         }
     }
 
+    private String getSalemanNameByid(String id){
+        String ret = "";
+        for(CashierInfo info: sales){
+            if(info.getCashierid().equals(id)){
+                ret = info.getCashiername();
+                break;
+            }
+        }
+        return ret;
+    }
     @Override
     protected void initView() {
         setContentView(R.layout.activity_return_goods_by_order);

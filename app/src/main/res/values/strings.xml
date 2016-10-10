@@ -93,6 +93,8 @@
     <string name="waring_scan_coupon_msg">不能重复扫描同一张纸券</string>
     <string name="waring_msg">输入的值不能大于可用值！</string>
     <string name="waring_cannot_use_msg">当前积分不能抵扣</string>
+    <string name="waring_param_err">参数异常</string>
+    <string name="waring_no_equity">本次交易没有可用的权益</string>
 
 
     <string name="weichat">微钱宝</string>
@@ -156,7 +158,7 @@
     <string name="please_select_handperson">请选择经手人</string>
     <string name="confirm_return_order">确认退货单</string>
     <string name="order_searching">查询中...</string>
-    <string name="order_seach_success">查询中成功</string>
+    <string name="order_seach_success">查询成功</string>
     <string name="waring_putfull_roder">请补全退货单</string>
     <string name="waring_return_moeny_right_err">请填写正确的金额</string>
     <string name="waring_return_moeny_null">退款金额不能为0</string>
@@ -171,6 +173,8 @@
     <string name="return_info">退款信息</string>
     <string name="return_total_money">退款总额</string>
     <string name="please_select_return_reason">请选择退款原因</string>
+    <string name="warning_no_return_reason">没有退款原因</string>
+    <string name="warning_no">无</string>
 
     <!--退款成功-->
     <string name="return_succeed">退款成功</string>
@@ -184,6 +188,7 @@
     <string name="score_return">积分返还</string>
     <string name="score_return_m">积分返还：</string>
     <string name="return_coupon_m">回收券：</string>
+    <string name="return_yuan_coupon_m">原单使用券：</string>
     <string name="change">找零</string>
     <string name="change_m">找零:</string>
     <string name="return_used_score">退货耗分</string>
@@ -250,6 +255,7 @@
     <string name="times">笔</string>
 
     <string name="overrage_waring">优惠券溢余</string>
+    <string name="overrage">溢余 </string>
     <string name="waring_coupons_over_msg1">本笔交易可用优惠券</string>
     <string name="waring_coupons_over_msg2">已选择</string>
 

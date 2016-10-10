@@ -1,9 +1,11 @@
 package com.symboltech.wangpos.activity;
 
 import android.content.Intent;
+import android.inputmethodservice.Keyboard;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -67,32 +69,34 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        int id = v.getId();
-        if(id == R.id.edit_return_good){
-            if(goodinfos != null && goodinfos.size() > 0){
-                new AddGoodDialog(ReturnGoodsByNormalActivity.this, goodinfos, new DialogFinishCallBack() {
-                    @Override
-                    public void finish(int p) {
-                        edit_return_good.setTag(p);
-                        edit_return_good.setText(goodinfos.get(p).getGoodsname());
-                    }
-                }).show();
-            }else {
-                ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_good));
-            }
-        }else if(id == R.id.edit_return_handperson){
-            if(sales != null && sales.size() > 0){
-                new AddSalemanDialog(ReturnGoodsByNormalActivity.this, sales, new DialogFinishCallBack() {
-                    @Override
-                    public void finish(int position) {
-                        edit_return_handperson.setText(sales.get(position).getCashiername());
-                        edit_return_handperson.setTag(position);
-                    }
-                }).show();
-            }else{
-                ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_saleman));
-            }
+        if(event.getAction() == KeyEvent.ACTION_DOWN){
+            int id = v.getId();
+            if(id == R.id.edit_return_good){
+                if(goodinfos != null && goodinfos.size() > 0){
+                    new AddGoodDialog(ReturnGoodsByNormalActivity.this, goodinfos, new DialogFinishCallBack() {
+                        @Override
+                        public void finish(int p) {
+                            edit_return_good.setTag(p);
+                            edit_return_good.setText(goodinfos.get(p).getGoodsname());
+                        }
+                    }).show();
+                }else {
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_good));
+                }
+            }else if(id == R.id.edit_return_handperson){
+                if(sales != null && sales.size() > 0){
+                    new AddSalemanDialog(ReturnGoodsByNormalActivity.this, sales, new DialogFinishCallBack() {
+                        @Override
+                        public void finish(int position) {
+                            edit_return_handperson.setText(sales.get(position).getCashiername());
+                            edit_return_handperson.setTag(position);
+                        }
+                    }).show();
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_saleman));
+                }
 
+            }
         }
         return false;
     }

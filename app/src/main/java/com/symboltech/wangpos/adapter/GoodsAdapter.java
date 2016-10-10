@@ -119,7 +119,11 @@ public class GoodsAdapter extends BaseAdapter {
 			default:
 				break;
 		}
-		holder.text_score.setText(goodsInfo.getUsedpointtemp());
+		if(flag){
+			holder.text_score.setText(goodsInfo.getUsedpointtemp());
+		}else{
+			holder.text_score.setText(goodsInfo.getUsedpoint());
+		}
 		holder.text_good_count.setText(goodsInfo.getSalecount());
 		holder.text_money.setText(MoneyAccuracyUtils.formatMoneyByTwo(goodsInfo.getSaleamt()));
 		return convertView;

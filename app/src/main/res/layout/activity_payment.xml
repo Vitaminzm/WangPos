@@ -141,6 +141,5 @@
         android:layout_marginLeft="@dimen/margin_tz"
         android:scrollbars="none"
         android:layout_above="@id/radioGroup_function"
-        android:listSelector="@android:color/transparent"
         android:layout_below="@id/input_money"/>
 </RelativeLayout>

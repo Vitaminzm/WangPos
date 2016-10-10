@@ -22,16 +22,19 @@
         android:layout_height="wrap_content">
         <include layout="@layout/view_return_bill_info" />
     </FrameLayout>
-
-    <ListView
+<ScrollView
+    android:layout_above="@id/fl_bill_info"
+    android:layout_below="@id/view_sales_info"
+    android:layout_marginRight="@dimen/margin_rz"
+    android:layout_marginLeft="@dimen/margin_rz"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.symboltech.wangpos.view.ListViewForScrollView
         android:id="@+id/goods_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginRight="@dimen/margin_rz"
-        android:layout_marginLeft="@dimen/margin_rz"
-        android:scrollbars="none"
-        android:layout_above="@id/fl_bill_info"
         android:background="@drawable/icon_bg_scroll"
-        android:listSelector="@android:color/transparent"
-        android:layout_below="@id/view_sales_info"/>
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"/>
+</ScrollView>
+
 </RelativeLayout>

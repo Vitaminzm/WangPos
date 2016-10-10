@@ -188,7 +188,6 @@ public class CheckOutActivity extends BaseActivity {
         });
         getPayType();
         paymentTypeInfoadapter = new PaymentTypeInfoAdapter(getApplicationContext(), payMentsCancle);
-        paymentTypeInfoadapter.registerDataSetObserver(new PaymentTypeInfoObserver());
         listview_pay_info.setAdapter(paymentTypeInfoadapter);
     }
 
@@ -224,6 +223,9 @@ public class CheckOutActivity extends BaseActivity {
                         addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
                     }
                 }
+                waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
         }
     }
@@ -232,6 +234,9 @@ public class CheckOutActivity extends BaseActivity {
         if (info != null) {
             paymentTypeInfoadapter.add(info);
             paymentTypeAdapter.setPayTpyeNull();
+            waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
             return;
         }
         PayMentsCancleInfo payMentsInfo = new PayMentsCancleInfo();
@@ -389,19 +394,23 @@ public class CheckOutActivity extends BaseActivity {
                 commitOrder();
                 break;
             case R.id.imageview_more:
-                Intent intent = new Intent(this, MemberEquityActivity.class);
-                intent.putExtra(ConstantData.CART_ALL_MONEY, ArithDouble.add(ArithDouble.add(waitPayValue, orderScore), orderCoupon)+"");
-                intent.putExtra(ConstantData.MEMBER_EQUITY, member_equity);
-                intent.putExtra(ConstantData.GET_MEMBER_INFO, member);
+                if(member_equity != null && member_equity.getCouponInfos() != null && member_equity.getLimitpoint()!= null){
+                    Intent intent = new Intent(this, MemberEquityActivity.class);
+                    intent.putExtra(ConstantData.CART_ALL_MONEY, ArithDouble.add(ArithDouble.add(waitPayValue, orderScore), orderCoupon)+"");
+                    intent.putExtra(ConstantData.MEMBER_EQUITY, member_equity);
+                    intent.putExtra(ConstantData.GET_MEMBER_INFO, member);
 
-                intent.putExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, orderScoreOverrage);
-                intent.putExtra(ConstantData.GET_ORDER_SCORE_INFO, orderScore);
-                intent.putExtra(ConstantData.USE_INTERRAL, (Serializable)exchangeInfo);
+                    intent.putExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, orderScoreOverrage);
+                    intent.putExtra(ConstantData.GET_ORDER_SCORE_INFO, orderScore);
+                    intent.putExtra(ConstantData.USE_INTERRAL, (Serializable)exchangeInfo);
 
-                intent.putExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, orderCouponOverrage);
-                intent.putExtra(ConstantData.GET_ORDER_COUPON_INFO, orderCoupon);
-                intent.putExtra(ConstantData.CAN_USED_COUPON, (Serializable)coupons);
-                startActivityForResult(intent, ConstantData.MEMBER_EQUITY_REQUEST_CODE);
+                    intent.putExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, orderCouponOverrage);
+                    intent.putExtra(ConstantData.GET_ORDER_COUPON_INFO, orderCoupon);
+                    intent.putExtra(ConstantData.CAN_USED_COUPON, (Serializable)coupons);
+                    startActivityForResult(intent, ConstantData.MEMBER_EQUITY_REQUEST_CODE);
+                }else {
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_no_equity));
+                }
                 break;
             case R.id.title_icon_back:
                 if(ArithDouble.sub(orderTotleValue, waitPayValue) > 0){
@@ -440,6 +449,9 @@ public class CheckOutActivity extends BaseActivity {
         }
 
         paymentTypeInfoadapter.notifyDataSetChanged();
+        waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+        text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
     }
 
     @Override
@@ -629,21 +641,5 @@ public class CheckOutActivity extends BaseActivity {
             }
         }
         return null;
-    }
-
-    class PaymentTypeInfoObserver extends DataSetObserver{
-        @Override
-        public void onChanged() {
-            super.onChanged();
-            waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-        }
-
-        @Override
-        public void onInvalidated() {
-            // TODO Auto-generated method stub
-            super.onInvalidated();
-        }
     }
 }

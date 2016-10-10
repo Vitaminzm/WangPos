@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.dialog;
 
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -89,7 +90,7 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog_login_failed);
+		setContentView(R.layout.dialog_return);
 		this.setCanceledOnTouchOutside(true);
 		initUI();
 		if (!StringUtil.isEmpty(MyApplication.getLast_billid())) {
@@ -99,8 +100,8 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 
 	private void initUI() {
 		edit_input_order_no = (EditText) findViewById(R.id.edit_input_order_no);
-		text_return_normal = (TextView) findViewById(R.id.text_day_report);
-		text_return_order = (TextView) findViewById(R.id.text_change_manager);
+		text_return_normal = (TextView) findViewById(R.id.text_return_normal);
+		text_return_order = (TextView) findViewById(R.id.text_return_order);
 		imageview_close = (ImageView) findViewById(R.id.imageview_close);
 		text_cancle = (TextView) findViewById(R.id.text_cancle);
 		text_confirm = (TextView) findViewById(R.id.text_confirm);
@@ -168,31 +169,43 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 		map.put("billid", billId);
 		HttpRequestUtil.getinstance().getOrderInfo(map, BillResult.class, new HttpActionHandle<BillResult>() {
 			@Override
-			public void handleActionError(String actionName, String errmsg) {
-				text_status.setText(errmsg);
-				spin_kit.setVisibility(View.GONE);
-				text_status.setTextColor(context.getResources().getColor(R.color.orange));
-				handler.sendEmptyMessageDelayed(STATUS_CODE_FAIL, 1500);
+			public void handleActionError(String actionName, final String errmsg) {
+				((Activity)context).runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						text_status.setText(errmsg);
+						spin_kit.setVisibility(View.GONE);
+						text_status.setTextColor(context.getResources().getColor(R.color.orange));
+						handler.sendEmptyMessageDelayed(STATUS_CODE_FAIL, 1500);
+					}
+				});
+
 			}
 
 			@Override
-			public void handleActionSuccess(String actionName, BillResult result) {
-				spin_kit.setVisibility(View.GONE);
-				Message msg = Message.obtain();
-				if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-					text_status.setText(context.getResources().getString(R.string.order_seach_success));
-					text_status.setTextColor(context.getResources().getColor(R.color.green));
-					msg.what = STATUS_CODE_SUCCESS;
-					BillInfo bill = result.getTicketInfo().getBillinfo();
-					bill.setOldposno(posno);
-					bill.setOldbillid(billId);
-					msg.obj = result.getTicketInfo().getBillinfo();
-					handler.sendMessageDelayed(msg, 1500);
-				} else {
-					text_status.setText(result.getMsg());
-					text_status.setTextColor(context.getResources().getColor(R.color.orange));
-					handler.sendEmptyMessageDelayed(STATUS_CODE_FAIL, 1500);
-				}
+			public void handleActionSuccess(String actionName, final BillResult result) {
+				((Activity)context).runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						spin_kit.setVisibility(View.GONE);
+						Message msg = Message.obtain();
+						if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+							text_status.setText(context.getResources().getString(R.string.order_seach_success));
+							text_status.setTextColor(context.getResources().getColor(R.color.green));
+							msg.what = STATUS_CODE_SUCCESS;
+							BillInfo bill = result.getTicketInfo().getBillinfo();
+							bill.setOldposno(posno);
+							bill.setOldbillid(billId);
+							msg.obj = result.getTicketInfo().getBillinfo();
+							handler.sendMessageDelayed(msg, 1500);
+						} else {
+							text_status.setText(result.getMsg());
+							text_status.setTextColor(context.getResources().getColor(R.color.orange));
+							handler.sendEmptyMessageDelayed(STATUS_CODE_FAIL, 1500);
+						}
+					}
+				});
+
 			}
 		});
 	}

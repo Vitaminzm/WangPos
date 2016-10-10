@@ -239,7 +239,7 @@ public class PaymentActivity extends BaseActivity {
         text_cashier_name.setText(SpSaveUtils.read(getApplication(), ConstantData.CASHIER_NAME, ""));
         if (sales != null && sales.size() > 0) {
             text_saleman_name.setText(sales.get(0).getCashiername());
-            text_saleman_name.setTag("0");
+            text_saleman_name.setTag(sales.get(0).getCashierid());
         }
 
     }

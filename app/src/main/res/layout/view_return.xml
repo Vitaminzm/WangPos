@@ -404,9 +404,10 @@
             </LinearLayout>
             <ListView
                 android:id="@+id/listview"
+                android:layout_alignTop="@id/tab1"
+                android:layout_alignBottom="@id/tab6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/tab6"
                 android:scrollbars="none"
                 android:listSelector="@drawable/gridview_selector"
                 android:cacheColorHint="@color/transparent" />

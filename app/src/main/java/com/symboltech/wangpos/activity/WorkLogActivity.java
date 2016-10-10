@@ -132,7 +132,7 @@ public class WorkLogActivity extends BaseActivity {
         scllortabview.setTabNum(3);
         scllortabview.setSelectedColor(getResources().getColor(R.color.green), getResources().getColor(R.color.green));
         myPagerAdapter = new MyPagerAdapter(getApplicationContext());
-        view_pager_statistics.setPageTransformer(true, new DepthPageTransformer());
+       // view_pager_statistics.setPageTransformer(true, new DepthPageTransformer());
         view_pager_statistics.setAdapter(myPagerAdapter);
         view_pager_statistics.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

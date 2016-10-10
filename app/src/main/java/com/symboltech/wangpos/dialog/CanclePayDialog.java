@@ -65,7 +65,7 @@ public class CanclePayDialog extends Dialog implements View.OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog_universal_hint);
+		setContentView(R.layout.dialog_cancle_pay);
 		this.setCanceledOnTouchOutside(false);
 		initUI();
 		setdata();

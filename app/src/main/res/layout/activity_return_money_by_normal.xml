@@ -75,7 +75,6 @@
     <ScrollView
         android:layout_below="@id/ll_return_reason"
         android:layout_above="@id/text_submit_return_order"
-
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginBottom="@dimen/margin_rz"
@@ -83,7 +82,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
-            android:id="@+id/ll_add_return_payInfo"
             android:background="@drawable/icon_bg_scroll"
             android:paddingLeft="@dimen/margin_fz"
             android:paddingTop="@dimen/margin_fz"
@@ -156,6 +154,11 @@
                     android:text="@string/yuan"
                     android:textColor="@color/font_color"/>
             </LinearLayout>
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/ll_add_return_payInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

@@ -9,7 +9,7 @@ package com.symboltech.wangpos.utils;
  */
 public enum PaymentTypeEnum {
 
-	CASH("1"), STORE("2"), BANK("3"), WECHAT("5"), ALIPAY("4"), COUPON("6"), ICBC_BANK("7"), ICBC_BUSY("8"), LING("99999"), SCORE("106"), HANDRECORDED("101"), ALIPAYRECORDED("102"), WECHATRECORDED("103") ,ERR("201");
+	CASH("1"), STORE("2"), BANK("3"), WECHAT("5"), ALIPAY("4"), COUPON("6"), ICBC_BANK("7"), ICBC_BUSY("8"), LING("99999"), SCORE("106"), HANDRECORDED("101"), ALIPAYRECORDED("102"), WECHATRECORDED("103") ,RECORDED_CAREDUCTION("104"), ALLWANCE_COMPENSATION("105"), ERR("201");
 	
 	private String styletype;
 	

@@ -34,7 +34,7 @@ public class ChangeManagerDialog extends Dialog implements View.OnClickListener 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.dialog_login_failed);
+		setContentView(R.layout.dialog_change_manager);
 		this.setCanceledOnTouchOutside(true);
 		initUI();
 	}

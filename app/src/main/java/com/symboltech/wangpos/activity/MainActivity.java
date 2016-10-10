@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
@@ -21,10 +22,14 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.config.InitializeConfig;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.ChangeManagerDialog;
+import com.symboltech.wangpos.dialog.PrintOrderDialog;
 import com.symboltech.wangpos.dialog.ReturnDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.msg.entity.BillInfo;
+import com.symboltech.wangpos.result.BillResult;
 import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.result.TicketFormatResult;
 import com.symboltech.wangpos.service.RunTimeService;
@@ -38,7 +43,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -198,6 +205,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             case R.id.rl_change:
                 new ChangeManagerDialog(this).show();
                 break;
+            case R.id.rl_billprint:
+                new PrintOrderDialog(this, new GeneralEditListener() {
+                    @Override
+                    public void editinput(String edit) {
+                        printByorder(edit);
+                    }
+                }).show();
+                break;
         }
     }
 
@@ -222,6 +237,47 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_LOCKSCREEN);
         startActivity(intent);
         this.finish();
+    }
+
+    private void printByorder(final String edit) {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("billid", edit);
+        HttpRequestUtil.getinstance().printerOrderagain(map, BillResult.class, new HttpActionHandle<BillResult>() {
+
+            @Override
+            public void handleActionStart() {
+                startwaitdialog();
+            }
+
+            @Override
+            public void handleActionFinish() {
+                closewaitdialog();
+            }
+
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName, BillResult result) {
+                if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+                    BillInfo billinfo = result.getTicketInfo().getBillinfo();
+                    if (billinfo != null) {
+                        if ("0".equals(billinfo.getSaletype())) {
+
+                        } else if ("1".equals(billinfo.getSaletype()) || "2".equals(billinfo.getSaletype())) {
+
+                        } else {
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_param_err));
+                        }
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                }
+            }
+
+        });
     }
 
     /**

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -131,7 +132,8 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        showReason(edit_input_reason);
+        if(event.getAction() == KeyEvent.ACTION_DOWN)
+            showReason(edit_input_reason);
         return false;
     }
 
@@ -160,7 +162,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         initReasonView();
         initStyleView();
         initids();
-        totalReturnMoney = ArithDouble.parseDouble(billInfo.getTotalmoney());
+        totalReturnMoney = Math.abs(ArithDouble.parseDouble(billInfo.getTotalmoney()));
         title_text_content.setText(getString(R.string.return_order_info));
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm.isActive()) {
@@ -168,11 +170,11 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         }
         edit_input_reason.setOnTouchListener(this);
         imageview_drop_arrow.setOnTouchListener(this);
-        text_return_total_money.setText(billInfo.getTotalmoney());
+        text_return_total_money.setText(totalReturnMoney+"");
         if (reasons != null && reasons.size() > 0) {
             edit_input_reason.setText(reasons.get(0).getName());
         }else {
-            edit_input_reason.setText("无");
+            edit_input_reason.setText(R.string.warning_no);
         }
     }
 
@@ -258,12 +260,16 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      * @param v 显示位置相对于v
      */
     private void showReason(View v) {
-        if (null == PopupWindowReason) {
-            PopupWindowReason = new PopupWindow(reasonPop, 250, 200, true);
-            PopupWindowReason.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
-            PopupWindowReason.setAnimationStyle(R.style.PopupAnimation);
+        if(reasons!= null && reasons.size() > 0){
+            if (null == PopupWindowReason) {
+                PopupWindowReason = new PopupWindow(reasonPop, 250, 200, true);
+                PopupWindowReason.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
+                PopupWindowReason.setAnimationStyle(R.style.PopupAnimation);
+            }
+            PopupWindowReason.showAsDropDown(v);
+        }else{
+            ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_return_reason));
         }
-        PopupWindowReason.showAsDropDown(v);
     }
 
     /**
@@ -410,7 +416,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             String type = null;
             // 得到支付名字
             String payName = ((TextView) ((LinearLayout)((LinearLayout) ll_add_return_payInfo.getChildAt(i)).getChildAt(1)).getChildAt(0)).getText().toString();
-            String value = ((TextView) ((LinearLayout) ll_add_return_payInfo.getChildAt(i)).getChildAt(3)).getText().toString();
+            String value = ((EditText) (((LinearLayout)((LinearLayout) ll_add_return_payInfo.getChildAt(i)).getChildAt(3)).getChildAt(0))).getText().toString();
             BigDecimal decimal;
             try {
                 decimal = new BigDecimal(value);
@@ -525,13 +531,21 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      * 提交退货单
      */
     private void saveOrder() {
-        if (!getReturnMoneyInfo())
-            return;
-        if (checkMoney()) {
-            payments.clear();
-            returnMoney();
-        } else {
-            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_return_moeny_mate_err));
+        if(reasons!= null && reasons.size() > 0){
+            if(edit_input_reason.getText().equals(getString(R.string.warning_no))){
+                ToastUtils.sendtoastbyhandler(handler, getString(R.string.please_select_return_reason));
+                return;
+            }
+            if (!getReturnMoneyInfo())
+                return;
+            if (checkMoney()) {
+                payments.clear();
+                returnMoney();
+            } else {
+                ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_return_moeny_mate_err));
+            }
+        }else{
+            ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_return_reason));
         }
     }
 
@@ -597,7 +611,12 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void returnAlipay() {
         if (alipayStyle != null && alipayFlag < alipayStyle.size()) {
-
+            alipayFlag += 1;
+            if(alipayFlag < alipayStyle.size()){
+                returnAlipay();
+            }else{
+                returnWeiXinPay();
+            }
         } else {
             returnWeiXinPay();
         }
@@ -608,6 +627,12 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void returnWeiXinPay() {
         if (weixinStyle != null && weixinFlag < weixinStyle.size()) {
+            allowanceWeixinFlag += 1;
+            if (weixinFlag < weixinStyle.size()) {
+                returnWeiXinPay();
+            } else {
+                returnAllowanceBank();
+            }
         } else {
             returnAllowanceBank();
         }
