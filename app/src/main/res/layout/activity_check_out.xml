@@ -202,9 +202,11 @@
                 android:text="@string/pay_money"/>
             <LinearLayout
                 android:layout_toRightOf="@id/text_pay_money"
-                android:layout_width="@dimen/line_txz"
+                android:layout_width="@dimen/line_rnz"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:layout_marginLeft="@dimen/margin_xz">
 
                 <EditText

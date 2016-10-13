@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
+import com.symboltech.wangpos.log.LogUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -56,7 +57,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	public static int real_scontenth =-1;	//实际内容高度，  计算公式:屏幕高度-导航栏高度-电量栏高度
 	private View mContentView;
 	private WindowManager mManager;
-	boolean isFocusOutside = true;
+	boolean isFocusOutside = false;
 	/**
 	 * 
 	 * @param context 上下文
@@ -216,7 +217,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 					  textView.getLocationOnScreen(pos);
 				  }
 			  }
-			  float height = dpToPx(getContext(), 500);
+			  float height = dpToPx(getContext(), 440);
 
 			  Rect outRect = new Rect();
 			  mContentView.getWindowVisibleDisplayFrame(outRect);
@@ -241,6 +242,11 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 					 mManager.updateViewLayout(mWindow.getDecorView(), getParams(-length));
 				 }
 			  }
+//			if(length>0){
+//				LogUtil.i("lgs",length+"---------");
+//				mManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//				mManager.updateViewLayout(mWindow.getDecorView(), getParams(-length));
+//			}
 		  }
 	}
 	
@@ -261,7 +267,8 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 					 length = 0;
 					 mManager.updateViewLayout(mWindow.getDecorView(), getParams(length));
 				 }
-				
+//				length = 0;
+//				mManager.updateViewLayout(mWindow.getDecorView(), getParams(length));
 			}
 		} catch (Exception e) {
 		}
@@ -365,11 +372,11 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		Window window = this.getWindow();
 		window.setGravity(Gravity.LEFT|Gravity.BOTTOM);
 		LayoutParams params = window.getAttributes();
-		params.windowAnimations = R.anim.slide_up_in;
+		//params.windowAnimations = R.anim.slide_up_in;
 		if(isFocusOutside)
 			params.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
-		params.x = 7;
-		params.y = 0;
+//		params.x = 7;
+//		params.y = 0;
 		window.setAttributes(params);
 	}
 

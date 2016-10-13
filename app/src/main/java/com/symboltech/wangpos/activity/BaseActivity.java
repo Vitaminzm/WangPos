@@ -4,6 +4,8 @@ package com.symboltech.wangpos.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.WindowManager;
 
 import com.symboltech.wangpos.utils.HttpWaitDialogUtils;
 
@@ -93,4 +95,17 @@ public abstract class BaseActivity extends Activity {
 		recycleMemery();
 	}
 
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_MENU) {
+			return false;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
+	public void onAttachedToWindow(){
+		this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
+		super.onAttachedToWindow();
+	}
 }

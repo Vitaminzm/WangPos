@@ -12,8 +12,6 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;

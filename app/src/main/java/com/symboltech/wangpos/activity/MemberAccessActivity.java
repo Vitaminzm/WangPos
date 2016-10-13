@@ -165,7 +165,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     }
 
     public void verifyByPhone(){
-        if(ll_phone_number.getVisibility() == View.GONE){
+        if(radioGroup_type.getCheckedRadioButtonId() == R.id.text_phone_number){
             verify_type = ConstantData.MEMBER_VERIFY_BY_PHONE;
             right_In_Animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -176,6 +176,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
+                    ll_swaip_card.setVisibility(View.GONE);
                     ll_phone_number.setVisibility(View.VISIBLE);
                 }
 
@@ -189,7 +190,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     }
 
     public void verifyByVipCard() {
-        if(ll_swaip_card.getVisibility() == View.GONE){
+        if(radioGroup_type.getCheckedRadioButtonId() == R.id.text_vip_card){
             verify_type = ConstantData.MEMBER_VERIFY_BY_MEMBERCARD;
             left_In_Animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -200,6 +201,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
                 @Override
                 public void onAnimationEnd(Animation animation) {
+                    ll_phone_number.setVisibility(View.GONE);
                     ll_swaip_card.setVisibility(View.VISIBLE);
                 }
 
@@ -308,22 +310,27 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                             getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
                         } else if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK_ADD_MEMBER)) {
                             //OperateLog.getInstance().saveLog2File(OptLogEnum.MEMBER_ADD_SUCCESS.getOptLogCode(), getString(R.string.member_add_success));
-                            UniversalHintDialog uhd = new UniversalHintDialog(MemberAccessActivity.this, null, null,
-                                    new DialogFinishCallBack() {
-                                    @Override
-                                    public void finish(int p) {
-                                        if (result.getDatamapclass() != null
-                                                && result.getDatamapclass().getMemberinfo() != null
-                                                && !StringUtil.isEmpty(result.getDatamapclass().getMemberinfo().getId())) {
-                                            memberinfo = result.getDatamapclass().getMemberinfo();
-                                            getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
-                                        } else {
-                                            closewaitdialog();
-                                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.member_id_is_not_null));
-                                        }
-                                    }
-                                });
-                            uhd.show();
+                            MemberAccessActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    UniversalHintDialog uhd = new UniversalHintDialog(MemberAccessActivity.this, null, null,
+                                            new DialogFinishCallBack() {
+                                                @Override
+                                                public void finish(int p) {
+                                                    if (result.getDatamapclass() != null
+                                                            && result.getDatamapclass().getMemberinfo() != null
+                                                            && !StringUtil.isEmpty(result.getDatamapclass().getMemberinfo().getId())) {
+                                                        memberinfo = result.getDatamapclass().getMemberinfo();
+                                                        getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
+                                                    } else {
+                                                        closewaitdialog();
+                                                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.member_id_is_not_null));
+                                                    }
+                                                }
+                                            });
+                                    uhd.show();
+                                }
+                            });
                         } else {
                             closewaitdialog();
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());

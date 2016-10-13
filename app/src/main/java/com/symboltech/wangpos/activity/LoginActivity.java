@@ -2,8 +2,10 @@ package com.symboltech.wangpos.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -70,6 +72,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private UserNameDao und;
     private ListView listview;
     private PopupWindow mPopupWindow;
+    private HorizontalKeyBoard keyboard;
 
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
@@ -93,6 +96,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private boolean iscashier;
     private int loginrole;
 
+
     @Override
     protected void initData() {
         und = new UserNameDao(this);
@@ -112,7 +116,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         setContentView(R.layout.activity_login);
         MyApplication.addActivity(this);
         ButterKnife.bind(this);
-        new HorizontalKeyBoard(this, this, edit_username, edit_password, new KeyBoardListener() {
+        keyboard = new HorizontalKeyBoard(this, this, edit_username, edit_password, new KeyBoardListener() {
             @Override
             public void onComfirm() {
 
@@ -215,6 +219,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * popup show
      */
     private void showPopupList() {
+        if(keyboard.isShowing()){
+            keyboard.dismiss();
+        }
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm.isActive()) {
             imm.hideSoftInputFromWindow(edit_username.getWindowToken(), 0); // 强制隐藏键盘
@@ -224,7 +231,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(LoginActivity.this, R.layout.popup_item,
                         DButils.getUserNames(und));
                 listview.setAdapter(adapter);
-                mPopupWindow = new PopupWindow(listview, 250, MachineUtils.dip2px(MyApplication.context, 110), true);
+                mPopupWindow = new PopupWindow(listview, 250, MachineUtils.dip2px(MyApplication.context, 105), true);
                 mPopupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
                 mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
             }
@@ -316,7 +323,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      */
     private void loginforhttp(final String username, final String password) {
         Map<String, String> map = new HashMap<>();
-
         map.put("machinecode", "0055DA1009B4");//MachineUtils.getUid(MyApplication.context)
         map.put("personcode", username);
         map.put("password", MD5Utils.md5(password));
@@ -331,7 +337,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             @Override
             public void handleActionFinish() {
                 closewaitdialog();
-               // startforcashier();
             }
 
             @Override
@@ -349,7 +354,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     serviceintent.putExtra(ConstantData.UPLOAD_LOG, true);
                     serviceintent.putExtra(ConstantData.CASHIER_ID, result.getLogininfo().getPerson_id());
                     startService(serviceintent);
-
                     startforcashier();
                 } else {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());

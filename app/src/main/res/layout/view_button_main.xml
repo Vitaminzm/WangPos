@@ -5,14 +5,14 @@
     android:orientation="vertical" >
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal" >
         <RelativeLayout
             android:id="@+id/rl_member"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/btn_width"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:background="@drawable/btn_green_bg" >
                 <ImageView
@@ -24,14 +24,15 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="@dimen/btn_margin"
         android:orientation="horizontal" >
 
         <RelativeLayout
             android:id="@+id/rl_pay"
-            android:layout_width="fill_parent"
-            android:layout_height="@dimen/btn_width"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:background="@drawable/btn_yellow_bg" >
                 <ImageView
@@ -42,15 +43,16 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="@dimen/btn_margin"
         android:orientation="horizontal" >
 
         <RelativeLayout
             android:id="@+id/rl_billprint"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:layout_marginRight="@dimen/btn_margin"
             android:gravity="center"
             android:layout_weight="1"
@@ -65,7 +67,7 @@
         <RelativeLayout
             android:id="@+id/rl_sendcarcoupon"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:layout_weight="1"
             android:background="@drawable/btn_blue_bg" >
@@ -78,15 +80,16 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="@dimen/btn_margin"
         android:orientation="horizontal" >
 
         <RelativeLayout
             android:id="@+id/rl_change"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:layout_marginRight="@dimen/btn_margin"
             android:gravity="center"
             android:layout_weight="1"
@@ -103,7 +106,7 @@
         <RelativeLayout
             android:id="@+id/rl_lockscreen"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:background="@drawable/btn_blue_bg" >

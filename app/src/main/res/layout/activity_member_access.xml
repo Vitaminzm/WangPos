@@ -65,7 +65,7 @@
         android:id="@+id/ll_swaip_card"
         android:layout_width="match_parent"
         android:visibility="gone"
-        android:layout_height="wrap_content">
+        android:layout_height="200dp">
 
         <TextView
             android:layout_width="match_parent"

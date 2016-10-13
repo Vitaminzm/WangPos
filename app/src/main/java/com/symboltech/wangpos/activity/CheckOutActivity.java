@@ -307,6 +307,7 @@ public class CheckOutActivity extends BaseActivity {
                 edit_input_money.setText(""+money);
             }
         });
+
     }
 
     @Override

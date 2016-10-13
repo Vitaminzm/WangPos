@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -210,6 +211,13 @@ public class PaymentActivity extends BaseActivity {
         goodsAdapter = new GoodsAdapter(getApplicationContext(), shopCarList);
         goodsAdapter.registerDataSetObserver(new GoodsDataObserver());
         goods_listview.setAdapter(goodsAdapter);
+        goods_listview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                goods_listview.smoothOpenMenu(position);
+                return false;
+            }
+        });
     }
 
     /**
@@ -399,9 +407,11 @@ public class PaymentActivity extends BaseActivity {
         if (enterFlag == ConstantData.ENTER_CASHIER_BY_ACCOUNTS) {
             submitgoodsorderforhttp(false);
         }else{
-            if(sumintegral > ArithDouble.parseDouble(memberBigdate.getMember().getCent_total())){
-                ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_score_notfull));
-                return;
+            if(sumintegral > 0){
+                if(sumintegral > ArithDouble.parseDouble(memberBigdate.getMember().getCent_total())){
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_score_notfull));
+                    return;
+                }
             }
             submitgoodsorderforhttp(true);
         }

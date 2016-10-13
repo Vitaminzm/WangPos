@@ -13,8 +13,9 @@
         android:layout_alignParentBottom="true"
         android:layout_width="fill_parent"
         android:layout_height="42dp" />
-    <com.symboltech.wangpos.view.MyViewPager
+    <android.support.v4.view.ViewPager
         android:id="@+id/view_pager"
+        android:layout_alignParentTop="true"
         android:layout_above="@id/myscollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

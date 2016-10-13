@@ -89,6 +89,7 @@ public class GoodsAdapter extends BaseAdapter {
 			holder = new Viewholder();
 			convertView = inflater.inflate(R.layout.item_shoppinggood, null);
 			holder.text_good_name = (TextView) convertView.findViewById(R.id.text_good_name);
+			holder.ll_bg = (LinearLayout) convertView.findViewById(R.id.ll_bg);
 			holder.text_money = (TextView) convertView.findViewById(R.id.text_money);
 			holder.text_score = (TextView) convertView.findViewById(R.id.text_score);
 			holder.text_good_code = (TextView) convertView.findViewById(R.id.text_good_code);
@@ -103,6 +104,11 @@ public class GoodsAdapter extends BaseAdapter {
 			convertView.setTag(holder);
 		}else {
 			holder = (Viewholder) convertView.getTag();
+		}
+		if((position%2)== 1){
+			holder.ll_bg.setBackgroundColor(context.getResources().getColor(R.color.good_bg));
+		}else{
+			holder.ll_bg.setBackgroundColor(context.getResources().getColor(R.color.white));
 		}
 		goods.get(position).setInx((position + 1) + "");
 		holder.imageview_quantity_plus.setTag(position);
@@ -133,7 +139,7 @@ public class GoodsAdapter extends BaseAdapter {
 	private class Viewholder {
 		public TextView text_good_name, text_money, text_score, text_good_code, text_good_count;
 		public ImageView imageview_quantity_plus, imageview_quantity_minus;
-		public LinearLayout ll_score_info;
+		public LinearLayout ll_score_info, ll_bg;
 	}
 	class CompentOnTouch implements View.OnTouchListener {
 

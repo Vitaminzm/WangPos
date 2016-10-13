@@ -33,6 +33,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:orientation="horizontal">
                 <EditText
                     android:id="@+id/edit_input_reason"
@@ -72,7 +74,7 @@
         android:textColor="@color/white"
         android:background="@drawable/btn_green_bg"
         android:layout_height="@dimen/height_ez" />
-    <ScrollView
+    <LinearLayout
         android:layout_below="@id/ll_return_reason"
         android:layout_above="@id/text_submit_return_order"
         android:layout_marginRight="@dimen/margin_rz"
@@ -81,84 +83,90 @@
         android:layout_marginTop="@dimen/margin_rz"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <LinearLayout
+        <ScrollView
             android:background="@drawable/icon_bg_scroll"
             android:paddingLeft="@dimen/margin_fz"
             android:paddingTop="@dimen/margin_fz"
             android:paddingRight="@dimen/margin_tz"
             android:paddingBottom="@dimen/margin_fz"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-            <RelativeLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_rz"
-                    android:textColor="@color/font_color"
-                    android:layout_centerVertical="true"
-                    android:text="@string/return_info"
-                    android:gravity="center"/>
-                <LinearLayout
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="@dimen/margin_oz"
-                    android:gravity="center"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <TextView
-                        android:id="@+id/text_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_rz"
                         android:textColor="@color/font_color"
                         android:layout_centerVertical="true"
-                        android:layout_marginRight="@dimen/margin_tz"
-                        android:text="@string/edit"
+                        android:text="@string/return_info"
                         android:gravity="center"/>
-                    <ImageView
-                        android:id="@+id/image_add"
+                    <LinearLayout
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="@dimen/margin_oz"
+                        android:gravity="center"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/text_edit"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_rz"
+                            android:textColor="@color/font_color"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/margin_tz"
+                            android:text="@string/edit"
+                            android:gravity="center"/>
+                        <ImageView
+                            android:id="@+id/image_add"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:visibility="invisible"
+                            android:src="@drawable/cart_quantity_plus_selector"/>
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/margin_rz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:visibility="invisible"
-                        android:src="@drawable/cart_quantity_plus_selector"/>
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="@string/return_total_money"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:id="@+id/text_return_total_money"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_rz"
+                        android:layout_marginLeft="@dimen/margin_ov"
+                        android:layout_marginRight="@dimen/margin_oz"
+                        android:text="0"
+                        android:textColor="@color/red"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:layout_marginLeft="5dp"
+                        android:text="@string/yuan"
+                        android:textColor="@color/font_color"/>
                 </LinearLayout>
-            </RelativeLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_marginTop="@dimen/margin_rz"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:text="@string/return_total_money"
-                    android:textColor="@color/font_color"/>
-                <TextView
-                    android:id="@+id/text_return_total_money"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_rz"
-                    android:layout_marginLeft="@dimen/margin_ov"
-                    android:layout_marginRight="@dimen/margin_oz"
-                    android:text="0"
-                    android:textColor="@color/red"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:layout_marginLeft="5dp"
-                    android:text="@string/yuan"
-                    android:textColor="@color/font_color"/>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_marginTop="@dimen/margin_rz"
+                    android:id="@+id/ll_add_return_payInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
-            <LinearLayout
-                android:orientation="vertical"
-                android:id="@+id/ll_add_return_payInfo"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-    </ScrollView>
+        </ScrollView>
+    </LinearLayout>
+
 </RelativeLayout>

@@ -72,7 +72,7 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
     LinearLayout ll_return_score;
 
     @Bind(R.id.goods_listview)
-    ListViewForScrollView goods_listview;
+    ListView goods_listview;
     private GoodsAdapter goodsAdapter;
     ArrayList<GoodsInfo> shopCarList = new ArrayList<>();
 

@@ -31,6 +31,7 @@ import com.symboltech.wangpos.result.CommitOrderResult;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
+import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
@@ -147,10 +148,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
         ButterKnife.bind(this);
         edit_return_handperson.setOnTouchListener(this);
         edit_return_good.setOnTouchListener(this);
-        InputMethodManager imm = (InputMethodManager)getSystemService(INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(edit_return_handperson.getWindowToken(), 0);
-        imm.hideSoftInputFromWindow(edit_return_good.getWindowToken(), 0);
-
+        new HorizontalKeyBoard(this, this, edit_return_money);
     }
 
     @Override

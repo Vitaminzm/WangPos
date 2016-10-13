@@ -33,7 +33,6 @@
             android:id="@+id/view_line_type"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="3dp"
             android:background="@color/font_color"/>
     </LinearLayout>
 
@@ -41,18 +40,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="@dimen/font_size_tf"
-        android:text="@string/return_ditch"
+        android:text="@string/return_money"
         android:layout_marginRight="@dimen/margin_tz"
-        android:layout_marginLeft="@dimen/margin_fz"
+        android:layout_marginLeft="@dimen/margin_tz"
         android:textColor="@color/font_color"/>
     <LinearLayout
-        android:layout_width="@dimen/height_orz"
+        android:layout_width="@dimen/height_otz"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical">
         <EditText
             android:id="@+id/edit_pay_money"
-            android:layout_width="@dimen/height_orz"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="@dimen/font_size_tf"
@@ -72,12 +71,11 @@
         android:layout_height="wrap_content"
         android:textSize="@dimen/font_size_tf"
         android:text="@string/yuan"
-        android:layout_marginLeft="@dimen/margin_tz"
         android:textColor="@color/font_color"/>
     <ImageView
         android:id="@+id/imageview_opt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="@dimen/margin_oz"
         android:src="@drawable/cart_quantity_minus_selector"/>
 </LinearLayout>

@@ -4,17 +4,16 @@
     android:layout_height="match_parent"
     android:background="@color/color_bg"
     android:orientation="vertical" >
-
-
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="horizontal" >
 
         <RelativeLayout
             android:id="@+id/rl_offline"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:layout_marginRight="@dimen/btn_margin"
             android:gravity="center"
             android:layout_weight="1"
@@ -29,7 +28,7 @@
         <RelativeLayout
             android:id="@+id/rl_upload"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:background="@drawable/btn_blue_bg" >
@@ -43,14 +42,15 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="@dimen/btn_margin"
         android:orientation="horizontal" >
 
         <RelativeLayout
             android:id="@+id/rl_bank"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:layout_marginRight="@dimen/btn_margin"
             android:layout_weight="1"
             android:gravity="center"
@@ -66,7 +66,7 @@
         <RelativeLayout
             android:id="@+id/rl_weichat"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
             android:background="@drawable/btn_blue_bg" >
@@ -80,14 +80,15 @@
 
     <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginTop="@dimen/btn_margin"
         android:orientation="horizontal" >
 
         <RelativeLayout
             android:id="@+id/rl_salereturn"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:layout_marginRight="@dimen/btn_margin"
             android:layout_weight="1"
             android:gravity="center"
@@ -103,7 +104,7 @@
         <RelativeLayout
             android:id="@+id/rl_add"
             android:layout_width="0dp"
-            android:layout_height="@dimen/btn_width"
+            android:layout_height="match_parent"
             android:visibility="invisible"
             android:gravity="center"
             android:layout_weight="1"
@@ -114,5 +115,11 @@
                 android:src="@mipmap/btn_weichat_icon" />
 
         </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_weight="1"
+        android:layout_height="0dp">
+
     </LinearLayout>
 </LinearLayout>

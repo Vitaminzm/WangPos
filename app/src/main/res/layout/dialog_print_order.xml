@@ -48,7 +48,7 @@
         <TextView
             android:id="@+id/text_print_order"
             android:layout_marginTop="@dimen/margin_vz"
-            android:layout_width="@dimen/height_fez"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/height_ez"
             android:gravity="center"
             android:textColor="@color/white"
@@ -58,7 +58,7 @@
         <TextView
             android:id="@+id/text_print_slip"
             android:layout_marginTop="@dimen/margin_vz"
-            android:layout_width="@dimen/height_fez"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/height_ez"
             android:gravity="center"
             android:textColor="@color/white"

@@ -38,6 +38,7 @@ import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
@@ -164,18 +165,15 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         initids();
         totalReturnMoney = Math.abs(ArithDouble.parseDouble(billInfo.getTotalmoney()));
         title_text_content.setText(getString(R.string.return_order_info));
-        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm.isActive()) {
-            imm.hideSoftInputFromWindow(edit_input_reason.getWindowToken(), 0); // 强制隐藏键盘
-        }
         edit_input_reason.setOnTouchListener(this);
         imageview_drop_arrow.setOnTouchListener(this);
-        text_return_total_money.setText(totalReturnMoney+"");
+        text_return_total_money.setText(totalReturnMoney + "");
         if (reasons != null && reasons.size() > 0) {
             edit_input_reason.setText(reasons.get(0).getName());
         }else {
             edit_input_reason.setText(R.string.warning_no);
         }
+        addReturnInfo(true);
     }
 
     @Override
@@ -215,7 +213,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                 }
                 break;
             case R.id.image_add:
-                    addReturnInfo();
+                    addReturnInfo(false);
                 break;
             case R.id.text_submit_return_order:
                     saveOrder();
@@ -291,8 +289,8 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         List<PayMentsInfo> visiblePayments = new ArrayList<>();
         if(paymentInfos != null && paymentInfos.size() != 0) {
             for (PayMentsInfo pay : paymentInfos) {
-                //过滤类型大于100的收款方式
-                if(Integer.parseInt(pay.getType()) > 100) {
+                //过滤类型大于100的收款方式 以及优惠券方式
+                if(Integer.parseInt(pay.getType()) > 100 || pay.getType().equals(PaymentTypeEnum.COUPON.getStyletype())){
                     continue;
                 }
                 if(MyApplication.isOffLineMode()) {
@@ -324,17 +322,20 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     /**
      * 添加退款信息
      */
-    private void addReturnInfo() {
+    private void addReturnInfo(boolean isFirst) {
         final View view = inflater.inflate(R.layout.item_pay_info, null);
         final TextView style = (TextView) view.findViewById(R.id.text_pay_type);
         final EditText money = (EditText) view.findViewById(R.id.edit_pay_money);
+        new HorizontalKeyBoard(this, this, money);
         ImageView icon = (ImageView) view.findViewById(R.id.imageview_opt);
         if (paymentInfos != null && paymentInfos.size() > 0) {
             style.setText(paymentInfos.get(0).getName());
         }else {
             style.setText("无");
         }
-
+         if(isFirst) {
+             money.setText(totalReturnMoney+"");
+         }
         if(isEdit) {
             icon.setVisibility(View.VISIBLE);
         }else {
@@ -370,7 +371,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             if(flag) {
                 icon.setVisibility(View.VISIBLE);
             }else {
-                icon.setVisibility(View.GONE);
+                icon.setVisibility(View.INVISIBLE);
             }
         }
     }
