@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -23,11 +25,9 @@ import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
-import com.symboltech.wangpos.log.LogUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
 
 public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTouchListener, OnDismissListener {
 
@@ -57,7 +57,37 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	public static int real_scontenth =-1;	//实际内容高度，  计算公式:屏幕高度-导航栏高度-电量栏高度
 	private View mContentView;
 	private WindowManager mManager;
+
+	int count = -1;
+	public  Handler mHandler =new Handler(){
+		@Override
+		public void dispatchMessage(Message msg) {
+			count++;
+			if(count >9){
+				count = -1;
+				return;
+			}
+			Message m= Message.obtain();
+			int a= msg.arg1;
+			switch (msg.what) {
+				case 1:
+					mContentView.scrollBy(0, a);
+					m.what =1;
+					m.arg1 = a;
+					mHandler.sendMessageDelayed(m, 10);
+					break;
+				case -1:
+					mContentView.scrollBy(0, a);
+					m.what = -1;
+					m.arg1 = a;
+					mHandler.sendMessageDelayed(m, 10);
+					break;
+			}
+		}
+	};
+
 	boolean isFocusOutside = false;
+
 	/**
 	 * 
 	 * @param context 上下文
@@ -199,7 +229,9 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		initSetting();
 		initScreenParams(context);
 	}
-	
+
+
+
 	@Override
 	public void show() {
 		super.show();
@@ -236,18 +268,18 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 			  }
 			  if(length>0){
 				 if(!(mObject instanceof Dialog)){
-					 mContentView.scrollBy(0, length);
+					 Message m =Message.obtain();
+					 m.what = 1;
+					 m.arg1 = length/10;
+					 mHandler.sendMessageDelayed(m, 200);
+					 //mContentView.scrollBy(0, length);
 				 }else{
 					 mManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 					 mManager.updateViewLayout(mWindow.getDecorView(), getParams(-length));
 				 }
 			  }
-//			if(length>0){
-//				LogUtil.i("lgs",length+"---------");
-//				mManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//				mManager.updateViewLayout(mWindow.getDecorView(), getParams(-length));
-//			}
 		  }
+
 	}
 	
 	private LayoutParams getParams(int speed) {
@@ -261,17 +293,16 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		try {
 			if (length > 0) {
 				if(!(mObject instanceof Dialog)){
-					 mContentView.scrollBy(0, -length);
+					 mContentView.scrollBy(0, -(length/10)*10);
 					 length = 0;
 				 }else{
 					 length = 0;
 					 mManager.updateViewLayout(mWindow.getDecorView(), getParams(length));
 				 }
-//				length = 0;
-//				mManager.updateViewLayout(mWindow.getDecorView(), getParams(length));
 			}
 		} catch (Exception e) {
 		}
+		mHandler.removeCallbacksAndMessages(null);
 		super.dismiss();
 	}
 	/**
