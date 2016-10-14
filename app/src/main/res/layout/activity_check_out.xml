@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ll_keyboard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/view_bg_color"
@@ -245,7 +246,7 @@
             android:layout_alignParentBottom="true"
             android:layout_height="1dp"/>
     </RelativeLayout>
-    
+
     <LinearLayout
         android:layout_below="@id/rl_payment"
         android:id="@+id/ll_pay_type_ditch"

@@ -1,7 +1,6 @@
 package com.symboltech.wangpos.activity;
 
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -22,7 +21,6 @@ import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.CancleCallback;
-import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
@@ -83,6 +81,8 @@ public class CheckOutActivity extends BaseActivity {
     GridView activity_payment_gridview;
     @Bind(R.id.listview_pay_info)
     ListView listview_pay_info;
+    @Bind(R.id.ll_keyboard)
+    RelativeLayout ll_keyboard;
     //订单总额
     private double orderTotleValue;
     //待支付金额
@@ -276,7 +276,7 @@ public class CheckOutActivity extends BaseActivity {
                 }
             }
         });
-        keyboard = new HorizontalKeyBoard(this, this, edit_input_money, new KeyBoardListener() {
+        keyboard = new HorizontalKeyBoard(this, this, edit_input_money, ll_keyboard, new KeyBoardListener() {
             @Override
             public void onComfirm() {
 

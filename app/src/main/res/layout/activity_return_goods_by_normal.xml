@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/view_bg_color"
+    android:id="@+id/ll_keyboard"
     tools:context="com.symboltech.wangpos.activity.ReturnGoodsByNormalActivity">
 
     <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />

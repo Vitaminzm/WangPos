@@ -1,7 +1,6 @@
 package com.symboltech.wangpos.activity;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -117,7 +116,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                 }
             }
         });
-        keyBoard = new HorizontalKeyBoard(this, this, edit_phone_number, new KeyBoardListener(){
+        keyBoard = new HorizontalKeyBoard(this, this, edit_phone_number, ll_phone_number, new KeyBoardListener(){
 
             @Override
             public void onComfirm() {

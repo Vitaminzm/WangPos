@@ -7,6 +7,7 @@
     tools:context="com.symboltech.wangpos.activity.LoginActivity">
 
     <LinearLayout
+        android:id="@+id/ll_keyboard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

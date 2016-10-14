@@ -1,16 +1,15 @@
 package com.symboltech.wangpos.activity;
 
 import android.content.Intent;
-import android.inputmethodservice.Keyboard;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +55,8 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
     TextView text_bill_id;
     @Bind(R.id.ll_saleman)
     LinearLayout ll_saleman;
+    @Bind(R.id.ll_keyboard)
+    RelativeLayout ll_keyboard;
     @Bind(R.id.text_desk_code)
     TextView text_desk_code;
 
@@ -114,7 +115,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
             BaseActivity theActivity = mActivity.get();
             switch (msg.what) {
                 case ToastUtils.TOAST_WHAT:
-                    ToastUtils.showtaostbyhandler(theActivity,msg);
+                    ToastUtils.showtaostbyhandler(theActivity, msg);
                     break;
             }
         }
@@ -148,7 +149,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
         ButterKnife.bind(this);
         edit_return_handperson.setOnTouchListener(this);
         edit_return_good.setOnTouchListener(this);
-        new HorizontalKeyBoard(this, this, edit_return_money);
+        new HorizontalKeyBoard(this, this, edit_return_money,ll_keyboard);
     }
 
     @Override
@@ -229,7 +230,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
                     @Override
                     public void handleActionSuccess(String actionName, CommitOrderResult result) {
                         if(result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
-                            Intent intent = new Intent(mContext, ReturnMoneyByNormalActivity.class);
+                            Intent intent = new Intent(ReturnGoodsByNormalActivity.this, ReturnMoneyByNormalActivity.class);
                             intent.putExtra(ConstantData.BILL, billInfo);
                             startActivity(intent);
                         }else {

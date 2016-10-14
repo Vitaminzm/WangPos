@@ -25,7 +25,6 @@ import com.symboltech.wangpos.dialog.ReturnDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
-import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.result.BillResult;
 import com.symboltech.wangpos.result.InitializeInfResult;
@@ -218,6 +217,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Intent intent = new Intent(this,PaymentActivity.class);
         intent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_ACCOUNTS);
         startActivity(intent);
+        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
     }
     /**
      * gotoFunction

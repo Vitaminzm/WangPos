@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baoyz.swipemenulistview.SwipeMenu;
@@ -25,7 +26,6 @@ import com.symboltech.wangpos.dialog.AddScoreGoodDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
-import com.symboltech.wangpos.http.HttpStringClient;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.msg.entity.AllMemberInfo;
@@ -73,6 +73,9 @@ public class PaymentActivity extends BaseActivity {
     TextView radio_add_score_good;
     @Bind(R.id.ll_used_score)
     LinearLayout ll_used_score;
+
+    @Bind(R.id.ll_keyboard)
+    RelativeLayout ll_keyboard;
 
     @Bind(R.id.text_cashier_name)
     TextView text_cashier_name;
@@ -132,7 +135,7 @@ public class PaymentActivity extends BaseActivity {
         cartuicontroller();
         initsalesandgoods();
         if(isHavePriceChangeGood()){
-            keyboard = new HorizontalKeyBoard(this, this, edit_input_money, new KeyBoardListener() {
+            keyboard = new HorizontalKeyBoard(this, this, edit_input_money,ll_keyboard, new KeyBoardListener() {
                 @Override
                 public void onComfirm() {
 

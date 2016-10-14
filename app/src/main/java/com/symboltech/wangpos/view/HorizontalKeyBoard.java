@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Rect;
+import android.text.Layout;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -14,10 +15,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +36,7 @@ import java.lang.reflect.Method;
 
 public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTouchListener, OnDismissListener {
 
+	private ViewGroup ll_keyboard;
 	private Context context;
 	private EditText editText1, editText2;
 	private TextView textView;
@@ -58,21 +64,6 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	private View mContentView;
 	private WindowManager mManager;
 	boolean isFocusOutside = false;
-	/**
-	 * 
-	 * @param context 上下文
-	 * @param mWindow 当前activity或者dialog（不能放其他）
-	 * @param listener
-	 */
-	public HorizontalKeyBoard(Context context, Object mWindow, KeyBoardListener listener) {
-		super(context, R.style.keyboard_dialog);
-		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
-		this.context = context;
-		this.mObject = mWindow;
-		this.listener = listener;
-		flag = FLAG_NULL;
-		initView();
-	}
 
 	/**
 	 * 
@@ -81,13 +72,14 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	 * @param editText 编辑框
 	 * @param listener 确定按钮监听, 不监听传null
 	 */
-	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText, KeyBoardListener listener) {
+	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText, ViewGroup ll_keyboard, KeyBoardListener listener) {
 		super(context, R.style.keyboard_dialog);
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
 		this.mObject = mWindow;
 		this.editText1 = editText;
 		this.listener = listener;
+		this.ll_keyboard = ll_keyboard;
 		flag = FLAG_EDIT;
 		initView();
 	}
@@ -97,12 +89,13 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	 * @param mWindow 当前activity或者dialog（不能放其他）
 	 * @param editText 编辑框
 	 */
-	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText) {
+	public HorizontalKeyBoard(Context context, Object mWindow, ViewGroup ll_keyboard, EditText editText) {
 		super(context, R.style.keyboard_dialog);
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
 		this.mObject = mWindow;
 		this.editText1 = editText;
+		this.ll_keyboard = ll_keyboard;
 		flag = FLAG_EDIT;
 		initView();
 	}
@@ -114,7 +107,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
      * @param editText2 编辑框2
 	 * @param listener 确定按钮监听, 不监听传null
 	 */
-	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText1,EditText editText2, KeyBoardListener listener) {
+	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText1,EditText editText2, ViewGroup ll_keyboard,KeyBoardListener listener) {
 		super(context, R.style.keyboard_dialog);
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
@@ -122,41 +115,25 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		this.listener = listener;
 		this.editText1 = editText1;
 		this.editText2 = editText2;
+		this.ll_keyboard = ll_keyboard;
 		flag = FLAG_EDIT;
 		initView();
 	}
 
-	/**
-	 *
-	 * @param context 上下文
-	 * @param mWindow 当前activity或者dialog（不能放其他）
-	 * @param editText
-	 * @param isFocusOutside 点击外部是否消失
-	 */
-	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText, boolean isFocusOutside) {
-		super(context, R.style.keyboard_dialog);
-		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
-		this.context = context;
-		this.mObject = mWindow;
-		this.editText1 = editText;
-		flag = FLAG_EDIT;
-		this.isFocusOutside = isFocusOutside;
-		initView();
-	}
-	
 	/**
 	 * @param context 上下文
 	 * @param mWindow 当前activity或者dialog（不能放其他）
 	 * @param textView 文本框
 	 * @param listener 确定按钮监听, 不监听传null
 	 */
-	public HorizontalKeyBoard(Context context, Object mWindow, TextView textView, KeyBoardListener listener) {
+	public HorizontalKeyBoard(Context context, Object mWindow, TextView textView, ViewGroup ll_keyboard, KeyBoardListener listener) {
 		super(context, R.style.keyboard_dialog);
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
 		this.mObject = mWindow;
 		this.textView = textView;
 		this.listener = listener;
+		this.ll_keyboard = ll_keyboard;
 		flag = FLAG_TEXT;
 		initView();
 	}
@@ -167,12 +144,13 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	 * @param mWindow 当前activity或者dialog（不能放其他）
 	 * @param textView 文本框
 	 */
-	public HorizontalKeyBoard(Context context, Object mWindow, TextView textView) {
+	public HorizontalKeyBoard(Context context, Object mWindow, TextView textView, ViewGroup ll_keyboard) {
 		super(context, R.style.keyboard_dialog);
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
 		this.mObject = mWindow;
 		this.textView = textView;
+		this.ll_keyboard = ll_keyboard;
 		flag = FLAG_TEXT;
 		initView();
 	}
@@ -236,7 +214,10 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 			  }
 			  if(length>0){
 				 if(!(mObject instanceof Dialog)){
-					 mContentView.scrollBy(0, length);
+					 ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) ll_keyboard.getLayoutParams();
+					 lp1.topMargin = -length;
+					 ll_keyboard.requestLayout();
+					 //mContentView.scrollBy(0, length);
 				 }else{
 					 mManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 					 mManager.updateViewLayout(mWindow.getDecorView(), getParams(-length));
@@ -245,7 +226,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 //			if(length>0){
 //				LogUtil.i("lgs",length+"---------");
 //				mManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-//				mManager.updateViewLayout(mWindow.getDecorView(), getParams(-length));
+//				mManager.updateViewLayout(mContentView, getParams(-length));
 //			}
 		  }
 	}
@@ -261,8 +242,11 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		try {
 			if (length > 0) {
 				if(!(mObject instanceof Dialog)){
-					 mContentView.scrollBy(0, -length);
-					 length = 0;
+					ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) ll_keyboard.getLayoutParams();
+					length = 0;
+					lp1.topMargin = length;
+					ll_keyboard.requestLayout();
+//					 mContentView.scrollBy(0, -length);
 				 }else{
 					 length = 0;
 					 mManager.updateViewLayout(mWindow.getDecorView(), getParams(length));
@@ -293,54 +277,8 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
         
         mScreenWidth = dMetrics.widthPixels;
         mScreenHeight = dMetrics.heightPixels;
-        
-       /* screenh_nonavbar = mScreenHeight;
-		
-        int ver = Build.VERSION.SDK_INT;
-        
-        // 新版本的android 系统有导航栏，造成无法正确获取高度
-        if (ver == 13){
-            try {
-                Method mt = display.getClass().getMethod("getRealHeight");
-                screenh_nonavbar = (Integer)mt.invoke(display);
-            }catch (Exception e){
-            }
-        } else if (ver > 13){
-            try{
-                Method mt = display.getClass().getMethod("getRawHeight");
-                screenh_nonavbar = (Integer)mt.invoke(display);
-            }catch (Exception e){
-            }
-        }
-        
-        real_scontenth = screenh_nonavbar-getStatusBarHeight(context);*/
-        
-  
 	}
 	
-	/**
-	 * 电量栏高度
-	 * @return
-	 */
-	public static int getStatusBarHeight(Context context){
-	       Class<?> c = null; 
-			 Object obj = null; 
-			 Field field = null;
-			 int x = 0,
-			 sbar = 0; 
-			 try { 
-				 c = Class.forName("com.android.internal.R$dimen");
-				 obj = c.newInstance();
-				 field = c.getField("status_bar_height");
-				 x = Integer.parseInt(field.get(obj).toString()); 
-				 sbar = context.getResources().getDimensionPixelSize(x);
-			 } catch (Exception e1) {
-				 e1.printStackTrace();
-			 }
-			 
-			 return sbar;
-	}
-
 	private void initSetting() {
 		((Activity) context).getWindow().setSoftInputMode(LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 		try {
@@ -372,11 +310,8 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		Window window = this.getWindow();
 		window.setGravity(Gravity.LEFT|Gravity.BOTTOM);
 		LayoutParams params = window.getAttributes();
-		//params.windowAnimations = R.anim.slide_up_in;
 		if(isFocusOutside)
 			params.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
-//		params.x = 7;
-//		params.y = 0;
 		window.setAttributes(params);
 	}
 

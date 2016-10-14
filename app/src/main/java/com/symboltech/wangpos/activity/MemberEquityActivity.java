@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
@@ -68,6 +69,8 @@ public class MemberEquityActivity extends BaseActivity {
 
     @Bind(R.id.recycleview_hold_coupon)
     RecyclerView recycleview_hold_coupon;
+    @Bind(R.id.ll_keyboard)
+    RelativeLayout ll_keyboard;
 
     private double orderTotleValue;
     private MemberInfo member;
@@ -122,7 +125,7 @@ public class MemberEquityActivity extends BaseActivity {
             } else {
                 maxScoreValue = ArithDouble.parseDouble(submitgoods.getLimitpoint());
                 text_max_score.setText(maxScoreValue +"");
-                new HorizontalKeyBoard(this, this, edit_used_score, new KeyBoardListener() {
+                new HorizontalKeyBoard(this, this, edit_used_score, ll_keyboard, new KeyBoardListener() {
                     @Override
                     public void onComfirm() {
 

@@ -1,6 +1,5 @@
 package com.symboltech.wangpos.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -9,16 +8,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.PaymentAdapter;
@@ -72,6 +69,8 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     EditText edit_input_reason;
     @Bind(R.id.imageview_drop_arrow)
     ImageView imageview_drop_arrow;
+    @Bind(R.id.ll_keyboard)
+    RelativeLayout ll_keyboard;
 
     private View reasonPop, stylePop;
     private ListView reasonList, styleList;
@@ -326,7 +325,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         final View view = inflater.inflate(R.layout.item_pay_info, null);
         final TextView style = (TextView) view.findViewById(R.id.text_pay_type);
         final EditText money = (EditText) view.findViewById(R.id.edit_pay_money);
-        new HorizontalKeyBoard(this, this, money);
+        new HorizontalKeyBoard(this, this, money,ll_keyboard);
         ImageView icon = (ImageView) view.findViewById(R.id.imageview_opt);
         if (paymentInfos != null && paymentInfos.size() > 0) {
             style.setText(paymentInfos.get(0).getName());

@@ -1,14 +1,12 @@
 package com.symboltech.wangpos.activity;
 
 import android.content.Intent;
-import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.GoodsAdapter;
@@ -23,13 +21,9 @@ import com.symboltech.wangpos.msg.entity.CashierInfo;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.BaseResult;
-import com.symboltech.wangpos.utils.ArithDouble;
-import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
-import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
-import com.symboltech.wangpos.view.ListViewForScrollView;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

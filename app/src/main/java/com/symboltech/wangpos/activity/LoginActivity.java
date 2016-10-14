@@ -2,10 +2,8 @@ package com.symboltech.wangpos.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -24,10 +22,8 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.config.InitializeConfig;
 import com.symboltech.wangpos.db.dao.LoginDao;
 import com.symboltech.wangpos.db.dao.UserNameDao;
-import com.symboltech.wangpos.dialog.UniversalHintDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
-import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.interfaces.OnDrawableClickListener;
 import com.symboltech.wangpos.log.LogUtil;
@@ -61,6 +57,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Bind(R.id.ll_lock_info)LinearLayout ll_lock_info;
     @Bind(R.id.ll_desk_code)LinearLayout ll_desk_code;
     @Bind(R.id.ll_cashier_name)LinearLayout ll_cashier_name;
+    @Bind(R.id.ll_keyboard)LinearLayout ll_keyboard;
     @Bind(R.id.text_cashier_name)TextView text_cashier_name;
     @Bind(R.id.text_desk_code)TextView text_desk_code;
 
@@ -116,7 +113,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         setContentView(R.layout.activity_login);
         MyApplication.addActivity(this);
         ButterKnife.bind(this);
-        keyboard = new HorizontalKeyBoard(this, this, edit_username, edit_password, new KeyBoardListener() {
+        keyboard = new HorizontalKeyBoard(this, this, edit_username, edit_password, ll_keyboard, new KeyBoardListener() {
             @Override
             public void onComfirm() {
 
