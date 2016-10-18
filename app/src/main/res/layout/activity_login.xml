@@ -71,14 +71,13 @@
             android:orientation="vertical">
             <LinearLayout
                 android:id="@+id/ll_lock_info"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/height_ozz"
                 android:layout_marginLeft="@dimen/margin_xz"
                 android:layout_marginRight="@dimen/margin_xz"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:background="@color/edit_bg">
+                android:background="@color/color_bg">
             <ImageView
                 android:layout_width="@dimen/margin_xz"
                 android:layout_height="@dimen/margin_xz"

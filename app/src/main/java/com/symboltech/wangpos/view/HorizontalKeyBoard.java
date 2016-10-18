@@ -1,5 +1,7 @@
 package com.symboltech.wangpos.view;
 
+import android.animation.IntEvaluator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -89,7 +91,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	 * @param mWindow 当前activity或者dialog（不能放其他）
 	 * @param editText 编辑框
 	 */
-	public HorizontalKeyBoard(Context context, Object mWindow, ViewGroup ll_keyboard, EditText editText) {
+	public HorizontalKeyBoard(Context context, Object mWindow, EditText editText, ViewGroup ll_keyboard ) {
 		super(context, R.style.keyboard_dialog);
 		requestWindowFeature(Window.FEATURE_OPTIONS_PANEL);
 		this.context = context;
@@ -195,7 +197,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 					  textView.getLocationOnScreen(pos);
 				  }
 			  }
-			  float height = dpToPx(getContext(), 440);
+			  float height = dpToPx(getContext(), 410);
 
 			  Rect outRect = new Rect();
 			  mContentView.getWindowVisibleDisplayFrame(outRect);
@@ -214,9 +216,20 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 			  }
 			  if(length>0){
 				 if(!(mObject instanceof Dialog)){
-					 ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) ll_keyboard.getLayoutParams();
-					 lp1.topMargin = -length;
-					 ll_keyboard.requestLayout();
+					 ValueAnimator valueAnimator = ValueAnimator.ofInt(0,length);
+					 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+						 private IntEvaluator intEvaluator = new IntEvaluator();
+
+						 @Override
+						 public void onAnimationUpdate(ValueAnimator animation) {
+							 int currentValue = (int) animation.getAnimatedValue();
+							 float fraction = animation.getAnimatedFraction();
+							 ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) ll_keyboard.getLayoutParams();
+							 lp1.topMargin = -intEvaluator.evaluate(fraction,0,length);
+							 ll_keyboard.requestLayout();
+						 }
+					 });
+					 valueAnimator.setDuration(300).start();
 					 //mContentView.scrollBy(0, length);
 				 }else{
 					 mManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -242,10 +255,20 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		try {
 			if (length > 0) {
 				if(!(mObject instanceof Dialog)){
-					ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) ll_keyboard.getLayoutParams();
-					length = 0;
-					lp1.topMargin = length;
-					ll_keyboard.requestLayout();
+					ValueAnimator valueAnimator = ValueAnimator.ofInt(length,0);
+					valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+						private IntEvaluator intEvaluator = new IntEvaluator();
+
+						@Override
+						public void onAnimationUpdate(ValueAnimator animation) {
+							int currentValue = (int) animation.getAnimatedValue();
+							float fraction = animation.getAnimatedFraction();
+							ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) ll_keyboard.getLayoutParams();
+							lp1.topMargin = -intEvaluator.evaluate(fraction,length,0);
+							ll_keyboard.requestLayout();
+						}
+					});
+					valueAnimator.setDuration(300).start();
 //					 mContentView.scrollBy(0, -length);
 				 }else{
 					 length = 0;
@@ -350,7 +373,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 				editText1.getText().delete(editText1.getSelectionStart() - 1, editText1.getSelectionStart());
 			}else if(flag == FLAG_EDIT2 && editText2.getSelectionStart() > 0) {
 				editText2.getText().delete(editText2.getSelectionStart() - 1, editText2.getSelectionStart());
-			}else if(flag == FLAG_TEXT && textView.getText() != null) {
+			}else if(flag == FLAG_TEXT && textView.getText() != null && textView.getText().length() >0) {
 				textView.getEditableText().delete(textView.getText().length() - 1, textView.getText().length());
 			}
 		}else if(v.getId() == cancle.getId()) {

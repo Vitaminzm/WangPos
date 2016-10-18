@@ -22,11 +22,13 @@ import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.result.BillResult;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +63,7 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 					context.startActivity(orderIntent);
 					break;
 				case STATUS_CODE_FAIL:
+					ReturnDialog.this.setCanceledOnTouchOutside(false);
 					text_status.setText(R.string.order_searching);
 					text_status.setTextColor(context.getResources().getColor(R.color.green));
 					spin_kit.setVisibility(View.VISIBLE);
@@ -73,8 +76,11 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 				default:
 					break;
 			}
-		};
+		}
+
+		;
 	};
+	private HorizontalKeyBoard keyboard;
 
 	public ReturnDialog(Context context) {
 		super(context, R.style.dialog_login_bg);
@@ -93,6 +99,7 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 		setContentView(R.layout.dialog_return);
 		this.setCanceledOnTouchOutside(true);
 		initUI();
+		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
 		if (!StringUtil.isEmpty(MyApplication.getLast_billid())) {
 			edit_input_order_no.setHint(MyApplication.getLast_billid());
 		}
@@ -131,6 +138,9 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 				ll_function_return_order.setVisibility(View.VISIBLE);
 				break;
 			case R.id.text_cancle:
+				if(keyboard.isShowing()){
+					keyboard.dismiss();
+				}
 				ll_function.setVisibility(View.VISIBLE);
 				ll_function_return_order.setVisibility(View.GONE);
 				break;
@@ -162,12 +172,23 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 	 * @param billId  订单号
 	 */
 	private void getOrderInfo(final String posno, final String billId) {
-		ll_function_return_order.setVisibility(View.GONE);
-		ll_status.setVisibility(View.VISIBLE);
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("posno", posno);
 		map.put("billid", billId);
 		HttpRequestUtil.getinstance().getOrderInfo(map, BillResult.class, new HttpActionHandle<BillResult>() {
+			@Override
+			public void handleActionStart() {
+				ll_function_return_order.setVisibility(View.GONE);
+				ll_status.setVisibility(View.VISIBLE);
+				super.handleActionStart();
+			}
+
+			@Override
+			public void handleActionFinish() {
+				super.handleActionFinish();
+				ReturnDialog.this.setCanceledOnTouchOutside(true);
+			}
+
 			@Override
 			public void handleActionError(String actionName, final String errmsg) {
 				((Activity)context).runOnUiThread(new Runnable() {

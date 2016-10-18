@@ -1,8 +1,13 @@
 package com.symboltech.wangpos.activity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,7 +35,9 @@ import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.RefundReasonInfo;
 import com.symboltech.wangpos.msg.entity.ReturnEntity;
+import com.symboltech.wangpos.print.PrepareReceiptInfo;
 import com.symboltech.wangpos.result.SaveOrderResult;
+import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
@@ -50,6 +57,10 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.koolcloud.engine.service.aidl.IPrintCallback;
+import cn.koolcloud.engine.service.aidl.IPrinterService;
+import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
+import cn.koolcloud.engine.service.aidlbean.IMessage;
 
 public class ReturnMoneyByNormalActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnTouchListener {
 
@@ -137,6 +148,10 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         return false;
     }
 
+    protected static final int printStart = 0;
+    protected static final int printEnd = 1;
+    protected static final int printError = 2;
+    /** refresh UI By handler */
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
 
@@ -151,11 +166,78 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                 case ToastUtils.TOAST_WHAT:
                     ToastUtils.showtaostbyhandler(theActivity,msg);
                     break;
+                case printStart:
+                    break;
+                case printEnd:
+                    break;
+                case printError:
+                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                    // -999：不支持该功能（可以不支持）
+                    String errorMsg = "";
+                    LogUtil.e("lgs", "printer errorCode is " + msg.arg1);
+                    switch (msg.arg1) {
+                        case -1:
+                            errorMsg = "result=-1：缺纸";
+                            break;
+                        case -2:
+                            errorMsg = "result=-2：未合盖";
+                            break;
+                        case -3:
+                            errorMsg = "result=-3：卡纸";
+                            break;
+                        case -4:
+                            errorMsg = "result=-4 初始化异常";
+                            break;
+                        case -999:
+                            errorMsg = "result=-999：不支持该功能";
+                            break;
+                        default:
+                            errorMsg = "result=-100：其他故障";
+                            break;
+                    }
+                    msg.obj = errorMsg;
+                    ToastUtils.showtaostbyhandler(theActivity,msg);
+                    break;
             }
         }
     }
-
     MyHandler handler = new MyHandler(this);
+    // 打印服务
+    private static IPrinterService iPrinterService;
+    private ServiceConnection printerServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            iPrinterService = IPrinterService.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            iPrinterService = null;
+        }
+    };
+
+    IPrintCallback.Stub callback = new IPrintCallback.Stub() {
+        @Override
+        public void handleMessage(IMessage message) throws RemoteException {
+            int ret = message.what;
+            LogUtil.d("lgs", "handleMessage ret:" + ret);
+            try {
+                iPrinterService.unRegisterPrintCallback();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (ret == 0) {
+                Message msg3 = new Message();
+                msg3.what = printEnd;
+                handler.sendMessage(msg3);
+            } else {
+                Message msg3 = new Message();
+                msg3.what = printError;
+                msg3.arg1 = ret;
+                handler.sendMessage(msg3);
+            }
+        }
+    };
     @Override
     protected void initData() {
         billInfo = (BillInfo) getIntent().getSerializableExtra(ConstantData.BILL);
@@ -173,6 +255,9 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             edit_input_reason.setText(R.string.warning_no);
         }
         addReturnInfo(true);
+        Intent printService = new Intent(IPrinterService.class.getName());
+        printService = AndroidUtils.getExplicitIntent(this, printService);
+        bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -187,6 +272,9 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
 
     @Override
     protected void recycleMemery() {
+        if (iPrinterService != null) {
+            unbindService(printerServiceConnection);
+        }
         handler.removeCallbacksAndMessages(null);
         MyApplication.delActivity(this);
     }
@@ -756,6 +844,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                             billInfo.setBillid(MyApplication.getBillId());
                             billInfo.setPaymentslist(payments);
                             billInfo.setAwardpoint(result.getSaveOrderInfo().getGainpoint());
+                            printBackByorder(billInfo);
                             MyApplication.setLast_billid(MyApplication.getBillId());
                             MyApplication.setBillId(result.getSaveOrderInfo().getBillid());
                             Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);
@@ -766,5 +855,28 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                         }
                     }
                 });
+    }
+
+    public void printBackByorder(final BillInfo billinfo){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg1 = new Message();
+                msg1.what = printStart;
+                handler.sendMessage(msg1);
+                try {
+                    iPrinterService.registerPrintCallback(callback);
+                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                    // -999：不支持该功能（可以不支持）
+                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo, false)));
+                } catch (Exception e) {
+                    Message msg2 = new Message();
+                    msg2.what = printError;
+                    msg2.arg1 = -100;
+                    handler.sendMessage(msg2);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }

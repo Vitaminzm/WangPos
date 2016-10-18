@@ -20,7 +20,7 @@
         android:id="@+id/input_money"
         android:layout_below="@id/view_sales_info"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_ofz"
+        android:layout_height="@dimen/height_otz"
         android:orientation="horizontal">
 
         <TextView

@@ -2,16 +2,21 @@ package com.symboltech.wangpos.activity;
 
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.ServiceConnection;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
@@ -25,11 +30,14 @@ import com.symboltech.wangpos.dialog.ReturnDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
+import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
+import com.symboltech.wangpos.print.PrepareReceiptInfo;
 import com.symboltech.wangpos.result.BillResult;
 import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.result.TicketFormatResult;
 import com.symboltech.wangpos.service.RunTimeService;
+import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.MyscollView;
@@ -46,11 +54,17 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.koolcloud.engine.service.aidl.IPrintCallback;
+import cn.koolcloud.engine.service.aidl.IPrinterService;
+import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
+import cn.koolcloud.engine.service.aidlbean.IMessage;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Bind(R.id.view_pager) ViewPager view_pager;
     @Bind(R.id.myscollview) MyscollView myscollView;
+
+    static public boolean isPrinting = false;
     /** used by receiver */
     private IntentFilter filter = new IntentFilter();
 
@@ -72,6 +86,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
     };
+    protected static final int printStart = 0;
+    protected static final int printEnd = 1;
+    protected static final int printError = 2;
     /** refresh UI By handler */
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
@@ -87,11 +104,82 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 case ToastUtils.TOAST_WHAT:
                     ToastUtils.showtaostbyhandler(theActivity,msg);
                     break;
+                case printStart:
+                    isPrinting = true;
+                    break;
+                case printEnd:
+                    isPrinting = false;
+                    break;
+                case printError:
+                    isPrinting = false;
+                        // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                        // -999：不支持该功能（可以不支持）
+                        String errorMsg = "";
+                        LogUtil.e("lgs", "printer errorCode is " + msg.arg1);
+                        switch (msg.arg1) {
+                            case -1:
+                                errorMsg = "result=-1：缺纸";
+                                break;
+                            case -2:
+                                errorMsg = "result=-2：未合盖";
+                                break;
+                            case -3:
+                                errorMsg = "result=-3：卡纸";
+                                break;
+                            case -4:
+                                errorMsg = "result=-4 初始化异常";
+                                break;
+                            case -999:
+                                errorMsg = "result=-999：不支持该功能";
+                                break;
+                            default:
+                                errorMsg = "result=-100：其他故障";
+                                break;
+                        }
+                        msg.obj = errorMsg;
+                        ToastUtils.showtaostbyhandler(theActivity,msg);
+                    break;
             }
         }
     }
 
     MyHandler handler = new MyHandler(this);
+    // 打印服务
+    private static IPrinterService iPrinterService;
+    private ServiceConnection printerServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            iPrinterService = IPrinterService.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            iPrinterService = null;
+        }
+    };
+
+    IPrintCallback.Stub callback = new IPrintCallback.Stub() {
+        @Override
+        public void handleMessage(IMessage message) throws RemoteException {
+            int ret = message.what;
+            LogUtil.d("lgs", "handleMessage ret:" + ret);
+            try {
+                iPrinterService.unRegisterPrintCallback();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (ret == 0) {
+                Message msg3 = new Message();
+                msg3.what = printEnd;
+                handler.sendMessage(msg3);
+            } else {
+                Message msg3 = new Message();
+                msg3.what = printError;
+                msg3.arg1 = ret;
+                handler.sendMessage(msg3);
+            }
+        }
+    };
 
     @Override
     protected void initData() {
@@ -122,6 +210,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
           //  getTickdatas();
            // uploadOfflineData(true);
         }
+        Intent printService = new Intent(IPrinterService.class.getName());
+        printService = AndroidUtils.getExplicitIntent(this, printService);
+        bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     public void ChangeUI(int mode){
@@ -176,6 +267,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void recycleMemery() {
+        if (iPrinterService != null) {
+            unbindService(printerServiceConnection);
+        }
         handler.removeCallbacksAndMessages(null);
         MyApplication.delActivity(this);
     }
@@ -203,10 +297,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 new ChangeManagerDialog(this).show();
                 break;
             case R.id.rl_billprint:
+                if(isPrinting){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.printing));
+                    return;
+                }
                 new PrintOrderDialog(this, new GeneralEditListener() {
                     @Override
                     public void editinput(String edit) {
-                        printByorder(edit);
+                        printByorderforHttp(edit);
                     }
                 }).show();
                 break;
@@ -217,7 +315,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Intent intent = new Intent(this,PaymentActivity.class);
         intent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_ACCOUNTS);
         startActivity(intent);
-        overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
     }
     /**
      * gotoFunction
@@ -237,7 +334,52 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         this.finish();
     }
 
-    private void printByorder(final String edit) {
+    public void printBackByorder(final BillInfo billinfo){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg1 = new Message();
+                msg1.what = printStart;
+                handler.sendMessage(msg1);
+                try {
+                    iPrinterService.registerPrintCallback(callback);
+                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                    // -999：不支持该功能（可以不支持）
+                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo,true)));
+                } catch (Exception e) {
+                    Message msg2 = new Message();
+                    msg2.what = printError;
+                    msg2.arg1 = -100;
+                    handler.sendMessage(msg2);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    public void printByorder(final BillInfo billinfo){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg1 = new Message();
+                msg1.what = printStart;
+                handler.sendMessage(msg1);
+                try {
+                    iPrinterService.registerPrintCallback(callback);
+                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                    // -999：不支持该功能（可以不支持）
+                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printOrderList(billinfo,true)));
+                } catch (Exception e) {
+                    Message msg2 = new Message();
+                    msg2.what = printError;
+                    msg2.arg1 = -100;
+                    handler.sendMessage(msg2);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+    private void printByorderforHttp(String edit) {
         Map<String, String> map = new HashMap<String, String>();
         map.put("billid", edit);
         HttpRequestUtil.getinstance().printerOrderagain(map, BillResult.class, new HttpActionHandle<BillResult>() {
@@ -263,9 +405,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     BillInfo billinfo = result.getTicketInfo().getBillinfo();
                     if (billinfo != null) {
                         if ("0".equals(billinfo.getSaletype())) {
-
+                            printByorder(billinfo);
                         } else if ("1".equals(billinfo.getSaletype()) || "2".equals(billinfo.getSaletype())) {
-
+                            printBackByorder(billinfo);
                         } else {
                             ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_param_err));
                         }

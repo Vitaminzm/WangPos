@@ -59,7 +59,7 @@
         android:layout_width="match_parent"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_height="@dimen/height_ofz">
+        android:layout_height="@dimen/height_orz">
 
         <ImageView
             android:id="@+id/imageview_more"
@@ -146,11 +146,11 @@
         android:layout_width="match_parent"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_height="@dimen/height_oev">
+        android:layout_height="@dimen/height_oxz">
         <RelativeLayout
             android:id="@+id/rl_wait_money"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/margin_rz"
+            android:layout_marginTop="@dimen/margin_tz"
             android:layout_height="wrap_content">
             <TextView
                 android:layout_width="wrap_content"
@@ -189,7 +189,7 @@
             android:layout_below="@id/rl_wait_money"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_rz"
+            android:layout_marginTop="@dimen/margin_ov"
             android:gravity="center_vertical">
 
             <TextView

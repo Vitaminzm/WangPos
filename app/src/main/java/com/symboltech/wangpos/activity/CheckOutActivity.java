@@ -227,6 +227,9 @@ public class CheckOutActivity extends BaseActivity {
                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
+            case WECHAT:
+
+                break;
         }
     }
 

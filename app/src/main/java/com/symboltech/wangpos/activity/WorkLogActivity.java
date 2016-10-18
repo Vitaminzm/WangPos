@@ -1,8 +1,13 @@
 package com.symboltech.wangpos.activity;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -19,12 +24,16 @@ import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.RefundReportInfo;
 import com.symboltech.wangpos.msg.entity.ReportDetailInfo;
 import com.symboltech.wangpos.msg.entity.ReportInfo;
 import com.symboltech.wangpos.msg.entity.SaleReportInfo;
 import com.symboltech.wangpos.msg.entity.TotalReportInfo;
+import com.symboltech.wangpos.print.PrepareReceiptInfo;
 import com.symboltech.wangpos.result.ReportResult;
+import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.DecoratorViewPager;
@@ -39,6 +48,10 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.koolcloud.engine.service.aidl.IPrintCallback;
+import cn.koolcloud.engine.service.aidl.IPrinterService;
+import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
+import cn.koolcloud.engine.service.aidlbean.IMessage;
 
 public class WorkLogActivity extends BaseActivity {
 
@@ -55,6 +68,10 @@ public class WorkLogActivity extends BaseActivity {
     private String flag;  //当前是班报还是日报   job - 班报
     private MyPagerAdapter myPagerAdapter;
 
+    protected static final int printStart = 0;
+    protected static final int printEnd = 1;
+    protected static final int printError = 2;
+    /** refresh UI By handler */
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
 
@@ -69,11 +86,84 @@ public class WorkLogActivity extends BaseActivity {
                 case ToastUtils.TOAST_WHAT:
                     ToastUtils.showtaostbyhandler(theActivity,msg);
                     break;
+                case printStart:
+                    isPrinting = true;
+                    break;
+                case printEnd:
+                    isPrinting = false;
+                    break;
+                case printError:
+                    isPrinting = false;
+                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                    // -999：不支持该功能（可以不支持）
+                    String errorMsg = "";
+                    LogUtil.e("lgs", "printer errorCode is " + msg.arg1);
+                    switch (msg.arg1) {
+                        case -1:
+                            errorMsg = "result=-1：缺纸";
+                            break;
+                        case -2:
+                            errorMsg = "result=-2：未合盖";
+                            break;
+                        case -3:
+                            errorMsg = "result=-3：卡纸";
+                            break;
+                        case -4:
+                            errorMsg = "result=-4 初始化异常";
+                            break;
+                        case -999:
+                            errorMsg = "result=-999：不支持该功能";
+                            break;
+                        default:
+                            errorMsg = "result=-100：其他故障";
+                            break;
+                    }
+                    msg.obj = errorMsg;
+                    ToastUtils.showtaostbyhandler(theActivity,msg);
+                    break;
             }
         }
     }
 
+    static public boolean isPrinting = false;
     MyHandler handler = new MyHandler(this);
+
+     // 打印服务
+    private static IPrinterService iPrinterService;
+    private ServiceConnection printerServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            iPrinterService = IPrinterService.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            iPrinterService = null;
+        }
+    };
+
+    IPrintCallback.Stub callback = new IPrintCallback.Stub() {
+        @Override
+        public void handleMessage(IMessage message) throws RemoteException {
+            int ret = message.what;
+            LogUtil.d("lgs", "handleMessage ret:" + ret);
+            try {
+                iPrinterService.unRegisterPrintCallback();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (ret == 0) {
+                Message msg3 = new Message();
+                msg3.what = printEnd;
+                handler.sendMessage(msg3);
+            } else {
+                Message msg3 = new Message();
+                msg3.what = printError;
+                msg3.arg1 = ret;
+                handler.sendMessage(msg3);
+            }
+        }
+    };
     @Override
     protected void initData() {
         text_desk_code.setText(SpSaveUtils.read(this, ConstantData.CASHIER_DESK_CODE, ""));
@@ -115,11 +205,14 @@ public class WorkLogActivity extends BaseActivity {
                             myPagerAdapter.refreshData(reportInfo.getSale(), reportInfo.getRefund(), reportInfo.getTotal());
                         }
                     });
-                }else {
+                } else {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
             }
         });
+        Intent printService = new Intent(IPrinterService.class.getName());
+        printService = AndroidUtils.getExplicitIntent(this, printService);
+        bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -172,6 +265,9 @@ public class WorkLogActivity extends BaseActivity {
 
     @Override
     protected void recycleMemery() {
+        if (iPrinterService != null) {
+            unbindService(printerServiceConnection);
+        }
         handler.removeCallbacksAndMessages(null);
         MyApplication.delActivity(this);
     }
@@ -199,19 +295,44 @@ public class WorkLogActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.text_print:
+                if(isPrinting){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.printing));
+                    return;
+                }
                 if(reportInfo == null) {
                     ToastUtils.sendtoastbyhandler(handler,"暂无数据");
                     return;
                 }
                 if(ConstantData.JOB.equals(flag)) {
-                   // PrintUtils.getinstance().printReportFrom(true, reportInfo);
+                    printReport(true, reportInfo);
                 }else {
-                   // PrintUtils.getinstance().printReportFrom(false, reportInfo);
+                    printReport(false, reportInfo);
                 }
                 break;
         }
     }
-
+    public void printReport(final boolean flag, final ReportInfo reportInfo){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Message msg1 = new Message();
+                msg1.what = printStart;
+                handler.sendMessage(msg1);
+                try {
+                    iPrinterService.registerPrintCallback(callback);
+                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                    // -999：不支持该功能（可以不支持）
+                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printReportFrom(flag, reportInfo)));
+                } catch (Exception e) {
+                    Message msg2 = new Message();
+                    msg2.what = printError;
+                    msg2.arg1 = -100;
+                    handler.sendMessage(msg2);
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
     class MyPagerAdapter extends PagerAdapter {
         public Context mContext;
         public LayoutInflater mLayoutInflater;

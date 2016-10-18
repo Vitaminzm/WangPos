@@ -40,7 +40,7 @@ import okhttp3.Response;
 public class HttpStringClient {
 	private static HttpStringClient httpStringRequest;
 	private static OkHttpClient httpClient ;
-	private static final int TIMEOUT_MS_DEFAULT = 10 *1000;
+	private static final int TIMEOUT_MS_DEFAULT = 30 *1000;
 	private static final int MAX_RETRIES = 0;
 	private static final int BACKOFF_MULT = 0;
 
@@ -112,8 +112,12 @@ public class HttpStringClient {
 			@Override
 			public void onFailure(Call call, IOException e) {
 				e.printStackTrace();
-				LogUtil.i("lgs", "======================================="+e.getCause());
-				httpactionhandler.handleActionError(actionname, e.getMessage());
+				LogUtil.i("lgs", "======================================="+e.getCause()+"---"+e.getMessage());
+				if(e.getMessage() != null){
+					httpactionhandler.handleActionError(actionname, e.getMessage());
+				}else{
+					httpactionhandler.handleActionError(actionname, "网络连接异常！");
+				}
 				httpactionhandler.handleActionFinish();
 			}
 

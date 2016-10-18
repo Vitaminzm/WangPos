@@ -15,8 +15,10 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
+import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 /**
  * Description 通用提示dialog
@@ -47,6 +49,8 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 			}
 		};
 	};
+	private HorizontalKeyBoard keyboard;
+
 	public PrintOrderDialog(Context context, GeneralEditListener gel) {
 		super(context, R.style.dialog_login_bg);
 		this.context = context;
@@ -63,6 +67,7 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 	}
 
 	private void initData() {
+		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
 		if (!StringUtil.isEmpty(MyApplication.getLast_billid())) {
 			edit_input_order_no.setHint(MyApplication.getLast_billid());
 		}
@@ -98,6 +103,9 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 		int id = v.getId();
 		switch (id){
 			case R.id.text_cancle:
+				if(keyboard.isShowing()){
+					keyboard.dismiss();
+				}
 				text_title.setText(R.string.print_order);
 				ll_function.setVisibility(View.VISIBLE);
 				ll_function_print_order.setVisibility(View.GONE);
