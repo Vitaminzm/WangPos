@@ -183,7 +183,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	@Override
 	public void show() {
 		super.show();
-		mWindow.setWindowAnimations(R.style.AnimationFade); //设置窗口弹出动画
+		getWindow().setWindowAnimations(R.style.AnimationFade); //设置窗口弹出动画
 		if(null != mContentView){
 			  int[] pos=new int[2];
 			  if(mObject instanceof Dialog) {
@@ -233,7 +233,18 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 					 //mContentView.scrollBy(0, length);
 				 }else{
 					 mManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-					 mManager.updateViewLayout(mWindow.getDecorView(), getParams(-length));
+					 ValueAnimator valueAnimator = ValueAnimator.ofInt(0,length);
+					 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+						 private IntEvaluator intEvaluator = new IntEvaluator();
+
+						 @Override
+						 public void onAnimationUpdate(ValueAnimator animation) {
+							 int currentValue = (int) animation.getAnimatedValue();
+							 float fraction = animation.getAnimatedFraction();
+							 mManager.updateViewLayout(mWindow.getDecorView(), getParams(-intEvaluator.evaluate(fraction, 0, length)));
+						 }
+					 });
+					 valueAnimator.setDuration(300).start();
 				 }
 			  }
 //			if(length>0){
@@ -274,8 +285,6 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 					 length = 0;
 					 mManager.updateViewLayout(mWindow.getDecorView(), getParams(length));
 				 }
-//				length = 0;
-//				mManager.updateViewLayout(mWindow.getDecorView(), getParams(length));
 			}
 		} catch (Exception e) {
 		}
