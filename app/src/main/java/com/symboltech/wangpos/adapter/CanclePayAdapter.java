@@ -13,8 +13,10 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.dialog.CanclePayDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.result.ThirdPayCancelResult;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
@@ -42,48 +44,8 @@ public class CanclePayAdapter extends BaseAdapter {
 	private List<PayMentsCancleInfo> paymentsInfo;
 	private List<PayMentsCancleInfo> paymentsInfoAdapter;
 	private Context context;
-	
+
 	private LayoutInflater mLayoutInflater;
-	private Boolean isCancled = true;
-
-	private int isCancleCount = 0;
-	
-	public int getIsCancleCount(){
-		return isCancleCount;
-	}
-	
-	public Boolean getIsCancled() {
-		return isCancled;
-	}
-
-	public void setIsCancled(Boolean isCancled) {
-		this.isCancled = isCancled;
-	}
-
-	public Handler handler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case ToastUtils.TOAST_WHAT:
-				ToastUtils.showtaostbyhandler(context, msg);
-				break;
-
-			case 2:
-				paymentsInfoAdapter.get(msg.arg1).setIsCancle(true);;
-				((TextView)msg.obj).setText(R.string.thirdpay_cancle_succeed);
-				((TextView)msg.obj).setTextColor(context.getResources().getColor(R.color.green));
-				break;
-			case 3:
-				((TextView)msg.obj).setClickable(true);
-				((TextView)msg.obj).setText(R.string.waring_cancle_failed_msg);
-				((TextView)msg.obj).setTextColor(context.getResources().getColor(R.color.white));
-				((TextView)msg.obj).setBackgroundColor(context.getResources().getColor(R.color.green));
-				break;
-			default:
-				break;
-			}
-		};
-	};
-	
 	public CanclePayAdapter(List<PayMentsCancleInfo> paymentsInfo, Context context) {
 		this.paymentsInfo = paymentsInfo;
 		this.context = context;
@@ -111,6 +73,7 @@ public class CanclePayAdapter extends BaseAdapter {
 				}
 			}
 		}
+		LogUtil.i("lgs", "------====="+paymentsInfoAdapter.size());
 	}
 	
 	
@@ -133,18 +96,7 @@ public class CanclePayAdapter extends BaseAdapter {
 		paymentsInfoAdapter.add(couponInfo);
 		notifyDataSetChanged();
 	}
-	
-	public void clear(Collection<PayMentsCancleInfo> collection){
-		paymentsInfoAdapter.clear();
-        addAll(collection);
-    }
-	
-	public void addAll(Collection<PayMentsCancleInfo> collection){
-		paymentsInfoAdapter.addAll(collection);
-		notifyDataSetChanged();
-	}
-	
-	
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
@@ -180,6 +132,14 @@ public class CanclePayAdapter extends BaseAdapter {
 			break;
 		}
 		holder.name_value.setText(paymentsInfoAdapter.get(position).getMoney());
+		holder.name_opt.setText(paymentsInfoAdapter.get(position).getDes());
+		if(paymentsInfoAdapter.get(position).getDes().equals(context.getString(R.string.cancled))
+				||paymentsInfoAdapter.get(position).getDes().equals(context.getString(R.string.cancled_failed))
+				||paymentsInfoAdapter.get(position).getDes().equals(context.getString(R.string.cancled_query))){
+			holder.name_opt.setClickable(true);
+		}else{
+			holder.name_opt.setClickable(false);
+		}
 		holder.name_opt.setTag(position);
 	}
 	
@@ -194,80 +154,10 @@ public class CanclePayAdapter extends BaseAdapter {
 				
 				@Override
 				public void onClick(View v) {
-					v.setClickable(false);
-					((TextView)v).setText(R.string.waring_cancle_msg);
-					((TextView)v).setTextColor(context.getResources().getColor(R.color.orange));
-					((TextView)v).setBackgroundColor(context.getResources().getColor(R.color.popup_default_bg));
-					int position = (int) v.getTag();
-					canclePay(position, v);
+					((CanclePayDialog)context).saleVoid((Integer) name_opt.getTag());
 				}
 			});
 		}
 
-	}
-	/**
-	 * 按钮点击撤销支付
-	 * @param position
-	 */
-	public void canclePay(int position, View view){
-		thirdcancle(position, view);
-	}
-	
-	/**
-	 * 支付撤销
-	 * 
-	 * @author zmm Email:mingming.zhang@symboltech.com 2015年11月14日
-	 * @Description: 
-	 */
-	private void thirdcancle(final int position, final View view) {
-		//LogUtil.i("lgs", "-----"+position);
-		isCancleCount++;
-		PayMentsCancleInfo info = paymentsInfoAdapter.get(position);
-		Map<String, String> map = new HashMap<String, String>();
-		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())){
-			map.put("pay_type", ConstantData.PAYMODE_BY_ALIPAY+"");
-		}else if(info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
-			map.put("pay_type", ConstantData.PAYMODE_BY_WEIXIN+"");
-		}
-		map.put("old_trade_no", info.getThridPay().getTrade_no());
-		map.put("billid", MyApplication.getBillId());
-		HttpRequestUtil.getinstance().thirdpaycancel(map, ThirdPayCancelResult.class,
-				new HttpActionHandle<ThirdPayCancelResult>() {
-
-					@Override
-					public void handleActionStart() {
-
-					}
-
-					@Override
-					public void handleActionFinish() {
-						isCancleCount--;
-					}
-
-					@Override
-					public void handleActionError(String actionName, String errmsg) {
-						ToastUtils.sendtoastbyhandler(handler, errmsg);
-						((TextView)view).setClickable(true);
-						((TextView)view).setText(R.string.waring_cancle_failed_msg);
-						((TextView)view).setTextColor(context.getResources().getColor(R.color.white));
-						((TextView)view).setBackgroundColor(context.getResources().getColor(R.color.green));
-					}
-
-					@Override
-					public void handleActionSuccess(String actionName, ThirdPayCancelResult result) {
-						if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-							paymentsInfoAdapter.get(position).setIsCancle(true);;
-							((TextView)view).setText(R.string.thirdpay_cancle_succeed);
-							((TextView)view).setTextColor(context.getResources().getColor(R.color.green));
-							handler.sendEmptyMessageDelayed(4, 1000 * 2);
-						} else {
-							((TextView)view).setClickable(true);
-							((TextView)view).setText(R.string.waring_cancle_failed_msg);
-							((TextView)view).setTextColor(context.getResources().getColor(R.color.white));
-							((TextView)view).setBackgroundColor(context.getResources().getColor(R.color.green));
-						}
-					}
-
-				});
 	}
 }

@@ -140,5 +140,36 @@ public class MoneyAccuracyUtils {
 			return false;
 		}
 	}
-	
+
+	/**
+	 * 转换成真实金额
+	 * @return
+	 */
+	public static String makeRealAmount(String amount) {
+		if(amount == null) {
+			return "0.00";
+		}
+		StringBuilder sb = new StringBuilder();
+		boolean flag = false;
+		char[] array = amount.toCharArray();
+		//去掉前面的0
+		for (int i = 0; i < array.length; i++) {
+			if(!flag) {
+				if(array[i] > '0') {
+					sb.append(array[i]);
+					flag = true;
+				}else {
+					continue;
+				}
+			}else {
+				sb.append(array[i]);
+			}
+		}
+		try {
+			DecimalFormat fnum = new DecimalFormat("0.00");
+			return fnum.format(Double.parseDouble(sb.toString()) / 100);
+		} catch (Exception e) {
+		}
+		return "0.00";
+	}
 }

@@ -65,6 +65,7 @@
     <string name="cart_goods_sum_not_zero">数量不能为零 </string>
     <!-- 结账界面-->
     <string name="confirm">确认</string>
+    <string name="query">查询</string>
     <string name="cancle">取消</string>
     <string name="checkout">结账</string>
     <string name="order_total_money">订单总额</string>
@@ -98,7 +99,7 @@
     <string name="waring_no_equity">本次交易没有可用的权益</string>
 
 
-    <string name="weichat">微钱宝</string>
+    <string name="weichat">微信</string>
     <string name="alipay">支付宝</string>
     <string name="bank">银行卡</string>
     <string name="cash">现  金</string>
@@ -114,6 +115,9 @@
     <string name="cancled_pay">已撤销</string>
     <string name="cancleing_pay">撤销中</string>
     <string name="cancled">撤销</string>
+    <string name="cancled_failed">撤销失败</string>
+    <string name="cancled_query">需要查询</string>
+    <string name="cancled_querying">查询中</string>
 
     <!--会员权益 -->
     <string name="member_hold_coupon">会员持券</string>
@@ -265,7 +269,25 @@
     <string name="thirdpay_pay_err">交易失败</string>
     <string name="thirdpay_cancle_err">撤销失败</string>
     <string name="thirdpay_returngood_err">退货失败</string>
+
+
+    <string name="thirdpay_requesting">请求中...</string>
     <string name="thirdpay_paying">交易中...</string>
+    <string name="thirdpay_loading">登录中...</string>
+    <string name="thirdpay_reverseing">冲正中...</string>
+    <string name="thirdpay_reverse_success">冲正成功，请重新发起交易</string>
+    <string name="thirdpay_reverse_failed">冲正失败，请重新发起交易</string>
+    <string name="thirdpay_signing">签到中...</string>
+    <string name="thirdpay_sign_success">签到成功</string>
+    <string name="thirdpay_sign_failed">签到失败</string>
+    <string name="thirdpay_swip_card">请刷卡</string>
+    <string name="thirdpay_swip_card_done">刷卡完成</string>
+    <string name="thirdpay_input_pwd">请输密码</string>
+    <string name="thirdpay_input_pwd_done">输密结束</string>
+    <string name="thirdpay_transing">联网交易中...</string>
+    <string name="thirdpay_trans_failed">交易失败</string>
+    <string name="thirdpay_querying">查询中...</string>
+
     <string name="thirdpay_wait_pay">等待付款......</string>
     <string name="thirdpay_succeed_enter">付款中, 请输入密码</string>
     <string name="thirdpay_query_trade_no_null">获取流水号失败，请从主页查询</string>
@@ -273,6 +295,7 @@
     <string name="thirdpay_salesreturn_succee_ing">退款中.....</string>
     <string name="thirdpay_salesreturn_fail">退款失败，\n是否确认退货单？</string>
     <string name="thirdpay_salesreturn_succeed">退款成功</string>
+    <string name="please_scan_qrcode">请扫描二维码付款</string>
     <string name="thirdpay_paying_running">正在处理交易中，请稍后再试</string>
     <string name="thirdpay_succeed">交易成功</string>
 

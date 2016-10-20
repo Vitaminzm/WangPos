@@ -2,7 +2,11 @@ package com.symboltech.wangpos.http;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,6 +66,26 @@ public class GsonUtil {
     }
 
     /**
+    **
+    * @param json
+    * @param clazz
+    * @return
+     */
+    public static <T> List<T> jsonToArrayList(String json, Class<T> clazz)
+    {
+        Type type = new TypeToken<ArrayList<JsonObject>>()
+        {}.getType();
+        List<JsonObject> jsonObjects = new Gson().fromJson(json, type);
+
+        List<T> arrayList = new ArrayList<>();
+        for (JsonObject jsonObject : jsonObjects)
+        {
+            arrayList.add(new Gson().fromJson(jsonObject, clazz));
+        }
+        return arrayList;
+    }
+
+    /**
      * jsonToBean
      *
      * @return
@@ -69,10 +93,10 @@ public class GsonUtil {
      * @author CWI-APST email:26873204@qq.com
      * @Description: TODO jsonToBean
      */
-    public static Object jsonToBean(String json, Class<?> cls) throws Exception {
+    public static <T> T jsonToBean(String json, Class<T> cls) throws Exception {
         try {
             Gson gson = getGsonInstance(false);
-            Object vo = gson.fromJson(json, cls);
+            T vo = gson.fromJson(json, cls);
             return vo;
         } catch (Exception e) {
             throw new Exception(e.getMessage());

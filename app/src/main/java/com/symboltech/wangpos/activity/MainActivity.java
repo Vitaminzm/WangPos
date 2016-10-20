@@ -209,6 +209,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             //获取小票格式
           //  getTickdatas();
            // uploadOfflineData(true);
+
         }
         Intent printService = new Intent(IPrinterService.class.getName());
         printService = AndroidUtils.getExplicitIntent(this, printService);

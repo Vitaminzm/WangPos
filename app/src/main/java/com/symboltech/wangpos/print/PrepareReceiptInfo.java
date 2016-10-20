@@ -479,29 +479,35 @@ public class PrepareReceiptInfo {
 		}
 
 		if(ticketFormat.getTickend()!= null){
-			PrintString tickend = new PrintString(ticketFormat.getTickend());
-			tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
-					.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
-					.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""))
-					.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
-			if(isJob){
-				tickend.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
-						.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""));
-			}
-			TickbasicEntity basic = ticketFormat.getTickbasic();
-			if(basic != null){
-				String date = Utils.formatDate( new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss");
-				tickend.replace(TicketFormatEnum.TICKET_LINE.getLable(), basic.getLineformat()+"\n")
-						.replace(TicketFormatEnum.TICKET_NORMAL_LINE.getLable(), basic.getLineformat()+"\n")
-						.replace(TicketFormatEnum.TICKET_PRINT_DATE.getLable(), getDateTime(date, basic.getDateformat(), true))
-						.replace(TicketFormatEnum.TICKET_PRINT_TIME.getLable(), getDateTime(date, basic.getTimeformat(), false));
-			}
-			String[] codes = tickend.getString().split("\n");
-			for (String code:codes){
-				addTextJson(array, FONT_DEFAULT, code, PrinterManager.CONTENT_ALIGN_LEFT);
-			}
+//			PrintString tickend = new PrintString(ticketFormat.getTickend());
+//			tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
+//					.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
+//					.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""))
+//					.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
+//			if(isJob){
+//				tickend.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+//						.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""));
+//			}
+//			TickbasicEntity basic = ticketFormat.getTickbasic();
+//			if(basic != null){
+//				String date = Utils.formatDate( new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss");
+//				tickend.replace(TicketFormatEnum.TICKET_LINE.getLable(), basic.getLineformat()+"\n")
+//						.replace(TicketFormatEnum.TICKET_NORMAL_LINE.getLable(), basic.getLineformat()+"\n")
+//						.replace(TicketFormatEnum.TICKET_PRINT_DATE.getLable(), getDateTime(date, basic.getDateformat(), true))
+//						.replace(TicketFormatEnum.TICKET_PRINT_TIME.getLable(), getDateTime(date, basic.getTimeformat(), false));
+//			}
+//			String[] codes = tickend.getString().split("\n");
+//			for (String code:codes){
+//				addTextJson(array, FONT_DEFAULT, code, PrinterManager.CONTENT_ALIGN_LEFT);
+//			}
 		}
-
+		addDashLine(array);
+		addTextJson(array, FONT_DEFAULT, "收银员签字", PrinterManager.CONTENT_ALIGN_LEFT);
+		addBlankLine(array);
+		addBlankLine(array);
+		addBlankLine(array);
+		addBlankLine(array);
+		addTextJson(array, FONT_DEFAULT, "财务签字", PrinterManager.CONTENT_ALIGN_LEFT);
 		addBlankLine(array);
 		addBlankLine(array);
 		addBlankLine(array);

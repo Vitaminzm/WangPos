@@ -3,11 +3,21 @@ package com.symboltech.wangpos.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
+import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.utils.HttpWaitDialogUtils;
+
+import java.lang.reflect.Method;
 
 /**
  * 
@@ -24,6 +34,7 @@ public abstract class BaseActivity extends Activity {
 
 	public Context mContext;
 	public HttpWaitDialogUtils waitdialog;
+	private View decorView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +43,47 @@ public abstract class BaseActivity extends Activity {
 		waitdialog = new HttpWaitDialogUtils(this);
 		initView();
 		initData();
+		//hideBottomUIMenu();
 	}
 
+
+//	@Override
+//	public void onWindowFocusChanged(boolean hasFocus) {
+//		super.onWindowFocusChanged(hasFocus);
+//		if(hasFocus){
+//			decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//					| View.SYSTEM_UI_FLAG_IMMERSIVE);
+//		}
+//	}
+
+	/**
+	 * 隐藏虚拟按键，并且全屏
+	 */
+	Window window;
+	protected void hideBottomUIMenu() {
+//		window = getWindow();
+//		WindowManager.LayoutParams params = window.getAttributes();
+//		params.systemUiVisibility = View.SYSTEM_UI_FLAG_LOW_PROFILE;
+//		window.setAttributes(params);
+
+		decorView = getWindow().getDecorView();
+		decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+				| View.SYSTEM_UI_FLAG_IMMERSIVE);
+
+//	    int uiOptions =View.SYSTEM_UI_FLAG_HIDE_NAVIGATION| View.SYSTEM_UI_FLAG_IMMERSIVE;
+//		decorView.setSystemUiVisibility(uiOptions);
+		//隐藏虚拟按键，并且全屏
+//		if (Build.VERSION.SDK_INT > 11 && Build.VERSION.SDK_INT < 19) { // lower api
+//			View v = this.getWindow().getDecorView();
+//			v.setSystemUiVisibility(View.GONE);
+//		} else if (Build.VERSION.SDK_INT >= 19) {
+//			//for new api versions.
+//			View decorView = getWindow().getDecorView();
+//			int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+//					| View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY ;
+//			decorView.setSystemUiVisibility(uiOptions);
+//		}
+	}
 	/**
 	 * 开启dialog
 	 */
@@ -97,8 +147,23 @@ public abstract class BaseActivity extends Activity {
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK || keyCode == KeyEvent.KEYCODE_HOME || keyCode == KeyEvent.KEYCODE_MENU) {
-			return false;
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_HOME:
+				return true;
+			case KeyEvent.KEYCODE_BACK:
+				return true;
+			case KeyEvent.KEYCODE_CALL:
+				return true;
+			case KeyEvent.KEYCODE_SYM:
+				return true;
+			case KeyEvent.KEYCODE_VOLUME_DOWN:
+				return true;
+			case KeyEvent.KEYCODE_VOLUME_UP:
+				return true;
+			case KeyEvent.KEYCODE_STAR:
+				return true;
+			case KeyEvent.KEYCODE_MENU:
+				return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}

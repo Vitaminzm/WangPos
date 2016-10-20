@@ -19,9 +19,25 @@ public class PayMentsCancleInfo implements Serializable {
 	private String money;
 	private String overage;
 	private String type;
-	private String qrcode;
-	private String paytype;
-	
+	private String txnid;//收银通唯一ID
+	private String des="撤销";//收银通唯一ID
+
+	public String getDes() {
+		return des;
+	}
+
+	public void setDes(String des) {
+		this.des = des;
+	}
+
+	public String getTxnid() {
+		return txnid;
+	}
+
+	public void setTxnid(String txnid) {
+		this.txnid = txnid;
+	}
+
 	private Boolean isCancle;
 	public Boolean getIsCancle() {
 		return isCancle;
@@ -29,22 +45,6 @@ public class PayMentsCancleInfo implements Serializable {
 
 	public void setIsCancle(Boolean isCancle) {
 		this.isCancle = isCancle;
-	}
-
-	public String getPaytype() {
-		return paytype;
-	}
-
-	public void setPaytype(String paytype) {
-		this.paytype = paytype;
-	}
-
-	public String getQrcode() {
-		return qrcode;
-	}
-
-	public void setQrcode(String qrcode) {
-		this.qrcode = qrcode;
 	}
 
 	public ThirdPay getThridPay() {

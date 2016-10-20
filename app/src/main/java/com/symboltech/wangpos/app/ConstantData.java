@@ -31,55 +31,44 @@ public class ConstantData {
 	public static final int QRCODE_REQURST_QR_PAY = BASE_CODE + 5;
 
 	/** 第三方支付 */
-	public static final int THIRD_OPERATION_PAY = BASE_CODE + 6;
+	public static final int THIRD_OPERATION_PAY = BASE_CODE + 7;
 
 	/** 第三方支付撤销 */
-	public static final int THIRD_OPERATION_CANCEL = BASE_CODE + 7;
+	public static final int THIRD_OPERATION_CANCEL = BASE_CODE + 8;
 
 	/** 第三方支付查询 */
-	public static final int THIRD_OPERATION_QUERY = BASE_CODE + 8;
+	public static final int THIRD_OPERATION_QUERY = BASE_CODE + 9;
 
 	/** 第三方支付退货 */
-	public static final int THIRD_OPERATION_SALES_RETURN = BASE_CODE + 9;
+	public static final int THIRD_OPERATION_SALES_RETURN = BASE_CODE + 10;
 
 	/** 会员 */
-	public static final int MEMBER_IS_VERITY = BASE_CODE + 10;
+	public static final int MEMBER_IS_VERITY = BASE_CODE + 11;
 
 	/** 非会员 */
-	public static final int MEMBER_IS_NOT_VERITY = BASE_CODE + 11;
+	public static final int MEMBER_IS_NOT_VERITY = BASE_CODE + 12;
 
 	/** 直接结账进入 */
-	public static final int ENTER_CASHIER_BY_ACCOUNTS = BASE_CODE + 12;
+	public static final int ENTER_CASHIER_BY_ACCOUNTS = BASE_CODE + 13;
 
 	/** 会员详情进入 */
-	public static final int ENTER_CASHIER_BY_MEMBER = BASE_CODE + 13;
+	public static final int ENTER_CASHIER_BY_MEMBER = BASE_CODE + 14;
 
-	/** 积分详情进入 */
-	public static final int ENTER_CASHIER_BY_INTEGRAL = BASE_CODE + 14;
-
-	/** 购物车进入积分页面request */
-	public static final int REQUEST_BY_ENTER_INTEGRAL = BASE_CODE + 15;
-
-	/** 购物车进入积分页面RESULT */
-	public static final int RESULT_BY_ENTER_INTEGRAL = BASE_CODE + 16;
 
 	/** 扫纸券 */
-	public static final int SCAN_CASH_COUPON = BASE_CODE + 17;
+	public static final int SCAN_CASH_COUPON = BASE_CODE + 18;
 
 	/** 会员验证不验证 */
-	public static final int VERIFY_MEMBER_NO = BASE_CODE + 18;
+	public static final int VERIFY_MEMBER_NO = BASE_CODE + 19;
 
 	/** 会员验证 方式  */
 	public static final String MEMBER_VERIFY= "member_type";
 
 	/** 会员验证SMS */
-	public static final int VERIFY_MEMBER_BY_SMS = BASE_CODE + 19;
+	public static final int VERIFY_MEMBER_BY_SMS = BASE_CODE + 20;
 
 	/** 会员验证qr */
-	public static final int VERIFY_MEMBER_BY_QR = BASE_CODE + 20;
-
-	/** 二维码验证requestcode by 会员验证 */
-	public static final int QRCODE_REQURST_MEMBER_VERIFY_SECOND = BASE_CODE + 21;
+	public static final int VERIFY_MEMBER_BY_QR = BASE_CODE + 21;
 
 	/**启动会员请求码*/
 	public static final int BOOT_MEMBER_REQUEST_CODE = BASE_CODE + 22;
@@ -107,6 +96,18 @@ public class ConstantData {
 
 	/**会员权益结果*/
 	public static final int MEMBER_EQUITY_RESULT_CODE = BASE_CODE + 30;
+
+	/**三方支付启动码*/
+	public static final int THRID_PAY_REQUEST_CODE = BASE_CODE + 31;
+
+	/**三方支付结果*/
+	public static final int THRID_PAY_RESULT_CODE = BASE_CODE + 32;
+
+	/**三方撤销启动码*/
+	public static final int THRID_CANCLE_REQUEST_CODE = BASE_CODE + 33;
+
+	/**三方撤销结果*/
+	public static final int THRID_CANCLE_RESULT_CODE = BASE_CODE + 34;
 
 	/**在线状态*/
 	public static final int ONLINE_STATE = 0;
@@ -233,12 +234,6 @@ public class ConstantData {
 
 	/** 微信支付渠道 */
 	public static final int PAYMODE_BY_WEIXIN = 3;
-
-	/** 第三方需要输入单号 */
-	public static final String THIRD_NEED_INPUT = "0";
-
-	/** 第三方不需要输入单号 */
-	public static final String THIRD_NOT_INPUT = "1";
 
 	/** 0品牌商品 */
 	public static final int GOODS_SOURCE_BY_BRAND = 0;
@@ -386,9 +381,29 @@ public class ConstantData {
 	/**查询报表类型 - 全部*/
 	public static final int LOG_ALL = -1;
 
-	/** receive 打印机正常 */
-	public static final String PRINTER_RUN_OK = "printer_run_ok";
+	/** 收银通帐号密码*/
+	public static final String CUSTOMERID = "customerId";
+	public static final String USERID = "userId";
+	public static final String PWD = "customerId";
+	/** 收银通三方支付code*/
+	public static final String SALE = "1021";
+	public static final String SALE_VOID = "3021";
 
-	/** receive 打印机err */
-	public static final String PRINTER_RUN_ERR = "printer_run_err";
+	/** 收银通三方支付参数*/
+	public static final String PAY_ID = "pay_id";
+	public static final String PAY_TYPE = "pay_type";
+	public static final String PAY_MONEY = "pay_money";
+	public static final String ORDER_BEAN = "order_bean";
+	public static final String PAY_TYPE_LIST = "pay_type_list";
+	public static final String CANCLE_LIST = "cancle_list";
+	public static final String BSC = "bsc";
+
+	/** 消费*/
+	public static final String TRANS_SALE = "1";
+
+	/** 当日撤销*/
+	public static final String TRANS_REVOKE = "2";
+
+	/** 隔日退货*/
+	public static final String TRANS_RETURN = "3";
 }

@@ -63,6 +63,7 @@
     <dimen name="height_rtz">160dp</dimen>
     <dimen name="height_roz">155dp</dimen>
     <dimen name="height_rzt">151dp</dimen>
+    <dimen name="height_rzz">150dp</dimen>
     <dimen name="height_tnz">145dp</dimen>
     <dimen name="height_tez">140dp</dimen>
     <dimen name="height_txz">130dp</dimen>

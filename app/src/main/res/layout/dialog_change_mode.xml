@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/height_xzz"
-    android:layout_height="@dimen/height_rxs"
+    android:layout_height="@dimen/height_fzz"
     android:background="@color/color_bg"
     android:shadowColor="#7f000000"
     android:shadowDx="5"
@@ -13,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/margin_rv"
+        android:layout_marginTop="@dimen/height_sz"
         android:background="@color/white"
         android:gravity="center_vertical"
         android:orientation="vertical"
@@ -47,7 +47,7 @@
                 android:gravity="center"
                 android:text="@string/no"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_size_rv" />
+                android:textSize="@dimen/font_size_rz" />
 
             <TextView
                 android:id="@+id/dialog_change_mode_yes"
@@ -59,7 +59,7 @@
                 android:gravity="center"
                 android:text="@string/yes"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_size_rv" />
+                android:textSize="@dimen/font_size_rz" />
         </LinearLayout>
     </LinearLayout>
 

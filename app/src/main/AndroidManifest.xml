@@ -40,31 +40,22 @@
         <activity android:name=".activity.MemberAccessActivity" />
         <activity android:name=".activity.PaymentActivity" />
         <activity android:name="com.symboltech.zxing.app.CaptureActivity" />
-
+        <activity android:name=".activity.CheckOutActivity" />
+        <activity android:name=".activity.MemberEquityActivity" />
+        <activity android:name=".activity.PaymentDetailActivity"/>
+        <activity android:name=".activity.ReturnGoodsByNormalActivity"/>
+        <activity android:name=".activity.ReturnMoneyByNormalActivity" />
+        <activity android:name=".activity.ReturnGoodSucceedActivity" />
+        <activity android:name=".activity.MemberDetailActivity" />
+        <activity android:name=".activity.ReturnGoodsByOrderActivity" />
+        <activity android:name=".activity.ReturnMoneyByOrderActivity"/>
+        <activity android:name=".activity.WorkLogActivity"/>
+        <activity android:name=".activity.MemberActivateActivity"/>
+        <activity android:name=".dialog.ThirdPayDialog"
+                android:theme="@style/dialog_login_bg"/>
+        <activity android:name=".dialog.CanclePayDialog"
+            android:theme="@style/dialog_login_bg"/>
         <service android:name=".service.RunTimeService" />
-
-        <activity android:name=".activity.CheckOutActivity" >
-        </activity>
-        <activity android:name=".activity.MemberEquityActivity" >
-        </activity>
-        <activity android:name=".activity.PaymentDetailActivity" >
-        </activity>
-        <activity android:name=".activity.ReturnGoodsByNormalActivity" >
-        </activity>
-        <activity android:name=".activity.ReturnMoneyByNormalActivity" >
-        </activity>
-        <activity android:name=".activity.ReturnGoodSucceedActivity" >
-        </activity>
-        <activity android:name=".activity.MemberDetailActivity" >
-        </activity>
-        <activity android:name=".activity.ReturnGoodsByOrderActivity" >
-        </activity>
-        <activity android:name=".activity.ReturnMoneyByOrderActivity" >
-        </activity>
-        <activity android:name=".activity.WorkLogActivity" >
-        </activity>
-        <activity android:name=".activity.MemberActivateActivity" >
-        </activity>
     </application>
 
 </manifest>
