@@ -64,6 +64,7 @@
     <string name="warning_score_notfull">积分不足</string>
     <string name="cart_goods_sum_not_zero">数量不能为零 </string>
     <!-- 结账界面-->
+    <string name="repeat">重试</string>
     <string name="confirm">确认</string>
     <string name="query">查询</string>
     <string name="cancle">取消</string>
@@ -118,6 +119,8 @@
     <string name="cancled_failed">撤销失败</string>
     <string name="cancled_query">需要查询</string>
     <string name="cancled_querying">查询中</string>
+    <string name="returning_pay">退货中</string>
+    <string name="returning_pay_failed">退货失败</string>
 
     <!--会员权益 -->
     <string name="member_hold_coupon">会员持券</string>

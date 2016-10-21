@@ -45,6 +45,7 @@
     <dimen name="margin_tz">10dp</dimen>
     <dimen name="margin_ov">7dp</dimen>
     <dimen name="margin_oz">5dp</dimen>
+    <dimen name="margin_x">3dp</dimen>
     <dimen name="margin_v">2dp</dimen>
 
 

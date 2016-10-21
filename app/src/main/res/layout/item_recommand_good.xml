@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_add_good"
+    android:layout_width="@dimen/height_txz"
+    android:orientation="vertical"
+    android:layout_marginRight="@dimen/margin_oz"
+    android:layout_marginBottom="@dimen/margin_oz"
+    android:background="@drawable/circle_corner_bt_shape"
+    android:layout_height="@dimen/height_nz">
+
+    <TextView
+        android:id="@+id/text_good_name"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="@dimen/font_size_tf"
+        android:textColor="@color/white"
+        android:text="商品名称"/>
+    <TextView
+        android:id="@+id/text_good_info"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:textSize="@dimen/font_size_tf"
+        android:textColor="@color/white"
+        android:text="￥1000元    积分50分"/>
+</LinearLayout>

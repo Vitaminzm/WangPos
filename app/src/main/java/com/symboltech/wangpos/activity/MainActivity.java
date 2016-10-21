@@ -27,6 +27,7 @@ import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.ChangeManagerDialog;
 import com.symboltech.wangpos.dialog.PrintOrderDialog;
 import com.symboltech.wangpos.dialog.ReturnDialog;
+import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
@@ -42,6 +43,10 @@ import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.MyscollView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -54,10 +59,15 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import cn.koolcloud.aidl.AidlRequestManager;
 import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
+import cn.koolcloud.engine.thirdparty.aidlbean.TransPrintRequest;
+import cn.koolcloud.interfaces.RemoteServiceStateChangeListerner;
+import cn.koolcloud.transmodel.AidlPaymentInfo;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -181,6 +191,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
     };
 
+    protected IKuYunThirdPartyService mYunService;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mYunService = IKuYunThirdPartyService.Stub.asInterface(service);
+        }
+            @Override
+            public void onServiceDisconnected (ComponentName name){
+                mYunService = null;
+        }
+    };
     @Override
     protected void initData() {
         if(MyApplication.isOffLineMode()){
@@ -214,6 +235,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         Intent printService = new Intent(IPrinterService.class.getName());
         printService = AndroidUtils.getExplicitIntent(this, printService);
         bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
+        yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
+        if (yunIntent == null) {
+        } else {
+            bindService(yunIntent, connection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     public void ChangeUI(int mode){
@@ -271,8 +298,42 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if (iPrinterService != null) {
             unbindService(printerServiceConnection);
         }
+        if(mYunService != null){
+            try {
+                unbindService(connection);
+            } catch (Exception e) {
+                // 如果重复解绑会抛异常
+            }
+        }
         handler.removeCallbacksAndMessages(null);
         MyApplication.delActivity(this);
+    }
+    public void print_last(String id){
+        TransPrintRequest request = new TransPrintRequest(id);
+        AidlRequestManager aidlManager = AidlRequestManager.getInstance();
+        aidlManager.aidlTransPrintRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
+            @Override
+            public void onTaskStart() {
+
+            }
+
+            @Override
+            public void onTaskCancelled() {
+                ToastUtils.sendtoastbyhandler(handler, "打印取消");
+            }
+
+            @Override
+            public void onTaskFinish(JSONObject rspJSON) {
+                if (!rspJSON.optString("responseCode").equals("00")) {
+                    ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+                }
+            }
+
+            @Override
+            public void onException(Exception e) {
+                ToastUtils.sendtoastbyhandler(handler, "打印异常");
+            }
+        });
     }
 
     @Override

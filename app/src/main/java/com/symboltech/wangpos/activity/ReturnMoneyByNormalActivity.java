@@ -624,6 +624,10 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                 ToastUtils.sendtoastbyhandler(handler, getString(R.string.please_select_return_reason));
                 return;
             }
+            if(text_edit.getText().equals(getString(R.string.done))){
+                ToastUtils.sendtoastbyhandler(handler, "请先完成支付方式编辑");
+                return;
+            }
             if (!getReturnMoneyInfo())
                 return;
             if (checkMoney()) {
@@ -657,7 +661,6 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     private void returnBank() {
         if (bankFlag < bankStyle.size()) {
             ReturnEntity entity = bankStyle.get(bankFlag);
-            final String id = entity.getId();
             double money = getDoubleMoney(entity.getMoney());
             putPayments(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype())), PaymentTypeEnum.HANDRECORDED.getStyletype(), "-" + money);
             bankFlag += 1;
@@ -699,6 +702,8 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void returnAlipay() {
         if (alipayStyle != null && alipayFlag < alipayStyle.size()) {
+            double money = getDoubleMoney(alipayStyle.get(alipayFlag).getMoney());
+            putPayments(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())), PaymentTypeEnum.ALIPAYRECORDED.getStyletype(), "-" + money);
             alipayFlag += 1;
             if(alipayFlag < alipayStyle.size()){
                 returnAlipay();
@@ -715,7 +720,9 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void returnWeiXinPay() {
         if (weixinStyle != null && weixinFlag < weixinStyle.size()) {
-            allowanceWeixinFlag += 1;
+            double money = getDoubleMoney(weixinStyle.get(weixinFlag).getMoney());
+            putPayments(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype())), PaymentTypeEnum.WECHATRECORDED.getStyletype(), "-" + money);
+            weixinFlag += 1;
             if (weixinFlag < weixinStyle.size()) {
                 returnWeiXinPay();
             } else {

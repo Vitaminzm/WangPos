@@ -70,7 +70,7 @@ public class PaymentTypeInfoAdapter extends BaseAdapter {
 		}else {
 			holder = (Viewholder) convertView.getTag();
 		}
-		holder.tv_name.setText(paymentsInfo.get(position).getName()+":");
+		holder.tv_name.setText(paymentsInfo.get(position).getName()+"\t:");
 		holder.tv_value.setText(paymentsInfo.get(position).getMoney());
 		return convertView;
 	}

@@ -211,6 +211,8 @@
                     android:cacheColorHint="@color/transparent"
                     android:horizontalSpacing = "@dimen/margin_rz"
                     android:verticalSpacing = "@dimen/margin_tz"
+                    android:divider="@color/transparent"
+                    android:dividerHeight = "@dimen/margin_x"
                     android:listSelector="@drawable/gridview_selector"
                     android:numColumns="2"
                     android:scrollbars="none"/>

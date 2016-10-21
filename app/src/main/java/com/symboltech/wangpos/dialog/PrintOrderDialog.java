@@ -13,9 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.activity.MainActivity;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
+import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
@@ -134,6 +137,13 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 				ll_function_print_order.setVisibility(View.VISIBLE);
 				break;
 			case R.id.text_print_slip:
+				String bankId = SpSaveUtils.read(context, ConstantData.LAST_BANK_TRANS, "");
+				if (!bankId.equals("")){
+					((MainActivity)context).print_last(bankId);
+					dismiss();
+				}else{
+					ToastUtils.sendtoastbyhandler(handler,"没有银行交易记录");
+				}
 				break;
 			case R.id.imageview_close:
 				dismiss();

@@ -25,19 +25,24 @@ import com.symboltech.wangpos.adapter.ReturnReasonAdapter;
 import com.symboltech.wangpos.adapter.ReturnTableAdapter;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.db.dao.OrderInfoDao;
+import com.symboltech.wangpos.dialog.ThirdPayReturnDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.msg.entity.BankPayInfo;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.CouponInfo;
 import com.symboltech.wangpos.msg.entity.ExchangeInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.RefundReasonInfo;
 import com.symboltech.wangpos.print.PrepareReceiptInfo;
+import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.SaveOrderResult;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
+import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -56,6 +61,7 @@ import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.koolcloud.transmodel.OrderBean;
 
 public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnTouchListener {
 
@@ -97,12 +103,15 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private Map<String, String> reasonIds = new HashMap<>();
 
     /**
-     * bankStyle-银行卡支付
      * alipayStyle-支付宝支付
      * weixinStyle-微信支付
      * cashStyle-现金支付
      */
-    private List<PayMentsInfo> bankStyle, alipayStyle, weixinStyle, cashStyle;
+    private List<PayMentsInfo>  alipayStyle, weixinStyle, cashStyle;
+    /**
+     * bankStyle-银行卡支付
+     */
+    private List<BankPayInfo> bankStyle;
     /**
      * allowanceBankStyle-银行卡补录
      * allowanceAlipayStyle-支付宝补录
@@ -345,6 +354,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 ToastUtils.sendtoastbyhandler(handler, getString(R.string.please_select_return_reason));
                 return;
             }
+            resetStyle();
             commitStyles.clear();
             returnMoney();
         }else{
@@ -370,15 +380,17 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
      */
     private void returnBank() {
         if (bankFlag < bankStyle.size()) {
-            PayMentsInfo entity = bankStyle.get(bankFlag);
-            double money = ArithDouble.parseDouble(entity.getMoney());
-            entity.setMoney("-"+money);
-            commitStyles.add(entity);
-            bankFlag += 1;
-            if (bankFlag < bankStyle.size()) {
-                returnBank();
-            } else {
-                returnAlipay();
+            BankPayInfo entity = bankStyle.get(bankFlag);
+            if("true".equals(entity.getDes())){
+                bankFlag += 1;
+            }else{
+                LogUtil.i("lgs","skfsid-----get-----"+entity.getSkfsid());
+                double money = ArithDouble.parseDouble(entity.getAmount());
+                Intent intentBank = new Intent(mContext, ThirdPayReturnDialog.class);
+                intentBank.putExtra(ConstantData.PAY_MONEY, money);
+                intentBank.putExtra(ConstantData.PAY_TYPE, getPayTypeById(entity.getSkfsid()));
+                intentBank.putExtra(ConstantData.PAY_ID, entity.getTradeno());
+                startActivityForResult(intentBank, ConstantData.THRID_CANCLE_REQUEST_CODE);
             }
         } else {
             returnAlipay();
@@ -424,10 +436,15 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private void returnAllowanceBank() {
         if (allowanceBankStyle != null && allowanceBankFlag < allowanceBankStyle.size()) {
             PayMentsInfo entity = allowanceBankStyle.get(allowanceBankFlag);
-            double money = ArithDouble.parseDouble(entity.getMoney());
-            entity.setMoney("-"+money);
-            commitStyles.add(entity);
-            allowanceBankFlag += 1;
+            if("true".equals(entity.getDes())){
+                allowanceBankFlag += 1;
+            }else{
+                double money = ArithDouble.parseDouble(entity.getMoney());
+                entity.setMoney("-"+money);
+                entity.setDes("true");
+                commitStyles.add(entity);
+                allowanceBankFlag += 1;
+            }
             if (allowanceBankFlag < allowanceBankStyle.size()) {
                 returnAllowanceBank();
             } else {
@@ -444,10 +461,15 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private void returnAllowanceAlipay() {
         if (allowanceAlipayStyle != null && allowanceAlipayFlag < allowanceAlipayStyle.size()) {
             PayMentsInfo entity = allowanceAlipayStyle.get(allowanceAlipayFlag);
-            double money = ArithDouble.parseDouble(entity.getMoney());
-            entity.setMoney("-"+money);
-            commitStyles.add(entity);
-            allowanceAlipayFlag += 1;
+            if("true".equals(entity.getDes())){
+                allowanceAlipayFlag += 1;
+            }else{
+                double money = ArithDouble.parseDouble(entity.getMoney());
+                entity.setMoney("-"+money);
+                entity.setDes("true");
+                commitStyles.add(entity);
+                allowanceAlipayFlag += 1;
+            }
             if (allowanceAlipayFlag < allowanceAlipayStyle.size()) {
                 returnAllowanceAlipay();
             } else {
@@ -464,10 +486,15 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private void returnAllowanceWeixin() {
         if (allowanceWeixinStyle != null && allowanceWeixinFlag < allowanceWeixinStyle.size()) {
             PayMentsInfo entity = allowanceWeixinStyle.get(allowanceWeixinFlag);
-            double money = ArithDouble.parseDouble(entity.getMoney());
-            entity.setMoney("-"+money);
-            commitStyles.add(entity);
-            allowanceWeixinFlag += 1;
+            if("true".equals(entity.getDes())){
+                allowanceWeixinFlag += 1;
+            }else{
+                double money = ArithDouble.parseDouble(entity.getMoney());
+                entity.setMoney("-"+money);
+                entity.setDes("true");
+                commitStyles.add(entity);
+                allowanceWeixinFlag += 1;
+            }
             if (allowanceWeixinFlag < allowanceWeixinStyle.size()) {
                 returnAllowanceWeixin();
             } else {
@@ -484,10 +511,15 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private void returnCash() {
         if (cashStyle != null && cashFlag < cashStyle.size()) {
             PayMentsInfo entity = cashStyle.get(cashFlag);
-            double money = ArithDouble.parseDouble(entity.getMoney());
-            entity.setMoney("-"+money);
-            commitStyles.add(entity);
-            cashFlag += 1;
+            if("true".equals(entity.getDes())){
+                cashFlag += 1;
+            }else{
+                double money = ArithDouble.parseDouble(entity.getMoney());
+                entity.setMoney("-"+money);
+                entity.setDes("true");
+                commitStyles.add(entity);
+                cashFlag += 1;
+            }
             if(cashFlag < cashStyle.size()) {
                 returnCash();
             }else {
@@ -626,24 +658,26 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         resetStyle();
         for (PayMentsInfo infoy: payMentsInfos) {
             PayMentsInfo info = infoy.clone();
+            info.setDes("false");
             String type = info.getType();
             if (type != null) {
-                if (PaymentTypeEnum.BANK.getStyletype().equals(type)) {
-                    if (bankStyle == null) {
-                        bankStyle = new ArrayList<>();
-                    }
-                    bankStyle.add(info);
-                } else if (PaymentTypeEnum.ALIPAY.getStyletype().equals(type)) {
-                    if (alipayStyle == null) {
-                        alipayStyle = new ArrayList<>();
-                    }
-                    alipayStyle.add(info);
-                } else if (PaymentTypeEnum.WECHAT.getStyletype().equals(type)) {
-                    if (weixinStyle == null) {
-                        weixinStyle = new ArrayList<>();
-                    }
-                    weixinStyle.add(info);
-                } else if (PaymentTypeEnum.CASH.getStyletype().equals(type)) {
+//                if (PaymentTypeEnum.BANK.getStyletype().equals(type)) {
+//                    if (bankStyle == null) {
+//                        bankStyle = new ArrayList<>();
+//                    }
+//                    bankStyle.add(info);
+//                } else if (PaymentTypeEnum.ALIPAY.getStyletype().equals(type)) {
+//                    if (alipayStyle == null) {
+//                        alipayStyle = new ArrayList<>();
+//                    }
+//                    alipayStyle.add(info);
+//                } else if (PaymentTypeEnum.WECHAT.getStyletype().equals(type)) {
+//                    if (weixinStyle == null) {
+//                        weixinStyle = new ArrayList<>();
+//                    }
+//                    weixinStyle.add(info);
+//                } else
+                if (PaymentTypeEnum.CASH.getStyletype().equals(type)) {
                     if(cashStyle == null) {
                         cashStyle = new ArrayList<>();
                     }
@@ -672,38 +706,27 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 }
             }
         }
+        for(BankPayInfo infoy:billInfo.getBankpaylist()){
+            BankPayInfo info = infoy.clone();
+            info.setDes("false");
+            if (bankStyle == null) {
+                bankStyle = new ArrayList<>();
+            }
+            bankStyle.add(info);
+        }
     }
 
     /**
      * 重置支付方式
      */
     private void resetStyle() {
-        resetStyleByStyle(bankStyle);
         bankFlag = 0;
-        resetStyleByStyle(alipayStyle);
         alipayFlag = 0;
-        resetStyleByStyle(weixinStyle);
         weixinFlag = 0;
-        resetStyleByStyle(cashStyle);
         cashFlag = 0;
-        resetStyleByStyle(allowanceBankStyle);
         allowanceBankFlag = 0;
-        resetStyleByStyle(allowanceAlipayStyle);
         allowanceAlipayFlag = 0;
-        resetStyleByStyle(allowanceWeixinStyle);
         allowanceWeixinFlag = 0;
-    }
-
-    /**
-     * 重置退款方式
-     *
-     * @param style
-     *            付款方式
-     */
-    private void resetStyleByStyle(List style) {
-        if (style != null) {
-            style.clear();
-        }
     }
 
     /**
@@ -719,7 +742,99 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         info.setName(name);
         info.setType(type);
         info.setMoney(money);
+        info.setDes("true");
         info.setOverage("0"); //用于补全字段
         commitStyles.add(info);
+    }
+
+    /**
+     * @author zmm emial:mingming.zhang@symboltech.com 2015年11月17日
+     * @Description: 获取支付方式TYPE
+     *
+     */
+    private String getPayTypeById(String id) {
+
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getId().equals(id)) {
+                return paymentslist.get(i).getType();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * @author zmm emial:mingming.zhang@symboltech.com 2015年11月17日
+     * @Description: 获取支付方式名称
+     *
+     */
+    private String getPayNameById(String id) {
+
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getId().equals(id)) {
+                return paymentslist.get(i).getName();
+            }
+        }
+        return null;
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == ConstantData.THRID_CANCLE_REQUEST_CODE){
+            if(resultCode == ConstantData.THRID_CANCLE_RESULT_CODE){
+                BankPayInfo entity = bankStyle.get(bankFlag);
+                putPayments(entity.getSkfsid(), getPayNameById(entity.getSkfsid()), getPayTypeById(entity.getSkfsid()), "-" + entity.getAmount());
+                saveBanInfo(entity.getSkfsid(), (OrderBean) data.getSerializableExtra(ConstantData.ORDER_BEAN));
+                bankFlag += 1;
+                if (bankFlag < bankStyle.size()) {
+                    returnBank();
+                } else {
+                    returnAlipay();
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    private void saveBanInfo(String payTypeId, final OrderBean orderBean){
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("skfsid", payTypeId);
+        map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+        map.put("billid", MyApplication.getBillId());
+        map.put("transtype", ConstantData.TRANS_RETURN);
+        map.put("tradeno", orderBean.getTxnId());
+        map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
+        map.put("decmoney", "0");
+        map.put("cardno", orderBean.getAccountNo()== null? "null":orderBean.getAccountNo());
+        map.put("bankcode",orderBean.getAcquId()== null? "null":orderBean.getAcquId());
+        map.put("batchno", orderBean.getBatchId()== null? "null":orderBean.getBatchId());
+        map.put("refno", orderBean.getRefNo()== null? "null":orderBean.getRefNo());
+        HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>(){
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+                // TODO Auto-generated method stub
+                OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+//                dao.addBankinfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), MyApplication.getBillId(), type, rp.getCardNo(),
+//                        rp.getBankCode() == null? "null":rp.getBankCode(), rp.getBatchNo() == null? "null":rp.getBatchNo(),
+//                        rp.getRefNo()== null? "null":rp.getRefNo(), rp.getTraceNo(), payTypeId,
+//                        ArithDouble.parseDouble(BanKPayUtils.makeRealAmount(rp.getAmount())), 0.0);
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName, BaseResult result) {
+                //TODO
+                if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
+//                    dao.addBankinfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), MyApplication.getBillId(), type, rp.getCardNo(),
+////                        rp.getBankCode() == null? "null":rp.getBankCode(), rp.getBatchNo() == null? "null":rp.getBatchNo(),
+////                        rp.getRefNo()== null? "null":rp.getRefNo(), rp.getTraceNo(), payTypeId,
+////                        ArithDouble.parseDouble(BanKPayUtils.makeRealAmount(rp.getAmount())), 0.0);
+                    ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
+                }
+            }
+        });
     }
 }

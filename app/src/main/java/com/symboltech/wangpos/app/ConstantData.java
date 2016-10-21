@@ -396,6 +396,7 @@ public class ConstantData {
 	public static final String ORDER_BEAN = "order_bean";
 	public static final String PAY_TYPE_LIST = "pay_type_list";
 	public static final String CANCLE_LIST = "cancle_list";
+	public static final String LAST_BANK_TRANS = "last_bank_trans";
 	public static final String BSC = "bsc";
 
 	/** 消费*/

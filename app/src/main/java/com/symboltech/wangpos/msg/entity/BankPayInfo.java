@@ -16,7 +16,25 @@ public class BankPayInfo implements Serializable, Cloneable {
 	private String amount;
 	private String decmoney;
 	private String skfsid;
-	
+	private String des;
+	private String tradeno;
+
+	public String getTradeno() {
+		return tradeno;
+	}
+
+	public void setTradeno(String tradeno) {
+		this.tradeno = tradeno;
+	}
+
+	public String getDes() {
+		return des;
+	}
+
+	public void setDes(String des) {
+		this.des = des;
+	}
+
 	public String getSkfsid() {
 		return skfsid;
 	}

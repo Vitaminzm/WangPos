@@ -57,6 +57,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.koolcloud.aidl.AidlRequestManager;
 import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
+import cn.koolcloud.engine.thirdparty.aidlbean.LoginRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.SaleVoidRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
 import cn.koolcloud.interfaces.RemoteServiceStateChangeListerner;
@@ -90,6 +91,7 @@ public class CanclePayDialog extends BaseActivity{
 	public int isCancleCount = 0;
 	protected IKuYunThirdPartyService mYunService;
 	protected RemoteServiceStateChangeListerner serviceStateChangeListerner = null;
+	private boolean isLogin = false;
 	private ServiceConnection connection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
@@ -101,9 +103,10 @@ public class CanclePayDialog extends BaseActivity{
 				String rspString = mYunService.isLogin();
 				JSONObject rspJsonObject = new JSONObject(rspString);
 				if (rspJsonObject.optString("responseCode").equals("00")) {
+					isLogin = true;
 					return;
 				} else {
-					ToastUtils.sendtoastbyhandler(handler, "未登录！");
+					login();
 				}
 			} catch (JSONException | RemoteException e1) {
 				e1.printStackTrace();
@@ -117,6 +120,43 @@ public class CanclePayDialog extends BaseActivity{
 			}
 		}
 	};
+
+	private void login() {
+		LoginRequest request = new LoginRequest(SpSaveUtils.read(CanclePayDialog.this, ConstantData.CUSTOMERID,""), SpSaveUtils.read(CanclePayDialog.this, ConstantData.USERID,""), SpSaveUtils.read(CanclePayDialog.this, ConstantData.PWD,""));
+		AidlRequestManager aidlManager = AidlRequestManager.getInstance();
+		aidlManager.aidlLoginRequest(mYunService, request,
+				new AidlRequestManager.AidlRequestCallBack() {
+
+					@Override
+					public void onTaskStart() {
+					}
+
+					@Override
+					public void onTaskFinish(JSONObject rspJsonObject) {
+						if (rspJsonObject.optString("responseCode").equals(
+								"00")) {
+							SpSaveUtils.saveObject(CanclePayDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
+							SpSaveUtils.saveObject(CanclePayDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
+							SpSaveUtils.saveObject(CanclePayDialog.this, ConstantData.PWD, rspJsonObject.optString("pwd"));
+							isLogin = true;
+							return;
+						} else {
+							ToastUtils.sendtoastbyhandler(handler, rspJsonObject.optString("errorMsg"));
+						}
+					}
+
+					@Override
+					public void onTaskCancelled() {
+						CanclePayDialog.this.finish();
+					}
+
+					@Override
+					public void onException(Exception e) {
+						ToastUtils.sendtoastbyhandler(handler, e.toString());
+						CanclePayDialog.this.finish();
+					}
+				});
+	}
 	/** refresh UI By handler */
 	public Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -141,14 +181,15 @@ public class CanclePayDialog extends BaseActivity{
 		if(payments!=null){
 			for(int i=0;i<payments.size();i++){
 				if(!payments.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
-					totalMoney = ArithDouble.add(totalMoney, ArithDouble.parseDouble(payments.get(i).getMoney()));
-				}else{
 					if(payments.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype())
 							|| payments.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
 							||payments.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
 							||payments.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())){
-						cash = ArithDouble.sub(cash, ArithDouble.parseDouble(payments.get(i).getMoney()));
+						cash = ArithDouble.add(cash, ArithDouble.parseDouble(payments.get(i).getMoney()));
 					}
+					totalMoney = ArithDouble.add(totalMoney, ArithDouble.parseDouble(payments.get(i).getMoney()));
+				}else{
+					cash = ArithDouble.sub(cash, ArithDouble.parseDouble(payments.get(i).getMoney()));
 					totalMoney = ArithDouble.sub(totalMoney, ArithDouble.parseDouble(payments.get(i).getMoney()));
 				}
 			}
@@ -156,12 +197,14 @@ public class CanclePayDialog extends BaseActivity{
 		text_money.setText(totalMoney + "");
 		if(cash > 0)
 			text_info.setText("(现金类 "+cash+")元");
-		Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
-		yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
-		setServiceStateChangeListerner(serviceStateChangeListerner1);
-		if (yunIntent == null) {
-		} else {
-			bindService(yunIntent, connection, Context.BIND_AUTO_CREATE);
+		if(totalMoney > cash){
+			Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
+			yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
+			setServiceStateChangeListerner(serviceStateChangeListerner1);
+			if (yunIntent == null) {
+			} else {
+				bindService(yunIntent, connection, Context.BIND_AUTO_CREATE);
+			}
 		}
 	}
 
@@ -212,10 +255,12 @@ public class CanclePayDialog extends BaseActivity{
 			}
 		}
 		handler.removeCallbacksAndMessages(null);
-		try {
-			unbindService(connection);
-		} catch (Exception e) {
-			// 如果重复解绑会抛异常
+		if(mYunService != null){
+			try {
+				unbindService(connection);
+			} catch (Exception e) {
+				// 如果重复解绑会抛异常
+			}
 		}
 	}
 
@@ -267,6 +312,10 @@ public class CanclePayDialog extends BaseActivity{
 	}
 
 	public void saleVoid(int position){
+		if(!isLogin){
+			ToastUtils.sendtoastbyhandler(handler, "收银通未登录");
+			return;
+		}
 		if(isCancleCount > 0){
 			ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
 			return;

@@ -26,6 +26,7 @@ import com.symboltech.wangpos.activity.BaseActivity;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.msg.entity.ThirdPay;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.CodeBitmap;
 import com.symboltech.wangpos.utils.CurrencyUnit;
@@ -100,31 +101,36 @@ public class ThirdPayDialog extends BaseActivity{
 			try {
 				String rspString = mYunService.isLogin();
 				LogUtil.d("lgs","==Login rsp is :" + rspString);
-				JSONObject rspJsonObject = new JSONObject(rspString);
-				if (rspJsonObject.optString("responseCode").equals("00")) {
-					SpSaveUtils.saveObject(ThirdPayDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
-					SpSaveUtils.saveObject(ThirdPayDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
-					SpSaveUtils.saveObject(ThirdPayDialog.this, ConstantData.PWD, rspJsonObject.optString("pwd"));
-					JSONArray payments = null;
-					try {
-						String rspStr = mYunService.getPaymentList();
-						JSONObject rspJSON = new JSONObject(rspStr);
-						payments = rspJSON.optJSONArray("paymentlList");
-						LogUtil.i("lgs", payments.toString());
-						SpSaveUtils.saveObject(ThirdPayDialog.this, ConstantData.PAY_TYPE_LIST, GsonUtil.jsonToArrayList(payments.toString(), AidlPaymentInfo.class));
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					} catch (JSONException e) {
-						e.printStackTrace();
+				final JSONObject rspJsonObject = new JSONObject(rspString);
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						if (rspJsonObject.optString("responseCode").equals("00")) {
+							SpSaveUtils.saveObject(ThirdPayDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
+							SpSaveUtils.saveObject(ThirdPayDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
+							SpSaveUtils.saveObject(ThirdPayDialog.this, ConstantData.PWD, rspJsonObject.optString("pwd"));
+							JSONArray payments = null;
+							try {
+								String rspStr = mYunService.getPaymentList();
+								JSONObject rspJSON = new JSONObject(rspStr);
+								payments = rspJSON.optJSONArray("paymentlList");
+								LogUtil.i("lgs", payments.toString());
+								SpSaveUtils.saveObject(ThirdPayDialog.this, ConstantData.PAY_TYPE_LIST, GsonUtil.jsonToArrayList(payments.toString(), AidlPaymentInfo.class));
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							} catch (JSONException e) {
+								e.printStackTrace();
+							}
+							return;
+						}else{
+							login();
+						}
 					}
-					return;
-				}else{
-					ToastUtils.sendtoastbyhandler(handler,"未登录！");
-				}
+				}).start();
 			} catch (JSONException | RemoteException e1) {
 				e1.printStackTrace();
 			}
-			login();
+
 		}
 
 		@Override
@@ -1049,6 +1055,9 @@ public class ThirdPayDialog extends BaseActivity{
 		if (isSuccess) {
 			OrderBean resultBean = parse(data, isSuccess);
 			LogUtil.e("lgs", resultBean.toString());
+			if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
+				SpSaveUtils.write(getApplicationContext(),ConstantData.LAST_BANK_TRANS, resultBean.getTxnId());
+			}
 			Intent intent = new Intent();
 			if (resultBean.getTransType().equals(ConstantData.SALE)) {
 				intent.putExtra(ConstantData.ORDER_BEAN, resultBean);
@@ -1087,15 +1096,9 @@ public class ThirdPayDialog extends BaseActivity{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// newBean.setAidlPaymentInfo(paymentInfo);
 		if (newBean.getOrderState().isEmpty()) {
 			newBean.setOrderState(isSuccess ? "0" : "");
 		}
-//		if (newBean.getPaymentName().isEmpty()) {
-//			newBean.setPaymentName(DevDemoSPEdit.getInstance(this)
-//					.getPaymentName(newBean.getPaymentId()));
-//		}
-		// newBean.setSuccess(isSuccess);
 		return newBean;
 	}
 }

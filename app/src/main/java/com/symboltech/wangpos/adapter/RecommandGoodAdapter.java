@@ -75,7 +75,7 @@ public class RecommandGoodAdapter extends RecyclerView.Adapter<RecommandGoodAdap
 
 	@Override
 	public ViewHolder onCreateViewHolder(ViewGroup arg0, int arg1) {
-		 View view = LayoutInflater.from(context).inflate(R.layout.item_add_good, arg0, false);
+		 View view = LayoutInflater.from(context).inflate(R.layout.item_recommand_good, arg0, false);
 	     return new ViewHolder(view);
 	}
 	

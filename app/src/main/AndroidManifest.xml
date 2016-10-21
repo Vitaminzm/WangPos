@@ -55,6 +55,8 @@
                 android:theme="@style/dialog_login_bg"/>
         <activity android:name=".dialog.CanclePayDialog"
             android:theme="@style/dialog_login_bg"/>
+        <activity android:name=".dialog.ThirdPayReturnDialog"
+            android:theme="@style/dialog_login_bg"/>
         <service android:name=".service.RunTimeService" />
     </application>
 
