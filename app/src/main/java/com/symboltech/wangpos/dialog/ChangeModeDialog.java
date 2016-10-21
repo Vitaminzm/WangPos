@@ -2,12 +2,14 @@ package com.symboltech.wangpos.dialog;
 
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.activity.MainActivity;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 
@@ -47,6 +49,8 @@ public class ChangeModeDialog extends Activity implements OnClickListener {
 			if(isOnLine) {
 				//OperateLog.getInstance().saveLog2File(OptLogEnum.OFFLINE_OUT_OPT.getOptLogCode(), getString(R.string.offline_out_opt));
 				MyApplication.setOffLineMode(false);
+				Intent changeMode = new Intent(this, MainActivity.class);
+				startActivity(changeMode);
 			}else {
 				//OperateLog.getInstance().saveLog2File(OptLogEnum.OFFLINE_IN_OPT.getOptLogCode(), getString(R.string.offline_in_opt));
 				MyApplication.setOffLineMode(true);

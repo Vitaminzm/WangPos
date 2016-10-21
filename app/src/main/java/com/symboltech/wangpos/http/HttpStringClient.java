@@ -1,5 +1,7 @@
 package com.symboltech.wangpos.http;
 
+import android.content.Intent;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -7,6 +9,7 @@ import com.google.gson.JsonSyntaxException;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.utils.SpSaveUtils;
@@ -111,6 +114,9 @@ public class HttpStringClient {
 		requestPost(url, param, request, new Callback() {
 			@Override
 			public void onFailure(Call call, IOException e) {
+				if(MyApplication.isNetConnect()) {
+					MyApplication.setNetConnect(false);
+				}
 				e.printStackTrace();
 				LogUtil.i("lgs", "======================================="+e.getCause()+"---"+e.getMessage());
 				if(e.getMessage() != null){
@@ -119,6 +125,11 @@ public class HttpStringClient {
 					httpactionhandler.handleActionError(actionname, "网络连接异常！");
 				}
 				httpactionhandler.handleActionFinish();
+				if(!MyApplication.isOffLineMode()) {
+					Intent changeMode = new Intent(MyApplication.context, ChangeModeDialog.class);
+					changeMode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					MyApplication.context.startActivity(changeMode);
+				}
 			}
 
 			@Override
@@ -152,13 +163,20 @@ public class HttpStringClient {
 					httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
 					e.printStackTrace();
 				}
+					httpactionhandler.handleActionFinish();
 				}else{
 					if(MyApplication.isNetConnect()) {
 						MyApplication.setNetConnect(false);
 					}
 					httpactionhandler.handleActionError(actionname, response.message());
+					httpactionhandler.handleActionFinish();
+					if(!MyApplication.isOffLineMode()) {
+						Intent changeMode = new Intent(MyApplication.context, ChangeModeDialog.class);
+						changeMode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+						MyApplication.context.startActivity(changeMode);
+					}
 				}
-				httpactionhandler.handleActionFinish();
+
 			}
 		});
 	}

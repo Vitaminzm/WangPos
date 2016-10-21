@@ -68,6 +68,7 @@
         android:layout_height="200dp">
 
         <TextView
+            android:id="@+id/text_msg"
             android:layout_width="match_parent"
             android:layout_height="@dimen/height_rvz"
             android:gravity="center"

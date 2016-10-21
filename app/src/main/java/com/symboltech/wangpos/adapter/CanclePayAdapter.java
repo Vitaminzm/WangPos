@@ -137,7 +137,15 @@ public class CanclePayAdapter extends BaseAdapter {
 				||paymentsInfoAdapter.get(position).getDes().equals(context.getString(R.string.cancled_failed))
 				||paymentsInfoAdapter.get(position).getDes().equals(context.getString(R.string.cancled_query))){
 			holder.name_opt.setClickable(true);
-		}else{
+			holder.name_opt.setTextColor(context.getResources().getColor(R.color.white));
+			holder.name_opt.setBackgroundColor(context.getResources().getColor(R.color.green));
+		}if(paymentsInfoAdapter.get(position).getDes().equals(context.getString(R.string.cancleing_pay))){
+			holder.name_opt.setTextColor(context.getResources().getColor(R.color.orange));
+			holder.name_opt.setBackgroundColor(context.getResources().getColor(R.color.white));
+			holder.name_opt.setClickable(false);
+		}else if(paymentsInfoAdapter.get(position).getDes().equals(context.getString(R.string.cancled_pay))){
+			holder.name_opt.setTextColor(context.getResources().getColor(R.color.green));
+			holder.name_opt.setBackgroundColor(context.getResources().getColor(R.color.white));
 			holder.name_opt.setClickable(false);
 		}
 		holder.name_opt.setTag(position);

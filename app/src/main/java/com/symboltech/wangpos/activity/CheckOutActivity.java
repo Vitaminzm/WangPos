@@ -258,7 +258,7 @@ public class CheckOutActivity extends BaseActivity {
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
             case WECHAT:
-                if(false){
+                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_WEIXIN_IS_INPUT, "0"))){
                     Intent intent_qr = new Intent(this, CaptureActivity.class);
                     startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
                 }else{
@@ -269,7 +269,7 @@ public class CheckOutActivity extends BaseActivity {
                 }
                 break;
             case ALIPAY:
-                if(false){
+                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
                     Intent intent_qr = new Intent(this, CaptureActivity.class);
                     startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
                 }else{

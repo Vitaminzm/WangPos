@@ -1,8 +1,16 @@
 package com.symboltech.wangpos.activity;
 
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.ServiceConnection;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -21,14 +29,18 @@ import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
+import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.result.AllMemeberInfoResult;
 import com.symboltech.wangpos.result.MemberInfoResult;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
+import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
+
+import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -38,6 +50,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
+import cn.koolcloud.engine.service.aidl.IMemberCardService;
 
 public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
@@ -52,12 +65,15 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     @Bind(R.id.ll_swaip_card)LinearLayout ll_swaip_card;
 
     @Bind(R.id.title_text_content)TextView title_text_content;
+    @Bind(R.id.text_msg)TextView text_msg;
     private MemberInfo memberinfo;
     private Animation left_In_Animation;
     private Animation right_In_Animation;
     private HorizontalKeyBoard keyBoard;
 
     private String verify_type = ConstantData.MEMBER_VERIFY_BY_PHONE;
+    private boolean isSwipVipCard =false;
+
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId){
@@ -91,13 +107,38 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         }
     }
 
+    private IMemberCardService mCardService = null;
+    private ServiceConnection mMemberCardConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mCardService = null;
+
+        }
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mCardService = IMemberCardService.Stub.asInterface(service);
+        }
+    };
+    private MsrBroadcastReceiver msrReceiver = new MsrBroadcastReceiver();
     MyHandler handler = new MyHandler(this);
     @Override
     protected void initData() {
         title_text_content.setText(getString(R.string.number_access));
         right_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
         left_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in);
+        Intent intent = new Intent(IMemberCardService.class.getName());
+
+        intent = AndroidUtils.getExplicitIntent(this, intent);
+        if (intent != null) {
+            bindService(intent, mMemberCardConnection, Context.BIND_AUTO_CREATE);
+        } else {
+            ToastUtils.sendtoastbyhandler(handler, "Check engine application version");
+        }
+        registerReceiver(msrReceiver, new IntentFilter("cn.koolcloud.engine.memberCard"));
     }
+
 
     @Override
     protected void initView() {
@@ -141,10 +182,17 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         super.onResume();
         text_phone_number.setChecked(true);
         verifyByPhone();
+
     }
 
     @Override
     protected void recycleMemery() {
+        if (mMemberCardConnection != null) {
+            unbindService(mMemberCardConnection);
+        }
+        if (msrReceiver != null) {
+            unregisterReceiver(msrReceiver);
+        }
         handler.removeCallbacksAndMessages(null);
         MyApplication.delActivity(this);
     }
@@ -165,6 +213,18 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     public void verifyByPhone(){
         if(radioGroup_type.getCheckedRadioButtonId() == R.id.text_phone_number){
+            if(isSwipVipCard){
+                try {
+                    if (mCardService != null) {
+                        isSwipVipCard = false;
+                        mCardService.stopReadCard();
+                    } else {
+                        LogUtil.e("lgs", "mCardService==null");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             verify_type = ConstantData.MEMBER_VERIFY_BY_PHONE;
             right_In_Animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -190,6 +250,18 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     public void verifyByVipCard() {
         if(radioGroup_type.getCheckedRadioButtonId() == R.id.text_vip_card){
+            if(isSwipVipCard){
+                try {
+                    if (mCardService != null) {
+                        isSwipVipCard = false;
+                        mCardService.stopReadCard();
+                    } else {
+                        LogUtil.e("lgs", "mCardService==null");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             verify_type = ConstantData.MEMBER_VERIFY_BY_MEMBERCARD;
             left_In_Animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -214,6 +286,18 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     }
 
     public void verifyByQR(){
+        try {
+            if (mCardService != null) {
+                if(isSwipVipCard){
+                    isSwipVipCard = false;
+                    mCardService.stopReadCard();
+                }
+            } else {
+                LogUtil.e("lgs", "mCardService==null");
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         Intent intent_qr = new Intent(this, CaptureActivity.class);
         startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
     }
@@ -376,5 +460,38 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                         }
                     }
                 });
+    }
+
+    class MsrBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            try {
+                Message msg = (Message) intent.getParcelableExtra(Message.class
+                        .getName());
+                Bundle data = msg.getData();
+
+                if (data != null) {
+                    JSONObject jsonData = new JSONObject(data.getString("data"));
+
+                    LogUtil.i("lgs", "dataStr is :" + jsonData.toString());
+                    // 处理返回结果
+                    LogUtil.i("lgs","\n\ntrack1 : "
+                            + jsonData.optString("track1") + "\n\n"
+                            + "track2 : " + jsonData.optString("track2")
+                            + "\n\n" + "track3 : "
+                            + jsonData.optString("track3") + "\n\n"
+                            + "cardNo : " + jsonData.optString("cardNo")
+                            + "\n\n" + "validTime : "
+                            + jsonData.optString("validTime") + "\n\n"
+                            + "serviceCode : "
+                            + jsonData.optString("serviceCode") + "\n");
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 }

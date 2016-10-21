@@ -44,13 +44,14 @@ import com.symboltech.wangpos.view.DrawableEditText;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener, View.OnFocusChangeListener, AdapterView.OnItemClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener, View.OnFocusChangeListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     @Bind(R.id.edit_username)DrawableEditText edit_username;
     @Bind(R.id.edit_password)EditText edit_password;
@@ -70,6 +71,15 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private ListView listview;
     private PopupWindow mPopupWindow;
     private HorizontalKeyBoard keyboard;
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+        ArrayList<String> datas = DButils.getUserNames(und);
+        if(datas.size() > position)
+            und.delete(datas.get(position));
+        mPopupWindow.dismiss();
+        return true;
+    }
 
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
@@ -149,6 +159,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
         listview = (ListView) LayoutInflater.from(this).inflate(R.layout.popup_list, null);
         listview.setOnItemClickListener(this);
+        listview.setOnItemLongClickListener(this);
 
     }
 
@@ -212,6 +223,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
     }
 
+    ArrayAdapter<String> adapter;
+    ArrayList<String> datas = new ArrayList<>();
     /**
      * popup show
      */
@@ -223,14 +236,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if (imm.isActive()) {
             imm.hideSoftInputFromWindow(edit_username.getWindowToken(), 0); // 强制隐藏键盘
         }
-        if (DButils.getUserNames(und).size() > 0) {
+        datas.clear();
+        datas.addAll(DButils.getUserNames(und));
+        if(datas.size()  > 0) {
             if (null == mPopupWindow) {
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(LoginActivity.this, R.layout.popup_item,
-                        DButils.getUserNames(und));
+                 adapter = new ArrayAdapter<>(LoginActivity.this, R.layout.popup_item, datas);
                 listview.setAdapter(adapter);
                 mPopupWindow = new PopupWindow(listview, 250, MachineUtils.dip2px(MyApplication.context, 105), true);
                 mPopupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
                 mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
+            }else {
+                adapter.notifyDataSetChanged();
             }
             if(!mPopupWindow.isShowing()){
                 int popupWidth = mPopupWindow.getWidth();
