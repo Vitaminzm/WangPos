@@ -307,6 +307,17 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             }
 
             @Override
+            public void startChangeMode() {
+                final HttpActionHandle httpActionHandle = this;
+                LoginActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ChangeModeDialog(LoginActivity.this, httpActionHandle).show();
+                    }
+                });
+            }
+
+            @Override
             public void handleActionChangeToOffLine() {
                 LoginDao dao = new LoginDao(mContext);
                 if (dao.unlock(SpSaveUtils.read(mContext, ConstantData.CASHIER_CODE, ""), MD5Utils.md5(password))) {

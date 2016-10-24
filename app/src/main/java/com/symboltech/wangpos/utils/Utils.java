@@ -52,6 +52,15 @@ public class Utils {
         timeFormat = new SimpleDateFormat("HH:mm");
     }
 
+    private static long lastClickTime;
+    public synchronized static boolean isFastClick() {
+        long time = System.currentTimeMillis();
+        if ( time - lastClickTime < 500) {
+            return true;
+        }
+        lastClickTime = time;
+        return false;
+    }
     /**
      * 获取随机的UUID
      *

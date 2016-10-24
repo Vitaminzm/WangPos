@@ -22,6 +22,7 @@ import com.symboltech.wangpos.msg.entity.CouponInfo;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -126,6 +127,9 @@ public class MemberDetailActivity extends BaseActivity {
 
     @OnClick({R.id.title_icon_back, R.id.text_member_activate})
     public void click(View view){
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id){
             case R.id.title_icon_back:

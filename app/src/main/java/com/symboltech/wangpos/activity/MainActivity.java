@@ -52,6 +52,7 @@ import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.MyscollView;
 
 import org.json.JSONObject;
@@ -340,6 +341,9 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = v.getId();
         switch (id){
             case R.id.rl_lockscreen:

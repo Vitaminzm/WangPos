@@ -97,6 +97,9 @@ public class MemberActivateActivity extends BaseActivity {
 
     @OnClick({R.id.title_icon_back, R.id.text_cancle, R.id.text_confirm, R.id.text_send_code})
     public void click(View view){
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id){
             case R.id.title_icon_back:

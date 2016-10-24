@@ -201,6 +201,9 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     @OnClick({R.id.text_add_or_verify_member, R.id.title_icon_back})
     public void click(View view){
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id){
             case R.id.text_add_or_verify_member:

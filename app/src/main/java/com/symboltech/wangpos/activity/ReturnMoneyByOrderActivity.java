@@ -47,6 +47,7 @@ import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.ListViewForScrollView;
 
 import java.lang.ref.WeakReference;
@@ -335,6 +336,9 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
 
     @OnClick({R.id.title_icon_back, R.id.text_submit_return_order})
     public void click(View view){
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id){
             case R.id.title_icon_back:

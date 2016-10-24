@@ -126,7 +126,11 @@ public class HttpStringClient {
 				e.printStackTrace();
 				LogUtil.i("lgs", "======================================="+e.getCause()+"---"+e.getMessage());
 				if(e.getMessage() != null){
-					httpactionhandler.handleActionError(actionname, e.getMessage());
+					if (e.getMessage().contains("failed to connect to")){
+						httpactionhandler.handleActionError(actionname, "网络连接超时");
+					}else{
+						httpactionhandler.handleActionError(actionname, e.getMessage());
+					}
 				}else{
 					httpactionhandler.handleActionError(actionname, "网络连接异常！");
 				}

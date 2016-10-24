@@ -197,6 +197,9 @@ public class CheckOutActivity extends BaseActivity {
         activity_payment_gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(Utils.isFastClick()){
+                    return;
+                }
                 if (null == edit_input_money.getText() || "".equals(edit_input_money.getText())) {
                     edit_input_money.setText("");
                     ToastUtils.sendtoastbyhandler(handler, "请先输入金额");

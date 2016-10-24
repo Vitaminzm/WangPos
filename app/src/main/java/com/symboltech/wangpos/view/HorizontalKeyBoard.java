@@ -332,6 +332,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		if(mObject instanceof Dialog) {
 			mWindow = ((Dialog)mObject).getWindow();
 			((Dialog) mObject).setOnDismissListener(this);
+			isFocusOutside = true;
 		}else {
 			mWindow = ((Activity) mObject).getWindow();
 		}

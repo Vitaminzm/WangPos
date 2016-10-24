@@ -39,6 +39,7 @@ import com.symboltech.wangpos.result.ReportResult;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.DecoratorViewPager;
 import com.symboltech.wangpos.view.ScllorTabView;
 
@@ -323,6 +324,9 @@ public class WorkLogActivity extends BaseActivity {
     }
     @OnClick({R.id.title_icon_back, R.id.text_print})
     public void click(View view){
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id){
             case R.id.title_icon_back:

@@ -36,6 +36,7 @@ import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.GridViewForScrollView;
 
 import java.lang.ref.WeakReference;
@@ -325,6 +326,9 @@ public class PaymentDetailActivity extends BaseActivity {
 
     @OnClick({R.id.text_print_coupon, R.id.text_selected_plate, R.id.text_done})
     public void click(View view){
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id){
             case R.id.text_print_coupon:
