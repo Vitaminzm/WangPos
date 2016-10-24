@@ -4,13 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
-import android.os.RemoteException;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -21,15 +17,16 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.PaymentTypeAdapter;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.CanclePayDialog;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.dialog.ThirdPayDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
-import com.symboltech.wangpos.interfaces.CancleCallback;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
@@ -322,7 +319,7 @@ public class CheckOutActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_check_out);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         edit_input_money.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -371,7 +368,7 @@ public class CheckOutActivity extends BaseActivity {
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.text_cancle_pay, R.id.title_icon_back, R.id.imageview_more, R.id.text_submit_order})
@@ -565,7 +562,7 @@ public class CheckOutActivity extends BaseActivity {
 
     private void commitOrder() {
         bill = new BillInfo();
-        bill.setBillid(MyApplication.getBillId());
+        bill.setBillid(AppConfigFile.getBillId());
         if(coupons != null){
             bill.setUsedcouponlist(coupons);
         }
@@ -625,14 +622,56 @@ public class CheckOutActivity extends BaseActivity {
                     bill.setGoodslist(cartgoods);
                     bill.setGrantcouponlist(result.getSaveOrderInfo().getGrantcouponlist());
                     bill.setAllcouponlist(result.getSaveOrderInfo().getAllcouponlist());
-                    MyApplication.setLast_billid(MyApplication.getBillId());
-                    MyApplication.setBillId(result.getSaveOrderInfo().getBillid());
+                    AppConfigFile.setLast_billid(AppConfigFile.getBillId());
+                    AppConfigFile.setBillId(result.getSaveOrderInfo().getBillid());
                     Intent intent_pay_detail = new Intent(CheckOutActivity.this, PaymentDetailActivity.class);
                     intent_pay_detail.putExtra(ConstantData.VERIFY_IS_MEMBER, isMember);
                     intent_pay_detail.putExtra(ConstantData.ORDER_INFO, bill);
                     startActivity(intent_pay_detail);
                 } else {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                }
+            }
+
+            @Override
+            public void startChangeMode() {
+                final HttpActionHandle httpActionHandle = this;
+                CheckOutActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ChangeModeDialog(CheckOutActivity.this, httpActionHandle).show();
+                    }
+                });
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                AppConfigFile.setLast_billid(AppConfigFile.getBillId());
+                AppConfigFile.setBillId(String.valueOf(Long.parseLong(AppConfigFile.getBillId()) + 1));
+                Intent intent = new Intent(CheckOutActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void handleActionOffLine() {
+                OrderInfoDao dao = new OrderInfoDao(mContext);
+                boolean result = dao.addOrderPaytypeinfo(AppConfigFile.getBillId(), null, null, null, payLing, "1", SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""), payments);
+                if(result){
+                    bill.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
+                    bill.setCashiername(SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""));
+                    bill.setSalemanname(salesman);
+                    bill.setRealmoney("" + ArithDouble.sub(orderTotleValue, ArithDouble.add(orderCoupon, orderScore)));
+                    bill.setTotalmoney(String.valueOf(orderTotleValue));
+                    bill.setGoodslist(cartgoods);
+                    AppConfigFile.setLast_billid(AppConfigFile.getBillId());
+                    AppConfigFile.setBillId(String.valueOf(Long.parseLong(AppConfigFile.getBillId()) + 1));
+
+                    Intent intent_pay_detail = new Intent(CheckOutActivity.this, PaymentDetailActivity.class);
+                    intent_pay_detail.putExtra(ConstantData.VERIFY_IS_MEMBER, isMember);
+                    intent_pay_detail.putExtra(ConstantData.ORDER_INFO, bill);
+                    startActivity(intent_pay_detail);
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_save_order_failed));
                 }
             }
         });
@@ -651,7 +690,7 @@ public class CheckOutActivity extends BaseActivity {
                 if (paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHAT.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())) {
-                    if(!MyApplication.isOffLineMode()){
+                    if(!AppConfigFile.isOffLineMode()){
                         paymentTypeAdapter.add(paymentslist.get(i));
                     }
                 }else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype())){
@@ -720,11 +759,11 @@ public class CheckOutActivity extends BaseActivity {
         }
         return null;
     }
-    private void saveBanInfo(String payTypeId, final OrderBean orderBean){
+    private void saveBanInfo(final String payTypeId, final OrderBean orderBean){
         Map<String, String> map = new HashMap<String, String>();
         map.put("skfsid", payTypeId);
         map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
-        map.put("billid", MyApplication.getBillId());
+        map.put("billid", AppConfigFile.getBillId());
         map.put("transtype", ConstantData.TRANS_SALE);
         map.put("tradeno", orderBean.getTxnId());
         map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
@@ -737,22 +776,22 @@ public class CheckOutActivity extends BaseActivity {
             @Override
             public void handleActionError(String actionName, String errmsg) {
                 ToastUtils.sendtoastbyhandler(handler, errmsg);
-                // TODO Auto-generated method stub
                 OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
-//                dao.addBankinfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), MyApplication.getBillId(), type, rp.getCardNo(),
-//                        rp.getBankCode() == null? "null":rp.getBankCode(), rp.getBatchNo() == null? "null":rp.getBatchNo(),
-//                        rp.getRefNo()== null? "null":rp.getRefNo(), rp.getTraceNo(), payTypeId,
-//                        ArithDouble.parseDouble(BanKPayUtils.makeRealAmount(rp.getAmount())), 0.0);
+                dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), AppConfigFile.getBillId(), ConstantData.TRANS_SALE, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
+                        orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
+                        orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+                        ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
+                ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
             }
 
             @Override
             public void handleActionSuccess(String actionName, BaseResult result) {
-                //TODO
                 if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
-//                    dao.addBankinfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), MyApplication.getBillId(), type, rp.getCardNo(),
-////                        rp.getBankCode() == null? "null":rp.getBankCode(), rp.getBatchNo() == null? "null":rp.getBatchNo(),
-////                        rp.getRefNo()== null? "null":rp.getRefNo(), rp.getTraceNo(), payTypeId,
-////                        ArithDouble.parseDouble(BanKPayUtils.makeRealAmount(rp.getAmount())), 0.0);
+                    OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+                    dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), AppConfigFile.getBillId(), ConstantData.TRANS_SALE, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
+                            orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
+                            orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+                            ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
                     ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
                 }
             }

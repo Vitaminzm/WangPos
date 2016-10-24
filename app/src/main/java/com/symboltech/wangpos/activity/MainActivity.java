@@ -16,8 +16,8 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
+import com.google.gson.GsonBuilder;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
@@ -25,17 +25,28 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.config.InitializeConfig;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.ChangeManagerDialog;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
+import com.symboltech.wangpos.dialog.OfflineReturnDialog;
+import com.symboltech.wangpos.dialog.OfflineUpdateByLogDialog;
+import com.symboltech.wangpos.dialog.OfflineUploadDialog;
 import com.symboltech.wangpos.dialog.PrintOrderDialog;
 import com.symboltech.wangpos.dialog.ReturnDialog;
-import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
+import com.symboltech.wangpos.msg.entity.GoodsInfo;
+import com.symboltech.wangpos.msg.entity.OfflineBankInfo;
+import com.symboltech.wangpos.msg.entity.OfflineBillInfo;
+import com.symboltech.wangpos.msg.entity.OfflineGoodsInfo;
+import com.symboltech.wangpos.msg.entity.OfflinePayTypeInfo;
+import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.print.PrepareReceiptInfo;
 import com.symboltech.wangpos.result.BillResult;
 import com.symboltech.wangpos.result.InitializeInfResult;
+import com.symboltech.wangpos.result.OfflineDataResult;
 import com.symboltech.wangpos.result.TicketFormatResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
@@ -43,8 +54,6 @@ import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.MyscollView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
@@ -66,8 +75,6 @@ import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
 import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransPrintRequest;
-import cn.koolcloud.interfaces.RemoteServiceStateChangeListerner;
-import cn.koolcloud.transmodel.AidlPaymentInfo;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -83,15 +90,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         public void onReceive(Context context, Intent intent) {
             if (ConstantData.OFFLINE_MODE.equals(intent.getAction())) {
                 int mode = intent.getIntExtra(ConstantData.OFFLINE_MODE_INFO, -1);
-                if(mode == ConstantData.ONLINE_STATE || mode == ConstantData.OFFLINE_STATE){
-                    //修改显示界面
-                    ChangeUI(mode);
-                }else if(mode == ConstantData.CHANGE_MODE_STATE){
-                    //弹网络切换提示框
-//                    Intent changeMode = new Intent(MainActivity.this, ChangeModeDialog.class);
-//                    changeMode.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    changeMode.putExtra(ConstantData.CHANGE_ONLINE_MODE, true);
-//                    startActivity(changeMode);
+                if(mode == ConstantData.CHANGE_MODE_STATE){
+                    new ChangeModeDialog(MainActivity.this,null).show();
                 }
             }
         }
@@ -99,6 +99,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected static final int printStart = 0;
     protected static final int printEnd = 1;
     protected static final int printError = 2;
+    private OfflineUploadDialog offlineUploadDialog;
+
     /** refresh UI By handler */
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
@@ -204,7 +206,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     };
     @Override
     protected void initData() {
-        if(MyApplication.isOffLineMode()){
+        if(AppConfigFile.isOffLineMode()){
             //手动监测网络状态
             Intent serviceintent = new Intent(MainActivity.this, RunTimeService.class);
             serviceintent.putExtra(ConstantData.CHECK_NET, true);
@@ -223,13 +225,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             calendar.setTime(dNow);
             calendar.add(Calendar.DAY_OF_MONTH, AppConfigFile.OFFLINE_DATA_TIME);
             dBefore = calendar.getTime();
-//            dao.deleteOrderBytime(format.format(dBefore.getTime()));
-//            //删除那些交易未成功的数据
-//            dao.deleteOrderbyState();
+            dao.deleteOrderBytime(format.format(dBefore.getTime()));
+            //删除那些交易未成功的数据
+            dao.deleteOrderbyState();
             getconfigInfo();
             //获取小票格式
           //  getTickdatas();
-           // uploadOfflineData(true);
+            uploadOfflineData(true);
 
         }
         Intent printService = new Intent(IPrinterService.class.getName());
@@ -251,7 +253,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onResume() {
-        if(MyApplication.isOffLineMode()){
+        if(AppConfigFile.isOffLineMode()){
             ChangeUI(1);
         }else {
             ChangeUI(0);
@@ -270,7 +272,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void initView() {
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         myscollView.setView_pager(view_pager);
@@ -306,7 +308,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
     public void print_last(String id){
         TransPrintRequest request = new TransPrintRequest(id);
@@ -344,19 +346,61 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 lockscreen();
                 break;
             case R.id.rl_member:
+                if(AppConfigFile.isOffLineMode()){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
+                    return;
+                }
                 gotoFunction(MemberAccessActivity.class);
                 break;
             case R.id.rl_sendcarcoupon:
-
+                if(AppConfigFile.isOffLineMode()){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
+                    return;
+                }
                 break;
             case R.id.rl_pay:
+                if(AppConfigFile.isOffLineMode()){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
+                    return;
+                }
                 gotoPay();
                 break;
             case R.id.rl_salereturn:
+                if(AppConfigFile.isOffLineMode()){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
+                    return;
+                }
                 new ReturnDialog(this).show();
                 break;
             case R.id.rl_change:
-                new ChangeManagerDialog(this).show();
+                new ChangeManagerDialog(this, new DialogFinishCallBack() {
+                    @Override
+                    public void finish(int position) {
+                        if(AppConfigFile.getUploadStatus() == ConstantData.UPLOAD_ING){
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_uploading));
+                            return;
+                        }
+                        if(AppConfigFile.isNetConnect()) {
+                            OrderInfoDao dao = new OrderInfoDao(MainActivity.this);
+                            if(dao.getOffLineDataCount() > 0 || dao.getBankOffLineDataCount() > 0) {
+                                AppConfigFile.setUploadStatus(ConstantData.UPLOAD_ING);
+                                offlineUploadDialog = new OfflineUploadDialog(MainActivity.this, true);
+                                offlineUploadDialog.show();
+                                uploadOfflineData(null, AppConfigFile.OFFLINE_DATA_COUNT);
+                            }else {
+                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
+                                MainActivity.this.startActivity(intent);
+                                MainActivity.this.finish();
+                            }
+                        }else {
+                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                                intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
+                                MainActivity.this.startActivity(intent);
+                                MainActivity.this.finish();
+                        }
+                    }
+                }).show();
                 break;
             case R.id.rl_billprint:
                 if(isPrinting){
@@ -369,6 +413,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         printByorderforHttp(edit);
                     }
                 }).show();
+                break;
+            case R.id.rl_upload:
+                uploadOfflineData(false);
+                break;
+            case R.id.rl_offline:
+                new OfflineReturnDialog(this).show();
                 break;
         }
     }
@@ -390,6 +440,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * lockscreen
      */
     private void lockscreen() {
+        Intent serviceintent = new Intent(getApplicationContext(), RunTimeService.class);
+        serviceintent.putExtra(ConstantData.UPDATE_STATUS, true);
+        serviceintent.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOCK);
+        startService(serviceintent);
         Intent intent = new Intent(this, LoginActivity.class);
         intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_LOCKSCREEN);
         startActivity(intent);
@@ -407,7 +461,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     iPrinterService.registerPrintCallback(callback);
                     // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
                     // -999：不支持该功能（可以不支持）
-                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo,true)));
+                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo, true)));
                 } catch (Exception e) {
                     Message msg2 = new Message();
                     msg2.what = printError;
@@ -441,7 +495,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }).start();
     }
-    private void printByorderforHttp(String edit) {
+    private void printByorderforHttp(final String edit) {
         Map<String, String> map = new HashMap<String, String>();
         map.put("billid", edit);
         HttpRequestUtil.getinstance().printerOrderagain(map, BillResult.class, new HttpActionHandle<BillResult>() {
@@ -474,11 +528,40 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_param_err));
                         }
                     }
-                }else{
+                } else {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
             }
 
+            @Override
+            public void startChangeMode() {
+                final HttpActionHandle httpActionHandle = this;
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ChangeModeDialog(MainActivity.this, httpActionHandle).show();
+                    }
+                });
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                ChangeUI(1);
+            }
+
+            @Override
+            public void handleActionOffLine() {
+                BillInfo billinfo = offlineInfo2billInfo(edit);
+                if (billinfo != null) {
+                    if ("0".equals(billinfo.getSaletype())) {
+                        printByorder(billinfo);
+                    } else if ("1".equals(billinfo.getSaletype()) || "2".equals(billinfo.getSaletype())) {
+                        printBackByorder(billinfo);
+                    }
+                } else {
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_no_found_bill));
+                }
+            }
         });
     }
 
@@ -512,6 +595,21 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         } else {
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                         }
+                    }
+                    @Override
+                    public void startChangeMode() {
+                        final HttpActionHandle httpActionHandle = this;
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new ChangeModeDialog(MainActivity.this, httpActionHandle).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void handleActionOffLine() {
+                        ChangeUI(1);
                     }
                 });
     }
@@ -634,6 +732,193 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             } else {
                 view.setAlpha(0);
+            }
+        }
+    }
+
+    /**
+     * 离线数据转成正常数据
+     * @param billId
+     * @return
+     */
+    public BillInfo offlineInfo2billInfo(String billId){
+        BillInfo bill = null;
+        if(billId == null){
+            return bill;
+        }
+        OrderInfoDao dao = new OrderInfoDao(mContext);
+        OfflineBillInfo info = dao.geOfflineBillInfo(billId);
+        if(info == null){
+            return bill;
+        }
+        bill = new BillInfo();
+        bill.setBillid(billId);
+        bill.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
+        bill.setCashiername(SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""));
+        bill.setSalemanname(info.getSavearticleinfos().getCashiername());
+        bill.setSaletime(info.getConfirmbillinfos().getSaletime());
+        bill.setChangemoney(info.getConfirmbillinfos().getChangemoney());
+        bill.setTotalmoney(info.getSavearticleinfos().getTotalmoney());
+        bill.setSaletype(info.getSavearticleinfos().getSaletype());
+        List<PayMentsInfo> payMentsInfos = new ArrayList<PayMentsInfo>();
+        for(OfflinePayTypeInfo billinfo:info.getConfirmbillinfos().getPaymentslist()){
+            PayMentsInfo payMentsInfo = new PayMentsInfo();
+            payMentsInfo.setMoney(billinfo.getMoney());
+            payMentsInfo.setId(billinfo.getId());
+            payMentsInfo.setOverage(billinfo.getOverage());
+            payMentsInfo.setName(billinfo.getName());
+            payMentsInfo.setType(billinfo.getType());
+            payMentsInfos.add(payMentsInfo);
+        }
+        bill.setPaymentslist(payMentsInfos);
+        List<GoodsInfo> goodslist = new ArrayList<GoodsInfo>();
+        for(OfflineGoodsInfo goodsInfo:info.getSavearticleinfos().getGoodslist()){
+            GoodsInfo goodInfo = new GoodsInfo();
+            goodInfo.setCode(goodsInfo.getCode());
+            goodInfo.setSalecount(goodsInfo.getSalecount());
+            goodInfo.setSaleamt(goodsInfo.getSaleamt());
+            goodInfo.setUsedpoint(goodsInfo.getUsedpoint());
+            goodInfo.setGoodsname(goodsInfo.getGoodsname());
+            goodslist.add(goodInfo);
+        }
+        bill.setGoodslist(goodslist);
+        return bill;
+    }
+
+    /**
+     * 上传离线数据
+     * @param isAuto 是不是自动上传  false 是手动上传
+     */
+    public void uploadOfflineData(boolean isAuto){
+        if(AppConfigFile.isNetConnect()){
+            if(AppConfigFile.getUploadStatus() == ConstantData.UPLOAD_ING){
+                ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_uploading));
+            }else{
+                OrderInfoDao dao = new OrderInfoDao(MyApplication.context);
+                int count = dao.getOffLineDataCount();
+                if(count > 0){
+                    AppConfigFile.setUploadStatus(ConstantData.UPLOAD_ING);
+                    if(isAuto) {
+                        Intent serviceintent = new Intent(mContext, RunTimeService.class);
+                        serviceintent.putExtra(ConstantData.UPLOAD_OFFLINE_DATA, true);
+                        mContext.startService(serviceintent);
+                    }else {
+                        new OfflineUploadDialog(MainActivity.this).show();
+                    }
+                }else{
+                    if(!isAuto) {
+                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_no_data));
+                    }
+                }
+            }
+        }else{
+            ToastUtils.sendtoastbyhandler(handler, getString(R.string.no_netconnect_waring));
+        }
+    }
+
+    public void uploadOfflineData(String beginBillID, final int count) {
+        OrderInfoDao dao = new OrderInfoDao(MyApplication.context);
+        List<OfflineBillInfo> billinfos = null;
+        if(AppConfigFile.isNetConnect()) {
+            billinfos = dao.getOfflineOrderInfo(beginBillID, count);
+        }
+        if (billinfos != null && billinfos.size() > 0) {
+            Map<String, String> map = new HashMap<String, String>();
+            //重新复制开始的订单号
+            final String newBillID = billinfos.get(billinfos.size() - 1).getConfirmbillinfos().getBillid();
+            String json = new GsonBuilder().serializeNulls().create().toJson(billinfos);
+            map.put("billinfo", json);
+            HttpRequestUtil.getinstance().uploadOfflineData(map, OfflineDataResult.class,
+                    new HttpActionHandle<OfflineDataResult>() {
+
+                        @Override
+                        public void handleActionError(String actionName, String errmsg) {
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
+                            MainActivity.this.startActivity(intent);
+                            MainActivity.this.finish();
+                        }
+
+                        @Override
+                        public void handleActionSuccess(String actionName, OfflineDataResult result) {
+                            if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode()) || ConstantData.HTTP_RESPONSE_PART_OK.equals(result.getCode())) {
+                                if (result != null || result.getOfflineDatainfo() != null) {
+                                    OrderInfoDao dao = new OrderInfoDao(MainActivity.this);
+                                    dao.setOfflineStatus(result.getOfflineDatainfo().getSucbillidlist());
+                                }
+                            } else {
+                                LogUtil.v("lgs", result.getMsg());
+                            }
+                            //不管成功还是不成功，都进行下次上传
+                            uploadOfflineData(newBillID, count);
+                        }
+                    });
+        } else {
+            uploadOfflineBankData(null, AppConfigFile.OFFLINE_DATA_COUNT);
+        }
+    }
+
+    /**
+     * 上传离线数据
+     *
+     * @param beginBillID
+     *            上传开始订单号，传空即是从头开始
+     * @param count
+     *            每次上传条数
+     */
+    public void uploadOfflineBankData(String beginBillID, final int count) {
+        OrderInfoDao dao = new OrderInfoDao(MyApplication.context);
+        List<OfflineBankInfo> bankinfos = null;
+        if (AppConfigFile.isNetConnect()) {
+            bankinfos = dao.getOfflineBankInfo(beginBillID, count);
+        }
+        if (bankinfos != null && bankinfos.size() > 0) {
+            Map<String, String> map = new HashMap<String, String>();
+            // 重新复制开始的订单号
+            final String newBillID = bankinfos.get(bankinfos.size() - 1).getTradeno();
+            String json = new GsonBuilder().serializeNulls().create().toJson(bankinfos);
+            LogUtil.v("lgs", "error = " + json);
+            map.put("data", json);
+            HttpRequestUtil.getinstance().uploadOfflineBankData(map, OfflineDataResult.class,
+                    new HttpActionHandle<OfflineDataResult>() {
+                        @Override
+                        public void handleActionError(String actionName, String errmsg) {
+                            // TODO Auto-generated method stub
+                            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                            intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
+                            MainActivity.this.startActivity(intent);
+                            MainActivity.this.finish();
+                        }
+
+                        @Override
+                        public void handleActionSuccess(String actionName, OfflineDataResult result) {
+                            // TODO Auto-generated method stub
+                            if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())
+                                    || ConstantData.HTTP_RESPONSE_PART_OK.equals(result.getCode())) {
+                                if (result != null || result.getOfflineDatainfo() != null) {
+                                    OrderInfoDao dao = new OrderInfoDao(MyApplication.context);
+                                    dao.setBankOfflineStatus(result.getOfflineDatainfo().getSucbillidlist());
+                                }
+                            } else {
+                                LogUtil.v("lgs", result.getMsg());
+                            }
+                            // 不管成功还是不成功，都进行下次上传
+                            uploadOfflineBankData(newBillID, count);
+                        }
+                    });
+        } else {
+            AppConfigFile.setUploadStatus(ConstantData.UPLOAD_SUCCESS);
+            //TODO 上传提示框
+            if(offlineUploadDialog != null && offlineUploadDialog.isShowing()){
+                offlineUploadDialog.dismiss();
+            }
+            if(dao.getOffLineDataCount() > 0 || dao.getBankOffLineDataCount() > 0 ) {
+                new OfflineUpdateByLogDialog(MainActivity.this).show();
+            }else {
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
+                MainActivity.this.startActivity(intent);
+                MainActivity.this.finish();
             }
         }
     }

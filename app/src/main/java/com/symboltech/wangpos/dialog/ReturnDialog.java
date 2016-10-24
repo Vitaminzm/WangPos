@@ -18,6 +18,7 @@ import com.github.ybq.android.spinkit.SpinKitView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.ReturnGoodsByNormalActivity;
 import com.symboltech.wangpos.activity.ReturnGoodsByOrderActivity;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -69,8 +70,8 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 					spin_kit.setVisibility(View.VISIBLE);
 					ll_status.setVisibility(View.GONE);
 					ll_function_return_order.setVisibility(View.VISIBLE);
-					if (!StringUtil.isEmpty(MyApplication.getLast_billid())) {
-						edit_input_order_no.setHint(MyApplication.getLast_billid());
+					if (!StringUtil.isEmpty(AppConfigFile.getLast_billid())) {
+						edit_input_order_no.setHint(AppConfigFile.getLast_billid());
 					}
 					break;
 				default:
@@ -100,8 +101,8 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 		this.setCanceledOnTouchOutside(true);
 		initUI();
 		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
-		if (!StringUtil.isEmpty(MyApplication.getLast_billid())) {
-			edit_input_order_no.setHint(MyApplication.getLast_billid());
+		if (!StringUtil.isEmpty(AppConfigFile.getLast_billid())) {
+			edit_input_order_no.setHint(AppConfigFile.getLast_billid());
 		}
 	}
 
@@ -153,8 +154,8 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 						ToastUtils.sendtoastbyhandler(handler, context.getString(R.string.waring_format_msg));
 					}
 				} else {
-					if (!StringUtil.isEmpty(MyApplication.getLast_billid())) {
-						getOrderInfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), MyApplication.getLast_billid());
+					if (!StringUtil.isEmpty(AppConfigFile.getLast_billid())) {
+						getOrderInfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), AppConfigFile.getLast_billid());
 					} else {
 						ToastUtils.sendtoastbyhandler(handler,context.getString(R.string.pleae_order_number));
 					}

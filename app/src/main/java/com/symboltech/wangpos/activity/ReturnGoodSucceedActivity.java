@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoDetailAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.log.LogUtil;
@@ -146,7 +147,7 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_return_good_success);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         title_icon_back.setVisibility(View.GONE);
     }
@@ -170,7 +171,7 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.text_confirm})

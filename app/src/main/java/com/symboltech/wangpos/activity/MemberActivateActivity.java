@@ -1,5 +1,6 @@
 package com.symboltech.wangpos.activity;
 
+import android.content.Intent;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
@@ -8,8 +9,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
@@ -79,14 +82,14 @@ public class MemberActivateActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_member_activate);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
     }
 
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
         if(timeCount != null){
             timeCount.cancel();
         }
@@ -164,8 +167,24 @@ public class MemberActivateActivity extends BaseActivity {
                 }else{
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
-
             }
-           });
+
+            @Override
+            public void startChangeMode() {
+                final HttpActionHandle httpActionHandle = this;
+                MemberActivateActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ChangeModeDialog(MemberActivateActivity.this, httpActionHandle).show();
+                    }
+                });
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                Intent intent = new Intent(MemberActivateActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

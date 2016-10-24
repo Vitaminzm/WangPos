@@ -25,8 +25,11 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.PaymentAdapter;
 import com.symboltech.wangpos.adapter.ReturnReasonAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.db.dao.OrderInfoDao;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -265,7 +268,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         setContentView(R.layout.activity_return_money_by_normal);
         mContext = ReturnMoneyByNormalActivity.this;
         inflater = LayoutInflater.from(mContext);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
 
     }
@@ -276,7 +279,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             unbindService(printerServiceConnection);
         }
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.title_icon_back, R.id.text_edit, R.id.image_add, R.id.text_submit_return_order})
@@ -380,7 +383,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                 if(Integer.parseInt(pay.getType()) > 100 || pay.getType().equals(PaymentTypeEnum.COUPON.getStyletype())){
                     continue;
                 }
-                if(MyApplication.isOffLineMode()) {
+                if(AppConfigFile.isOffLineMode()) {
                     /**保证现金类收款方式 */
                     if(PaymentTypeEnum.CASH.getStyletype().equals(pay.getType())) {
                         visiblePayments.add(pay);
@@ -813,7 +816,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void commitOrder() {
         BillInfo bill = new BillInfo();
-        bill.setBillid(MyApplication.getBillId());
+        bill.setBillid(AppConfigFile.getBillId());
         bill.setBackreason(reasonIds.get(edit_input_reason.getText().toString()));
         bill.setPaymentslist(payments);
         billInfo.setRealmoney(totalReturnMoney+"");
@@ -848,17 +851,50 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                     @Override
                     public void handleActionSuccess(String actionName, SaveOrderResult result) {
                         if(ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-                            billInfo.setBillid(MyApplication.getBillId());
+                            billInfo.setBillid(AppConfigFile.getBillId());
                             billInfo.setPaymentslist(payments);
                             billInfo.setAwardpoint(result.getSaveOrderInfo().getGainpoint());
                             printBackByorder(billInfo);
-                            MyApplication.setLast_billid(MyApplication.getBillId());
-                            MyApplication.setBillId(result.getSaveOrderInfo().getBillid());
+                            AppConfigFile.setLast_billid(AppConfigFile.getBillId());
+                            AppConfigFile.setBillId(result.getSaveOrderInfo().getBillid());
                             Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);
                             intent.putExtra(ConstantData.BILL, billInfo);
                             startActivity(intent);
                         }else {
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                        }
+                    }
+
+                    @Override
+                    public void startChangeMode() {
+                        final HttpActionHandle httpActionHandle = this;
+                        ReturnMoneyByNormalActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new ChangeModeDialog(ReturnMoneyByNormalActivity.this, httpActionHandle).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void handleActionChangeToOffLine() {
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void handleActionOffLine() {
+                        OrderInfoDao dao = new OrderInfoDao(mContext);
+                        if(dao.addOrderPaytypeinfo(AppConfigFile.getBillId(), null, null, reasonIds.get(edit_input_reason.getText().toString()), 0, "1", SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""), payments)) {
+                            billInfo.setPaymentslist(payments);
+                            printBackByorder(billInfo);
+                            AppConfigFile.setLast_billid(AppConfigFile.getBillId());
+                            AppConfigFile.setBillId(String.valueOf(Long.parseLong(AppConfigFile.getBillId()) + 1));
+                            Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);
+                            intent.putExtra(ConstantData.BILL, billInfo);
+                            startActivity(intent);
+                        }else {
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_save_order_failed));
                         }
                     }
                 });

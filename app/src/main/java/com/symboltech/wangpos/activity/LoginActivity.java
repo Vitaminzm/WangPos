@@ -17,11 +17,14 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.config.InitializeConfig;
 import com.symboltech.wangpos.db.dao.LoginDao;
+import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.db.dao.UserNameDao;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
@@ -121,7 +124,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void initView() {
         setContentView(R.layout.activity_login);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         keyboard = new HorizontalKeyBoard(this, this, edit_username, edit_password, ll_keyboard, new KeyBoardListener() {
             @Override
@@ -191,7 +194,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @Override
@@ -206,10 +209,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 break;
             case R.id.imageview_loginout:
                 Intent service = new Intent(getApplicationContext(), RunTimeService.class);
+                service.putExtra(ConstantData.UPDATE_STATUS, true);
+                service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
+                startService(service);
+                try {
+                    Thread.sleep(300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                InitializeConfig.clearCash(LoginActivity.this);
                 stopService(service);
                 this.finish();
-                InitializeConfig.clearCash(LoginActivity.this);
-                MyApplication.exit();
+                AppConfigFile.exit();
                 break;
         }
     }
@@ -294,6 +305,28 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
             }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                LoginDao dao = new LoginDao(mContext);
+                if (dao.unlock(SpSaveUtils.read(mContext, ConstantData.CASHIER_CODE, ""), MD5Utils.md5(password))) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.login_input_err));
+                }
+            }
+
+            @Override
+            public void handleActionOffLine() {
+                LoginDao dao = new LoginDao(mContext);
+                if (dao.unlock(SpSaveUtils.read(mContext, ConstantData.CASHIER_CODE, ""), MD5Utils.md5(password))) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.login_input_err));
+                }
+            }
         });
     }
 
@@ -336,7 +369,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      */
     private void loginforhttp(final String username, final String password) {
         Map<String, String> map = new HashMap<>();
-        map.put("machinecode", "0055DA1009B4");//MachineUtils.getUid(MyApplication.context)
+        map.put("machinecode", "0055DA1009B4");//MachineUtils.getUid(AppConfigFile.context)
         map.put("personcode", username);
         map.put("password", MD5Utils.md5(password));
         LogUtil.i("lgs", "MachineUtils.getUid==========" + MachineUtils.getUid(MyApplication.context));
@@ -372,7 +405,59 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
             }
+
+            @Override
+            public void startChangeMode() {
+                final HttpActionHandle httpActionHandle = this;
+                LoginActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ChangeModeDialog(LoginActivity.this, httpActionHandle).show();
+                    }
+                });
+            }
+
+            @Override
+            public void handleActionOffLine() {
+                LoginDao loginDao = new LoginDao(mContext);
+                LoginInfo loginInfo = loginDao.login(username, MD5Utils.md5(password));
+                if (loginInfo != null) {
+                    saveOffLineData(loginInfo);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.login_input_err));
+                }
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                LoginDao loginDao = new LoginDao(mContext);
+                LoginInfo loginInfo = loginDao.login(username, MD5Utils.md5(password));
+                if (loginInfo != null) {
+                    saveOffLineData(loginInfo);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.login_input_err));
+                }
+            }
         });
+    }
+
+    /**
+     * 保存离线登录数据
+     *
+     * @param logininfo
+     */
+    private void saveOffLineData(LoginInfo logininfo) {
+        OrderInfoDao dao = new OrderInfoDao(mContext);
+        long billid = Math.max(ArithDouble.parseLong(dao.getMaxbillid()) + 1,
+                ArithDouble.parseLong(AppConfigFile.getBillId()));
+        AppConfigFile.setBillId(String.valueOf(billid));
+        SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_NAME, logininfo.getPerson_name());
+        SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_CODE, logininfo.getPersoncode());
+        SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_ID, logininfo.getPerson_id());
     }
 
     /**
@@ -380,11 +465,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * @param logininfo 登录信息
      */
     private void savelogininfo(LoginInfo logininfo) {
-//        OrderInfoDao dao = new OrderInfoDao(mContext);
-//        long billid = Math.max(ArithDouble.parseLong(dao.getMaxbillid()) + 1,
-//                 ArithDouble.parseLong(logininfo.getBillid()));
-        long billid = ArithDouble.parseLong(logininfo.getBillid());
-        MyApplication.setBillId(String.valueOf(billid));
+        OrderInfoDao dao = new OrderInfoDao(mContext);
+        long billid = Math.max(ArithDouble.parseLong(dao.getMaxbillid()) + 1,
+                ArithDouble.parseLong(logininfo.getBillid()));
+        AppConfigFile.setBillId(String.valueOf(billid));
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_DESK_CODE, logininfo.getPosno());
         SpSaveUtils.write(MyApplication.context, ConstantData.RECEIPT_NUMBER, logininfo.getBillid());
         SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_ID, logininfo.getShopinfo().getId());

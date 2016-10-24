@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
@@ -43,7 +44,7 @@ import okhttp3.Response;
 public class HttpStringClient {
 	private static HttpStringClient httpStringRequest;
 	private static OkHttpClient httpClient ;
-	private static final int TIMEOUT_MS_DEFAULT = 30 *1000;
+	private static final int TIMEOUT_MS_DEFAULT = 10 *1000;
 	private static final int MAX_RETRIES = 0;
 	private static final int BACKOFF_MULT = 0;
 
@@ -93,6 +94,11 @@ public class HttpStringClient {
 		final Gson gson = getGson();
 		httpactionhandler.handleActionStart();
 
+		if(AppConfigFile.isOffLineMode()) {
+			httpactionhandler.handleActionOffLine();
+			httpactionhandler.handleActionFinish();
+			return;
+		}
 		Map<String, String> param = map;
 		if (param == null) {
 			param = new HashMap<>();
@@ -114,8 +120,8 @@ public class HttpStringClient {
 		requestPost(url, param, request, new Callback() {
 			@Override
 			public void onFailure(Call call, IOException e) {
-				if(MyApplication.isNetConnect()) {
-					MyApplication.setNetConnect(false);
+				if (AppConfigFile.isNetConnect()) {
+					AppConfigFile.setNetConnect(false);
 				}
 				e.printStackTrace();
 				LogUtil.i("lgs", "======================================="+e.getCause()+"---"+e.getMessage());
@@ -125,10 +131,8 @@ public class HttpStringClient {
 					httpactionhandler.handleActionError(actionname, "网络连接异常！");
 				}
 				httpactionhandler.handleActionFinish();
-				if(!MyApplication.isOffLineMode()) {
-					Intent changeMode = new Intent(MyApplication.context, ChangeModeDialog.class);
-					changeMode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					MyApplication.context.startActivity(changeMode);
+				if(!AppConfigFile.isOffLineMode()) {
+					httpactionhandler.startChangeMode();
 				}
 			}
 
@@ -136,8 +140,8 @@ public class HttpStringClient {
 			public void onResponse(Call call, Response response) throws IOException {
 				T result = null;
 				if(response.isSuccessful()){
-					if(!MyApplication.isNetConnect()) {
-						MyApplication.setNetConnect(true);
+					if(!AppConfigFile.isNetConnect()) {
+						AppConfigFile.setNetConnect(true);
 					}
 					try {
 						String re =  response.body().string();
@@ -165,15 +169,13 @@ public class HttpStringClient {
 				}
 					httpactionhandler.handleActionFinish();
 				}else{
-					if(MyApplication.isNetConnect()) {
-						MyApplication.setNetConnect(false);
+					if(AppConfigFile.isNetConnect()) {
+						AppConfigFile.setNetConnect(false);
 					}
 					httpactionhandler.handleActionError(actionname, response.message());
 					httpactionhandler.handleActionFinish();
-					if(!MyApplication.isOffLineMode()) {
-						Intent changeMode = new Intent(MyApplication.context, ChangeModeDialog.class);
-						changeMode.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						MyApplication.context.startActivity(changeMode);
+					if(!AppConfigFile.isOffLineMode()) {
+						httpactionhandler.startChangeMode();
 					}
 				}
 

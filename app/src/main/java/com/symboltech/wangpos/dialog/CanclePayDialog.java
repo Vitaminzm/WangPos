@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.BaseActivity;
 import com.symboltech.wangpos.adapter.CanclePayAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
@@ -522,7 +523,7 @@ public class CanclePayDialog extends BaseActivity{
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("skfsid", payTypeId);
 		map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
-		map.put("billid", MyApplication.getBillId());
+		map.put("billid", AppConfigFile.getBillId());
 		map.put("transtype", ConstantData.TRANS_REVOKE);
 		map.put("tradeno", orderBean.getTxnId());
 		map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));

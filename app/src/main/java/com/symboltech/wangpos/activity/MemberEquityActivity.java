@@ -15,8 +15,10 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CouponsAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.dialog.CouponWaringDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -207,7 +209,7 @@ public class MemberEquityActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_member_equity);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         MemberDetailActivity.MyLayoutManager linearLayoutManagerHold = new MemberDetailActivity.MyLayoutManager(this);
         linearLayoutManagerHold.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -217,7 +219,7 @@ public class MemberEquityActivity extends BaseActivity {
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.title_icon_back, R.id.imageview_qr})
@@ -226,7 +228,7 @@ public class MemberEquityActivity extends BaseActivity {
         switch (id){
             case R.id.title_icon_back:
                 if(couponList.size()>0){
-                    checkPaperCoupon(MyApplication.getBillId(), couponList);
+                    checkPaperCoupon(AppConfigFile.getBillId(), couponList);
                 }else
                 {
                     goPayment(couponList, null);
@@ -265,7 +267,7 @@ public class MemberEquityActivity extends BaseActivity {
                 case ConstantData.SCAN_CASH_COUPON:
                     if (!StringUtil.isEmpty(data.getExtras().getString("QRcode"))) {
                         if(getPayTypeId(PaymentTypeEnum.COUPON)!=null){
-                            couponforhttp(MyApplication.getBillId(), data.getExtras().getString("QRcode"));
+                            couponforhttp(AppConfigFile.getBillId(), data.getExtras().getString("QRcode"));
                         }else{
                             ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
                         }
@@ -334,6 +336,22 @@ public class MemberEquityActivity extends BaseActivity {
                         } else {
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                         }
+                    }
+                    @Override
+                    public void startChangeMode() {
+                        final HttpActionHandle httpActionHandle = this;
+                        MemberEquityActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new ChangeModeDialog(MemberEquityActivity.this, httpActionHandle).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void handleActionChangeToOffLine() {
+                        Intent intent = new Intent(MemberEquityActivity.this, MainActivity.class);
+                        startActivity(intent);
                     }
                 });
     }
@@ -404,6 +422,22 @@ public class MemberEquityActivity extends BaseActivity {
                     text_deduction_money.setText(exchangeInfo.getExchangemoney());
                 }
             }
+            @Override
+            public void startChangeMode() {
+                final HttpActionHandle httpActionHandle = this;
+                MemberEquityActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ChangeModeDialog(MemberEquityActivity.this, httpActionHandle).show();
+                    }
+                });
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                Intent intent = new Intent(MemberEquityActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
         });
     }
 
@@ -458,6 +492,22 @@ public class MemberEquityActivity extends BaseActivity {
                 } else {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
+            }
+            @Override
+            public void startChangeMode() {
+                final HttpActionHandle httpActionHandle = this;
+                MemberEquityActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ChangeModeDialog(MemberEquityActivity.this, httpActionHandle).show();
+                    }
+                });
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                Intent intent = new Intent(MemberEquityActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
     }

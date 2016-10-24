@@ -1,5 +1,6 @@
 package com.symboltech.wangpos.http;
 
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 
@@ -32,7 +33,7 @@ public class HttpRequestUtil {
 	 * @return
 	 */
 	private static String getUrl(String url) {
-		return ConstantData.IP_HOST_CONFIG_PREFIX + MyApplication.getHost_config() +"/"+ url;
+		return ConstantData.IP_HOST_CONFIG_PREFIX + AppConfigFile.getHost_config() +"/"+ url;
 	}
 
 	private HttpRequestUtil() {

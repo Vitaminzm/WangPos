@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.MainActivity;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
@@ -71,8 +72,8 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 
 	private void initData() {
 		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
-		if (!StringUtil.isEmpty(MyApplication.getLast_billid())) {
-			edit_input_order_no.setHint(MyApplication.getLast_billid());
+		if (!StringUtil.isEmpty(AppConfigFile.getLast_billid())) {
+			edit_input_order_no.setHint(AppConfigFile.getLast_billid());
 		}
 	}
 
@@ -123,8 +124,8 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 						ToastUtils.sendtoastbyhandler(handler, context.getString(R.string.waring_format_msg));
 					}
 				} else {
-					if (!StringUtil.isEmpty(MyApplication.getLast_billid())) {
-						gel.editinput(MyApplication.getLast_billid());
+					if (!StringUtil.isEmpty(AppConfigFile.getLast_billid())) {
+						gel.editinput(AppConfigFile.getLast_billid());
 						this.dismiss();
 					} else {
 						ToastUtils.sendtoastbyhandler(handler,context.getString(R.string.pleae_order_number));

@@ -22,8 +22,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.dialog.UniversalHintDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -143,7 +145,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     @Override
     protected void initView() {
         setContentView(R.layout.activity_member_access);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         edit_phone_number.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -194,7 +196,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
             unregisterReceiver(msrReceiver);
         }
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.text_add_or_verify_member, R.id.title_icon_back})
@@ -419,6 +421,22 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                         }
                     }
+                    @Override
+                    public void startChangeMode() {
+                        final HttpActionHandle httpActionHandle = this;
+                        MemberAccessActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new ChangeModeDialog(MemberAccessActivity.this, httpActionHandle).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void handleActionChangeToOffLine() {
+                        Intent intent = new Intent(MemberAccessActivity.this, MainActivity.class);
+                        startActivity(intent);
+                    }
                 });
     }
 
@@ -458,6 +476,21 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                         } else {
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                         }
+                    }
+                    @Override
+                    public void startChangeMode() {
+                        final HttpActionHandle httpActionHandle = this;
+                        MemberAccessActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new ChangeModeDialog(MemberAccessActivity.this, httpActionHandle).show();
+                            }
+                        });
+                    }
+                    @Override
+                    public void handleActionChangeToOffLine() {
+                        Intent intent = new Intent(MemberAccessActivity.this, MainActivity.class);
+                        startActivity(intent);
                     }
                 });
     }

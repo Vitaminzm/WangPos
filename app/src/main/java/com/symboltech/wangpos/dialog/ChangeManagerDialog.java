@@ -8,11 +8,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.LoginActivity;
 import com.symboltech.wangpos.activity.WorkLogActivity;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
+import com.symboltech.wangpos.utils.ToastUtils;
 
 /**
  * Description 通用提示dialog
@@ -22,13 +26,15 @@ import com.symboltech.wangpos.app.ConstantData;
  * @version 1.0
  */
 public class ChangeManagerDialog extends Dialog implements View.OnClickListener {
+	private  DialogFinishCallBack callBack;
 	public Context context;
 	private TextView text_job_report, text_day_report, text_change_manager;
 	private ImageView imageview_close;
 
-	public ChangeManagerDialog(Context context) {
+	public ChangeManagerDialog(Context context, DialogFinishCallBack callBack) {
 		super(context, R.style.dialog_login_bg);
 		this.context = context;
+		this.callBack =  callBack;
 	}
 
 	@Override
@@ -65,9 +71,9 @@ public class ChangeManagerDialog extends Dialog implements View.OnClickListener 
 				context.startActivity(intentDay);
 				break;
 			case R.id.text_change_manager:
-				Intent intent = new Intent(context, LoginActivity.class);
-				intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
-				context.startActivity(intent);
+				if (callBack!= null){
+					callBack.finish(0);
+				}
 				break;
 			case R.id.imageview_close:
 				break;

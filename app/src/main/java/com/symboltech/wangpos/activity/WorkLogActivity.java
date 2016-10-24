@@ -20,8 +20,11 @@ import android.widget.Toast;
 import com.nineoldandroids.view.ViewHelper;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.ReportTableAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.db.dao.OrderInfoDao;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
@@ -209,6 +212,37 @@ public class WorkLogActivity extends BaseActivity {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
             }
+            @Override
+            public void handleActionOffLine() {
+                OrderInfoDao dao = new OrderInfoDao(mContext);
+                if("job".equals(flag)) {
+                    reportInfo = dao.findPaytypeBytime(System.currentTimeMillis());
+                }else {
+                    reportInfo = dao.findPaytypeBytime(SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""), System.currentTimeMillis());
+                }
+                if(reportInfo == null) {
+                    Toast.makeText(mContext, "报表没有数据", Toast.LENGTH_SHORT).show();
+                }else {
+                    myPagerAdapter.refreshData(reportInfo.getSale(), reportInfo.getRefund(), reportInfo.getTotal());
+                }
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                Intent intent = new Intent(WorkLogActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void startChangeMode() {
+                final HttpActionHandle httpActionHandle = this;
+                WorkLogActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ChangeModeDialog(WorkLogActivity.this, httpActionHandle).show();
+                    }
+                });
+            }
         });
         Intent printService = new Intent(IPrinterService.class.getName());
         printService = AndroidUtils.getExplicitIntent(this, printService);
@@ -218,7 +252,7 @@ public class WorkLogActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_work_log);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         scllortabview.setTabNum(3);
         scllortabview.setSelectedColor(getResources().getColor(R.color.green), getResources().getColor(R.color.green));
@@ -269,7 +303,7 @@ public class WorkLogActivity extends BaseActivity {
             unbindService(printerServiceConnection);
         }
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     public void switchUI(int position){

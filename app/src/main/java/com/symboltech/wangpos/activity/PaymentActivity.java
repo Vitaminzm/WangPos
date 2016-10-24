@@ -18,11 +18,14 @@ import com.baoyz.swipemenulistview.SwipeMenuItem;
 import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.GoodsAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.AddGoodDialog;
 import com.symboltech.wangpos.dialog.AddSalemanDialog;
 import com.symboltech.wangpos.dialog.AddScoreGoodDialog;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -246,7 +249,7 @@ public class PaymentActivity extends BaseActivity {
         sales = (List<CashierInfo>) SpSaveUtils.getObject(MyApplication.context, ConstantData.SALEMANLIST);
         title_text_content.setText(getString(R.string.pay));
         text_desk_code.setText(SpSaveUtils.read(getApplication(), ConstantData.CASHIER_DESK_CODE, ""));
-        text_bill_id.setText(MyApplication.getBillId());
+        text_bill_id.setText(AppConfigFile.getBillId());
         text_cashier_name.setText(SpSaveUtils.read(getApplication(), ConstantData.CASHIER_NAME, ""));
         if (sales != null && sales.size() > 0) {
             text_saleman_name.setText(sales.get(0).getCashiername());
@@ -274,7 +277,7 @@ public class PaymentActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_payment);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         edit_input_money.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -333,7 +336,7 @@ public class PaymentActivity extends BaseActivity {
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.title_icon_back, R.id.text_confirm_order, R.id.radio_add_score_good, R.id.radio_select_good, R.id.radio_add_salesman, R.id.radio_look_member})
@@ -427,7 +430,7 @@ public class PaymentActivity extends BaseActivity {
     public void submitgoodsorderforhttp(boolean flag){
         Map<String, String> map = new HashMap<String, String>();
         BillInfo billinfo = new BillInfo();
-        billinfo.setBillid(MyApplication.getBillId());
+        billinfo.setBillid(AppConfigFile.getBillId());
         billinfo.setSaletype("0");
         billinfo.setCashier(String.valueOf(text_saleman_name.getTag()));
         String type = SpSaveUtils.read(MyApplication.context, ConstantData.MALL_MONEY_OMIT, "0");
@@ -503,6 +506,46 @@ public class PaymentActivity extends BaseActivity {
                 } else {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+
+            @Override
+            public void handleActionOffLine() {
+                String type = SpSaveUtils.read(MyApplication.context, ConstantData.MALL_MONEY_OMIT, "0");
+                OrderInfoDao dao = new OrderInfoDao(mContext);
+                boolean result = dao.addOrderGoodsInfo(AppConfigFile.getBillId(),
+                        SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""),
+                        String.valueOf(text_saleman_name.getTag()),
+                        String.valueOf(text_saleman_name.getText()), "0",
+                        ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type), shopCarList);
+                if (result) {
+                    Intent intent_payment = new Intent(PaymentActivity.this, CheckOutActivity.class);
+                    // 是否是会员标识
+                    intent_payment.putExtra(ConstantData.VERIFY_IS_MEMBER, ConstantData.MEMBER_IS_NOT_VERITY);
+                    intent_payment.putExtra(ConstantData.SALESMAN_NAME, text_saleman_name.getText().toString());
+                    // 订单总额
+                    intent_payment.putExtra(ConstantData.GET_ORDER_VALUE_INFO, ArithDouble.parseDouble(MoneyAccuracyUtils.getmoneybytwo(
+                            ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type))));
+                    intent_payment.putExtra(ConstantData.CART_HAVE_GOODS, (Serializable) shopCarList);
+                    startActivity(intent_payment);
+                } else {
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_save_goods_failed));
+                }
+            }
+            @Override
+            public void startChangeMode() {
+                final HttpActionHandle httpActionHandle = this;
+                PaymentActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new ChangeModeDialog(PaymentActivity.this, httpActionHandle).show();
+                    }
+                });
             }
         });
     }

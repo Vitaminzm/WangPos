@@ -306,6 +306,7 @@
     <string name="print_order">打票</string>
     <string name="pay_bu_print_bill">补打小票</string>
     <string name="pay_bu_print_slip">补打签购单</string>
+    <string name="waring_no_found_bill">没有该订单</string>
     <string name="please_input_order_no">请输入订单号</string>
     <string name="pleae_order_number">请输入正确订单号</string>
 
@@ -325,4 +326,16 @@
     <string name="send_code">发送验证码</string>
     <string name="param_null">参数不能为空</string>
 
+    <!-- offline waring msg -->
+    <string name="offline_waring">离线模式不允许该操作</string>
+    <string name="offline_save_goods_failed">提交商品失败</string>
+    <string name="offline_save_order_failed">保存交易失败</string>
+    <string name="offline_hint">请进行脱机操作</string>
+    <string name="offline_no_data">无离线数据</string>
+    <string name="offline_uploading">脱机数据正在后台上传，请稍后...</string>
+    <string name="no_netconnect_waring">网络异常，请稍后再试</string>
+    <string name="offline_msg">脱机数据上传中\n请稍后......</string>
+    <string name="has_offline_data">有脱机数据未上传\n是否上传脱机数据？</string>
+    <string name="offline">脱机</string>
+    <string name="sale">销售</string>
 </resources>

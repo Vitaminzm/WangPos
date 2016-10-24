@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/height_xzz"
-    android:layout_height="@dimen/height_fzz"
-    android:background="@color/color_bg"
-    android:shadowColor="#7f000000"
-    android:shadowDx="5"
-    android:shadowDy="5"
-    android:shadowRadius="10"
-    android:layout_gravity="center"
-    android:orientation="vertical" >
+    android:layout_height="@dimen/height_fez"
+    android:background="@color/white" >
 
+    <TextView
+        android:id="@+id/title_bar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_sz"
+        android:background="@color/color_bg">
+    </TextView>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/height_sz"
-        android:background="@color/white"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="@dimen/margin_sz"
-        android:paddingRight="@dimen/margin_sz"
+        android:layout_below="@id/title_bar"
+        android:layout_marginTop="@dimen/margin_sz"
+        android:layout_marginRight="@dimen/margin_nv"
+        android:layout_marginLeft="@dimen/margin_nv"
         android:visibility="visible" >
 
         <TextView
@@ -30,37 +30,39 @@
             android:textColor="@color/yellow"
             android:textSize="@dimen/font_size_ft"
             android:textStyle="bold" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/height_ez"
-            android:layout_marginTop="@dimen/margin_rv"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:id="@+id/dialog_change_mode_no"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginRight="@dimen/margin_fz"
-                android:layout_weight="1"
-                android:background="@drawable/btn_red_bg"
-                android:gravity="center"
-                android:text="@string/no"
-                android:textColor="@color/white"
-                android:textSize="@dimen/font_size_rz" />
-
-            <TextView
-                android:id="@+id/dialog_change_mode_yes"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/margin_fz"
-                android:layout_weight="1"
-                android:background="@drawable/btn_green_bg"
-                android:gravity="center"
-                android:text="@string/yes"
-                android:textColor="@color/white"
-                android:textSize="@dimen/font_size_rz" />
-        </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_ez"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/margin_xv"
+        android:layout_marginLeft="@dimen/margin_xv"
+        android:layout_marginBottom="@dimen/margin_rv"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/dialog_change_mode_no"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="@dimen/margin_fz"
+            android:layout_weight="1"
+            android:background="@drawable/btn_red_bg"
+            android:gravity="center"
+            android:text="@string/no"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size_rz" />
+
+        <TextView
+            android:id="@+id/dialog_change_mode_yes"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/margin_fz"
+            android:layout_weight="1"
+            android:background="@drawable/btn_green_bg"
+            android:gravity="center"
+            android:text="@string/yes"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size_rz" />
+    </LinearLayout>
+</RelativeLayout>

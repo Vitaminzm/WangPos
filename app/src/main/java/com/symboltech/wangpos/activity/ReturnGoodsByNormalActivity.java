@@ -14,10 +14,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.AddGoodDialog;
 import com.symboltech.wangpos.dialog.AddSalemanDialog;
+import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -129,7 +132,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
         ll_saleman.setVisibility(View.INVISIBLE);
         title_text_content.setText(getString(R.string.return_normal));
         text_desk_code.setText(SpSaveUtils.read(getApplication(), ConstantData.CASHIER_DESK_CODE, ""));
-        text_bill_id.setText(MyApplication.getBillId());
+        text_bill_id.setText(AppConfigFile.getBillId());
         text_cashier_name.setText(SpSaveUtils.read(getApplication(), ConstantData.CASHIER_NAME, ""));
 
         if(goodinfos != null && goodinfos.size() > 0){
@@ -145,7 +148,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
     @Override
     protected void initView() {
         setContentView(R.layout.activity_return_goods_by_normal);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         edit_return_handperson.setOnTouchListener(this);
         edit_return_good.setOnTouchListener(this);
@@ -155,7 +158,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.title_icon_back, R.id.text_confirm_return_order})
@@ -184,10 +187,10 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
             if(money > 0) {
                 final BillInfo billInfo = new BillInfo();
                 billInfo.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
-                billInfo.setBillid(MyApplication.getBillId());
+                billInfo.setBillid(AppConfigFile.getBillId());
                 billInfo.setSaletype(ConstantData.SALETYPE_SALE_RETURN_NORMAL);
                 billInfo.setOldposno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
-                billInfo.setOldbillid(MyApplication.getBillId());
+                billInfo.setOldbillid(AppConfigFile.getBillId());
                 billInfo.setCashier(SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""));
                 billInfo.setSalemanname(edit_return_handperson.getText().toString());
                 billInfo.setTotalmoney("-" + money);
@@ -236,6 +239,36 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
                         }else {
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                         }
+                    }
+
+                    @Override
+                    public void startChangeMode() {
+                        final HttpActionHandle httpActionHandle = this;
+                        ReturnGoodsByNormalActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                new ChangeModeDialog(ReturnGoodsByNormalActivity.this, httpActionHandle).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void handleActionOffLine() {
+                        OrderInfoDao dao = new OrderInfoDao(mContext);
+                        if(dao.addOrderGoodsInfo(billInfo.getBillid(), SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""), billInfo.getCashier(), SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""), billInfo.getSaletype(), Double.parseDouble(billInfo.getTotalmoney()), billInfo.getGoodslist())) {
+                            Intent intent = new Intent(mContext, ReturnMoneyByNormalActivity.class);
+                            intent.putExtra(ConstantData.TOTAL_RETURN_MONEY, billInfo.getTotalmoney());
+                            intent.putExtra(ConstantData.BILL, billInfo);
+                            startActivity(intent);
+                        }else {
+                            Toast.makeText(mContext, getString(R.string.offline_save_goods_failed), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void handleActionChangeToOffLine() {
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        startActivity(intent);
                     }
                 });
 

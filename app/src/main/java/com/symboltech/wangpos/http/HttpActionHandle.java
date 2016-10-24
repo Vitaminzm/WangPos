@@ -29,4 +29,18 @@ public abstract class HttpActionHandle<T>  {
 	//请求动作成功时调用
 	public abstract void handleActionSuccess(String actionName, T result);
 
+	//离线模式调用
+	public void handleActionOffLine(){
+
+	}
+
+	//切换到离线模式调用
+	public void handleActionChangeToOffLine(){
+
+	}
+
+	//开启切换界面
+	public void startChangeMode(){
+
+	}
 }

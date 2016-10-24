@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.GoodsAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.http.GsonUtil;
@@ -164,14 +165,14 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_return_goods_by_order);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
     }
 
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.title_icon_back, R.id.text_confirm_return_order})
@@ -193,13 +194,13 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
     private void saveArticles() {
         BillInfo bill = new BillInfo();
         bill.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
-        bill.setBillid(MyApplication.getBillId());
+        bill.setBillid(AppConfigFile.getBillId());
         bill.setSaletype(ConstantData.SALETYPE_SALE_RETURN_ORDER);
         bill.setOldposno(billInfo.getOldposno());
         bill.setOldbillid(billInfo.getOldbillid());
         //修正原订单数据
         billInfo.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
-        billInfo.setBillid(MyApplication.getBillId());
+        billInfo.setBillid(AppConfigFile.getBillId());
         bill.setCashier(SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""));
         bill.setTotalmoney("-" + billInfo.getTotalmoney());
         bill.setSaletime(Utils.formatDate(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"));

@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CouponsAdapter;
 import com.symboltech.wangpos.adapter.RecommandGoodAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.msg.entity.AllMemberInfo;
@@ -113,14 +114,14 @@ public class MemberDetailActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_member_detail);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
     }
 
     @Override
     protected void recycleMemery() {
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.title_icon_back, R.id.text_member_activate})

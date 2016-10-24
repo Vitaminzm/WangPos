@@ -12,7 +12,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import com.google.gson.Gson;
 import com.symboltech.wangpos.app.AppConfigFile;
@@ -21,6 +24,8 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.msg.entity.LogInfo;
+import com.symboltech.wangpos.msg.entity.OfflineBankInfo;
+import com.symboltech.wangpos.msg.entity.OfflineBillInfo;
 import com.symboltech.wangpos.msg.entity.OptLogInfo;
 import com.symboltech.wangpos.result.LogResult;
 import com.symboltech.wangpos.utils.ArithDouble;
@@ -45,14 +50,9 @@ public class OperateLog {
 	
 	//用来记录当前存储日志总数
 	private static int count = 0;
-	//用来控制线程退出的
-	private static boolean isRun = true;
-	
-	private Thread thread = null;
-	public void setIsRun(boolean isrun){
-		isRun = isrun;
-	}
-	
+
+	private static Timer timer = null;
+
 	private OperateLog(){
 	}
 
@@ -67,6 +67,10 @@ public class OperateLog {
 			}
 		};
 	};
+
+	public static void stopUpload(){
+		timer.cancel();
+	}
 	public static OperateLog getInstance() {
 		if (operateLog == null) {
 			synchronized (OperateLog.class) {
@@ -77,21 +81,40 @@ public class OperateLog {
 		}
 		return operateLog;
 	}
-	
+
 	/**
 	 * 保存离线数据
-	 * TODO
+	 * @param opType
+	 * @param datas
+	 * @return
 	 */
-//	public boolean saveLog2File(String opType,List<OfflineBillInfo> datas){
-//		boolean ret = true;
-//		for (OfflineBillInfo data : datas) {
-//			if(!saveLog2File(opType, new Gson().toJson(data))) {
-//				ret = false;
-//				break;
-//			}
-//		}
-//		return ret;
-//	}
+	public boolean saveBillLog2File(String opType,List<OfflineBillInfo> datas){
+		boolean ret = true;
+		for (OfflineBillInfo data : datas) {
+			if(!saveLog2File(opType, new Gson().toJson(data))) {
+				ret = false;
+				break;
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * 保存银行离线数据
+	 * @param opType
+	 * @param datas
+	 * @return
+	 */
+	public boolean saveBankLog2File(String opType,List<OfflineBankInfo> datas){
+		boolean ret = true;
+		for (OfflineBankInfo data : datas) {
+			if(!saveLog2File(opType, new Gson().toJson(data))) {
+				ret = false;
+				break;
+			}
+		}
+		return ret;
+	}
 	
 	/**
 	 * 保存操作日志
@@ -176,49 +199,43 @@ public class OperateLog {
 	 * @param time 单个日志文件上传时间间隔  单位：ms
 	 */
 	public void DeleteLog(final long time){
-		if(thread == null || !thread.isAlive()){
-			thread = new Thread(new Runnable() {
-				
+		if(timer == null){
+			timer = new Timer();
+			timer.schedule(new TimerTask() {
 				@Override
 				public void run() {
-					isRun = true;
+					if(!AppConfigFile.isNetConnect()){
+						timer.cancel();
+						timer = null;
+						return;
+					}
 					File file = new File(context.getFilesDir(), "Log");
-					
+
 					File[] files = file.listFiles();
 					if (files == null || files.length <= 0) {
 						return;
 					}
 					//按时间先后顺序排序
 					Collections.sort(Arrays.asList(files), new Comparator<File>() {
-		                public int compare(File file, File newFile) {
-		                    if (file.lastModified() < newFile.lastModified()) {
-		                        return -1;
-		                    } else if (file.lastModified() == newFile.lastModified()) {
-		                        return 0;
-		                    } else {
-		                        return 1;
-		                    }
-		 
-		                }
-		            });
+						public int compare(File file, File newFile) {
+							if (file.lastModified() < newFile.lastModified()) {
+								return -1;
+							} else if (file.lastModified() == newFile.lastModified()) {
+								return 0;
+							} else {
+								return 1;
+							}
+
+						}
+					});
 					//尽量保留最后一个日志文件，因为程序在不停的写日志
 					for (int i = 0;i < files.length - 1 ;i++) {
 						File f = files[i];
-						
-						//服务退出时，能尽量及时退出线程
-						if(!isRun || MyApplication.isOffLineMode() || !MyApplication.isNetConnect()){
-							break;
-						}
 						saveOperationLog(f);
-						try {
-							Thread.sleep(time);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
+						break;
 					}
 				}
-			});
-			thread.start();
+			}, 0, time);
 		}
 	}
 	/**

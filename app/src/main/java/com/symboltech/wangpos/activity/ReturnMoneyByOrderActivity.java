@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.ReturnReasonAdapter;
 import com.symboltech.wangpos.adapter.ReturnTableAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
@@ -283,7 +284,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         setContentView(R.layout.activity_return_money_by_order);
         mContext = ReturnMoneyByOrderActivity.this;
         inflater = LayoutInflater.from(mContext);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         initReasonView();
         edit_input_reason.setOnTouchListener(this);
@@ -329,7 +330,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             unbindService(printerServiceConnection);
         }
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.title_icon_back, R.id.text_submit_return_order})
@@ -555,7 +556,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private void commitOrder() {
         dealCoupon(billInfo.getUsedcouponlist());
         BillInfo bill = new BillInfo();
-        bill.setBillid(MyApplication.getBillId());
+        bill.setBillid(AppConfigFile.getBillId());
         bill.setBackreason(reasonIds.get(edit_input_reason.getText().toString()));
         if(exchangeInfo != null) {
             bill.setExchange(exchangeInfo);
@@ -591,11 +592,11 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             @Override
             public void handleActionSuccess(String actionName, SaveOrderResult result) {
                 if(ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-                    billInfo.setBillid(MyApplication.getBillId());
+                    billInfo.setBillid(AppConfigFile.getBillId());
                     billInfo.setPaymentslist(commitStyles);
                     printBackByorder(billInfo);
-                    MyApplication.setLast_billid(MyApplication.getBillId());
-                    MyApplication.setBillId(result.getSaveOrderInfo().getBillid());
+                    AppConfigFile.setLast_billid(AppConfigFile.getBillId());
+                    AppConfigFile.setBillId(result.getSaveOrderInfo().getBillid());
                     Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);
                     intent.putExtra(ConstantData.BILL, billInfo);
                     intent.putExtra(ConstantData.SAVE_ORDER_RESULT_INFO, result.getSaveOrderInfo());
@@ -803,7 +804,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         Map<String, String> map = new HashMap<String, String>();
         map.put("skfsid", payTypeId);
         map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
-        map.put("billid", MyApplication.getBillId());
+        map.put("billid", AppConfigFile.getBillId());
         map.put("transtype", ConstantData.TRANS_RETURN);
         map.put("tradeno", orderBean.getTxnId());
         map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));

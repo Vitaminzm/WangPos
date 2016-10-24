@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CouponsAdapter;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoDetailAdapter;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.http.GsonUtil;
@@ -306,7 +307,7 @@ public class PaymentDetailActivity extends BaseActivity {
     @Override
     protected void initView() {
         setContentView(R.layout.activity_payment_detial);
-        MyApplication.addActivity(this);
+        AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
         bill = (BillInfo) getIntent().getSerializableExtra(ConstantData.ORDER_INFO);
         isMember = getIntent().getIntExtra(ConstantData.VERIFY_IS_MEMBER, ConstantData.MEMBER_IS_NOT_VERITY);
@@ -319,7 +320,7 @@ public class PaymentDetailActivity extends BaseActivity {
             unbindService(printerServiceConnection);
         }
         handler.removeCallbacksAndMessages(null);
-        MyApplication.delActivity(this);
+        AppConfigFile.delActivity(this);
     }
 
     @OnClick({R.id.text_print_coupon, R.id.text_selected_plate, R.id.text_done})

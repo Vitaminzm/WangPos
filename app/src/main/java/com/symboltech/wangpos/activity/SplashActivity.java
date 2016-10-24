@@ -16,8 +16,7 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        goHome();
-      //  initAnimation();
+        initAnimation();
     }
 
     @Override
