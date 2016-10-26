@@ -36,8 +36,8 @@ public class AppConfigFile {
 
 	/** activity manange list */
 	public static List<Activity> activityList = new LinkedList<>();
-	private static  String host_config = "192.168.28.234:82";
-	// private static  String host_config = "210.14.129.52:82";
+	//private static  String host_config = "192.168.28.234:82";
+	 private static  String host_config = "210.14.129.52:82";
 	private static String billId;
 	private static String last_billid;
 

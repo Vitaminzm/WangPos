@@ -58,8 +58,9 @@ public class ChangeModeDialog extends Dialog implements OnClickListener {
 			if(isOnLine) {
 				//OperateLog.getInstance().saveLog2File(OptLogEnum.OFFLINE_OUT_OPT.getOptLogCode(), getString(R.string.offline_out_opt));
 				AppConfigFile.setOffLineMode(false);
-				Intent changeMode = new Intent(mContext, MainActivity.class);
-				mContext.startActivity(changeMode);
+				if(mHttpactionhandler != null) {
+					mHttpactionhandler.handleActionChangeToOffLine();
+				}
 			}else {
 				//OperateLog.getInstance().saveLog2File(OptLogEnum.OFFLINE_IN_OPT.getOptLogCode(), getString(R.string.offline_in_opt));
 				AppConfigFile.setOffLineMode(true);

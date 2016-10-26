@@ -21,7 +21,6 @@ public class TextScrollView extends TextView {
 
 		super(context);
 
-		// TODO Auto-generated constructor stub
 	}
 
 	public TextScrollView(Context context, AttributeSet attrs) {
@@ -35,7 +34,6 @@ public class TextScrollView extends TextView {
 
 		super(context, attrs, defStyle);
 
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -43,12 +41,6 @@ public class TextScrollView extends TextView {
 
 		return true;
 
-	}
-
-	@Override
-	protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
-
-		// TODO Auto-generated method stub
 	}
 
 }

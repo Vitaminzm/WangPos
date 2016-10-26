@@ -338,4 +338,5 @@
     <string name="has_offline_data">有脱机数据未上传\n是否上传脱机数据？</string>
     <string name="offline">脱机</string>
     <string name="sale">销售</string>
+    <string name="trans">交易</string>
 </resources>

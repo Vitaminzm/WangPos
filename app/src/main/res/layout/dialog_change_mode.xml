@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/height_xzz"
-    android:layout_height="@dimen/height_fez"
+    android:layout_height="@dimen/height_fzz"
     android:background="@color/white" >
 
     <TextView
@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_below="@id/title_bar"
-        android:layout_marginTop="@dimen/margin_sz"
+        android:layout_marginTop="@dimen/margin_fz"
         android:layout_marginRight="@dimen/margin_nv"
         android:layout_marginLeft="@dimen/margin_nv"
         android:visibility="visible" >

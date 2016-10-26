@@ -309,7 +309,7 @@ public class ConstantData {
 	/** 会员权益  */
 	public static final String MEMBER_EQUITY= "member_equity";
 
-	/** 会员验证 方式 磁卡RFID */
+	/** 会员验证 方式 磁条卡RFID */
 	public static final String MEMBER_VERIFY_BY_MAGCARD = "0";
 
 	/** 会员验证 方式 会员卡 */
@@ -384,7 +384,7 @@ public class ConstantData {
 	/** 收银通帐号密码*/
 	public static final String CUSTOMERID = "customerId";
 	public static final String USERID = "userId";
-	public static final String PWD = "customerId";
+	public static final String PWD = "pwd";
 	/** 收银通三方支付code*/
 	public static final String SALE = "1021";
 	public static final String SALE_VOID = "3021";

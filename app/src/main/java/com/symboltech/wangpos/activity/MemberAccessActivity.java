@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -91,24 +92,36 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         }
     }
 
-    static class MyHandler extends Handler {
-        WeakReference<BaseActivity> mActivity;
-
-        MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
+    public static final int Qrcode = 1;
+    Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            BaseActivity theActivity = mActivity.get();
             switch (msg.what) {
                 case ToastUtils.TOAST_WHAT:
-                    ToastUtils.showtaostbyhandler(theActivity,msg);
+                    ToastUtils.showtaostbyhandler(MemberAccessActivity.this,msg);
+                    break;
+                case Qrcode:
+                    memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_QR, (String) msg.obj);
+                    break;
+                case Vipcard:
+                    memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_MAGCARD, (String) msg.obj);
+                    try {
+                        if (mCardService != null) {
+                            isSwipVipCard = true;
+                            mCardService.startReadCard();
+                        } else {
+                            LogUtil.e("lgs", "mCardService==null");
+                        }
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                     break;
             }
         }
-    }
+    };
 
+
+    public static final int Vipcard = 2;
     private IMemberCardService mCardService = null;
     private ServiceConnection mMemberCardConnection = new ServiceConnection() {
 
@@ -124,7 +137,6 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         }
     };
     private MsrBroadcastReceiver msrReceiver = new MsrBroadcastReceiver();
-    MyHandler handler = new MyHandler(this);
     @Override
     protected void initData() {
         title_text_content.setText(getString(R.string.number_access));
@@ -189,6 +201,18 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     @Override
     protected void recycleMemery() {
+        try {
+            if (mCardService != null) {
+                if(isSwipVipCard){
+                    isSwipVipCard = false;
+                    mCardService.stopReadCard();
+                }
+            } else {
+                LogUtil.e("lgs", "mCardService==null");
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         if (mMemberCardConnection != null) {
             unbindService(mMemberCardConnection);
         }
@@ -255,17 +279,15 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     public void verifyByVipCard() {
         if(radioGroup_type.getCheckedRadioButtonId() == R.id.text_vip_card){
-            if(isSwipVipCard){
-                try {
-                    if (mCardService != null) {
-                        isSwipVipCard = false;
-                        mCardService.stopReadCard();
-                    } else {
-                        LogUtil.e("lgs", "mCardService==null");
-                    }
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            try {
+                if (mCardService != null) {
+                    isSwipVipCard = true;
+                    mCardService.startReadCard();
+                } else {
+                    LogUtil.e("lgs", "mCardService==null");
                 }
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
             verify_type = ConstantData.MEMBER_VERIFY_BY_MEMBERCARD;
             left_In_Animation.setAnimationListener(new Animation.AnimationListener() {
@@ -314,23 +336,14 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                 case ConstantData.QRCODE_REQURST_MEMBER_VERIFY:
                     verifyByPhone();
                     if (!StringUtil.isEmpty(data.getExtras().getString("QRcode"))) {
-                        memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_QR, data.getExtras().getString("QRcode"));
-                    }
-                    break;
-                case ConstantData.QRCODE_REQURST_QR_PAY:
-                    if (!StringUtil.isEmpty(data.getExtras().getString("QRcode"))) {
-//                        AlipayAndWeixinPayControllerDialog paydialog = new AlipayAndWeixinPayControllerDialog(this, paytype,
-//                                ConstantData.THIRD_OPERATION_PAY, data.getExtras().getString("QRcode"));
-//                        paydialog.show();
+                        Message msg = Message.obtain();
+                        msg.obj = data.getExtras().getString("QRcode");
+                        msg.what = Qrcode;
+                        handler.sendMessage(msg);
                     }
                     break;
                 default:
                     break;
-            }
-        }else if(resultCode == ConstantData.MEMBER_RESULT_CODE){
-            if(requestCode == ConstantData.BOOT_MEMBER_REQUEST_CODE){
-//                MyApplication.memberinfo = (MemberInfo) data.getExtras().getSerializable(ConstantData.MEMBER);
-//                getAllMemberInfo(MyApplication.memberinfo.getId(), MyApplication.memberinfo.getIschecked(), ConstantData.MEMBER_VERIFY_BY_MAGCARD);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
@@ -368,7 +381,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
      * @param verifyValue
      *            验证value
      */
-    private void memberverifymethodbyhttp(final String verifyType, String verifyValue) {
+    private  void memberverifymethodbyhttp(final String verifyType, String verifyValue) {
         Map<String, String> map = new HashMap<>();
         map.put("condType", verifyType);
         map.put("condValue", verifyValue);
@@ -503,13 +516,18 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         @Override
         public void onReceive(Context context, Intent intent) {
             try {
-                Message msg = (Message) intent.getParcelableExtra(Message.class
+                Message msgContext = (Message) intent.getParcelableExtra(Message.class
                         .getName());
-                Bundle data = msg.getData();
+                Bundle data = msgContext.getData();
 
                 if (data != null) {
                     JSONObject jsonData = new JSONObject(data.getString("data"));
-
+                    if(!StringUtil.isEmpty(jsonData.optString("cardNo"))){
+                        Message msg = Message.obtain();
+                        msg.obj = jsonData.optString("cardNo");
+                        msg.what = Vipcard;
+                        handler.sendMessage(msg);
+                    }
                     LogUtil.i("lgs", "dataStr is :" + jsonData.toString());
                     // 处理返回结果
                     LogUtil.i("lgs","\n\ntrack1 : "

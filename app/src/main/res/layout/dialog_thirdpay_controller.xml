@@ -2,29 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/height_xzz"
     android:layout_height="@dimen/height_fzz"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#f5f5f5"
-    android:shadowColor="#7f000000"
-    android:shadowDx="5"
-    android:shadowDy="5"
-    android:shadowRadius="10"
-    android:orientation="vertical"
-    android:layout_gravity="center">
-
+    android:background="@color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:id="@+id/title_bar"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_sz"
+        android:layout_height="@dimen/height_vz"
         android:background="@color/color_bg">
-        <TextView
-            android:id="@+id/text_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/pay"
-            android:textColor="@color/white"
-            android:textSize="@dimen/big_font_size"
-            android:layout_centerInParent="true"/>
         <ImageView
             android:visibility="gone"
             android:id="@+id/imageview_close"
@@ -37,6 +22,119 @@
     </RelativeLayout>
 
     <LinearLayout
+            android:id="@+id/ll_function"
+            android:layout_below="@id/title_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/margin_fz"
+            android:layout_marginRight="@dimen/margin_fz"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:layout_marginRight="@dimen/margin_fz"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/ll_pay_jiaoyi"
+                    android:layout_width="@dimen/height_ttz"
+                    android:layout_height="@dimen/height_ez"
+                    android:background="@drawable/btn_blue_bg"
+                    android:gravity="center" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/pay_jiaoyi_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="@string/trans"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_size_rz" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_pay_repealdeal"
+                    android:layout_width="@dimen/height_ttz"
+                    android:layout_height="@dimen/height_ez"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/btn_red_bg"
+                    android:gravity="center" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/pay_repealdeal_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="@string/cancled"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_size_rz" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:orientation="vertical" >
+
+                <LinearLayout
+                    android:id="@+id/ll_pay_search"
+                    android:layout_width="@dimen/height_ttz"
+                    android:layout_height="@dimen/height_ez"
+                    android:background="@drawable/btn_blue_bg"
+                    android:gravity="center" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/pay_search_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="@string/query"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_size_rz" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/ll_pay_returngoods"
+                    android:layout_width="@dimen/height_ttz"
+                    android:layout_height="@dimen/height_ez"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/btn_green_bg"
+                    android:gravity="center" >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@mipmap/pay_returngoods_icon" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:text="@string/returns"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_size_rz" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    <LinearLayout
+        android:visibility="gone"
         android:id="@+id/ll_input_money"
         android:layout_below="@id/title_bar"
         android:layout_width="fill_parent"
@@ -50,11 +148,10 @@
             android:id="@+id/edit_money"
             android:layout_marginTop="@dimen/margin_vz"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/height_xz"
+            android:layout_height="@dimen/height_ez"
             android:gravity="center"
             android:textColor="@color/font_color"
             android:editable="false"
-            android:background="@drawable/icon_edittext_bg_press"
             android:text="@string/pay_bu_print_bill"
             android:textSize="@dimen/font_size_rz" />
         <LinearLayout

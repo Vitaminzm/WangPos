@@ -136,9 +136,9 @@ public class CanclePayDialog extends BaseActivity{
 					public void onTaskFinish(JSONObject rspJsonObject) {
 						if (rspJsonObject.optString("responseCode").equals(
 								"00")) {
-							SpSaveUtils.saveObject(CanclePayDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
-							SpSaveUtils.saveObject(CanclePayDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
-							SpSaveUtils.saveObject(CanclePayDialog.this, ConstantData.PWD, rspJsonObject.optString("pwd"));
+							SpSaveUtils.write(CanclePayDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
+							SpSaveUtils.write(CanclePayDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
+							SpSaveUtils.write(CanclePayDialog.this, ConstantData.PWD, "111111");
 							isLogin = true;
 							return;
 						} else {

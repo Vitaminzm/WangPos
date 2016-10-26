@@ -83,6 +83,7 @@
             android:id="@+id/edit_input_order_no"
             android:gravity="center"
             android:hint="@string/please_input_order_no"
+            android:background="@drawable/edittext_2_bg_selector"
             android:textColorHint="@color/hint_color"
             android:textColor="@color/font_color"
             android:layout_width="match_parent"

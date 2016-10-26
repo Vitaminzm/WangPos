@@ -376,6 +376,9 @@ public class CheckOutActivity extends BaseActivity {
 
     @OnClick({R.id.text_cancle_pay, R.id.title_icon_back, R.id.imageview_more, R.id.text_submit_order})
     public void click(View view){
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id){
             case R.id.text_cancle_pay:

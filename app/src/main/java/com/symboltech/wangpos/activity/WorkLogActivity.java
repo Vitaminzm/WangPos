@@ -258,12 +258,13 @@ public class WorkLogActivity extends BaseActivity {
         scllortabview.setTabNum(3);
         scllortabview.setSelectedColor(getResources().getColor(R.color.green), getResources().getColor(R.color.green));
         myPagerAdapter = new MyPagerAdapter(getApplicationContext());
-       // view_pager_statistics.setPageTransformer(true, new DepthPageTransformer());
+        view_pager_statistics.setPageTransformer(true, new DepthPageTransformer());
         view_pager_statistics.setAdapter(myPagerAdapter);
         view_pager_statistics.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 scllortabview.setOffset(position, positionOffset);
+               // LogUtil.i("lgs",position+"-----:"+positionOffset);
             }
 
             @Override
@@ -274,7 +275,8 @@ public class WorkLogActivity extends BaseActivity {
             @Override
             public void onPageScrollStateChanged(int state) {
                 int position = view_pager_statistics.getCurrentItem();
-                scllortabview.setCurrentNum(position);
+              //  LogUtil.i("lgs","---onPageScrollStateChanged--"+position);
+//                scllortabview.setCurrentNum(position);
                 switchUI(position);
             }
         });
@@ -450,27 +452,33 @@ public class WorkLogActivity extends BaseActivity {
     }
 
     public static class DepthPageTransformer implements ViewPager.PageTransformer {
-        /**
-         * position参数指明给定页面相对于屏幕中心的位置。它是一个动态属性，会随着页面的滚动而改变。当一个页面填充整个屏幕是，它的值是0，
-         * 当一个页面刚刚离开屏幕的右边时，它的值是1。当两个也页面分别滚动到一半时，其中一个页面的位置是-0.5，另一个页面的位置是0.5。基于屏幕上页面的位置
-         * ，通过使用诸如setAlpha()、setTranslationX()、或setScaleY()方法来设置页面的属性，来创建自定义的滑动动画。
-         */
-        @Override
+        private static final float MIN_SCALE = 0.75f;
+
         public void transformPage(View view, float position) {
-            if (position <= 0) {
-                //从右向左滑动为当前View
+            int pageWidth = view.getWidth();
 
-                //设置旋转中心点；
-                ViewHelper.setPivotX(view, view.getMeasuredWidth());
-                ViewHelper.setPivotY(view, view.getMeasuredHeight() * 0.5f);
-
-                //只在Y轴做旋转操作
-                ViewHelper.setRotationY(view, 90f * position);
-            } else if (position <= 1) {
-                //从左向右滑动为当前View
-                ViewHelper.setPivotX(view, 0);
-                ViewHelper.setPivotY(view, view.getMeasuredHeight() * 0.5f);
-                ViewHelper.setRotationY(view, 90f * position);
+            if (position < -1) { // [-Infinity,-1)
+                // This page is way off-screen to the left.
+                view.setAlpha(0);
+            } else if (position <= 0) { // [-1,0]
+                // Use the default slide transition when moving to the left page
+                view.setAlpha(1);
+                view.setTranslationX(0);
+                view.setScaleX(1);
+                view.setScaleY(1);
+            } else if (position <= 1) { // (0,1]
+                // Fade the page out.
+                view.setAlpha(1 - position);
+                // Counteract the default slide transition
+                view.setTranslationX(pageWidth * -position);
+                // Scale the page down (between MIN_SCALE and 1)
+                float scaleFactor = MIN_SCALE
+                        + (1 - MIN_SCALE) * (1 - Math.abs(position));
+                view.setScaleX(scaleFactor);
+                view.setScaleY(scaleFactor);
+            } else { // (1,+Infinity]
+                // This page is way off-screen to the right.
+                view.setAlpha(0);
             }
         }
     }

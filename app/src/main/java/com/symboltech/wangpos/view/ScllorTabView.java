@@ -38,12 +38,13 @@ public class ScllorTabView extends View {
 	public void setCurrentNum(int n) {
 		mCurrentNum = n;
 		mOffset = 0;
+		invalidate();
 	}
 
 	public void setOffset(int position, float offset) {
-		if (offset == 0) {
-			return;
-		}
+//		if (offset == 0) {
+//			return;
+//		}
 		mCurrentNum = position;
 		mOffset = offset;
 		invalidate();

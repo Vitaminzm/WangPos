@@ -81,9 +81,9 @@ public class ThirdPayReturnDialog extends BaseActivity{
 				LogUtil.d("lgs","==Login rsp is :" + rspString);
 				JSONObject rspJsonObject = new JSONObject(rspString);
 				if (rspJsonObject.optString("responseCode").equals("00")) {
-					SpSaveUtils.saveObject(ThirdPayReturnDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
-					SpSaveUtils.saveObject(ThirdPayReturnDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
-					SpSaveUtils.saveObject(ThirdPayReturnDialog.this, ConstantData.PWD, rspJsonObject.optString("pwd"));
+					SpSaveUtils.write(ThirdPayReturnDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
+					SpSaveUtils.write(ThirdPayReturnDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
+					SpSaveUtils.write(ThirdPayReturnDialog.this, ConstantData.PWD, "111111");
 					returnMoney();
 					return;
 				}else{
@@ -120,9 +120,9 @@ public class ThirdPayReturnDialog extends BaseActivity{
 					public void onTaskFinish(JSONObject rspJsonObject) {
 						if (rspJsonObject.optString("responseCode").equals(
 								"00")) {
-							SpSaveUtils.saveObject(ThirdPayReturnDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
-							SpSaveUtils.saveObject(ThirdPayReturnDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
-							SpSaveUtils.saveObject(ThirdPayReturnDialog.this, ConstantData.PWD, rspJsonObject.optString("pwd"));
+							SpSaveUtils.write(ThirdPayReturnDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
+							SpSaveUtils.write(ThirdPayReturnDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
+							SpSaveUtils.write(ThirdPayReturnDialog.this, ConstantData.PWD, "111111");
 							returnMoney();
 							return;
 						} else {
@@ -253,7 +253,7 @@ public class ThirdPayReturnDialog extends BaseActivity{
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			LogUtil.e("lgs","服务已绑定");
+			LogUtil.i("lgs","服务已绑定");
 		}
 	};
 

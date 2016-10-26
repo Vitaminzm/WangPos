@@ -152,18 +152,6 @@ public abstract class BaseActivity extends Activity {
 				return true;
 			case KeyEvent.KEYCODE_BACK:
 				return true;
-			case KeyEvent.KEYCODE_CALL:
-				return true;
-			case KeyEvent.KEYCODE_SYM:
-				return true;
-			case KeyEvent.KEYCODE_VOLUME_DOWN:
-				return true;
-			case KeyEvent.KEYCODE_VOLUME_UP:
-				return true;
-			case KeyEvent.KEYCODE_STAR:
-				return true;
-			case KeyEvent.KEYCODE_MENU:
-				return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}

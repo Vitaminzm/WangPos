@@ -31,6 +31,7 @@ import com.symboltech.wangpos.dialog.OfflineUpdateByLogDialog;
 import com.symboltech.wangpos.dialog.OfflineUploadDialog;
 import com.symboltech.wangpos.dialog.PrintOrderDialog;
 import com.symboltech.wangpos.dialog.ReturnDialog;
+import com.symboltech.wangpos.dialog.ThirdPayControllerDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
@@ -92,7 +93,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if (ConstantData.OFFLINE_MODE.equals(intent.getAction())) {
                 int mode = intent.getIntExtra(ConstantData.OFFLINE_MODE_INFO, -1);
                 if(mode == ConstantData.CHANGE_MODE_STATE){
-                    new ChangeModeDialog(MainActivity.this,null).show();
+                    new ChangeModeDialog(MainActivity.this, new HttpActionHandle() {
+                        @Override
+                        public void handleActionError(String actionName, String errmsg) {
+
+                        }
+
+                        @Override
+                        public void handleActionSuccess(String actionName, Object result) {
+
+                        }
+
+                        @Override
+                        public void handleActionChangeToOffLine() {
+                            ChangeUI(0);
+                        }
+                    }).show();
                 }
             }
         }
@@ -254,11 +270,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onResume() {
-        if(AppConfigFile.isOffLineMode()){
-            ChangeUI(1);
-        }else {
-            ChangeUI(0);
-        }
+//        if(AppConfigFile.isOffLineMode()){
+//            ChangeUI(1);
+//        }else {
+//            ChangeUI(0);
+//        }
         filter.addAction(ConstantData.OFFLINE_MODE);
         registerReceiver(receiver, filter);
         super.onResume();
@@ -291,7 +307,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                myscollView.setPosition(view_pager.getCurrentItem());
+//                myscollView.setPosition(view_pager.getCurrentItem());
             }
         });
     }
@@ -423,6 +439,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.rl_offline:
                 new OfflineReturnDialog(this).show();
+                break;
+            case R.id.rl_bank:
+            case R.id.rl_weichat:
+                if(AppConfigFile.isOffLineMode()){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
+                    return;
+                }
+                Intent intent = new Intent(this,ThirdPayControllerDialog.class);
+                startActivity(intent);
                 break;
         }
     }
@@ -837,6 +862,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                         @Override
                         public void handleActionError(String actionName, String errmsg) {
+                            AppConfigFile.setUploadStatus(ConstantData.UPLOAD_SUCCESS);
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
                             MainActivity.this.startActivity(intent);
@@ -888,6 +914,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         @Override
                         public void handleActionError(String actionName, String errmsg) {
                             // TODO Auto-generated method stub
+                            AppConfigFile.setUploadStatus(ConstantData.UPLOAD_SUCCESS);
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
                             MainActivity.this.startActivity(intent);
