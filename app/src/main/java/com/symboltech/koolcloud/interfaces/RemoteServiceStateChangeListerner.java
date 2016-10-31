@@ -1,4 +1,4 @@
-package cn.koolcloud.interfaces;
+package com.symboltech.koolcloud.interfaces;
 
 import android.content.ComponentName;
 import android.os.IBinder;

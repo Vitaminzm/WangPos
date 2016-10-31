@@ -1,8 +1,4 @@
-package cn.koolcloud.aidl;
-
-
-import org.json.JSONException;
-import org.json.JSONObject;
+package com.symboltech.koolcloud.aidl;
 
 
 import android.database.Cursor;
@@ -12,6 +8,9 @@ import android.os.RemoteException;
 
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.log.LogUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

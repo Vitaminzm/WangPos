@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.GsonBuilder;
+import com.symboltech.koolcloud.aidl.AidlRequestManager;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
@@ -70,7 +71,6 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import cn.koolcloud.aidl.AidlRequestManager;
 import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
@@ -913,7 +913,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     new HttpActionHandle<OfflineDataResult>() {
                         @Override
                         public void handleActionError(String actionName, String errmsg) {
-                            // TODO Auto-generated method stub
                             AppConfigFile.setUploadStatus(ConstantData.UPLOAD_SUCCESS);
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
@@ -923,7 +922,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                         @Override
                         public void handleActionSuccess(String actionName, OfflineDataResult result) {
-                            // TODO Auto-generated method stub
                             if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())
                                     || ConstantData.HTTP_RESPONSE_PART_OK.equals(result.getCode())) {
                                 if (result != null || result.getOfflineDatainfo() != null) {

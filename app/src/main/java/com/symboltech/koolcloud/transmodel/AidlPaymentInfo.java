@@ -1,4 +1,4 @@
-package cn.koolcloud.transmodel;
+package com.symboltech.koolcloud.transmodel;
 
 import java.io.Serializable;
 

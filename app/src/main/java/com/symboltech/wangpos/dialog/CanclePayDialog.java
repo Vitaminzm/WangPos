@@ -2,7 +2,6 @@ package com.symboltech.wangpos.dialog;
 
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -10,8 +9,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -21,29 +18,28 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.symboltech.koolcloud.aidl.AidlRequestManager;
+import com.symboltech.koolcloud.interfaces.RemoteServiceStateChangeListerner;
+import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.BaseActivity;
 import com.symboltech.wangpos.adapter.CanclePayAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
-import com.symboltech.wangpos.interfaces.CancleCallback;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
-import com.symboltech.wangpos.utils.CodeBitmap;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,19 +47,14 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.koolcloud.aidl.AidlRequestManager;
 import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
 import cn.koolcloud.engine.thirdparty.aidlbean.LoginRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.SaleVoidRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
-import cn.koolcloud.interfaces.RemoteServiceStateChangeListerner;
-import cn.koolcloud.transmodel.AidlPaymentInfo;
-import cn.koolcloud.transmodel.OrderBean;
 
 /**
  * Description 通用提示dialog

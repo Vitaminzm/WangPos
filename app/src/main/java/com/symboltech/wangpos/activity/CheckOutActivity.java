@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.PaymentTypeAdapter;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoAdapter;
@@ -49,26 +50,19 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
+;
 import java.io.Serializable;
-import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.koolcloud.aidl.AidlRequestManager;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
-import cn.koolcloud.transmodel.OrderBean;
 
 public class CheckOutActivity extends BaseActivity {
 

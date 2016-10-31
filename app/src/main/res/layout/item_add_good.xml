@@ -9,8 +9,7 @@
     <TextView
         android:id="@+id/text_good_name"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="@dimen/margin_fv"
         android:gravity="center"
         android:textSize="@dimen/font_size_tf"
         android:textColor="@color/white"
@@ -18,8 +17,7 @@
     <TextView
         android:id="@+id/text_good_info"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="@dimen/margin_fv"
         android:gravity="center"
         android:textSize="@dimen/font_size_tf"
         android:textColor="@color/white"

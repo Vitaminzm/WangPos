@@ -21,6 +21,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.github.ybq.android.spinkit.SpinKitView;
+import com.symboltech.koolcloud.aidl.AidlRequestManager;
+import com.symboltech.koolcloud.interfaces.RemoteServiceStateChangeListerner;
+import com.symboltech.koolcloud.transmodel.AidlPaymentInfo;
+import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.BaseActivity;
 import com.symboltech.wangpos.app.ConstantData;
@@ -45,14 +49,10 @@ import java.util.TimerTask;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import cn.koolcloud.aidl.AidlRequestManager;
 import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
 import cn.koolcloud.engine.thirdparty.aidlbean.LoginRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.SaleRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
-import cn.koolcloud.interfaces.RemoteServiceStateChangeListerner;
-import cn.koolcloud.transmodel.AidlPaymentInfo;
-import cn.koolcloud.transmodel.OrderBean;
 
 public class ThirdPayControllerDialog extends BaseActivity{
 

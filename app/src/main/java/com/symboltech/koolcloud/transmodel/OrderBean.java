@@ -1,4 +1,4 @@
-package cn.koolcloud.transmodel;
+package com.symboltech.koolcloud.transmodel;
 
 import org.json.JSONException;
 import org.json.JSONObject;

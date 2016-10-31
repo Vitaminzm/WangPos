@@ -15,12 +15,24 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+#是否混淆第三方jar
+-optimizationpasses 5
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontpreverify
+-verbose
+-optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
+
 -dontwarn android.support.v4.**
 -keep class android.support.v4.** { *; }
 -keep interface android.support.v4.app.** { *; }
 -keep public class * extends android.support.v4.**
 -keep public class * extends android.app.Fragment
 
+-dontwarn android.support.v7.**
+-keep class android.support.v7.** { *; }
+-keep interface android.support.v7.app.** { *; }
+-keep public class * extends android.support.v7.**
 #自定义数据类
 -dontwarn com.symboltech.wangpos.result.**
 -dontwarn com.symboltech.wangpos.msg.entity.**
@@ -33,6 +45,10 @@
 -keepattributes *Annotation*
 -keepattributes *JavascriptInterface*
 
+-keep class **.R$* { *; }
+
+#AIDL混淆
+-keep class * implements android.os.IInterface {*;}
 #butterknife混淆
 -keep class butterknife.** { *; }
 -dontwarn butterknife.internal.**
@@ -48,7 +64,12 @@
 -dontwarn com.squareup.okhttp.**
 -keep class com.squareup.okhttp.** { *;}
 -dontwarn okio.**
+-keep class okio.** { *;}
 
+#酷云混淆代码
+
+
+-keep class android.** {*; }
 -keep public class * extends android.app.Activity      # 保持哪些类不被混淆
 -keep public class * extends android.app.Application   # 保持哪些类不被混淆
 -keep public class * extends android.app.Service       # 保持哪些类不被混淆

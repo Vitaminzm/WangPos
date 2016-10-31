@@ -31,17 +31,17 @@
 
     <GridView
         android:layout_below="@id/title_bar"
+        android:layout_above="@id/text_confirm"
         android:id="@+id/gridview_score_good"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_trz"
+        android:layout_height="match_parent"
         android:horizontalSpacing="@dimen/margin_tz"
         android:verticalSpacing="@dimen/margin_tz"
-        android:gravity="center"
         android:layout_marginTop="@dimen/margin_rz"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginBottom="@dimen/margin_rz"
         android:cacheColorHint="@color/transparent"
-        android:listSelector="@drawable/gridview_selector"
         android:numColumns="2"
         android:scrollbars="none"/>
     <TextView

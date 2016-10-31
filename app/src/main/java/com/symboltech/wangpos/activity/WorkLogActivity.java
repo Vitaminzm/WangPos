@@ -17,18 +17,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.nineoldandroids.view.ViewHelper;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.ReportTableAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
-import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.RefundReportInfo;
 import com.symboltech.wangpos.msg.entity.ReportDetailInfo;
 import com.symboltech.wangpos.msg.entity.ReportInfo;

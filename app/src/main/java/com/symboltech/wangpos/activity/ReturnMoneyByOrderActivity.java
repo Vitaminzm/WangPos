@@ -20,12 +20,12 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.ReturnReasonAdapter;
 import com.symboltech.wangpos.adapter.ReturnTableAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.ThirdPayReturnDialog;
 import com.symboltech.wangpos.http.GsonUtil;
@@ -63,7 +63,6 @@ import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
-import cn.koolcloud.transmodel.OrderBean;
 
 public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnTouchListener {
 
