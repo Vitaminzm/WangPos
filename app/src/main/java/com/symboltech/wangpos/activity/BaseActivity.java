@@ -156,9 +156,9 @@ public abstract class BaseActivity extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	@Override
-	public void onAttachedToWindow(){
-		this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
-		super.onAttachedToWindow();
-	}
+//	@Override
+//	public void onAttachedToWindow(){
+//		this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
+//		super.onAttachedToWindow();
+//	}
 }

@@ -26,6 +26,7 @@ import com.symboltech.wangpos.adapter.ReturnReasonAdapter;
 import com.symboltech.wangpos.adapter.ReturnTableAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.ThirdPayReturnDialog;
 import com.symboltech.wangpos.http.GsonUtil;
@@ -791,6 +792,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         if(requestCode == ConstantData.THRID_CANCLE_REQUEST_CODE){
             if(resultCode == ConstantData.THRID_CANCLE_RESULT_CODE){
                 BankPayInfo entity = bankStyle.get(bankFlag);
+                entity.setDes("true");
                 putPayments(entity.getSkfsid(), getPayNameById(entity.getSkfsid()), getPayTypeById(entity.getSkfsid()), "-" + entity.getAmount());
                 saveBanInfo(entity.getSkfsid(), (OrderBean) data.getSerializableExtra(ConstantData.ORDER_BEAN));
                 bankFlag += 1;
@@ -803,7 +805,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
-    private void saveBanInfo(String payTypeId, final OrderBean orderBean){
+    private void saveBanInfo(final String payTypeId, final OrderBean orderBean){
         Map<String, String> map = new HashMap<String, String>();
         map.put("skfsid", payTypeId);
         map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
@@ -820,23 +822,22 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             @Override
             public void handleActionError(String actionName, String errmsg) {
                 ToastUtils.sendtoastbyhandler(handler, errmsg);
-                // TODO Auto-generated method stub
                 OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
-//                dao.addBankinfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), MyApplication.getBillId(), type, rp.getCardNo(),
-//                        rp.getBankCode() == null? "null":rp.getBankCode(), rp.getBatchNo() == null? "null":rp.getBatchNo(),
-//                        rp.getRefNo()== null? "null":rp.getRefNo(), rp.getTraceNo(), payTypeId,
-//                        ArithDouble.parseDouble(BanKPayUtils.makeRealAmount(rp.getAmount())), 0.0);
+                dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), AppConfigFile.getBillId(), ConstantData.TRANS_RETURN, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
+                        orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
+                        orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+                        ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
             }
 
             @Override
             public void handleActionSuccess(String actionName, BaseResult result) {
-                //TODO
                 if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
-//                    dao.addBankinfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), MyApplication.getBillId(), type, rp.getCardNo(),
-////                        rp.getBankCode() == null? "null":rp.getBankCode(), rp.getBatchNo() == null? "null":rp.getBatchNo(),
-////                        rp.getRefNo()== null? "null":rp.getRefNo(), rp.getTraceNo(), payTypeId,
-////                        ArithDouble.parseDouble(BanKPayUtils.makeRealAmount(rp.getAmount())), 0.0);
                     ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
+                    OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+                    dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), AppConfigFile.getBillId(), ConstantData.TRANS_RETURN, orderBean.getAccountNo() == null ? "null" : orderBean.getAccountNo(),
+                            orderBean.getAcquId() == null ? "null" : orderBean.getAcquId(), orderBean.getBatchId() == null ? "null" : orderBean.getBatchId(),
+                            orderBean.getRefNo() == null ? "null" : orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+                            ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
                 }
             }
         });

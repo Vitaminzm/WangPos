@@ -26,6 +26,7 @@ import com.symboltech.wangpos.activity.BaseActivity;
 import com.symboltech.wangpos.adapter.CanclePayAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -489,6 +490,23 @@ public class CanclePayDialog extends BaseActivity{
 				}
 				case TransState.STATE_NO_CARD_VOID_FINISH: {
 					if (dataString != null && !dataString.isEmpty()) {
+						try {
+							JSONObject dataJson = new JSONObject(dataString);
+							String code  = dataJson.optString("resultCode");
+							if(code == null || "".equals(code) || !"00".equals(code)){
+								isCancleCount--;
+								info.setDes(getString(R.string.cancled_failed));
+								canclePayAdapter.notifyDataSetChanged();
+								return;
+							}
+							isCancleCount--;
+							info.setIsCancle(true);
+							info.setDes(getString(R.string.cancled_pay));
+							canclePayAdapter.notifyDataSetChanged();
+							handleTransResult(true, dataString);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
 						isCancleCount--;
 						info.setIsCancle(true);
 						info.setDes(getString(R.string.cancled_pay));
@@ -510,7 +528,7 @@ public class CanclePayDialog extends BaseActivity{
 		}
 	};
 
-	private void saveBanInfo(String payTypeId, final OrderBean orderBean){
+	private void saveBanInfo(final String payTypeId, final OrderBean orderBean){
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("skfsid", payTypeId);
 		map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
@@ -527,22 +545,21 @@ public class CanclePayDialog extends BaseActivity{
 			@Override
 			public void handleActionError(String actionName, String errmsg) {
 				ToastUtils.sendtoastbyhandler(handler, errmsg);
-				// TODO Auto-generated method stub
 				OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
-//                dao.addBankinfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), MyApplication.getBillId(), type, rp.getCardNo(),
-//                        rp.getBankCode() == null? "null":rp.getBankCode(), rp.getBatchNo() == null? "null":rp.getBatchNo(),
-//                        rp.getRefNo()== null? "null":rp.getRefNo(), rp.getTraceNo(), payTypeId,
-//                        ArithDouble.parseDouble(BanKPayUtils.makeRealAmount(rp.getAmount())), 0.0);
+				dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), AppConfigFile.getBillId(), ConstantData.TRANS_REVOKE, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
+						orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
+						orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+						ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
 			}
 
 			@Override
 			public void handleActionSuccess(String actionName, BaseResult result) {
-				//TODO
 				if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
-//                    dao.addBankinfo(SpSaveUtils.read(context, ConstantData.CASHIER_DESK_CODE, ""), MyApplication.getBillId(), type, rp.getCardNo(),
-////                        rp.getBankCode() == null? "null":rp.getBankCode(), rp.getBatchNo() == null? "null":rp.getBatchNo(),
-////                        rp.getRefNo()== null? "null":rp.getRefNo(), rp.getTraceNo(), payTypeId,
-////                        ArithDouble.parseDouble(BanKPayUtils.makeRealAmount(rp.getAmount())), 0.0);
+					OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+					dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), AppConfigFile.getBillId(), ConstantData.TRANS_REVOKE, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
+							orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
+							orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+							ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
 					ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
 				}
 			}

@@ -327,6 +327,7 @@
     <string name="param_null">参数不能为空</string>
 
     <!-- offline waring msg -->
+    <string name="no_config">没有配置该操作</string>
     <string name="offline_waring">离线模式不允许该操作</string>
     <string name="offline_save_goods_failed">提交商品失败</string>
     <string name="offline_save_order_failed">保存交易失败</string>

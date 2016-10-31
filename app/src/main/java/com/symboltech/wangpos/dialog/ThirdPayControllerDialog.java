@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.ybq.android.spinkit.SpinKitView;
@@ -27,22 +28,36 @@ import com.symboltech.koolcloud.transmodel.AidlPaymentInfo;
 import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.BaseActivity;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.http.GsonUtil;
+import com.symboltech.wangpos.http.HttpActionHandle;
+import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.msg.entity.PayMentsInfo;
+import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.utils.AndroidUtils;
+import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.CodeBitmap;
 import com.symboltech.wangpos.utils.CurrencyUnit;
+import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.view.HorizontalKeyBoard;
+import com.symboltech.zxing.app.CaptureActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -52,29 +67,18 @@ import butterknife.OnClick;
 import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
 import cn.koolcloud.engine.thirdparty.aidlbean.LoginRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.SaleRequest;
+import cn.koolcloud.engine.thirdparty.aidlbean.SaleVoidRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
 
 public class ThirdPayControllerDialog extends BaseActivity{
 
 	@Bind(R.id.ll_function)
 	LinearLayout ll_function;
-	@Bind(R.id.ll_pay_jiaoyi)
-	LinearLayout ll_pay_jiaoyi;
-	@Bind(R.id.ll_pay_repealdeal)
-	LinearLayout ll_pay_repealdeal;
-	@Bind(R.id.ll_pay_search)
-	LinearLayout ll_pay_search;
-	@Bind(R.id.ll_pay_returngoods)
-	LinearLayout ll_pay_returngoods;
 
 	@Bind(R.id.ll_input_money)
 	LinearLayout ll_input_money;
 	@Bind(R.id.edit_money)
 	EditText edit_money;
-	@Bind(R.id.text_cancle)
-	TextView text_cancle;
-	@Bind(R.id.text_confirm)
-	TextView text_confirm;
 
 	@Bind(R.id.ll_paying_by_code)
 	LinearLayout ll_paying_by_code;
@@ -115,9 +119,9 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					@Override
 					public void run() {
 						if (rspJsonObject.optString("responseCode").equals("00")) {
-							SpSaveUtils.saveObject(ThirdPayControllerDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
-							SpSaveUtils.saveObject(ThirdPayControllerDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
-							SpSaveUtils.saveObject(ThirdPayControllerDialog.this, ConstantData.PWD, rspJsonObject.optString("pwd"));
+							SpSaveUtils.write(ThirdPayControllerDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
+							SpSaveUtils.write(ThirdPayControllerDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
+							SpSaveUtils.write(ThirdPayControllerDialog.this, ConstantData.PWD, "111111");
 							JSONArray payments = null;
 							try {
 								String rspStr = mYunService.getPaymentList();
@@ -150,8 +154,10 @@ public class ThirdPayControllerDialog extends BaseActivity{
 			}
 		}
 	};
-	private String dataString;
-	private String qrcode;
+	private String qrcode = "";
+	private String type_function;
+	private HorizontalKeyBoard keyboard;
+	private double money;
 
 	private void login() {
 		LoginRequest request = new LoginRequest(SpSaveUtils.read(ThirdPayControllerDialog.this, ConstantData.CUSTOMERID,""), SpSaveUtils.read(ThirdPayControllerDialog.this, ConstantData.USERID,""), SpSaveUtils.read(ThirdPayControllerDialog.this, ConstantData.PWD,""));
@@ -161,21 +167,25 @@ public class ThirdPayControllerDialog extends BaseActivity{
 
 					@Override
 					public void onTaskStart() {
-						ll_paying_by_code.setVisibility(View.GONE);
-						ll_paying_msg.setVisibility(View.GONE);
-						ll_input_money.setVisibility(View.GONE);
-						ll_paying_status.setVisibility(View.VISIBLE);
-						spin_kit.setVisibility(View.VISIBLE);
-						text_status.setText(R.string.thirdpay_loading);
+						ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								setFinishOnTouchOutside(false);
+								ll_function.setVisibility(View.GONE);
+								ll_paying_status.setVisibility(View.VISIBLE);
+								spin_kit.setVisibility(View.VISIBLE);
+								text_status.setText(R.string.thirdpay_loading);
+							}
+						});
 					}
 
 					@Override
 					public void onTaskFinish(JSONObject rspJsonObject) {
 						if (rspJsonObject.optString("responseCode").equals(
 								"00")) {
-							SpSaveUtils.saveObject(ThirdPayControllerDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
-							SpSaveUtils.saveObject(ThirdPayControllerDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
-							SpSaveUtils.saveObject(ThirdPayControllerDialog.this, ConstantData.PWD, rspJsonObject.optString("pwd"));
+							SpSaveUtils.write(ThirdPayControllerDialog.this, ConstantData.CUSTOMERID, rspJsonObject.optString("customerId"));
+							SpSaveUtils.write(ThirdPayControllerDialog.this, ConstantData.USERID, rspJsonObject.optString("userId"));
+							SpSaveUtils.write(ThirdPayControllerDialog.this, ConstantData.PWD, "111111");
 							JSONArray payments = null;
 							try {
 								String rspStr = mYunService.getPaymentList();
@@ -188,12 +198,17 @@ public class ThirdPayControllerDialog extends BaseActivity{
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
-							ll_paying_by_code.setVisibility(View.GONE);
-							ll_paying_msg.setVisibility(View.GONE);
-							ll_input_money.setVisibility(View.VISIBLE);
-							ll_paying_status.setVisibility(View.GONE);
+							ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									setFinishOnTouchOutside(true);
+									ll_function.setVisibility(View.VISIBLE);
+									ll_paying_status.setVisibility(View.GONE);
+								}
+							});
 							return;
 						} else {
+							setFinishOnTouchOutside(true);
 							ToastUtils.sendtoastbyhandler(handler, rspJsonObject.optString("errorMsg"));
 							ThirdPayControllerDialog.this.finish();
 						}
@@ -235,7 +250,8 @@ public class ThirdPayControllerDialog extends BaseActivity{
 
 	};
 	public static final int  TRANS_AGAIN = 1;
-	public static final int  TRANS_CANCLE= 2;
+	public static final int  TRANS_CANCLE = 2;
+	public static final int  TRANS_FINISH = 3;
 	static class MyHandler extends Handler {
 		WeakReference<BaseActivity> mActivity;
 
@@ -256,6 +272,9 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				case TRANS_CANCLE:
 					theActivity.finish();
 					break;
+				case TRANS_FINISH:
+					((ThirdPayControllerDialog)theActivity).handleTransResult(true, (String) msg.obj);
+					break;
 			}
 		}
 	}
@@ -263,23 +282,19 @@ public class ThirdPayControllerDialog extends BaseActivity{
 	MyHandler handler = new MyHandler(this);
 
 	public void initUi(){
+		setFinishOnTouchOutside(true);
+		ll_function.setVisibility(View.VISIBLE);
 		ll_paying_by_code.setVisibility(View.GONE);
 		ll_paying_msg.setVisibility(View.GONE);
-		ll_input_money.setVisibility(View.VISIBLE);
+		ll_input_money.setVisibility(View.GONE);
 		ll_paying_status.setVisibility(View.GONE);
+		imageview_close.setVisibility(View.GONE);
 	}
 
-	private Double money;
 	private String Type;
 	@Override
 	protected void initData() {
-		this.money = getIntent().getDoubleExtra(ConstantData.PAY_MONEY, 0);
 		this.Type = getIntent().getStringExtra(ConstantData.PAY_TYPE);
-		this.qrcode = getIntent().getStringExtra(ConstantData.BSC);
-		if(qrcode == null){
-			qrcode = "";
-		}
-		edit_money.setText(money + "");
 		Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
 		yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
 		setServiceStateChangeListerner(serviceStateChangeListerner1);
@@ -325,6 +340,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		setContentView(R.layout.dialog_thirdpay_controller);
 		setFinishOnTouchOutside(true);
 		ButterKnife.bind(this);
+		keyboard = new HorizontalKeyBoard(this, this, edit_money, null);
 	}
 
 	@Override
@@ -344,205 +360,35 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		}
 	}
 
-	@OnClick({R.id.text_confirm_query, R.id.text_cancle, R.id.text_confirm, R.id.imageview_close})
+	@OnClick({R.id.text_confirm_query, R.id.text_cancle, R.id.text_confirm, R.id.imageview_close, R.id.ll_pay_jiaoyi, R.id.ll_pay_search, R.id.ll_pay_repealdeal, R.id.ll_pay_returngoods})
 	public void onClick(View v) {
 		int id = v.getId();
 		switch (id){
 			case R.id.text_cancle:
-				finish();
+				keyboard.dismiss();
+				setFinishOnTouchOutside(true);
+				initUi();
 				break;
 			case R.id.imageview_close:
 				finish();
 				break;
 			case R.id.text_confirm:
-				List<AidlPaymentInfo> paymentlist = (List<AidlPaymentInfo>)SpSaveUtils.getObject(ThirdPayControllerDialog.this,ConstantData.PAY_TYPE_LIST);
-				if(paymentlist == null || paymentlist.size()<= 0){
-					LogUtil.i("lgs","------------------");
-					return;
-				}
-				AidlPaymentInfo paymentInfo;
-				switch (PaymentTypeEnum.getpaymentstyle(Type)){
-					case WECHAT:
-						 paymentInfo = getAidlPaymentInfoByName(paymentlist,getString(R.string.weichat));
-						if(paymentInfo != null){
-							String transAmount = CurrencyUnit.yuan2fenStr(money+"");
-							SaleRequest request = new SaleRequest(paymentInfo
-									.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
-							AidlRequestManager aidlManager = AidlRequestManager.getInstance();
-							aidlManager.aidlSaleRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
-
-								@Override
-								public void onTaskStart() {
-									ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											imageview_close.setVisibility(View.GONE);
-											ll_paying_by_code.setVisibility(View.GONE);
-											ll_paying_msg.setVisibility(View.GONE);
-											ll_input_money.setVisibility(View.GONE);
-											ll_paying_status.setVisibility(View.VISIBLE);
-											spin_kit.setVisibility(View.VISIBLE);
-											text_status.setText(R.string.thirdpay_requesting);
-										}
-									});
-									LogUtil.e("lgs","onTaskStart");
-								}
-
-								@Override
-								public void onTaskFinish(JSONObject rspJSON) {
-									// 如有dialog，此处终止
-									// dismissLoadingDialog();
-									LogUtil.e("lgs","onTaskFinish");
-									if (!rspJSON.optString("responseCode").equals("00")) {
-										ToastUtils.sendtoastbyhandler(handler, "调用交易失败：" + rspJSON.optString("errorMsg"));
-										handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
-									}
-
-								}
-
-								@Override
-								public void onTaskCancelled() {
-									ToastUtils.sendtoastbyhandler(handler, "交易取消");
-									handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
-									LogUtil.e("lgs","onTaskCancelled");
-									// dismissLoadingDialog();
-
-								}
-
-								@Override
-								public void onException(Exception e) {
-									LogUtil.e("lgs", "onException");
-									ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
-									handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
-								}
-							});
-						}else {
-							ToastUtils.sendtoastbyhandler(handler, "暂不支持！");
-						}
+				keyboard.dismiss();
+				switch (type_function){
+					case ConstantData.TRANS_SALE:
+						doTrans();
 						break;
-					case ALIPAY:
-						paymentInfo = getAidlPaymentInfoByName(paymentlist,getString(R.string.alipay));
-						if(paymentInfo != null){
-							String transAmount = CurrencyUnit.yuan2fenStr(money+"");
-							SaleRequest request = new SaleRequest(paymentInfo
-									.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
-							AidlRequestManager aidlManager = AidlRequestManager.getInstance();
-							aidlManager.aidlSaleRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
-
-								@Override
-								public void onTaskStart() {
-									ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											imageview_close.setVisibility(View.GONE);
-											ll_paying_by_code.setVisibility(View.GONE);
-											ll_paying_msg.setVisibility(View.GONE);
-											ll_input_money.setVisibility(View.GONE);
-											ll_paying_status.setVisibility(View.VISIBLE);
-											spin_kit.setVisibility(View.VISIBLE);
-											text_status.setText(R.string.thirdpay_requesting);
-										}
-									});
-									LogUtil.e("lgs","onTaskStart");
-								}
-
-								@Override
-								public void onTaskFinish(JSONObject rspJSON) {
-									// 如有dialog，此处终止
-									// dismissLoadingDialog();
-									LogUtil.e("lgs","onTaskFinish");
-									if (!rspJSON.optString("responseCode").equals("00")) {
-										ToastUtils.sendtoastbyhandler(handler, "调用交易失败：" + rspJSON.optString("errorMsg"));
-										handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
-									}
-
-								}
-
-								@Override
-								public void onTaskCancelled() {
-									ToastUtils.sendtoastbyhandler(handler, "交易取消");
-									handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
-									LogUtil.e("lgs","onTaskCancelled");
-									// dismissLoadingDialog();
-
-								}
-
-								@Override
-								public void onException(Exception e) {
-									// dismissLoadingDialog();
-									LogUtil.e("lgs", "onException");
-									ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
-									handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
-								}
-							});
-						}else {
-							ToastUtils.sendtoastbyhandler(handler, "暂不支持！");
-						}
+					case ConstantData.TRANS_RETURN:
+						doReturn();
 						break;
-					case BANK:
-						paymentInfo = getAidlPaymentInfoBank(paymentlist);
-						if(paymentInfo != null){
-							String transAmount = CurrencyUnit.yuan2fenStr(money+"");
-							SaleRequest request = new SaleRequest(paymentInfo
-									.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
-							AidlRequestManager aidlManager = AidlRequestManager.getInstance();
-							aidlManager.aidlSaleRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
-
-								@Override
-								public void onTaskStart() {
-									ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
-										@Override
-										public void run() {
-											imageview_close.setVisibility(View.GONE);
-											ll_paying_by_code.setVisibility(View.GONE);
-											ll_paying_msg.setVisibility(View.GONE);
-											ll_input_money.setVisibility(View.GONE);
-											ll_paying_status.setVisibility(View.VISIBLE);
-											spin_kit.setVisibility(View.VISIBLE);
-											text_status.setText(R.string.thirdpay_requesting);
-										}
-									});
-									LogUtil.e("lgs","onTaskStart");
-								}
-
-								@Override
-								public void onTaskFinish(JSONObject rspJSON) {
-									// 如有dialog，此处终止
-									// dismissLoadingDialog();
-									LogUtil.e("lgs","onTaskFinish");
-									if (!rspJSON.optString("responseCode").equals("00")) {
-										handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
-										ToastUtils.sendtoastbyhandler(handler, "调用交易失败：" + rspJSON.optString("errorMsg"));
-									}
-
-								}
-
-								@Override
-								public void onTaskCancelled() {
-									LogUtil.e("lgs","onTaskCancelled");
-									ToastUtils.sendtoastbyhandler(handler, "交易取消");
-									handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
-									// dismissLoadingDialog();
-
-								}
-
-								@Override
-								public void onException(Exception e) {
-									// dismissLoadingDialog();
-									LogUtil.e("lgs", "onException");
-									ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
-									handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
-								}
-							});
-						}else {
-							ToastUtils.sendtoastbyhandler(handler, "暂不支持！");
-						}
+					case ConstantData.TRANS_REVOKE:
+						doRevoke();
 						break;
 				}
 				break;
 			case R.id.text_confirm_query:
 				if (text_confirm_query.getText().equals(getString(R.string.confirm))){
-					handleTransResult(true, dataString);
+					//handleTransResult(true, dataString);
 					text_confirm_query.setText(R.string.query);
 				}else if(text_confirm_query.getText().equals(getString(R.string.query))){
 					imageview_close.setVisibility(View.GONE);
@@ -554,6 +400,295 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					text_status.setText(R.string.thirdpay_querying);
 
 					text_confirm_query.setText(R.string.confirm);
+				}
+				break;
+			case R.id.ll_pay_jiaoyi:
+				setFinishOnTouchOutside(false);
+				type_function = ConstantData.TRANS_SALE;
+				ll_function.setVisibility(View.GONE);
+				ll_input_money.setVisibility(View.VISIBLE);
+				edit_money.setHint("请输入支付金额");
+				break;
+			case R.id.ll_pay_search:
+				ToastUtils.sendtoastbyhandler(handler,"暂不支持");
+//				type_function = ConstantData.TRANS_QUERY;
+//				ll_function.setVisibility(View.GONE);
+//				ll_input_money.setVisibility(View.VISIBLE);
+				break;
+			case R.id.ll_pay_repealdeal:
+				setFinishOnTouchOutside(false);
+				type_function = ConstantData.TRANS_REVOKE;
+				ll_function.setVisibility(View.GONE);
+				ll_input_money.setVisibility(View.VISIBLE);
+				edit_money.setHint("请输入撤销交易号");
+				break;
+			case R.id.ll_pay_returngoods:
+				setFinishOnTouchOutside(false);
+				type_function = ConstantData.TRANS_RETURN;
+				ll_function.setVisibility(View.GONE);
+				ll_input_money.setVisibility(View.VISIBLE);
+				edit_money.setHint("请输入退货交易号");
+				break;
+		}
+	}
+
+	public void doReturn(){
+		if(edit_money.getText() == null || "".equals(edit_money.getText().toString())){
+			ToastUtils.sendtoastbyhandler(handler, "请先输入订单号");
+			return;
+		}
+		SaleVoidRequest saleVoidRequest = new SaleVoidRequest(edit_money.getText().toString());
+		AidlRequestManager.getInstance().aidlSaleVoidRequest(mYunService,
+				saleVoidRequest, new AidlRequestManager.AidlRequestCallBack() {
+
+					@Override
+					public void onTaskStart() {
+						ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								ll_input_money.setVisibility(View.GONE);
+								ll_paying_status.setVisibility(View.VISIBLE);
+								spin_kit.setVisibility(View.VISIBLE);
+								text_status.setText(R.string.thirdpay_requesting);
+							}
+						});
+					}
+
+					@Override
+					public void onTaskFinish(JSONObject rspJSON) {
+						LogUtil.e("lgs", "onTaskFinish");
+						if (!rspJSON.optString("responseCode").equals("00")) {
+							ToastUtils.sendtoastbyhandler(handler, "调用交易失败：" + rspJSON.optString("errorMsg"));
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+						}
+					}
+
+					@Override
+					public void onTaskCancelled() {
+						ToastUtils.sendtoastbyhandler(handler, "交易取消");
+						handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+					}
+
+					@Override
+					public void onException(Exception e) {
+						LogUtil.e("lgs", "onException");
+						ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
+						handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+					}
+				});
+	}
+
+
+	public void doRevoke(){
+		doReturn();
+	}
+
+	public void doTrans(){
+		LogUtil.i("lgs", edit_money.getText().toString());
+		if(edit_money.getText() == null || "".equals(edit_money.getText().toString())){
+			ToastUtils.sendtoastbyhandler(handler, "请先输入支付金额");
+			return;
+		}
+		money = ArithDouble.parseDouble(edit_money.getText().toString());
+		if (money <= 0) {
+			ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_money_not_zero));
+			return;
+		}
+		if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
+			Intent intent_qr = new Intent(this, CaptureActivity.class);
+			startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+		}else{
+			doPay();
+		}
+
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (resultCode == ConstantData.QRCODE_RESULT_MEMBER_VERIFY) {
+			switch (requestCode) {
+				case ConstantData.QRCODE_REQURST_QR_PAY:
+					if (!StringUtil.isEmpty(data.getExtras().getString("QRcode"))) {
+						qrcode = data.getExtras().getString("QRcode");
+						doPay();
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	private void doPay() {
+		List<AidlPaymentInfo> paymentlist = (List<AidlPaymentInfo>)SpSaveUtils.getObject(ThirdPayControllerDialog.this,ConstantData.PAY_TYPE_LIST);
+		AidlPaymentInfo paymentInfo;
+		switch (PaymentTypeEnum.getpaymentstyle(Type)){
+			case WECHAT:
+				paymentInfo = getAidlPaymentInfoByName(paymentlist,getString(R.string.weichat));
+				if(paymentInfo != null){
+					String transAmount = CurrencyUnit.yuan2fenStr(money+"");
+					SaleRequest request = new SaleRequest(paymentInfo
+							.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
+					AidlRequestManager aidlManager = AidlRequestManager.getInstance();
+					aidlManager.aidlSaleRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
+
+						@Override
+						public void onTaskStart() {
+							ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									ll_input_money.setVisibility(View.GONE);
+									ll_paying_status.setVisibility(View.VISIBLE);
+									spin_kit.setVisibility(View.VISIBLE);
+									text_status.setText(R.string.thirdpay_requesting);
+								}
+							});
+							LogUtil.e("lgs","onTaskStart");
+						}
+
+						@Override
+						public void onTaskFinish(JSONObject rspJSON) {
+							// 如有dialog，此处终止
+							// dismissLoadingDialog();
+							LogUtil.e("lgs","onTaskFinish");
+							if (!rspJSON.optString("responseCode").equals("00")) {
+								ToastUtils.sendtoastbyhandler(handler, "调用交易失败：" + rspJSON.optString("errorMsg"));
+								handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+							}
+
+						}
+
+						@Override
+						public void onTaskCancelled() {
+							ToastUtils.sendtoastbyhandler(handler, "交易取消");
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+							LogUtil.e("lgs","onTaskCancelled");
+							// dismissLoadingDialog();
+
+						}
+
+						@Override
+						public void onException(Exception e) {
+							LogUtil.e("lgs", "onException");
+							ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+						}
+					});
+				}else {
+					ToastUtils.sendtoastbyhandler(handler, "暂不支持！");
+				}
+				break;
+			case ALIPAY:
+				paymentInfo = getAidlPaymentInfoByName(paymentlist,getString(R.string.alipay));
+				if(paymentInfo != null){
+					String transAmount = CurrencyUnit.yuan2fenStr(money+"");
+					SaleRequest request = new SaleRequest(paymentInfo
+							.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
+					AidlRequestManager aidlManager = AidlRequestManager.getInstance();
+					aidlManager.aidlSaleRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
+
+						@Override
+						public void onTaskStart() {
+							ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									ll_input_money.setVisibility(View.GONE);
+									ll_paying_status.setVisibility(View.VISIBLE);
+									spin_kit.setVisibility(View.VISIBLE);
+									text_status.setText(R.string.thirdpay_requesting);
+								}
+							});
+							LogUtil.e("lgs","onTaskStart");
+						}
+
+						@Override
+						public void onTaskFinish(JSONObject rspJSON) {
+							// 如有dialog，此处终止
+							// dismissLoadingDialog();
+							LogUtil.e("lgs","onTaskFinish");
+							if (!rspJSON.optString("responseCode").equals("00")) {
+								ToastUtils.sendtoastbyhandler(handler, "调用交易失败：" + rspJSON.optString("errorMsg"));
+								handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+							}
+
+						}
+
+						@Override
+						public void onTaskCancelled() {
+							ToastUtils.sendtoastbyhandler(handler, "交易取消");
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+							LogUtil.e("lgs","onTaskCancelled");
+							// dismissLoadingDialog();
+
+						}
+
+						@Override
+						public void onException(Exception e) {
+							// dismissLoadingDialog();
+							LogUtil.e("lgs", "onException");
+							ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+						}
+					});
+				}else {
+					ToastUtils.sendtoastbyhandler(handler, "暂不支持！");
+				}
+				break;
+			case BANK:
+				paymentInfo = getAidlPaymentInfoBank(paymentlist);
+				if(paymentInfo != null){
+					String transAmount = CurrencyUnit.yuan2fenStr(money+"");
+					SaleRequest request = new SaleRequest(paymentInfo
+							.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
+					AidlRequestManager aidlManager = AidlRequestManager.getInstance();
+					aidlManager.aidlSaleRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
+
+						@Override
+						public void onTaskStart() {
+							ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									ll_input_money.setVisibility(View.GONE);
+									ll_paying_status.setVisibility(View.VISIBLE);
+									spin_kit.setVisibility(View.VISIBLE);
+									text_status.setText(R.string.thirdpay_requesting);
+								}
+							});
+							LogUtil.e("lgs","onTaskStart");
+						}
+
+						@Override
+						public void onTaskFinish(JSONObject rspJSON) {
+							// 如有dialog，此处终止
+							// dismissLoadingDialog();
+							LogUtil.e("lgs","onTaskFinish");
+							if (!rspJSON.optString("responseCode").equals("00")) {
+								handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+								ToastUtils.sendtoastbyhandler(handler, "调用交易失败：" + rspJSON.optString("errorMsg"));
+							}
+
+						}
+
+						@Override
+						public void onTaskCancelled() {
+							LogUtil.e("lgs","onTaskCancelled");
+							ToastUtils.sendtoastbyhandler(handler, "交易取消");
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+							// dismissLoadingDialog();
+
+						}
+
+						@Override
+						public void onException(Exception e) {
+							// dismissLoadingDialog();
+							LogUtil.e("lgs", "onException");
+							ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 500);
+						}
+					});
+				}else {
+					ToastUtils.sendtoastbyhandler(handler, "暂不支持！");
 				}
 				break;
 		}
@@ -611,10 +746,6 @@ public class ThirdPayControllerDialog extends BaseActivity{
 			switch (message.what) {
 				case TransState.State_Waiting_Reverse: {
 					// 存在冲正-冲正中
-					imageview_close.setVisibility(View.GONE);
-					ll_paying_by_code.setVisibility(View.GONE);
-					ll_paying_msg.setVisibility(View.GONE);
-					ll_input_money.setVisibility(View.GONE);
 					ll_paying_status.setVisibility(View.VISIBLE);
 					spin_kit.setVisibility(View.VISIBLE);
 					text_status.setText(R.string.thirdpay_reverseing);
@@ -631,7 +762,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					text_status.setText(R.string.thirdpay_reverse_success);
 					LogUtil.i("lgs", "-------------冲正成功-------------");
 					// 冲正成功后该笔交易失效，需要重新手动发起交易（此处需要UI提示）
-					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					break;
 				}
 				case TransState.State_Reverse_Failed: {
@@ -645,7 +776,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					text_status.setText(R.string.thirdpay_reverse_failed);
 					LogUtil.i("lgs", "-------------冲正失败-------------");
 					// 冲正失败后该笔交易失效，需要重新手动发起交易（此处需要UI提示）
-					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					break;
 				}
 
@@ -674,7 +805,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 							text_status.setText(R.string.thirdpay_sign_success);
 						} else {
 							text_status.setText(R.string.thirdpay_sign_failed);
-							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -849,7 +980,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					} else {
 						text_status.setText(getString(R.string.thirdpay_trans_failed) + "数据异常");
 					}
-					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					break;
 				}
 				case TransState.State_Finish_Trans: {
@@ -859,8 +990,12 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					ll_paying_msg.setVisibility(View.VISIBLE);
 					ll_input_money.setVisibility(View.GONE);
 					ll_paying_status.setVisibility(View.GONE);
+					text_confirm_query.setVisibility(View.GONE);
 					text_paying_msg.setText("银行卡交易成功");
-					ThirdPayControllerDialog.this.dataString = dataString;
+					Message msg = Message.obtain();
+					msg.what = TRANS_FINISH;
+					msg.obj = dataString;
+					handler.sendMessageDelayed(msg, 2000);
 					// 银行卡交易完成（成功）
 					break;
 				}
@@ -888,8 +1023,12 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					ll_paying_msg.setVisibility(View.VISIBLE);
 					ll_input_money.setVisibility(View.GONE);
 					ll_paying_status.setVisibility(View.GONE);
-					text_paying_msg.setText("交易完成");
-					ThirdPayControllerDialog.this.dataString = dataString;
+					text_confirm_query.setVisibility(View.GONE);
+					text_paying_msg.setText("支付完成");
+					Message msg = Message.obtain();
+					msg.what = TRANS_FINISH;
+					msg.obj = dataString;
+					handler.sendMessageDelayed(msg, 2000);
 					break;
 				}
 				case TransState.STATE_BSC_FAIL: {
@@ -910,7 +1049,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					} else {
 						text_status.setText("扫码支付失败, 数据异常");
 					}
-					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					break;
 				}
 				case TransState.STATE_CSB_GET_CODE: {
@@ -958,7 +1097,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 						e.printStackTrace();
 					}
 
-					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					break;
 				}
 				case TransState.STATE_CSB_FINISH: {
@@ -967,8 +1106,12 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					ll_paying_msg.setVisibility(View.VISIBLE);
 					ll_input_money.setVisibility(View.GONE);
 					ll_paying_status.setVisibility(View.GONE);
+					text_confirm_query.setVisibility(View.GONE);
 					text_paying_msg.setText("顾客已支付完成");
-					ThirdPayControllerDialog.this.dataString = dataString;
+					Message msg = Message.obtain();
+					msg.what = TRANS_FINISH;
+					msg.obj = dataString;
+					handler.sendMessageDelayed(msg, 2000);
 					break;
 				}
 				case TransState.STATE_CSB_FAILURE: {
@@ -989,7 +1132,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					} else {
 						text_status.setText("扫码支付失败, 数据异常");
 					}
-					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					break;
 				}
 				case TransState.STATE_NO_CARD_VOID_FINISH: {
@@ -999,15 +1142,32 @@ public class ThirdPayControllerDialog extends BaseActivity{
 						ll_paying_msg.setVisibility(View.VISIBLE);
 						ll_input_money.setVisibility(View.GONE);
 						ll_paying_status.setVisibility(View.GONE);
-						text_paying_msg.setText("交易完成");
-						ThirdPayControllerDialog.this.dataString = dataString;
+						text_confirm_query.setVisibility(View.GONE);
+						JSONObject dataJson = null;
+						try {
+							dataJson = new JSONObject(dataString);
+							String code  = dataJson.optString("resultCode");
+							if(code == null || "".equals(code) || !"00".equals(code)){
+								text_paying_msg.setText("撤销失败" + dataJson.optString("resultMsg"));
+								handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+								return;
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						text_paying_msg.setText("撤销成功");
+						Message msg = Message.obtain();
+						msg.what = TRANS_FINISH;
+						msg.obj = dataString;
+						handler.sendMessageDelayed(msg, 2000);
 					} else {
 						imageview_close.setVisibility(View.GONE);
 						ll_paying_by_code.setVisibility(View.GONE);
-						ll_paying_msg.setVisibility(View.GONE);
-						ll_input_money.setVisibility(View.VISIBLE);
+						ll_paying_msg.setVisibility(View.VISIBLE);
+						ll_input_money.setVisibility(View.GONE);
 						ll_paying_status.setVisibility(View.GONE);
-						ToastUtils.sendtoastbyhandler(handler, "交易撤销结果处理异常");
+						text_paying_msg.setText("交易撤销结果处理异常");
+						handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					}
 
 					break;
@@ -1056,16 +1216,12 @@ public class ThirdPayControllerDialog extends BaseActivity{
 			if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
 				SpSaveUtils.write(getApplicationContext(),ConstantData.LAST_BANK_TRANS, resultBean.getTxnId());
 			}
-			Intent intent = new Intent();
 			if (resultBean.getTransType().equals(ConstantData.SALE)) {
-				intent.putExtra(ConstantData.ORDER_BEAN, resultBean);
-				setResult(ConstantData.THRID_PAY_RESULT_CODE, intent);
+				saveBanInfo(getPayTypeId(Type),ConstantData.TRANS_SALE, resultBean);
 				finish();
 			} else if (resultBean.getTransType().equals(ConstantData.SALE_VOID)) {
 				if (resultBean.getResultCode().equals("00")) {
-					resultBean.setOrderState("0");
-					intent.putExtra(ConstantData.ORDER_BEAN, resultBean);
-					setResult(ConstantData.THRID_PAY_RESULT_CODE, intent);
+					saveBanInfo(getPayTypeId(Type), ConstantData.TRANS_REVOKE, resultBean);
 					finish();
 				}else{
 					LogUtil.e("lgs", "退款失败"+data);
@@ -1098,5 +1254,62 @@ public class ThirdPayControllerDialog extends BaseActivity{
 			newBean.setOrderState(isSuccess ? "0" : "");
 		}
 		return newBean;
+	}
+
+	private void saveBanInfo(final String payTypeId, final String transtype, final OrderBean orderBean){
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("skfsid", payTypeId);
+		map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+		map.put("billid", "-"+AppConfigFile.getBillId());
+		map.put("transtype", transtype);
+		map.put("tradeno", orderBean.getTxnId());
+		map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
+		map.put("decmoney", "0");
+		map.put("cardno", orderBean.getAccountNo()== null? "null":orderBean.getAccountNo());
+		map.put("bankcode",orderBean.getAcquId()== null? "null":orderBean.getAcquId());
+		map.put("batchno", orderBean.getBatchId()== null? "null":orderBean.getBatchId());
+		map.put("refno", orderBean.getRefNo()== null? "null":orderBean.getRefNo());
+		HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>(){
+			@Override
+			public void handleActionError(String actionName, String errmsg) {
+				ToastUtils.sendtoastbyhandler(handler, errmsg);
+				OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+				dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), "-"+AppConfigFile.getBillId(), transtype, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
+						orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
+						orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+						ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
+				ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
+			}
+
+			@Override
+			public void handleActionSuccess(String actionName, BaseResult result) {
+				if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
+					OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+					dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), "-"+AppConfigFile.getBillId(), transtype, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
+							orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
+							orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+							ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
+					ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
+				}
+			}
+		});
+	}
+
+	/**
+	 * @author zmm emial:mingming.zhang@symboltech.com 2015年11月17日
+	 * @Description: 获取支付方式Id
+	 *
+	 */
+	private String getPayTypeId(String typeEnum) {
+
+		List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+		if(paymentslist == null)
+			return null;
+		for (int i = 0; i < paymentslist.size(); i++) {
+			if (paymentslist.get(i).getType().equals(typeEnum)) {
+				return paymentslist.get(i).getId();
+			}
+		}
+		return null;
 	}
 }

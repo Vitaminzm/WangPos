@@ -151,12 +151,17 @@ public class ThirdPayDialog extends BaseActivity{
 
 					@Override
 					public void onTaskStart() {
-						ll_paying_by_code.setVisibility(View.GONE);
-						ll_paying_msg.setVisibility(View.GONE);
-						ll_input_money.setVisibility(View.GONE);
-						ll_paying_status.setVisibility(View.VISIBLE);
-						spin_kit.setVisibility(View.VISIBLE);
-						text_status.setText(R.string.thirdpay_loading);
+						ThirdPayDialog.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								ll_paying_by_code.setVisibility(View.GONE);
+								ll_paying_msg.setVisibility(View.GONE);
+								ll_input_money.setVisibility(View.GONE);
+								ll_paying_status.setVisibility(View.VISIBLE);
+								spin_kit.setVisibility(View.VISIBLE);
+								text_status.setText(R.string.thirdpay_loading);
+							}
+						});
 					}
 
 					@Override
@@ -178,11 +183,16 @@ public class ThirdPayDialog extends BaseActivity{
 							} catch (JSONException e) {
 								e.printStackTrace();
 							}
-							ll_paying_by_code.setVisibility(View.GONE);
-							ll_paying_msg.setVisibility(View.GONE);
-							ll_input_money.setVisibility(View.VISIBLE);
-							edit_money.setFocusable(true);
-							ll_paying_status.setVisibility(View.GONE);
+							ThirdPayDialog.this.runOnUiThread(new Runnable() {
+								@Override
+								public void run() {
+									ll_paying_by_code.setVisibility(View.GONE);
+									ll_paying_msg.setVisibility(View.GONE);
+									ll_input_money.setVisibility(View.VISIBLE);
+									edit_money.setFocusable(true);
+									ll_paying_status.setVisibility(View.GONE);
+								}
+							});
 							return;
 						} else {
 							ToastUtils.sendtoastbyhandler(handler, rspJsonObject.optString("errorMsg"));
@@ -227,6 +237,7 @@ public class ThirdPayDialog extends BaseActivity{
 	};
 	public static final int  TRANS_AGAIN = 1;
 	public static final int  TRANS_CANCLE= 2;
+	public static final int  TRANS_FINISH= 3;
 	static class MyHandler extends Handler {
 		WeakReference<BaseActivity> mActivity;
 
@@ -246,6 +257,9 @@ public class ThirdPayDialog extends BaseActivity{
 					break;
 				case TRANS_CANCLE:
 					theActivity.finish();
+					break;
+				case TRANS_FINISH:
+					((ThirdPayDialog)theActivity).handleTransResult(true, (String) msg.obj);
 					break;
 			}
 		}
@@ -630,7 +644,7 @@ public class ThirdPayDialog extends BaseActivity{
 					text_status.setText(R.string.thirdpay_reverse_success);
 					LogUtil.i("lgs", "-------------冲正成功-------------");
 					// 冲正成功后该笔交易失效，需要重新手动发起交易（此处需要UI提示）
-					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					break;
 				}
 				case TransState.State_Reverse_Failed: {
@@ -644,7 +658,7 @@ public class ThirdPayDialog extends BaseActivity{
 					text_status.setText(R.string.thirdpay_reverse_failed);
 					LogUtil.i("lgs", "-------------冲正失败-------------");
 					// 冲正失败后该笔交易失效，需要重新手动发起交易（此处需要UI提示）
-					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					break;
 				}
 
@@ -673,7 +687,7 @@ public class ThirdPayDialog extends BaseActivity{
 							text_status.setText(R.string.thirdpay_sign_success);
 						} else {
 							text_status.setText(R.string.thirdpay_sign_failed);
-							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -750,6 +764,7 @@ public class ThirdPayDialog extends BaseActivity{
 					ll_paying_msg.setVisibility(View.VISIBLE);
 					ll_input_money.setVisibility(View.GONE);
 					ll_paying_status.setVisibility(View.GONE);
+					text_confirm_query.setVisibility(View.VISIBLE);
 					text_confirm_query.setText(R.string.query);
 					ToastUtils.sendtoastbyhandler(handler, "需要查询");
 					break;
@@ -848,7 +863,7 @@ public class ThirdPayDialog extends BaseActivity{
 					} else {
 						text_status.setText(getString(R.string.thirdpay_trans_failed) + "数据异常");
 					}
-					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					break;
 				}
 				case TransState.State_Finish_Trans: {
@@ -859,7 +874,11 @@ public class ThirdPayDialog extends BaseActivity{
 					ll_input_money.setVisibility(View.GONE);
 					ll_paying_status.setVisibility(View.GONE);
 					text_paying_msg.setText("银行卡交易成功");
-					ThirdPayDialog.this.dataString = dataString;
+					text_confirm_query.setVisibility(View.GONE);
+					Message msg = Message.obtain();
+					msg.what = TRANS_FINISH;
+					msg.obj = dataString;
+					handler.sendMessageDelayed(msg, 2000);
 					// 银行卡交易完成（成功）
 					break;
 				}
@@ -887,8 +906,12 @@ public class ThirdPayDialog extends BaseActivity{
 					ll_paying_msg.setVisibility(View.VISIBLE);
 					ll_input_money.setVisibility(View.GONE);
 					ll_paying_status.setVisibility(View.GONE);
-					text_paying_msg.setText("交易完成");
-					ThirdPayDialog.this.dataString = dataString;
+					text_confirm_query.setVisibility(View.GONE);
+					text_paying_msg.setText("支付完成");
+					Message msg = Message.obtain();
+					msg.what = TRANS_FINISH;
+					msg.obj = dataString;
+					handler.sendMessageDelayed(msg, 2000);
 					break;
 				}
 				case TransState.STATE_BSC_FAIL: {
@@ -909,7 +932,7 @@ public class ThirdPayDialog extends BaseActivity{
 					} else {
 						text_status.setText("扫码支付失败, 数据异常");
 					}
-					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 2000);
 					break;
 				}
 				case TransState.STATE_CSB_GET_CODE: {
@@ -957,7 +980,7 @@ public class ThirdPayDialog extends BaseActivity{
 						e.printStackTrace();
 					}
 
-					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 2000);
 					break;
 				}
 				case TransState.STATE_CSB_FINISH: {
@@ -966,8 +989,12 @@ public class ThirdPayDialog extends BaseActivity{
 					ll_paying_msg.setVisibility(View.VISIBLE);
 					ll_input_money.setVisibility(View.GONE);
 					ll_paying_status.setVisibility(View.GONE);
+					text_confirm_query.setVisibility(View.GONE);
 					text_paying_msg.setText("顾客已支付完成");
-					ThirdPayDialog.this.dataString = dataString;
+					Message msg = Message.obtain();
+					msg.what = TRANS_FINISH;
+					msg.obj = dataString;
+					handler.sendMessageDelayed(msg, 2000);
 					break;
 				}
 				case TransState.STATE_CSB_FAILURE: {
@@ -988,7 +1015,7 @@ public class ThirdPayDialog extends BaseActivity{
 					} else {
 						text_status.setText("扫码支付失败, 数据异常");
 					}
-					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 3000);
+					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 2000);
 					break;
 				}
 				case TransState.STATE_NO_CARD_VOID_FINISH: {
@@ -998,16 +1025,33 @@ public class ThirdPayDialog extends BaseActivity{
 						ll_paying_msg.setVisibility(View.VISIBLE);
 						ll_input_money.setVisibility(View.GONE);
 						ll_paying_status.setVisibility(View.GONE);
-						text_paying_msg.setText("交易完成");
-						ThirdPayDialog.this.dataString = dataString;
+						text_confirm_query.setVisibility(View.GONE);
+						JSONObject dataJson = null;
+						try {
+							dataJson = new JSONObject(dataString);
+							String code  = dataJson.optString("resultCode");
+							if(code == null || "".equals(code) || !"00".equals(code)){
+								text_paying_msg.setText("撤销失败" + dataJson.optString("resultMsg"));
+								handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+								return;
+							}
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						text_paying_msg.setText("撤销成功");
+						Message msg = Message.obtain();
+						msg.what = TRANS_FINISH;
+						msg.obj = dataString;
+						handler.sendMessageDelayed(msg, 2000);
 					} else {
 						imageview_close.setVisibility(View.GONE);
 						ll_paying_by_code.setVisibility(View.GONE);
-						ll_paying_msg.setVisibility(View.GONE);
-						ll_input_money.setVisibility(View.VISIBLE);
-						edit_money.setFocusable(true);
+						ll_paying_msg.setVisibility(View.VISIBLE);
+						ll_input_money.setVisibility(View.GONE);
 						ll_paying_status.setVisibility(View.GONE);
-						ToastUtils.sendtoastbyhandler(handler, "交易撤销结果处理异常");
+						text_confirm_query.setVisibility(View.GONE);
+						text_paying_msg.setText("交易撤销结果处理异常");
+						handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 					}
 
 					break;

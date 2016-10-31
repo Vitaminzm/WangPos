@@ -882,8 +882,10 @@ public class CheckOutActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (newBean.getOrderState().isEmpty()) {
-            newBean.setOrderState(isSuccess ? "0" : "");
+        if(newBean != null){
+            if (newBean.getOrderState().isEmpty()) {
+                newBean.setOrderState(isSuccess ? "0" : "");
+            }
         }
         return newBean;
     }

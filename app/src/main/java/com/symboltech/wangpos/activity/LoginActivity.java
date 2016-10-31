@@ -213,7 +213,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
                 startService(service);
                 try {
-                    Thread.sleep(300);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

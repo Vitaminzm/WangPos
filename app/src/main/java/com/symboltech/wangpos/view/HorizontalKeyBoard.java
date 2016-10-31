@@ -205,7 +205,9 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 			  length = 0;
 			  if(mObject instanceof Dialog) {
 				  length=(int)((pos[1]+mWindow.getDecorView().getHeight()-outRect.top)-(mScreenHeight-height));
-			  }else {
+			  }else if(ll_keyboard == null){
+				  length=(int)((pos[1]+mWindow.getDecorView().getHeight()-outRect.top)-(mScreenHeight-height));
+			  }else{
 				  if(flag == FLAG_EDIT) {
 					  length=(int)((pos[1]+editText1.getMeasuredHeight()-outRect.top)-(mScreenHeight-height));
 				  }else if(flag == FLAG_EDIT2) {
@@ -215,7 +217,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 				  }
 			  }
 			  if(length>0){
-				 if(!(mObject instanceof Dialog)){
+				 if(!(mObject instanceof Dialog) && ll_keyboard != null){
 					 ValueAnimator valueAnimator = ValueAnimator.ofInt(0,length);
 					 valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 						 private IntEvaluator intEvaluator = new IntEvaluator();
@@ -265,7 +267,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	public void dismiss() {
 		try {
 			if (length > 0) {
-				if(!(mObject instanceof Dialog)){
+				if(!(mObject instanceof Dialog) && ll_keyboard != null){
 					ValueAnimator valueAnimator = ValueAnimator.ofInt(length,0);
 					valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 						private IntEvaluator intEvaluator = new IntEvaluator();
@@ -335,6 +337,9 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 			isFocusOutside = true;
 		}else {
 			mWindow = ((Activity) mObject).getWindow();
+		}
+		if(ll_keyboard == null){
+			isFocusOutside = true;
 		}
 		LayoutParams attributes = mWindow.getAttributes();
 		attributes.format = 1;

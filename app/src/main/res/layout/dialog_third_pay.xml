@@ -55,7 +55,6 @@
             android:textColor="@color/font_color"
             android:editable="false"
             android:background="@drawable/icon_edittext_bg_press"
-            android:text="@string/pay_bu_print_bill"
             android:textSize="@dimen/font_size_rz" />
         <LinearLayout
             android:layout_marginTop="@dimen/margin_vz"

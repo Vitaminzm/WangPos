@@ -407,4 +407,7 @@ public class ConstantData {
 
 	/** 隔日退货*/
 	public static final String TRANS_RETURN = "3";
+
+	/** 查询*/
+	public static final String TRANS_QUERY = "4";
 }

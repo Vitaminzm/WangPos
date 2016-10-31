@@ -52,6 +52,7 @@ import com.symboltech.wangpos.result.OfflineDataResult;
 import com.symboltech.wangpos.result.TicketFormatResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
+import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
@@ -328,31 +329,56 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         AppConfigFile.delActivity(this);
     }
     public void print_last(String id){
-        TransPrintRequest request = new TransPrintRequest(id);
-        AidlRequestManager aidlManager = AidlRequestManager.getInstance();
-        aidlManager.aidlTransPrintRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
-            @Override
-            public void onTaskStart() {
+        if(id == null || "".equals(id)){
+            AidlRequestManager.getInstance().aidlLastTransPrintRequest(mYunService, new AidlRequestManager.AidlRequestCallBack() {
 
-            }
-
-            @Override
-            public void onTaskCancelled() {
-                ToastUtils.sendtoastbyhandler(handler, "打印取消");
-            }
-
-            @Override
-            public void onTaskFinish(JSONObject rspJSON) {
-                if (!rspJSON.optString("responseCode").equals("00")) {
-                    ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+                @Override
+                public void onTaskStart() {
                 }
-            }
 
-            @Override
-            public void onException(Exception e) {
-                ToastUtils.sendtoastbyhandler(handler, "打印异常");
-            }
-        });
+                @Override
+                public void onTaskFinish(JSONObject rspJSON) {
+                    if (!rspJSON.optString("responseCode").equals("00")) {
+                        ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+                    }
+                }
+
+                @Override
+                public void onTaskCancelled() {
+                }
+
+                @Override
+                public void onException(Exception e) {
+                    ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
+                }
+            });
+        }else{
+            TransPrintRequest request = new TransPrintRequest(id);
+            AidlRequestManager aidlManager = AidlRequestManager.getInstance();
+            aidlManager.aidlTransPrintRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
+                @Override
+                public void onTaskStart() {
+
+                }
+
+                @Override
+                public void onTaskCancelled() {
+                    ToastUtils.sendtoastbyhandler(handler, "打印取消");
+                }
+
+                @Override
+                public void onTaskFinish(JSONObject rspJSON) {
+                    if (!rspJSON.optString("responseCode").equals("00")) {
+                        ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+                    }
+                }
+
+                @Override
+                public void onException(Exception e) {
+                    ToastUtils.sendtoastbyhandler(handler, "打印异常");
+                }
+            });
+        }
     }
 
     @Override
@@ -441,15 +467,49 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 new OfflineReturnDialog(this).show();
                 break;
             case R.id.rl_bank:
+                if(AppConfigFile.isOffLineMode()){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
+                    return;
+                }
+                if(!getPayType(PaymentTypeEnum.BANK)){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.no_config));
+                    return;
+                }
+                Intent intentBank = new Intent(this,ThirdPayControllerDialog.class);
+                intentBank.putExtra(ConstantData.PAY_TYPE, PaymentTypeEnum.BANK.getStyletype());
+                startActivity(intentBank);
+                break;
             case R.id.rl_weichat:
                 if(AppConfigFile.isOffLineMode()){
                     ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
                     return;
                 }
+                if(!getPayType(PaymentTypeEnum.WECHAT)){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.no_config));
+                    return;
+                }
                 Intent intent = new Intent(this,ThirdPayControllerDialog.class);
+                intent.putExtra(ConstantData.PAY_TYPE, PaymentTypeEnum.WECHAT.getStyletype());
                 startActivity(intent);
                 break;
         }
+    }
+
+    /**
+     * @author zmm emial:mingming.zhang@symboltech.com 2015年11月17日
+     * @Description: 获取支付方式Id
+     *
+     */
+    private Boolean getPayType(PaymentTypeEnum typeEnum) {
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return false;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getType().equals(typeEnum.getStyletype())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void gotoPay(){

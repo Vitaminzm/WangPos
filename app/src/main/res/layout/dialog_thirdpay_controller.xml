@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/height_xzz"
     android:layout_height="@dimen/height_fzz"
+    android:id="@+id/ll_keyboard"
     android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
@@ -151,8 +152,8 @@
             android:layout_height="@dimen/height_ez"
             android:gravity="center"
             android:textColor="@color/font_color"
-            android:editable="false"
-            android:text="@string/pay_bu_print_bill"
+            android:textColorHint="@color/hint_color"
+            android:background="@drawable/edittext_2_bg_selector"
             android:textSize="@dimen/font_size_rz" />
         <LinearLayout
             android:layout_marginTop="@dimen/margin_vz"
@@ -203,7 +204,7 @@
             android:textColorHint="@color/hint_color"
             android:textColor="@color/font_color"
             android:layout_width="match_parent"
-            android:textSize="@dimen/font_size_tf"
+            android:textSize="@dimen/font_size_fz"
             android:layout_height="@dimen/height_sz" />
 
         <TextView

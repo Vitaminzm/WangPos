@@ -138,13 +138,13 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 				ll_function_print_order.setVisibility(View.VISIBLE);
 				break;
 			case R.id.text_print_slip:
-				String bankId = SpSaveUtils.read(context, ConstantData.LAST_BANK_TRANS, "");
-				if (!bankId.equals("")){
-					((MainActivity)context).print_last(bankId);
+//				String bankId = SpSaveUtils.read(context, ConstantData.LAST_BANK_TRANS, "");
+//				if (!bankId.equals("")){
+					((MainActivity)context).print_last(null);
 					dismiss();
-				}else{
-					ToastUtils.sendtoastbyhandler(handler,"没有银行交易记录");
-				}
+//				}else{
+//					ToastUtils.sendtoastbyhandler(handler,"没有银行交易记录");
+//				}
 				break;
 			case R.id.imageview_close:
 				dismiss();
