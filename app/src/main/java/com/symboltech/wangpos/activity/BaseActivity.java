@@ -148,17 +148,17 @@ public abstract class BaseActivity extends Activity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		switch (keyCode) {
-			case KeyEvent.KEYCODE_HOME:
-				return true;
+//			case KeyEvent.KEYCODE_HOME:
+//				return true;
 			case KeyEvent.KEYCODE_BACK:
 				return true;
 		}
 		return super.onKeyDown(keyCode, event);
 	}
 
-//	@Override
-//	public void onAttachedToWindow(){
-//		this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
-//		super.onAttachedToWindow();
-//	}
+	@Override
+	public void onAttachedToWindow(){
+		//this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
+		super.onAttachedToWindow();
+	}
 }

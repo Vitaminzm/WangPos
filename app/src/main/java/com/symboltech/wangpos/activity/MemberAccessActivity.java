@@ -195,7 +195,8 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     protected void onResume() {
         super.onResume();
         text_phone_number.setChecked(true);
-        verifyByPhone();
+        ll_swaip_card.setVisibility(View.GONE);
+        ll_phone_number.setVisibility(View.VISIBLE);
 
     }
 
@@ -334,7 +335,6 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         if (resultCode == ConstantData.QRCODE_RESULT_MEMBER_VERIFY) {
             switch (requestCode) {
                 case ConstantData.QRCODE_REQURST_MEMBER_VERIFY:
-                    verifyByPhone();
                     if (!StringUtil.isEmpty(data.getExtras().getString("QRcode"))) {
                         Message msg = Message.obtain();
                         msg.obj = data.getExtras().getString("QRcode");
