@@ -885,7 +885,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }else{
                 OrderInfoDao dao = new OrderInfoDao(MyApplication.context);
                 int count = dao.getOffLineDataCount();
-                if(count > 0){
+                int countBank = dao.getBankOffLineDataCount();
+                if(count > 0 || countBank > 0){
                     AppConfigFile.setUploadStatus(ConstantData.UPLOAD_ING);
                     if(isAuto) {
                         Intent serviceintent = new Intent(mContext, RunTimeService.class);

@@ -79,12 +79,12 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 	};
 	
 	public SelectCarPlateDialog(Context context) {
-		super(context, R.style.alert_dialog);
+		super(context, R.style.dialog_login_bg);
 		this.context = context;
 	}
 
 	public SelectCarPlateDialog(Context context, MemberInfo member, String hour, String addhour, String billId,FinishSendCoupon finish) {
-		super(context, R.style.alert_dialog);
+		super(context, R.style.dialog_login_bg);
 		this.context = context;
 		this.member = member;
 		this.hour = hour;

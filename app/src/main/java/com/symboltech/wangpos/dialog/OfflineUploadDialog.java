@@ -24,12 +24,12 @@ public class OfflineUploadDialog extends Dialog {
 	private boolean isForce = false;
 	
 	public OfflineUploadDialog(Context context) {
-		super(context, R.style.alert_dialog);
+		super(context, R.style.dialog_login_bg);
 		this.context = context;
 	}
 
 	public OfflineUploadDialog(Context context,boolean isForce) {
-		super(context, R.style.alert_dialog);
+		super(context, R.style.dialog_login_bg);
 		this.context = context;
 		this.isForce = isForce;
 	}
