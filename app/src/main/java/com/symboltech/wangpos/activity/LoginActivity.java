@@ -380,7 +380,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      */
     private void loginforhttp(final String username, final String password) {
         Map<String, String> map = new HashMap<>();
-        map.put("machinecode", "0055DA1009B4");//MachineUtils.getUid(AppConfigFile.context)
+        map.put("machinecode", "0055DA1009B4");
         map.put("personcode", username);
         map.put("password", MD5Utils.md5(password));
         LogUtil.i("lgs", "MachineUtils.getUid==========" + MachineUtils.getUid(MyApplication.context));

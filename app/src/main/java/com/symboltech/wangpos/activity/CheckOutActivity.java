@@ -554,9 +554,6 @@ public class CheckOutActivity extends BaseActivity {
                 deletepayMentsInfo((List<PayMentsCancleInfo>) data.getSerializableExtra(ConstantData.CANCLE_LIST));
             }
         }
-        else {
-            paymentTypeAdapter.setPayTpyeNull();
-        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 

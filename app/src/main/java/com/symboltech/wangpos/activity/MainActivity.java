@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 
 import com.google.gson.GsonBuilder;
 import com.symboltech.koolcloud.aidl.AidlRequestManager;
+import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
@@ -33,6 +34,7 @@ import com.symboltech.wangpos.dialog.OfflineUploadDialog;
 import com.symboltech.wangpos.dialog.PrintOrderDialog;
 import com.symboltech.wangpos.dialog.ReturnDialog;
 import com.symboltech.wangpos.dialog.ThirdPayControllerDialog;
+import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
@@ -46,12 +48,15 @@ import com.symboltech.wangpos.msg.entity.OfflineGoodsInfo;
 import com.symboltech.wangpos.msg.entity.OfflinePayTypeInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.print.PrepareReceiptInfo;
+import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.BillResult;
 import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.result.OfflineDataResult;
 import com.symboltech.wangpos.result.TicketFormatResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
+import com.symboltech.wangpos.utils.ArithDouble;
+import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -78,6 +83,7 @@ import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
 import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransPrintRequest;
+import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -278,6 +284,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 //        }
         filter.addAction(ConstantData.OFFLINE_MODE);
         registerReceiver(receiver, filter);
+        registerReceiver(broadcastReceiver, new IntentFilter(
+                "cn.koolcloud.engine.ThirdPartyTrans"));
         super.onResume();
     }
 
@@ -285,6 +293,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onPause() {
         unregisterReceiver(receiver);
+        unregisterReceiver(broadcastReceiver);
         super.onPause();
     }
 
@@ -349,6 +358,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                 @Override
                 public void onException(Exception e) {
+                    LogUtil.i("lgs","---"+e.toString());
                     ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
                 }
             });
@@ -475,6 +485,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     ToastUtils.sendtoastbyhandler(handler,getString(R.string.no_config));
                     return;
                 }
+                Type = PaymentTypeEnum.BANK.getStyletype();
                 Intent intentBank = new Intent(this,ThirdPayControllerDialog.class);
                 intentBank.putExtra(ConstantData.PAY_TYPE, PaymentTypeEnum.BANK.getStyletype());
                 startActivity(intentBank);
@@ -488,6 +499,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     ToastUtils.sendtoastbyhandler(handler,getString(R.string.no_config));
                     return;
                 }
+                Type = PaymentTypeEnum.WECHAT.getStyletype();
                 Intent intent = new Intent(this,ThirdPayControllerDialog.class);
                 intent.putExtra(ConstantData.PAY_TYPE, PaymentTypeEnum.WECHAT.getStyletype());
                 startActivity(intent);
@@ -1011,5 +1023,170 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 MainActivity.this.finish();
             }
         }
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final Message message = intent.getParcelableExtra(Message.class
+                    .getName());
+            LogUtil.d("lgs", "handleMessage" + message.what + ":" + message.toString());
+            String dataString = "";
+            if (message.getData() != null) {
+                dataString = message.getData().getString("data");
+                try {
+                    LogUtil.d("lgs", "data:" + dataString);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            switch (message.what) {
+                case TransState.STATE_CSB_FINISH: {
+                    handleTransResult(true, dataString);
+                    break;
+                }
+                case TransState.STATE_CSB_FAILURE: {
+                    break;
+                }
+                default:
+                    break;
+            }
+
+        }
+    };
+    private String Type;
+     /**
+     * 处理交易结果
+     *
+     * @param isSuccess
+     * @param data
+     */
+
+    private void handleTransResult(boolean isSuccess, String data) {
+        if (isSuccess) {
+            AidlRequestManager.getInstance().aidlLastTransPrintRequest(mYunService, new AidlRequestManager.AidlRequestCallBack() {
+
+                @Override
+                public void onTaskStart() {
+                }
+
+                @Override
+                public void onTaskFinish(JSONObject rspJSON) {
+                    if (!rspJSON.optString("responseCode").equals("00")) {
+                        ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+                    }
+                }
+
+                @Override
+                public void onTaskCancelled() {
+                }
+
+                @Override
+                public void onException(Exception e) {
+                    ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
+                }
+            });
+        }
+        // 待嫁接
+        if (isSuccess) {
+            OrderBean resultBean = parse(data, isSuccess);
+            LogUtil.e("lgs", resultBean.toString());
+            if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
+                SpSaveUtils.write(getApplicationContext(),ConstantData.LAST_BANK_TRANS, resultBean.getTxnId());
+            }
+            if (resultBean.getTransType().equals(ConstantData.SALE)) {
+                saveBanInfo(getPayTypeId(Type), ConstantData.TRANS_SALE, resultBean);
+            } else if (resultBean.getTransType().equals(ConstantData.SALE_VOID)) {
+                if (resultBean.getResultCode().equals("00")) {
+                    saveBanInfo(getPayTypeId(Type), ConstantData.TRANS_REVOKE, resultBean);
+                }else{
+                    LogUtil.e("lgs", "退款失败" + data);
+                }
+            } else {
+                LogUtil.e("lgs", data);
+                return;
+            }
+        }
+    }
+
+    /**
+     * 解析交易结果
+     *
+     * @param jsonStr
+     * @param isSuccess
+     * @return
+     */
+
+    private OrderBean parse(String jsonStr, boolean isSuccess) {
+        OrderBean newBean = null;
+        try {
+            newBean = (OrderBean) GsonUtil.jsonToBean(jsonStr, OrderBean.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(newBean != null){
+            if (newBean.getOrderState().isEmpty()) {
+                newBean.setOrderState(isSuccess ? "0" : "");
+            }
+        }
+        return newBean;
+    }
+
+    private void saveBanInfo(final String payTypeId, final String transtype, final OrderBean orderBean){
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("skfsid", payTypeId);
+        map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+        map.put("billid", "-"+AppConfigFile.getBillId());
+        map.put("transtype", transtype);
+        map.put("tradeno", orderBean.getTxnId());
+        map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
+        map.put("decmoney", "0");
+        map.put("cardno", orderBean.getAccountNo()== null? "null":orderBean.getAccountNo());
+        map.put("bankcode",orderBean.getAcquId()== null? "null":orderBean.getAcquId());
+        map.put("batchno", orderBean.getBatchId()== null? "null":orderBean.getBatchId());
+        map.put("refno", orderBean.getRefNo()== null? "null":orderBean.getRefNo());
+        HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>(){
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+                OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+                dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), "-"+AppConfigFile.getBillId(), transtype, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
+                        orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
+                        orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+                        ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
+                ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName, BaseResult result) {
+                if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
+                    OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+                    dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), "-"+AppConfigFile.getBillId(), transtype, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
+                            orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
+                            orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
+                            ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
+                    ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
+                }
+            }
+        });
+    }
+
+    /**
+     * @author zmm emial:mingming.zhang@symboltech.com 2015年11月17日
+     * @Description: 获取支付方式Id
+     *
+     */
+    private String getPayTypeId(String typeEnum) {
+
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getType().equals(typeEnum)) {
+                return paymentslist.get(i).getId();
+            }
+        }
+        return null;
     }
 }

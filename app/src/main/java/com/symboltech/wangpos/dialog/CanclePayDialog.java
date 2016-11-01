@@ -331,8 +331,8 @@ public class CanclePayDialog extends BaseActivity{
 
 						@Override
 						public void onTaskFinish(JSONObject rspJSON) {
+							isCancleCount--;
 							if (!rspJSON.optString("responseCode").equals("00")) {
-								isCancleCount--;
 								info.setDes(getString(R.string.cancled_failed));
 								canclePayAdapter.notifyDataSetChanged();
 							}
@@ -381,7 +381,6 @@ public class CanclePayDialog extends BaseActivity{
 				case TransState.State_Reverse_Success: {
 					// 冲正成功
 					// 冲正成功后该笔交易失效，需要重新手动发起交易（此处需要UI提示）
-					isCancleCount--;
 					info.setDes(getString(R.string.cancled_failed));
 					canclePayAdapter.notifyDataSetChanged();
 					break;
@@ -389,7 +388,6 @@ public class CanclePayDialog extends BaseActivity{
 				case TransState.State_Reverse_Failed: {
 					// 冲正失败
 					// 冲正失败后该笔交易失效，需要重新手动发起交易（此处需要UI提示）
-					isCancleCount--;
 					info.setDes(getString(R.string.cancled_failed));
 					canclePayAdapter.notifyDataSetChanged();
 					break;
@@ -406,7 +404,6 @@ public class CanclePayDialog extends BaseActivity{
 						if (object.optString("responseCode").equals("00")) {
 							return;
 						} else {
-							isCancleCount--;
 							info.setDes(getString(R.string.cancled_failed));
 							canclePayAdapter.notifyDataSetChanged();
 						}
@@ -437,7 +434,6 @@ public class CanclePayDialog extends BaseActivity{
 				case TransState.State_Neeed_Query: {
 					// 需要查询
 					isWaitSwip = false;
-					isCancleCount--;
 					info.setDes(getString(R.string.cancled_query));
 					canclePayAdapter.notifyDataSetChanged();
 					break;
@@ -453,7 +449,6 @@ public class CanclePayDialog extends BaseActivity{
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
-					isCancleCount--;
 					info.setDes(getString(R.string.cancled_failed));
 					canclePayAdapter.notifyDataSetChanged();
 					ToastUtils.sendtoastbyhandler(handler, "暂不支持降级交易！");
@@ -462,14 +457,12 @@ public class CanclePayDialog extends BaseActivity{
 				case TransState.State_Abord_Trans: {
 					isWaitSwip = false;
 					// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
-					isCancleCount--;
 					info.setDes(getString(R.string.cancled_failed));
 					canclePayAdapter.notifyDataSetChanged();
 					break;
 				}
 				case TransState.State_Finish_Trans: {
 					isWaitSwip = false;
-					isCancleCount--;
 					info.setIsCancle(true);
 					info.setDes(getString(R.string.cancled_pay));
 					canclePayAdapter.notifyDataSetChanged();
@@ -494,26 +487,20 @@ public class CanclePayDialog extends BaseActivity{
 							JSONObject dataJson = new JSONObject(dataString);
 							String code  = dataJson.optString("resultCode");
 							if(code == null || "".equals(code) || !"00".equals(code)){
-								isCancleCount--;
 								info.setDes(getString(R.string.cancled_failed));
 								canclePayAdapter.notifyDataSetChanged();
 								return;
 							}
-							isCancleCount--;
 							info.setIsCancle(true);
 							info.setDes(getString(R.string.cancled_pay));
 							canclePayAdapter.notifyDataSetChanged();
 							handleTransResult(true, dataString);
 						} catch (JSONException e) {
 							e.printStackTrace();
+							info.setDes(getString(R.string.cancled_failed));
+							canclePayAdapter.notifyDataSetChanged();
 						}
-						isCancleCount--;
-						info.setIsCancle(true);
-						info.setDes(getString(R.string.cancled_pay));
-						canclePayAdapter.notifyDataSetChanged();
-						handleTransResult(true, dataString);
 					} else {
-						isCancleCount--;
 						info.setDes(getString(R.string.cancled_failed));
 						canclePayAdapter.notifyDataSetChanged();
 					}
@@ -583,6 +570,9 @@ public class CanclePayDialog extends BaseActivity{
 
 				@Override
 				public void onTaskFinish(JSONObject rspJSON) {
+					if (!rspJSON.optString("responseCode").equals("00")) {
+						ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+					}
 				}
 
 				@Override

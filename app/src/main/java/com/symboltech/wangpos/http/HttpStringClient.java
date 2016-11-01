@@ -143,7 +143,8 @@ public class HttpStringClient {
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				T result = null;
-				if(response.isSuccessful()){
+				LogUtil.i("lgs", response.code()+response.message());
+				if(response != null && response.code()== 200){
 					if(!AppConfigFile.isNetConnect()) {
 						AppConfigFile.setNetConnect(true);
 					}
@@ -173,14 +174,9 @@ public class HttpStringClient {
 				}
 					httpactionhandler.handleActionFinish();
 				}else{
-					if(AppConfigFile.isNetConnect()) {
-						AppConfigFile.setNetConnect(false);
-					}
+					LogUtil.i("lgs", "response====fffff======");
 					httpactionhandler.handleActionError(actionname, response.message());
 					httpactionhandler.handleActionFinish();
-					if(!AppConfigFile.isOffLineMode()) {
-						httpactionhandler.startChangeMode();
-					}
 				}
 
 			}

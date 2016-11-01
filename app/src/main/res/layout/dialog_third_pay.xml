@@ -105,7 +105,7 @@
             android:textColorHint="@color/hint_color"
             android:textColor="@color/font_color"
             android:layout_width="match_parent"
-            android:textSize="@dimen/font_size_tf"
+            android:textSize="@dimen/font_size_fz"
             android:layout_height="@dimen/height_sz" />
 
         <TextView

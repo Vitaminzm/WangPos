@@ -644,7 +644,7 @@ public class ThirdPayDialog extends BaseActivity{
 					text_status.setText(R.string.thirdpay_reverse_success);
 					LogUtil.i("lgs", "-------------冲正成功-------------");
 					// 冲正成功后该笔交易失效，需要重新手动发起交易（此处需要UI提示）
-					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
 					break;
 				}
 				case TransState.State_Reverse_Failed: {
@@ -658,7 +658,7 @@ public class ThirdPayDialog extends BaseActivity{
 					text_status.setText(R.string.thirdpay_reverse_failed);
 					LogUtil.i("lgs", "-------------冲正失败-------------");
 					// 冲正失败后该笔交易失效，需要重新手动发起交易（此处需要UI提示）
-					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
 					break;
 				}
 
@@ -687,7 +687,7 @@ public class ThirdPayDialog extends BaseActivity{
 							text_status.setText(R.string.thirdpay_sign_success);
 						} else {
 							text_status.setText(R.string.thirdpay_sign_failed);
-							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
 						}
 					} catch (JSONException e) {
 						e.printStackTrace();
@@ -863,7 +863,7 @@ public class ThirdPayDialog extends BaseActivity{
 					} else {
 						text_status.setText(getString(R.string.thirdpay_trans_failed) + "数据异常");
 					}
-					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
 					break;
 				}
 				case TransState.State_Finish_Trans: {
@@ -878,7 +878,7 @@ public class ThirdPayDialog extends BaseActivity{
 					Message msg = Message.obtain();
 					msg.what = TRANS_FINISH;
 					msg.obj = dataString;
-					handler.sendMessageDelayed(msg, 2000);
+					handler.sendMessageDelayed(msg, 3000);
 					// 银行卡交易完成（成功）
 					break;
 				}
@@ -911,7 +911,7 @@ public class ThirdPayDialog extends BaseActivity{
 					Message msg = Message.obtain();
 					msg.what = TRANS_FINISH;
 					msg.obj = dataString;
-					handler.sendMessageDelayed(msg, 2000);
+					handler.sendMessageDelayed(msg, 3000);
 					break;
 				}
 				case TransState.STATE_BSC_FAIL: {
@@ -932,7 +932,7 @@ public class ThirdPayDialog extends BaseActivity{
 					} else {
 						text_status.setText("扫码支付失败, 数据异常");
 					}
-					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 2000);
+					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 3000);
 					break;
 				}
 				case TransState.STATE_CSB_GET_CODE: {
@@ -980,7 +980,7 @@ public class ThirdPayDialog extends BaseActivity{
 						e.printStackTrace();
 					}
 
-					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 2000);
+					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 3000);
 					break;
 				}
 				case TransState.STATE_CSB_FINISH: {
@@ -994,7 +994,7 @@ public class ThirdPayDialog extends BaseActivity{
 					Message msg = Message.obtain();
 					msg.what = TRANS_FINISH;
 					msg.obj = dataString;
-					handler.sendMessageDelayed(msg, 2000);
+					handler.sendMessageDelayed(msg, 3000);
 					break;
 				}
 				case TransState.STATE_CSB_FAILURE: {
@@ -1015,7 +1015,7 @@ public class ThirdPayDialog extends BaseActivity{
 					} else {
 						text_status.setText("扫码支付失败, 数据异常");
 					}
-					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 2000);
+					handler.sendEmptyMessageDelayed(TRANS_CANCLE, 3000);
 					break;
 				}
 				case TransState.STATE_NO_CARD_VOID_FINISH: {
@@ -1032,7 +1032,7 @@ public class ThirdPayDialog extends BaseActivity{
 							String code  = dataJson.optString("resultCode");
 							if(code == null || "".equals(code) || !"00".equals(code)){
 								text_paying_msg.setText("撤销失败" + dataJson.optString("resultMsg"));
-								handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+								handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
 								return;
 							}
 						} catch (JSONException e) {
@@ -1042,7 +1042,7 @@ public class ThirdPayDialog extends BaseActivity{
 						Message msg = Message.obtain();
 						msg.what = TRANS_FINISH;
 						msg.obj = dataString;
-						handler.sendMessageDelayed(msg, 2000);
+						handler.sendMessageDelayed(msg, 3000);
 					} else {
 						imageview_close.setVisibility(View.GONE);
 						ll_paying_by_code.setVisibility(View.GONE);
@@ -1051,7 +1051,7 @@ public class ThirdPayDialog extends BaseActivity{
 						ll_paying_status.setVisibility(View.GONE);
 						text_confirm_query.setVisibility(View.GONE);
 						text_paying_msg.setText("交易撤销结果处理异常");
-						handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+						handler.sendEmptyMessageDelayed(TRANS_AGAIN, 3000);
 					}
 
 					break;
@@ -1081,6 +1081,9 @@ public class ThirdPayDialog extends BaseActivity{
 
 				@Override
 				public void onTaskFinish(JSONObject rspJSON) {
+					if (!rspJSON.optString("responseCode").equals("00")) {
+						ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+					}
 				}
 
 				@Override

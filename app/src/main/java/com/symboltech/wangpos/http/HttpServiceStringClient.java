@@ -97,12 +97,12 @@ public class HttpServiceStringClient {
 		}
 		param.put("token", SpSaveUtils.read(MyApplication.context, ConstantData.LOGIN_TOKEN, ""));
 		FormBody.Builder builder = new FormBody.Builder();
-
 		Set<Map.Entry<String, String>> set = param.entrySet();
 		for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
 			Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
 			builder.add(entry.getKey(), entry.getValue());
 		}
+		LogUtil.i("lgs","map--ss---"+param.toString());
 		FormBody formBody = builder.build();
 		Request request = new Request.Builder()
 				.url(url)
@@ -111,6 +111,10 @@ public class HttpServiceStringClient {
 		requestPost(url, param, request, new Callback() {
 			@Override
 			public void onFailure(Call call, IOException e) {
+
+				if (AppConfigFile.isNetConnect()) {
+					AppConfigFile.setNetConnect(false);
+				}
 				httpactionhandler.handleActionError(actionname, e.getMessage());
 				httpactionhandler.handleActionFinish();
 			}
@@ -118,7 +122,8 @@ public class HttpServiceStringClient {
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				T result = null;
-				if(response.isSuccessful()){
+				LogUtil.i("lgs", response.code()+response.message());
+				if(response != null && response.code()== 200){
 					if(!AppConfigFile.isNetConnect()) {
 						AppConfigFile.setNetConnect(true);
 					}
@@ -147,9 +152,6 @@ public class HttpServiceStringClient {
 					e.printStackTrace();
 				}
 				}else{
-					if(AppConfigFile.isNetConnect()) {
-						AppConfigFile.setNetConnect(false);
-					}
 					httpactionhandler.handleActionError(actionname, response.message());
 				}
 				httpactionhandler.handleActionFinish();

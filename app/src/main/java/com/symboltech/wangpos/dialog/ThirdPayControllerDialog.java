@@ -1197,6 +1197,9 @@ public class ThirdPayControllerDialog extends BaseActivity{
 
 				@Override
 				public void onTaskFinish(JSONObject rspJSON) {
+					if (!rspJSON.optString("responseCode").equals("00")) {
+						ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+					}
 				}
 
 				@Override
