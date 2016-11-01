@@ -22,6 +22,7 @@ import com.symboltech.wangpos.adapter.PaymentTypeInfoDetailAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.dialog.SelectCarPlateDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -352,6 +353,7 @@ public class PaymentDetailActivity extends BaseActivity {
                 getCouponPrintInfo();
                 break;
             case R.id.text_selected_plate:
+                new SelectCarPlateDialog(this).show();
                 break;
             case R.id.text_done:
                 printByorder(bill);
