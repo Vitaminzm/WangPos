@@ -54,9 +54,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void printerOrderagain(Map<String, String> param, final Class<T> clz,
+	public <T> void printerOrderagain(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/GetReprintInfo"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/GetReprintInfo"), param, clz,
 				httpactionhandler);
 	}
 
@@ -69,9 +69,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void thirdpay(Map<String, String> param, final Class<T> clz,
+	public <T> void thirdpay(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/paycenter/pay"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/paycenter/pay"), param, clz,
 				httpactionhandler);
 	}
 
@@ -84,9 +84,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void thirdpaycancel(Map<String, String> param, final Class<T> clz,
+	public <T> void thirdpaycancel(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/paycenter/cancel"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/paycenter/cancel"), param, clz,
 				httpactionhandler);
 	}
 
@@ -99,9 +99,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void thirdpaysalesreturn(Map<String, String> param, final Class<T> clz,
+	public <T> void thirdpaysalesreturn(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/paycenter/refund"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/paycenter/refund"), param, clz,
 				httpactionhandler);
 	}
 
@@ -114,9 +114,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void thirdpayquery(Map<String, String> param, final Class<T> clz,
+	public <T> void thirdpayquery(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/paycenter/query"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/paycenter/query"), param, clz,
 				httpactionhandler);
 	}
 
@@ -129,8 +129,8 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void login(Map<String, String> param, final Class<T> clz, final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject("login", getUrl("xbapi/login"), param, clz,
+	public <T> void login(String tag, Map<String, String> param, final Class<T> clz, final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/login"), param, clz,
 				httpactionhandler);
 	}
 
@@ -142,8 +142,8 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void unlock(Map<String, String> param, final Class<T> clz, final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject("unlock", getUrl("xbapi/unlock"), param, clz,
+	public <T> void unlock(String tag, Map<String, String> param, final Class<T> clz, final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/unlock"), param, clz,
 				httpactionhandler);
 	}
 
@@ -155,9 +155,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void getmemberinfo(Map<String, String> param, final Class<T> clz,
+	public <T> void getmemberinfo(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/GetMemberInfo"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/GetMemberInfo"), param, clz,
 				httpactionhandler);
 	}
 
@@ -169,9 +169,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void initialize(Map<String, String> param, final Class<T> clz,
+	public <T> void initialize(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/GetPosInitializeInfo"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/GetPosInitializeInfo"), param, clz,
 				httpactionhandler);
 	}
 
@@ -182,9 +182,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void getOrderInfo(Map<String, String> param, final Class<T> clz,
+	public <T> void getOrderInfo(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/GetOldTicket"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/GetOldTicket"), param, clz,
 				httpactionhandler);
 	}
 
@@ -195,9 +195,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void commitReturnOrder(Map<String, String> param, final Class<T> clz,
+	public <T> void commitReturnOrder(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/saveArticles"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/saveArticles"), param, clz,
 				httpactionhandler);
 	}
 
@@ -210,9 +210,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void submitgoods(Map<String, String> param, final Class<T> clz,
+	public <T> void submitgoods(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/saveArticles"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/saveArticles"), param, clz,
 				httpactionhandler);
 	}
 
@@ -223,9 +223,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void getReportInfo(Map<String, String> param, final Class<T> clz,
+	public <T> void getReportInfo(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/GetReportData"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/GetReportData"), param, clz,
 				httpactionhandler);
 	}
 
@@ -236,9 +236,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void getAllMemberInfo(Map<String, String> param, final Class<T> clz,
+	public <T> void getAllMemberInfo(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/GetMemberallInfo"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/GetMemberallInfo"), param, clz,
 				httpactionhandler);
 	}
 
@@ -249,9 +249,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void saveReturnOrder(Map<String, String> param, final Class<T> clz,
+	public <T> void saveReturnOrder(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/confirmBill"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/confirmBill"), param, clz,
 				httpactionhandler);
 	}
 
@@ -262,9 +262,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void sendSMSverify(Map<String, String> param, final Class<T> clz,
+	public <T> void sendSMSverify(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/requestverifycode"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/requestverifycode"), param, clz,
 				httpactionhandler);
 	}
 
@@ -275,9 +275,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void getSMSverify(Map<String, String> param, final Class<T> clz,
+	public <T> void getSMSverify(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/checkoutverifycode"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/checkoutverifycode"), param, clz,
 				httpactionhandler);
 	}
 
@@ -288,9 +288,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void getPaperCoupon(Map<String, String> param, final Class<T> clz,
+	public <T> void getPaperCoupon(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/getpapercoupon"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/getpapercoupon"), param, clz,
 				httpactionhandler);
 	}
 
@@ -301,9 +301,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void calcutePointExchange(Map<String, String> param, final Class<T> clz,
+	public <T> void calcutePointExchange(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/calcutePointExchange"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/calcutePointExchange"), param, clz,
 				httpactionhandler);
 	}
 
@@ -314,9 +314,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void getPaymentType(Map<String, String> param, final Class<T> clz,
+	public <T> void getPaymentType(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/GetPay"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/GetPay"), param, clz,
 				httpactionhandler);
 	}
 	
@@ -327,9 +327,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void getCouponPrintInfo(Map<String, String> param, final Class<T> clz,
+	public <T> void getCouponPrintInfo(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/saveprintcoupon"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/saveprintcoupon"), param, clz,
 				httpactionhandler);
 	}
 	
@@ -340,25 +340,12 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void sendCouponInfo(Map<String, String> param, final Class<T> clz,
+	public <T> void sendCouponInfo(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/sendecoupon"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/sendecoupon"), param, clz,
 				httpactionhandler);
 	}
 
-	/**
-	 * @Description 获取小票格式
-	 * @author zmm
-	 * @param param
-	 * @param clz
-	 * @param httpactionhandler
-	 */
-	public <T> void getTicketFormat(Map<String, String> param, final Class<T> clz,
-			final HttpActionHandle<T> httpactionhandler) {
-		HttpServiceStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/gettick"), param, clz,
-				httpactionhandler);
-	}
-	
 	/**
 	 * @Description 提交订单前的券验证
 	 * @author zmm
@@ -366,9 +353,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void checkPaperCoupon(Map<String, String> param, final Class<T> clz,
+	public <T> void checkPaperCoupon(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/checkpapercoupon"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/checkpapercoupon"), param, clz,
 				httpactionhandler);
 	}
 	
@@ -379,9 +366,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void manualParkCoupon(Map<String, String> param, final Class<T> clz,
+	public <T> void manualParkCoupon(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/manualparkcoupon"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/manualparkcoupon"), param, clz,
 				httpactionhandler);
 	}
 	
@@ -392,12 +379,25 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void actiateMember(Map<String, String> param, final Class<T> clz,
+	public <T> void actiateMember(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/registermemeber"), param, clz,
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/registermemeber"), param, clz,
 				httpactionhandler);
 	}
-	
+
+	/**
+	 * @Description 获取小票格式
+	 * @author zmm
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void getTicketFormat(String tag, Map<String, String> param, final Class<T> clz,
+									final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/gettick"), param, clz,
+				httpactionhandler);
+	}
+
 	/**
 	 * @Description 保存银行交易信息
 	 * @author zmm
@@ -457,9 +457,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void monitorSKT(Map<String, String> param, final Class<T> clz,
+	public <T> void monitorSKT(String tag, Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpServiceStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/monitorskt"), param, clz,
+		HttpServiceStringClient.getinstance().getForObject(tag, getUrl("xbapi/monitorskt"), param, clz,
 				httpactionhandler);
 	}
 	

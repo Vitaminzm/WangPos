@@ -414,4 +414,7 @@ public class ConstantData {
 
 	/** 查询*/
 	public static final String TRANS_QUERY = "4";
+
+	/** 网络请求Tag */
+	public static final String NET_TAG = "net_tag";
 }

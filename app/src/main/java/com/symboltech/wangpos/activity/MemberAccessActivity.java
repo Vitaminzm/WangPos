@@ -385,7 +385,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         Map<String, String> map = new HashMap<>();
         map.put("condType", verifyType);
         map.put("condValue", verifyValue);
-        HttpRequestUtil.getinstance().getmemberinfo(map, MemberInfoResult.class,
+        HttpRequestUtil.getinstance().getmemberinfo(HTTP_TASK_KEY, map, MemberInfoResult.class,
                 new HttpActionHandle<MemberInfoResult>() {
 
                     @Override
@@ -462,7 +462,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     private void getAllMemberInfo(String memberID, final String isChecked, final String verifyType) {
         Map<String, String> map = new HashMap<String, String>();
         map.put("id", memberID);
-        HttpRequestUtil.getinstance().getAllMemberInfo(map, AllMemeberInfoResult.class,
+        HttpRequestUtil.getinstance().getAllMemberInfo(HTTP_TASK_KEY, map, AllMemeberInfoResult.class,
                 new HttpActionHandle<AllMemeberInfoResult>() {
 
                     @Override

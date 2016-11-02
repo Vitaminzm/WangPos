@@ -296,7 +296,7 @@ public class MemberEquityActivity extends BaseActivity {
         Map<String, String> map = new HashMap<String, String>();
         map.put("billId", billId);
         map.put("couponcode", couponcode);
-        HttpRequestUtil.getinstance().getPaperCoupon(map, CouponResult.class,
+        HttpRequestUtil.getinstance().getPaperCoupon(HTTP_TASK_KEY, map, CouponResult.class,
                 new HttpActionHandle<CouponResult>() {
 
                     @Override
@@ -371,7 +371,7 @@ public class MemberEquityActivity extends BaseActivity {
         Map<String, String> map = new HashMap<String, String>();
         map.put("id", id);
         map.put("point", point);
-        HttpRequestUtil.getinstance().calcutePointExchange(map, ExchangemsgResult.class, new HttpActionHandle<ExchangemsgResult>() {
+        HttpRequestUtil.getinstance().calcutePointExchange(HTTP_TASK_KEY, map, ExchangemsgResult.class, new HttpActionHandle<ExchangemsgResult>() {
 
             @Override
             public void handleActionStart() {
@@ -457,7 +457,7 @@ public class MemberEquityActivity extends BaseActivity {
         map.put("billId", id);
         String json = new Gson().toJson(coupons);
         map.put("coupon", json);
-        HttpRequestUtil.getinstance().checkPaperCoupon(map, CheckCouponResult.class, new HttpActionHandle<CheckCouponResult>() {
+        HttpRequestUtil.getinstance().checkPaperCoupon(HTTP_TASK_KEY, map, CheckCouponResult.class, new HttpActionHandle<CheckCouponResult>() {
 
             @Override
             public void handleActionStart() {

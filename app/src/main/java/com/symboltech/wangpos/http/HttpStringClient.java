@@ -80,6 +80,20 @@ public class HttpStringClient {
 		return httpClient;
 	}
 
+	public void cancleRequest(String tag){
+		if (tag == null){
+			return;
+		}
+		synchronized (httpClient.dispatcher().getClass()) {
+			for (Call call : httpClient.dispatcher().queuedCalls()) {
+				if (tag.equals(call.request().tag())) call.cancel();
+			}
+			for (Call call : httpClient.dispatcher().runningCalls()) {
+				if (tag.equals(call.request().tag())) call.cancel();
+			}
+		}
+		//httpClient.dispatcher().cancelAll();
+	}
 	/**
 	 *
 	 * @param actionname
@@ -106,6 +120,7 @@ public class HttpStringClient {
 		param.put("token", SpSaveUtils.read(MyApplication.context, ConstantData.LOGIN_TOKEN, ""));
 		FormBody.Builder builder = new FormBody.Builder();
 
+
 		Set<Map.Entry<String, String>> set = param.entrySet();
 		for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
 			Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
@@ -113,20 +128,19 @@ public class HttpStringClient {
 		}
 		LogUtil.i("lgs","map-----"+param.toString());
 		FormBody formBody = builder.build();
-		Request request = new Request.Builder()
+		Request request = new Request.Builder().tag(actionname)
 				.url(url)
 				.post(formBody)
 				.build();
 		requestPost(url, param, request, new Callback() {
 			@Override
 			public void onFailure(Call call, IOException e) {
-				if (AppConfigFile.isNetConnect()) {
-					AppConfigFile.setNetConnect(false);
-				}
 				e.printStackTrace();
-				LogUtil.i("lgs", "======================================="+e.getCause()+"---"+e.getMessage());
+				Boolean ret = false;
+				LogUtil.i("lgs", "======================"+e.getCause()+"---"+e.getMessage());
 				if(e.getMessage() != null){
 					if (e.getMessage().contains("failed to connect to")){
+						ret = true;
 						httpactionhandler.handleActionError(actionname, "网络连接超时");
 					}else{
 						httpactionhandler.handleActionError(actionname, e.getMessage());
@@ -135,8 +149,13 @@ public class HttpStringClient {
 					httpactionhandler.handleActionError(actionname, "网络连接异常！");
 				}
 				httpactionhandler.handleActionFinish();
-				if(!AppConfigFile.isOffLineMode()) {
-					httpactionhandler.startChangeMode();
+				if(ret){
+					if (AppConfigFile.isNetConnect()) {
+						AppConfigFile.setNetConnect(false);
+					}
+					if(!AppConfigFile.isOffLineMode()) {
+						httpactionhandler.startChangeMode();
+					}
 				}
 			}
 

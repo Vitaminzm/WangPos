@@ -32,6 +32,7 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.http.HttpStringClient;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -225,7 +226,7 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 		if(cardno != null)
 			map.put("cardno", cardno);
 		map.put("billid", billId);
-		HttpRequestUtil.getinstance().manualParkCoupon(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+		HttpRequestUtil.getinstance().manualParkCoupon(ConstantData.NET_TAG, map, BaseResult.class, new HttpActionHandle<BaseResult>() {
 
 			@Override
 			public void handleActionStart() {
@@ -277,6 +278,7 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 	@Override
 	public void dismiss() {
 		mHandler.removeCallbacksAndMessages(null);
+		HttpStringClient.getinstance().cancleRequest(ConstantData.NET_TAG);
 		super.dismiss();
 	}
 	

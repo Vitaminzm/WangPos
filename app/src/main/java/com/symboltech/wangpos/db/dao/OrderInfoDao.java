@@ -191,7 +191,7 @@ public class OrderInfoDao {
 	public String getMaxbillid(){
 		String result = "0";
 		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor cursor = db.rawQuery("select max(billid) AS maxId from user_order where status = ?", new String[]{ "1" });
+		Cursor cursor = db.rawQuery("select max(billid) AS maxId from user_order where status = ?", new String[]{"1"});
 		if (cursor.moveToFirst()) {
 			result = cursor.getString(0);
 		}
@@ -209,7 +209,7 @@ public class OrderInfoDao {
 	public String findOrderStatus(String orderid) {
 		String result = null;
 		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor cursor = db.query("user_order", new String[]{"status"}, "billid = ?", new String[] { orderid }, null, null, null);
+		Cursor cursor = db.query("user_order", new String[]{"status"}, "billid = ?", new String[]{orderid}, null, null, null);
 		if (cursor.moveToFirst()) {
 			result = cursor.getString(0);
 		}
@@ -307,7 +307,7 @@ public class OrderInfoDao {
 			db.endTransaction();
 			db.close();
 		}
-		LogUtil.i("lgs", "addOrderGoodsInfo---"+ ret);
+		LogUtil.i("lgs", "addOrderGoodsInfo---" + ret);
 		return ret;
 	}
 
@@ -338,7 +338,7 @@ public class OrderInfoDao {
 			values.put("status", status);
 			values.put("saletime", time);
 			int success = 0;
-			success = db.update("user_order", values, "billid = ?", new String[]{ billid });
+			success = db.update("user_order", values, "billid = ?", new String[]{billid});
 
 			if(success > 0){
 				ret = true;
@@ -451,6 +451,26 @@ public class OrderInfoDao {
 		return ret;
 	}
 
+	/**
+	 * 删除账单信息 BY时间（会级联删除商品以及支付表）
+	 * @param date
+	 * @return
+	 */
+	public boolean deleteBankInfoBytime(String date){
+		boolean ret = false;
+		if (!StringUtil.isEmpty(date)){
+			SQLiteDatabase db = helper.getWritableDatabase();
+			db.execSQL("pragma foreign_keys=on");
+			int success = 0;
+			success = db.delete("bank_info", "date(skrq) <= date(?) and offline = ? ", new String[]{ date, "1" });
+			db.close();
+			if(success > 0){
+				ret = true;
+			}
+		}
+		LogUtil.i("lgs", "deleteOrderBytime---"+ ret);
+		return ret;
+	}
 	/**
 	 * 获取离线商品信息BY orderid
 	 *

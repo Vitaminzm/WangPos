@@ -30,6 +30,7 @@ import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.interfaces.OnDrawableClickListener;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.msg.entity.ConfigList;
 import com.symboltech.wangpos.msg.entity.LoginInfo;
 import com.symboltech.wangpos.result.LoginResult;
@@ -111,8 +112,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     protected void initData() {
         und = new UserNameDao(this);
         loginrole = getIntent().getIntExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
-        LogUtil.i("lgs", "" + Utils.px2dip(getApplicationContext(), 200));
-        LogUtil.i("lgs", "" + Utils.px2dip(getApplicationContext(), 160));
         switchrole();
         if (getIntent().getBooleanExtra(ConstantData.LOGIN_FIRST, false)) {
             //开启服务(上传日志及pos状态监听)
@@ -208,19 +207,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.imageview_loginout:
+                OperateLog.getInstance().stopUpload();
                 Intent service = new Intent(getApplicationContext(), RunTimeService.class);
-                service.putExtra(ConstantData.UPDATE_STATUS, true);
-                service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
-                startService(service);
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
                 InitializeConfig.clearCash(LoginActivity.this);
                 stopService(service);
                 this.finish();
                 AppConfigFile.exit();
+               // System.exit(0);
                 break;
         }
     }
@@ -276,7 +269,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void unlockforhttp(final String password) {
         Map<String, String> map = new HashMap<>();
         map.put("password", MD5Utils.md5(password));
-        HttpRequestUtil.getinstance().unlock(map, UnLockResult.class, new HttpActionHandle<UnLockResult>() {
+        HttpRequestUtil.getinstance().unlock(HTTP_TASK_KEY, map, UnLockResult.class, new HttpActionHandle<UnLockResult>() {
 
             @Override
             public void handleActionStart() {
@@ -384,7 +377,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         map.put("personcode", username);
         map.put("password", MD5Utils.md5(password));
         LogUtil.i("lgs", "MachineUtils.getUid==========" + MachineUtils.getUid(MyApplication.context));
-        HttpRequestUtil.getinstance().login(map, LoginResult.class, new HttpActionHandle<LoginResult>() {
+        HttpRequestUtil.getinstance().login(HTTP_TASK_KEY, map, LoginResult.class, new HttpActionHandle<LoginResult>() {
 
             @Override
             public void handleActionStart() {

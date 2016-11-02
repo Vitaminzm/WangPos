@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.http.HttpStringClient;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.utils.HttpWaitDialogUtils;
 
@@ -32,6 +34,7 @@ import java.lang.reflect.Method;
  */
 public abstract class BaseActivity extends Activity {
 
+	protected final String HTTP_TASK_KEY = "HttpTaskKey_" + hashCode();
 	public Context mContext;
 	public HttpWaitDialogUtils waitdialog;
 	private View decorView;
@@ -143,6 +146,7 @@ public abstract class BaseActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		recycleMemery();
+		HttpStringClient.getinstance().cancleRequest(HTTP_TASK_KEY);
 	}
 
 	@Override

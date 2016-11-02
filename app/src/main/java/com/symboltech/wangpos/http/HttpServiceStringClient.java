@@ -77,6 +77,16 @@ public class HttpServiceStringClient {
 		return httpServiceClient;
 	}
 
+	public void cancleRequest(){
+		synchronized (httpServiceClient.dispatcher().getClass()) {
+			for (Call call : httpServiceClient.dispatcher().queuedCalls()) {
+				if (ConstantData.NET_TAG.equals(call.request().tag())) call.cancel();
+			}
+			for (Call call : httpServiceClient.dispatcher().runningCalls()) {
+				if (ConstantData.NET_TAG.equals(call.request().tag())) call.cancel();
+			}
+		}
+	}
 	/**
 	 *
 	 * @param actionname
@@ -104,16 +114,24 @@ public class HttpServiceStringClient {
 		}
 		LogUtil.i("lgs","map--ss---"+param.toString());
 		FormBody formBody = builder.build();
-		Request request = new Request.Builder()
+		Request request = new Request.Builder().tag(actionname)
 				.url(url)
 				.post(formBody)
 				.build();
 		requestPost(url, param, request, new Callback() {
 			@Override
 			public void onFailure(Call call, IOException e) {
-
-				if (AppConfigFile.isNetConnect()) {
-					AppConfigFile.setNetConnect(false);
+				e.printStackTrace();
+				Boolean ret = false;
+				if(e.getMessage() != null){
+					if (e.getMessage().contains("failed to connect to")){
+						ret = true;
+					}
+				}
+				if(ret){
+					if (AppConfigFile.isNetConnect()) {
+						AppConfigFile.setNetConnect(false);
+					}
 				}
 				httpactionhandler.handleActionError(actionname, e.getMessage());
 				httpactionhandler.handleActionFinish();

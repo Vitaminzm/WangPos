@@ -458,7 +458,7 @@ public class PaymentActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        HttpRequestUtil.getinstance().submitgoods(map, SubmitGoodsResult.class, new HttpActionHandle<SubmitGoodsResult>() {
+        HttpRequestUtil.getinstance().submitgoods(HTTP_TASK_KEY, map, SubmitGoodsResult.class, new HttpActionHandle<SubmitGoodsResult>() {
 
             @Override
             public void handleActionStart() {

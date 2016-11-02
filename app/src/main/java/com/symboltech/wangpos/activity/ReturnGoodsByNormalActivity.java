@@ -216,7 +216,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                HttpRequestUtil.getinstance().commitReturnOrder(map, CommitOrderResult.class, new HttpActionHandle<CommitOrderResult>() {
+                HttpRequestUtil.getinstance().commitReturnOrder(HTTP_TASK_KEY, map, CommitOrderResult.class, new HttpActionHandle<CommitOrderResult>() {
 
                     @Override
                     public void handleActionStart() {

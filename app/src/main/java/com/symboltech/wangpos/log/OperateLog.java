@@ -69,7 +69,10 @@ public class OperateLog {
 	};
 
 	public static void stopUpload(){
-		timer.cancel();
+		if(timer != null){
+			timer.cancel();
+			timer = null;
+		}
 	}
 	public static OperateLog getInstance() {
 		if (operateLog == null) {

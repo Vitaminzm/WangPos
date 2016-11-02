@@ -23,6 +23,7 @@ import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.http.HttpStringClient;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.result.BillResult;
@@ -92,6 +93,7 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 	public void dismiss() {
 		super.dismiss();
 		handler.removeCallbacksAndMessages(null);
+		HttpStringClient.getinstance().cancleRequest(ConstantData.NET_TAG);
 	}
 
 	@Override
@@ -176,7 +178,7 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("posno", posno);
 		map.put("billid", billId);
-		HttpRequestUtil.getinstance().getOrderInfo(map, BillResult.class, new HttpActionHandle<BillResult>() {
+		HttpRequestUtil.getinstance().getOrderInfo(ConstantData.NET_TAG, map, BillResult.class, new HttpActionHandle<BillResult>() {
 			@Override
 			public void handleActionStart() {
 				ll_function_return_order.setVisibility(View.GONE);

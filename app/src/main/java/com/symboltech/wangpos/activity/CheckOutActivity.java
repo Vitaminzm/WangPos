@@ -586,7 +586,7 @@ public class CheckOutActivity extends BaseActivity {
             LogUtil.v("lgs", "订单转换失败");
             e.printStackTrace();
         }
-        HttpRequestUtil.getinstance().saveReturnOrder(map, SaveOrderResult.class, new HttpActionHandle<SaveOrderResult>() {
+        HttpRequestUtil.getinstance().saveReturnOrder(HTTP_TASK_KEY, map, SaveOrderResult.class, new HttpActionHandle<SaveOrderResult>() {
             @Override
             public void handleActionStart() {
                 super.handleActionStart();

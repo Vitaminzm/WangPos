@@ -145,7 +145,7 @@ public class MemberActivateActivity extends BaseActivity {
         map.put("certnum", shenfen_no);
         map.put("name", name);
         map.put("cardnum", card_no);
-        HttpRequestUtil.getinstance().actiateMember(map, BaseResult.class, new HttpActionHandle<BaseResult>(){
+        HttpRequestUtil.getinstance().actiateMember(HTTP_TASK_KEY, map, BaseResult.class, new HttpActionHandle<BaseResult>(){
 
             @Override
             public void handleActionStart() {

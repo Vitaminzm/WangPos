@@ -216,7 +216,7 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        HttpRequestUtil.getinstance().commitReturnOrder(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+        HttpRequestUtil.getinstance().commitReturnOrder(HTTP_TASK_KEY, map, BaseResult.class, new HttpActionHandle<BaseResult>() {
 
             @Override
             public void handleActionStart() {

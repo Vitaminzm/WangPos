@@ -400,7 +400,7 @@ public class PaymentDetailActivity extends BaseActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        HttpRequestUtil.getinstance().getCouponPrintInfo(map, PrintCouponResult.class, new HttpActionHandle<PrintCouponResult>() {
+        HttpRequestUtil.getinstance().getCouponPrintInfo(HTTP_TASK_KEY, map, PrintCouponResult.class, new HttpActionHandle<PrintCouponResult>() {
             @Override
             public void handleActionStart() {
                 super.handleActionStart();

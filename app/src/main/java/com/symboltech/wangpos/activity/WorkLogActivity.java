@@ -177,7 +177,7 @@ public class WorkLogActivity extends BaseActivity {
         } else {
             title_text_content.setText(getString(R.string.day_report));
         }
-        HttpRequestUtil.getinstance().getReportInfo(map, ReportResult.class, new HttpActionHandle<ReportResult>() {
+        HttpRequestUtil.getinstance().getReportInfo(HTTP_TASK_KEY, map, ReportResult.class, new HttpActionHandle<ReportResult>() {
 
             @Override
             public void handleActionStart() {

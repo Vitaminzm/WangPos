@@ -24,6 +24,7 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.http.HttpServiceStringClient;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.msg.entity.OfflineBankInfo;
@@ -94,8 +95,7 @@ public class RunTimeService extends Service {
 	public void checkNetStatus(final boolean isCheck) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("cashier", cashierId);
-		LogUtil.v("lgs", "cashierID = " + cashierId);
-		HttpRequestUtil.getinstance().monitorSKT(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+		HttpRequestUtil.getinstance().monitorSKT(ConstantData.NET_TAG, map, BaseResult.class, new HttpActionHandle<BaseResult>() {
 
 			@Override
 			public void handleActionStart() {
@@ -114,7 +114,6 @@ public class RunTimeService extends Service {
 
 			@Override
 			public void handleActionSuccess(String actionName, BaseResult result) {
-				LogUtil.v("lgs", "service result = " + result.getCode());
 				if (isCheck && ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
 					if (!AppConfigFile.isNetConnect()) {
 						AppConfigFile.setNetConnect(true);
@@ -146,6 +145,7 @@ public class RunTimeService extends Service {
 				// 上传操作日志
 				OperateLog.getInstance().DeleteLog(AppConfigFile.OPT_LOG_INTERVAL);
 				setCashierId(intent.getStringExtra(ConstantData.CASHIER_ID));
+				checkNetStatus(false);
 			}
 			if (intent.getBooleanExtra(ConstantData.CHECK_NET, false)) {
 				// 手动检测网络
@@ -175,7 +175,7 @@ public class RunTimeService extends Service {
 	
 	@Override
 	public void onDestroy() {
-		LogUtil.i("lgs","onDestroy-------------");
+		LogUtil.i("lgs", "onDestroy-------------");
 		cancel();
 		super.onDestroy();
 	}
@@ -197,8 +197,7 @@ public class RunTimeService extends Service {
 			mTimer.purge();
 			mTimer = null;
 		}
-		OperateLog.getInstance().stopUpload();
-		System.exit(0);
+		HttpServiceStringClient.getinstance().cancleRequest();
 	}
 
 	/**

@@ -250,6 +250,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             calendar.add(Calendar.DAY_OF_MONTH, AppConfigFile.OFFLINE_DATA_TIME);
             dBefore = calendar.getTime();
             dao.deleteOrderBytime(format.format(dBefore.getTime()));
+            dao.deleteBankInfoBytime(format.format(dBefore.getTime()));
             //删除那些交易未成功的数据
             dao.deleteOrderbyState();
             getconfigInfo();
@@ -444,12 +445,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 offlineUploadDialog.show();
                                 uploadOfflineData(null, AppConfigFile.OFFLINE_DATA_COUNT);
                             }else {
+                                Intent service = new Intent(getApplicationContext(), RunTimeService.class);
+                                service.putExtra(ConstantData.UPDATE_STATUS, true);
+                                service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
+                                startService(service);
                                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                                 intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
                                 MainActivity.this.startActivity(intent);
                                 MainActivity.this.finish();
                             }
                         }else {
+                                Intent service = new Intent(getApplicationContext(), RunTimeService.class);
+                                service.putExtra(ConstantData.UPDATE_STATUS, true);
+                                service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
+                                startService(service);
                                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                                 intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
                                 MainActivity.this.startActivity(intent);
@@ -599,7 +608,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private void printByorderforHttp(final String edit) {
         Map<String, String> map = new HashMap<String, String>();
         map.put("billid", edit);
-        HttpRequestUtil.getinstance().printerOrderagain(map, BillResult.class, new HttpActionHandle<BillResult>() {
+        HttpRequestUtil.getinstance().printerOrderagain(HTTP_TASK_KEY, map, BillResult.class, new HttpActionHandle<BillResult>() {
 
             @Override
             public void handleActionStart() {
@@ -670,7 +679,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * get config info by server
      */
     protected void getconfigInfo() {
-        HttpRequestUtil.getinstance().initialize(null, InitializeInfResult.class,
+        HttpRequestUtil.getinstance().initialize(HTTP_TASK_KEY, null, InitializeInfResult.class,
                 new HttpActionHandle<InitializeInfResult>() {
 
                     @Override
@@ -716,7 +725,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     protected void getTickdatas(){
-        HttpRequestUtil.getinstance().getTicketFormat(null, TicketFormatResult.class, new HttpActionHandle<TicketFormatResult>() {
+        HttpRequestUtil.getinstance().getTicketFormat(HTTP_TASK_KEY, null, TicketFormatResult.class, new HttpActionHandle<TicketFormatResult>() {
 
             @Override
             public void handleActionError(String actionName, String errmsg) {
@@ -891,30 +900,26 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
      * @param isAuto 是不是自动上传  false 是手动上传
      */
     public void uploadOfflineData(boolean isAuto){
-        if(AppConfigFile.isNetConnect()){
-            if(AppConfigFile.getUploadStatus() == ConstantData.UPLOAD_ING){
-                ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_uploading));
+        if(AppConfigFile.getUploadStatus() == ConstantData.UPLOAD_ING){
+            ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_uploading));
+        }else{
+            OrderInfoDao dao = new OrderInfoDao(MyApplication.context);
+            int count = dao.getOffLineDataCount();
+            int countBank = dao.getBankOffLineDataCount();
+            if(count > 0 || countBank > 0){
+                AppConfigFile.setUploadStatus(ConstantData.UPLOAD_ING);
+                if(isAuto) {
+                    Intent serviceintent = new Intent(mContext, RunTimeService.class);
+                    serviceintent.putExtra(ConstantData.UPLOAD_OFFLINE_DATA, true);
+                    mContext.startService(serviceintent);
+                }else {
+                    new OfflineUploadDialog(MainActivity.this).show();
+                }
             }else{
-                OrderInfoDao dao = new OrderInfoDao(MyApplication.context);
-                int count = dao.getOffLineDataCount();
-                int countBank = dao.getBankOffLineDataCount();
-                if(count > 0 || countBank > 0){
-                    AppConfigFile.setUploadStatus(ConstantData.UPLOAD_ING);
-                    if(isAuto) {
-                        Intent serviceintent = new Intent(mContext, RunTimeService.class);
-                        serviceintent.putExtra(ConstantData.UPLOAD_OFFLINE_DATA, true);
-                        mContext.startService(serviceintent);
-                    }else {
-                        new OfflineUploadDialog(MainActivity.this).show();
-                    }
-                }else{
-                    if(!isAuto) {
-                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_no_data));
-                    }
+                if(!isAuto) {
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_no_data));
                 }
             }
-        }else{
-            ToastUtils.sendtoastbyhandler(handler, getString(R.string.no_netconnect_waring));
         }
     }
 
@@ -936,6 +941,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         @Override
                         public void handleActionError(String actionName, String errmsg) {
                             AppConfigFile.setUploadStatus(ConstantData.UPLOAD_SUCCESS);
+                            Intent service = new Intent(getApplicationContext(), RunTimeService.class);
+                            service.putExtra(ConstantData.UPDATE_STATUS, true);
+                            service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
+                            startService(service);
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
                             MainActivity.this.startActivity(intent);
@@ -987,6 +996,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         @Override
                         public void handleActionError(String actionName, String errmsg) {
                             AppConfigFile.setUploadStatus(ConstantData.UPLOAD_SUCCESS);
+                            Intent service = new Intent(getApplicationContext(), RunTimeService.class);
+                            service.putExtra(ConstantData.UPDATE_STATUS, true);
+                            service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
+                            startService(service);
                             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                             intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
                             MainActivity.this.startActivity(intent);
@@ -1017,6 +1030,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             if(dao.getOffLineDataCount() > 0 || dao.getBankOffLineDataCount() > 0 ) {
                 new OfflineUpdateByLogDialog(MainActivity.this).show();
             }else {
+                Intent service = new Intent(getApplicationContext(), RunTimeService.class);
+                service.putExtra(ConstantData.UPDATE_STATUS, true);
+                service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
+                startService(service);
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                 intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
                 MainActivity.this.startActivity(intent);

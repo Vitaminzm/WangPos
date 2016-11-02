@@ -61,6 +61,7 @@ public class PrepareReceiptInfo {
 	private static final int FONT_DEFAULT = 0x1111;
 	private static final int FONT_BIG = 0x1124;
 
+	private static final String unit = "						元";
 	/**
 	 * 封装酷券核销小票打印信息
 	 * @param
@@ -556,7 +557,7 @@ public class PrepareReceiptInfo {
 		if (sale.getSalelist() != null) {
 			for (ReportDetailInfo info : sale.getSalelist()) {
 				if (info.getName() != null && info.getMoney() != null) {
-					addMultiTextJson(array, FONT_DEFAULT, info.getName(), info.getMoney()+"						元");
+					addMultiTextJson(array, FONT_DEFAULT, info.getName(), info.getMoney()+ unit);
 					//addTextJson(array, FONT_DEFAULT, formatLString(8, info.getName()) + info.getMoney(), PrinterManager.CONTENT_ALIGN_LEFT);
 				}
 			}
@@ -579,7 +580,7 @@ public class PrepareReceiptInfo {
 		if (refund.getRefundlist() != null) {
 			for (ReportDetailInfo info : refund.getRefundlist()) {
 				if (info.getName() != null && info.getMoney() != null) {
-					addMultiTextJson(array, FONT_DEFAULT,info.getName(),info.getMoney()+"						元");
+					addMultiTextJson(array, FONT_DEFAULT,info.getName(),info.getMoney()+unit);
 					//addTextJson(array, FONT_DEFAULT, formatLString(8, info.getName()) + info.getMoney().replaceAll("-", ""), PrinterManager.CONTENT_ALIGN_LEFT);
 				}
 			}
@@ -602,7 +603,7 @@ public class PrepareReceiptInfo {
 		if (total.getTotallist() != null) {
 			for (ReportDetailInfo info : total.getTotallist()) {
 				if (info.getName() != null && info.getMoney() != null) {
-					addMultiTextJson(array, FONT_DEFAULT,info.getName(),info.getMoney()+"						元");
+					addMultiTextJson(array, FONT_DEFAULT,info.getName(),info.getMoney()+unit);
 					//addTextJson(array, FONT_DEFAULT, formatLString(8, info.getName()) + info.getMoney().replaceAll("-", ""), PrinterManager.CONTENT_ALIGN_LEFT);
 				}
 			}
@@ -1103,7 +1104,7 @@ public class PrepareReceiptInfo {
 		}
 
 		if (!TextUtils.isEmpty(bill.getTotalmoney())) {
-			addTextJson(array, FONT_DEFAULT, formatLString(10, "合计：") + "	" + bill.getTotalmoney() + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+			addMultiTextJson(array, FONT_DEFAULT, "合计：", bill.getTotalmoney() + unit);
 		}
 
 		if (bill.getPaymentslist() != null) {
@@ -1118,46 +1119,41 @@ public class PrepareReceiptInfo {
 			}
 		}
 		if (cardValue > 0) {
-			addMultiTextJson(array, FONT_DEFAULT, "代金券：", cardValue + "						元");
+			addMultiTextJson(array, FONT_DEFAULT, "代金券：", cardValue + unit);
 			//addTextJson(array, FONT_DEFAULT, formatLString(10, "代金券：") + "	" + cardValue + "元", PrinterManager.CONTENT_ALIGN_LEFT);
 		}
 
 		if (score > 0) {
-			addMultiTextJson(array, FONT_DEFAULT, "积分抵扣：", score + "						元");
+			addMultiTextJson(array, FONT_DEFAULT, "积分抵扣：", score + unit);
 			//addTextJson(array, FONT_DEFAULT, formatLString(10, "积分抵扣：") + "	" + score + "元", PrinterManager.CONTENT_ALIGN_LEFT);
 		}
 
 		if (bill.getChangemoney() != null) {
 			changeMoney = ArithDouble.parseDouble(bill.getChangemoney());
 		}
-		addTextJson(array, FONT_DEFAULT, formatLString(10, "应付：") + "	"
-				+ ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), score), cardValue)
-				+ "元", PrinterManager.CONTENT_ALIGN_LEFT);
+		addMultiTextJson(array, FONT_DEFAULT, "应付：", ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), score), cardValue) + unit);
 
 		addDashLine(array);
-		addTextJson(array, FONT_DEFAULT, formatLString(10, "实付：") + "	"
-				+ ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), score), cardValue), changeMoney) + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+		addMultiTextJson(array, FONT_DEFAULT, "实付：", ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), score), cardValue), changeMoney) + unit);
 		if (bill.getPaymentslist() != null) {
 			for (PayMentsInfo info : bill.getPaymentslist()) {
 				if (PaymentTypeEnum.getpaymentstyle(info.getType()) != PaymentTypeEnum.SCORE
 						&& PaymentTypeEnum.getpaymentstyle(info.getType()) != PaymentTypeEnum.COUPON) {
 					if (PaymentTypeEnum.getpaymentstyle(info.getType()) == PaymentTypeEnum.CASH) {
 						if ("1".equals(info.getId())) {
-							addMultiTextJson(array, FONT_DEFAULT, info.getName(), (ArithDouble.parseDouble(info.getMoney()) + changeMoney) + "						元");
-							//addTextJson(array, FONT_DEFAULT, formatLString(10, info.getName()) + "	" + (ArithDouble.parseDouble(info.getMoney()) + changeMoney) + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+							addMultiTextJson(array, FONT_DEFAULT, info.getName(), (ArithDouble.parseDouble(info.getMoney()) + changeMoney) + unit);
 						} else {
-							addMultiTextJson(array, FONT_DEFAULT, info.getName(), ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage())) + "						元");
+							addMultiTextJson(array, FONT_DEFAULT, info.getName(), ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage())) + unit);
 						}
 					} else {
-						addMultiTextJson(array, FONT_DEFAULT, info.getName(), ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage())) + "						元");
+						addMultiTextJson(array, FONT_DEFAULT, info.getName(), ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage())) + unit);
 					}
 				}
 			}
 		}
 		if (bill.getChangemoney() != null) {
 			if (changeMoney > 0) {
-				addMultiTextJson(array, FONT_DEFAULT, "找零", bill.getChangemoney()+"						元");
-			//	addTextJson(array, FONT_DEFAULT, formatLString(10, "找零") + "	" + bill.getChangemoney() + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+				addMultiTextJson(array, FONT_DEFAULT, "找零", bill.getChangemoney()+unit);
 			}
 		}
 
@@ -1796,19 +1792,19 @@ public class PrepareReceiptInfo {
 		}
 		if (couponValue > 0) {
 			if(couponOverrage > 0){
-				addTextJson(array, FONT_DEFAULT, formatLString(10, "代金券") + "	" + couponValue + "元(溢余" + couponOverrage + "元)", PrinterManager.CONTENT_ALIGN_LEFT);
+				addMultiTextJson(array, FONT_DEFAULT, "代金券：", couponValue + "(溢余" + couponOverrage + ")" + unit);
 			}else{
-				addTextJson(array, FONT_DEFAULT, formatLString(10, "代金券") + "	" + couponValue + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+				addMultiTextJson(array, FONT_DEFAULT, "代金券：", couponValue + unit);
 			}
 		}
 		if (deductionValue > 0) {
-			addTextJson(array, FONT_DEFAULT, formatLString(10, "积分抵扣") + "	" + deductionValue + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+			addMultiTextJson(array, FONT_DEFAULT, "积分抵扣：", deductionValue + unit);
 		}
 		if (careduction > 0) {
-			addTextJson(array, FONT_DEFAULT, formatLString(10, "扣减现金") + "	" + careduction + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+			addMultiTextJson(array, FONT_DEFAULT, "扣减现金：", careduction + unit);
 		}
 		if (compensation > 0) {
-			addTextJson(array, FONT_DEFAULT, formatLString(10, "补偿金额") + "	" + compensation + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+			addMultiTextJson(array, FONT_DEFAULT, "补偿金额：", compensation + unit);
 		}
 		try {
 			BigDecimal decimal = new BigDecimal(bill.getTotalmoney().replaceAll("-", ""));
@@ -1816,16 +1812,16 @@ public class PrepareReceiptInfo {
 			realMoney = realMoney - couponValue - deductionValue - careduction + compensation + couponOverrage;
 		} catch (Exception e) {
 		}
-		addTextJson(array, FONT_DEFAULT, formatLString(10, "应退") + "	" + MoneyAccuracyUtils.getmoneybytwo(realMoney) + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+		addMultiTextJson(array, FONT_DEFAULT, "应退：", MoneyAccuracyUtils.getmoneybytwo(realMoney) + unit);
 		addDashLine(array);
-		addTextJson(array, FONT_DEFAULT, formatLString(10, "实退") + "	" + MoneyAccuracyUtils.getmoneybytwo(realMoney) + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+		addMultiTextJson(array, FONT_DEFAULT, "实退：", MoneyAccuracyUtils.getmoneybytwo(realMoney) + unit);
 		for (PayMentsInfo info : bill.getPaymentslist()) {
 			String type = info.getType();
 			if (PaymentTypeEnum.COUPON.equals(type) || PaymentTypeEnum.SCORE.equals(type)
 					|| PaymentTypeEnum.RECORDED_CAREDUCTION.equals(type)
 					|| PaymentTypeEnum.ALLWANCE_COMPENSATION.equals(type))
 				continue;
-			addTextJson(array, FONT_DEFAULT, formatLString(10, info.getName()) + "	" + info.getMoney().replaceAll("-", "") + "元", PrinterManager.CONTENT_ALIGN_LEFT);
+			addMultiTextJson(array, FONT_DEFAULT, info.getName(), info.getMoney().replaceAll("-", "") + unit);
 		}
 		addDashLine(array);
 		MemberInfo member = bill.getMember();
