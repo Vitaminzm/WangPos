@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
@@ -31,8 +32,11 @@ import com.symboltech.wangpos.msg.entity.OptLogInfo;
 import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.LogResult;
 import com.symboltech.wangpos.result.OfflineDataResult;
+import com.symboltech.wangpos.utils.ArithDouble;
+import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.ToastUtils;
 
 /**
  * 后台服务，提供日志上传等功能
@@ -154,6 +158,12 @@ public class RunTimeService extends Service {
 			if(intent.getBooleanExtra(ConstantData.UPDATE_STATUS, false)){
 				setCashierId(intent.getStringExtra(ConstantData.CASHIER_ID));
 				checkNetStatus(false);
+			}
+
+			if(intent.getBooleanExtra(ConstantData.SAVE_THIRD_DATA, false)){
+				OrderBean res = (OrderBean) intent.getSerializableExtra(ConstantData.THIRD_DATA);
+				LogUtil.i("lgs", "========save third=====" + res.toString());
+				saveBanInfo(res);
 			}
 			if(intent.getBooleanExtra(ConstantData.UPLOAD_OFFLINE_DATA_BYLOG, false)){
 				sendOffLineByLog(null, AppConfigFile.OFFLINE_DATA_COUNT);
@@ -456,5 +466,41 @@ public class RunTimeService extends Service {
 		} else {
 			AppConfigFile.setUploadStatus(ConstantData.UPLOAD_SUCCESS);
 		}
+	}
+
+	private void saveBanInfo(final OrderBean orderBean){
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("skfsid", orderBean.getPaymentId());
+		map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+		map.put("billid", orderBean.getTraceId());
+		map.put("transtype", orderBean.getTransType());
+		map.put("tradeno", orderBean.getTxnId());
+		map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
+		map.put("decmoney", "0");
+		map.put("cardno", orderBean.getAccountNo()== null? "null":orderBean.getAccountNo());
+		map.put("bankcode",orderBean.getAcquId()== null? "null":orderBean.getAcquId());
+		map.put("batchno", orderBean.getBatchId()== null? "null":orderBean.getBatchId());
+		map.put("refno", orderBean.getRefNo()== null? "null":orderBean.getRefNo());
+		HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>(){
+			@Override
+			public void handleActionError(String actionName, String errmsg) {
+				OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+				dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), orderBean.getTraceId(), orderBean.getTransType(), orderBean.getAccountNo() == null ? "null" : orderBean.getAccountNo(),
+						orderBean.getAcquId() == null ? "null" : orderBean.getAcquId(), orderBean.getBatchId() == null ? "null" : orderBean.getBatchId(),
+						orderBean.getRefNo() == null ? "null" : orderBean.getRefNo(), orderBean.getTxnId(), orderBean.getPaymentId(),
+						ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
+			}
+
+			@Override
+			public void handleActionSuccess(String actionName, BaseResult result) {
+				if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
+					OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
+					dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), orderBean.getTraceId(), orderBean.getTransType(), orderBean.getAccountNo() == null ? "null" : orderBean.getAccountNo(),
+							orderBean.getAcquId() == null ? "null" : orderBean.getAcquId(), orderBean.getBatchId() == null ? "null" : orderBean.getBatchId(),
+							orderBean.getRefNo() == null ? "null" : orderBean.getRefNo(), orderBean.getTxnId(), orderBean.getPaymentId(),
+							ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
+				}
+			}
+		});
 	}
 }

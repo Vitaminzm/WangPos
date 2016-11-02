@@ -345,6 +345,10 @@ public class ConstantData {
 	/** 上传脱机数据*/
 	public static final String UPLOAD_OFFLINE_DATA = "upload_offline_data";
 
+	/** 保存三方支付交易记录*/
+	public static final String SAVE_THIRD_DATA = "save_third_data";
+	public static final String THIRD_DATA = "third_data";
+
 	/** 更换pos状态*/
 	public static final String UPDATE_STATUS = "update_status";
 

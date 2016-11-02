@@ -34,6 +34,7 @@ import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.result.BaseResult;
+import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
@@ -515,44 +516,6 @@ public class CanclePayDialog extends BaseActivity{
 		}
 	};
 
-	private void saveBanInfo(final String payTypeId, final OrderBean orderBean){
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("skfsid", payTypeId);
-		map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
-		map.put("billid", AppConfigFile.getBillId());
-		map.put("transtype", ConstantData.TRANS_REVOKE);
-		map.put("tradeno", orderBean.getTxnId());
-		map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
-		map.put("decmoney", "0");
-		map.put("cardno", orderBean.getAccountNo()== null? "null":orderBean.getAccountNo());
-		map.put("bankcode",orderBean.getAcquId()== null? "null":orderBean.getAcquId());
-		map.put("batchno", orderBean.getBatchId()== null? "null":orderBean.getBatchId());
-		map.put("refno", orderBean.getRefNo()== null? "null":orderBean.getRefNo());
-		HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>(){
-			@Override
-			public void handleActionError(String actionName, String errmsg) {
-				ToastUtils.sendtoastbyhandler(handler, errmsg);
-				OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
-				dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), AppConfigFile.getBillId(), ConstantData.TRANS_REVOKE, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
-						orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
-						orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
-						ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
-			}
-
-			@Override
-			public void handleActionSuccess(String actionName, BaseResult result) {
-				if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
-					OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
-					dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), AppConfigFile.getBillId(), ConstantData.TRANS_REVOKE, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
-							orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
-							orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
-							ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
-					ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
-				}
-			}
-		});
-	}
-
 	/**
 	 * 处理交易结果
 	 *
@@ -595,7 +558,13 @@ public class CanclePayDialog extends BaseActivity{
 			} else if (resultBean.getTransType().equals(ConstantData.SALE_VOID)) {
 				if (resultBean.getResultCode().equals("00")) {
 					resultBean.setOrderState("0");
-					saveBanInfo(payments.get(position).getId(), resultBean);
+					resultBean.setPaymentId(payments.get(position).getId());
+					resultBean.setTransType(ConstantData.TRANS_REVOKE);
+					resultBean.setTraceId(AppConfigFile.getBillId());
+					Intent serviceintent = new Intent(mContext, RunTimeService.class);
+					serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+					serviceintent.putExtra(ConstantData.THIRD_DATA, resultBean);
+					startService(serviceintent);
 				}else{
 					LogUtil.e("lgs", "退款失败" + data);
 				}

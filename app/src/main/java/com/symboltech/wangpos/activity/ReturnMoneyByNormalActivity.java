@@ -882,6 +882,8 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
 
                     @Override
                     public void handleActionChangeToOffLine() {
+                        AppConfigFile.setLast_billid(AppConfigFile.getBillId());
+                        AppConfigFile.setBillId(String.valueOf(Long.parseLong(AppConfigFile.getBillId()) + 1));
                         Intent intent = new Intent(mContext, MainActivity.class);
                         startActivity(intent);
                     }

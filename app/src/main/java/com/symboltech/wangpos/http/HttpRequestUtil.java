@@ -407,7 +407,7 @@ public class HttpRequestUtil {
 	 */
 	public <T> void saveBankInfo(Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/savebankinfo"), param, clz,
+		HttpServiceStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/savebankinfo"), param, clz,
 				httpactionhandler);
 	}
 	

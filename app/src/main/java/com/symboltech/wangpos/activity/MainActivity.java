@@ -1096,10 +1096,22 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 SpSaveUtils.write(getApplicationContext(),ConstantData.LAST_BANK_TRANS, resultBean.getTxnId());
             }
             if (resultBean.getTransType().equals(ConstantData.SALE)) {
-                saveBanInfo(getPayTypeId(Type), ConstantData.TRANS_SALE, resultBean);
+                resultBean.setPaymentId(getPayTypeId(Type));
+                resultBean.setTransType(ConstantData.TRANS_SALE);
+                resultBean.setTraceId("-" + AppConfigFile.getBillId());
+                Intent serviceintent = new Intent(mContext, RunTimeService.class);
+                serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+                serviceintent.putExtra(ConstantData.THIRD_DATA, resultBean);
+                startService(serviceintent);
             } else if (resultBean.getTransType().equals(ConstantData.SALE_VOID)) {
                 if (resultBean.getResultCode().equals("00")) {
-                    saveBanInfo(getPayTypeId(Type), ConstantData.TRANS_REVOKE, resultBean);
+                    resultBean.setPaymentId(getPayTypeId(Type));
+                    resultBean.setTransType(ConstantData.TRANS_REVOKE);
+                    resultBean.setTraceId("-"+AppConfigFile.getBillId());
+                    Intent serviceintent = new Intent(mContext, RunTimeService.class);
+                    serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+                    serviceintent.putExtra(ConstantData.THIRD_DATA, resultBean);
+                    startService(serviceintent);
                 }else{
                     LogUtil.e("lgs", "退款失败" + data);
                 }
@@ -1131,45 +1143,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
         return newBean;
-    }
-
-    private void saveBanInfo(final String payTypeId, final String transtype, final OrderBean orderBean){
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("skfsid", payTypeId);
-        map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
-        map.put("billid", "-"+AppConfigFile.getBillId());
-        map.put("transtype", transtype);
-        map.put("tradeno", orderBean.getTxnId());
-        map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
-        map.put("decmoney", "0");
-        map.put("cardno", orderBean.getAccountNo()== null? "null":orderBean.getAccountNo());
-        map.put("bankcode",orderBean.getAcquId()== null? "null":orderBean.getAcquId());
-        map.put("batchno", orderBean.getBatchId()== null? "null":orderBean.getBatchId());
-        map.put("refno", orderBean.getRefNo()== null? "null":orderBean.getRefNo());
-        HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>(){
-            @Override
-            public void handleActionError(String actionName, String errmsg) {
-                ToastUtils.sendtoastbyhandler(handler, errmsg);
-                OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
-                dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), "-"+AppConfigFile.getBillId(), transtype, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
-                        orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
-                        orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
-                        ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
-                ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
-            }
-
-            @Override
-            public void handleActionSuccess(String actionName, BaseResult result) {
-                if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
-                    OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
-                    dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), "-"+AppConfigFile.getBillId(), transtype, orderBean.getAccountNo()== null? "null":orderBean.getAccountNo(),
-                            orderBean.getAcquId()== null? "null":orderBean.getAcquId(), orderBean.getBatchId()== null? "null":orderBean.getBatchId(),
-                            orderBean.getRefNo()== null? "null":orderBean.getRefNo(), orderBean.getTxnId(), payTypeId,
-                            ArithDouble.parseDouble(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount())), 0.0);
-                    ToastUtils.sendtoastbyhandler(handler, "三方交易信息保存失败！");
-                }
-            }
-        });
     }
 
     /**
