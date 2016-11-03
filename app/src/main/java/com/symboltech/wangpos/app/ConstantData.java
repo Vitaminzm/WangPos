@@ -211,6 +211,13 @@ public class ConstantData {
 	/** 交易类型 2-普通退货 */
 	public static final String SALETYPE_SALE_RETURN_NORMAL = "2";
 
+	/** 网络是否正常 */
+	public static final String IS_NETCONNECT = "is_NetConnect";
+	/** 是否是脱机模式 */
+	public static final String IS_OFFLINE = "is_Offline";
+	/** 脱机上传状态 */
+	public static final String UP_STATUS = "up_status";
+
 	/** 订单 */
 	public static final String BILL = "bill";
 

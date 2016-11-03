@@ -41,30 +41,27 @@ public class AppConfigFile {
 	private static String billId;
 	private static String last_billid;
 
-	/**是否是脱机模式 */
-	private static boolean isOffLineMode = false;
-	/**网络是否连接*/
-	private static boolean isNetConnect = true;
-	/**上传状态*/
-	private static int uploadStatus = ConstantData.UPLOAD_SUCCESS;
-
     /*----------------------------------------------------------------*/
 	/**
 	 * activity
 	 *
 	 */
 	public static void addActivity(Activity activity) {
-		activityList.add(activity);
+		if (activityList != null)
+			activityList.add(activity);
 	}
 
 	public static void delActivity(Activity activity) {
-		activityList.remove(activity);
+		if (activityList != null)
+			activityList.remove(activity);
 	}
 
 	public static void exit() {
-		for (Activity activity : activityList) {
-			if (activity != null) {
-				activity.finish();
+		if (activityList != null){
+			for (Activity activity : activityList) {
+				if (activity != null) {
+					activity.finish();
+				}
 			}
 		}
 	}
@@ -119,27 +116,27 @@ public class AppConfigFile {
 	}
 
 	public static int getUploadStatus() {
-		return uploadStatus;
+		return SpSaveUtils.readInt(MyApplication.context, ConstantData.UP_STATUS, ConstantData.UPLOAD_SUCCESS);
 	}
 
 	public static void setUploadStatus(int uploadStatus) {
-		AppConfigFile.uploadStatus = uploadStatus;
+		SpSaveUtils.writeInt(MyApplication.context, ConstantData.UP_STATUS, uploadStatus);
 	}
 
 	public static boolean isOffLineMode() {
-		return isOffLineMode;
+		return SpSaveUtils.readboolean(MyApplication.context, ConstantData.IS_OFFLINE, false);
 	}
 
 	public static void setOffLineMode(boolean isOffLineMode) {
-		AppConfigFile.isOffLineMode = isOffLineMode;
+		SpSaveUtils.writeboolean(MyApplication.context, ConstantData.IS_OFFLINE, isOffLineMode);
 	}
 
 	public static boolean isNetConnect() {
-		return isNetConnect;
+		return SpSaveUtils.readboolean(MyApplication.context, ConstantData.IS_NETCONNECT, true);
 	}
 
 	public static void setNetConnect(boolean isNetConnect) {
-		AppConfigFile.isNetConnect = isNetConnect;
+		SpSaveUtils.writeboolean(MyApplication.context, ConstantData.IS_NETCONNECT, isNetConnect);
 	}
 
 }

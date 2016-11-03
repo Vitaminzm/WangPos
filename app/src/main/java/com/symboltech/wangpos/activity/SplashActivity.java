@@ -8,6 +8,7 @@ import android.view.animation.AnimationUtils;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.utils.SpSaveUtils;
 
 public class SplashActivity extends BaseActivity {
 
@@ -22,6 +23,9 @@ public class SplashActivity extends BaseActivity {
     @Override
     protected void initView() {
         view = View.inflate(this, R.layout.activity_splash, null);
+        SpSaveUtils.writeboolean(getApplicationContext(), ConstantData.IS_NETCONNECT, true);
+        SpSaveUtils.writeboolean(getApplicationContext(), ConstantData.IS_OFFLINE, false);
+        SpSaveUtils.writeInt(getApplicationContext(), ConstantData.UP_STATUS, ConstantData.UPLOAD_SUCCESS);
         setContentView(view);
     }
 

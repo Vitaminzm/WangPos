@@ -139,7 +139,7 @@ public class HttpStringClient {
 				Boolean ret = false;
 				LogUtil.i("lgs", "======================"+e.getCause()+"---"+e.getMessage());
 				if(e.getMessage() != null){
-					if (e.getMessage().contains("failed to connect to")){
+					if (e.getMessage().contains("Failed to connect to") || e.getMessage().contains("failed to connect to")){
 						ret = true;
 						httpactionhandler.handleActionError(actionname, "网络连接超时");
 					}else{

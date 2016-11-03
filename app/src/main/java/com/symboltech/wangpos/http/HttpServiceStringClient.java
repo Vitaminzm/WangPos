@@ -124,7 +124,7 @@ public class HttpServiceStringClient {
 				e.printStackTrace();
 				Boolean ret = false;
 				if(e.getMessage() != null){
-					if (e.getMessage().contains("failed to connect to")){
+					if (e.getMessage().contains("Failed to connect to") || e.getMessage().contains("failed to connect to")){
 						ret = true;
 					}
 				}

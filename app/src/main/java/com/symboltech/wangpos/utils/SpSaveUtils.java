@@ -156,6 +156,34 @@ public class SpSaveUtils {
 	}
 
 	/**
+	 * 读取相应的存储的xml文件 ，获取对应的值
+	 *
+	 * @param context
+	 * @param key
+	 * @param Default
+	 * @return
+	 */
+
+	public static int readInt(Context context, String key, int Default) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(SAVE_FOR_SP_KEY, Context.MODE_PRIVATE);
+		int value = sharedPreferences.getInt(key, Default);
+		return value;
+	}
+
+	/**
+	 * 指定xml名字 ，并写入相应的键值
+	 *
+	 * @param context
+	 * @param key
+	 * @param value
+	 */
+	public static void writeInt(Context context, String key, int value) {
+		SharedPreferences sharedPreferences = context.getSharedPreferences(SAVE_FOR_SP_KEY, Context.MODE_PRIVATE);
+		Editor editor = sharedPreferences.edit();
+		editor.putInt(key, value);
+		editor.commit();
+	}
+	/**
 	 * 删除指定的xml文件中对应的键的值
 	 * 
 	 * @param context
