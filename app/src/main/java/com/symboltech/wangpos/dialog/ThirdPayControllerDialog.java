@@ -48,6 +48,7 @@ import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
 
@@ -363,6 +364,9 @@ public class ThirdPayControllerDialog extends BaseActivity{
 
 	@OnClick({R.id.text_confirm_query, R.id.text_cancle, R.id.text_confirm, R.id.imageview_close, R.id.ll_pay_jiaoyi, R.id.ll_pay_search, R.id.ll_pay_repealdeal, R.id.ll_pay_returngoods})
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 			case R.id.text_cancle:

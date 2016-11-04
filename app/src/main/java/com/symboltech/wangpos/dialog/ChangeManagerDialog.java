@@ -17,6 +17,7 @@ import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 
 /**
  * Description 通用提示dialog
@@ -58,6 +59,9 @@ public class ChangeManagerDialog extends Dialog implements View.OnClickListener 
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 			case R.id.text_job_report:

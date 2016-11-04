@@ -36,6 +36,7 @@ import com.symboltech.wangpos.http.HttpStringClient;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.MyRadioGroup;
 
 
@@ -174,6 +175,9 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 	}
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		switch (v.getId()) {
 		case R.id.text_cancle:
 		case R.id.imageview_close:

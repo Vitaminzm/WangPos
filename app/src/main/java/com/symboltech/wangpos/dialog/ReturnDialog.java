@@ -30,6 +30,7 @@ import com.symboltech.wangpos.result.BillResult;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.util.HashMap;
@@ -129,6 +130,9 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 			case R.id.text_return_normal:
@@ -175,6 +179,9 @@ public class ReturnDialog extends Dialog implements View.OnClickListener {
 	 * @param billId  订单号
 	 */
 	private void getOrderInfo(final String posno, final String billId) {
+		if(keyboard.isShowing()){
+			keyboard.dismiss();
+		}
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("posno", posno);
 		map.put("billid", billId);

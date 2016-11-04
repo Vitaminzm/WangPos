@@ -41,6 +41,7 @@ import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -273,6 +274,9 @@ public class CanclePayDialog extends BaseActivity{
 
 	@OnClick({R.id.imageview_close, R.id.text_cancle_pay, R.id.text_submit_order})
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		Intent intent = new Intent();
 		switch (id){

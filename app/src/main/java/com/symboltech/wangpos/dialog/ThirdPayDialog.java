@@ -36,6 +36,7 @@ import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -363,6 +364,9 @@ public class ThirdPayDialog extends BaseActivity{
 
 	@OnClick({R.id.text_confirm_query, R.id.text_cancle, R.id.text_confirm, R.id.imageview_close})
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 			case R.id.text_cancle:

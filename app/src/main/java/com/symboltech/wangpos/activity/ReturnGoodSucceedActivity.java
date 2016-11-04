@@ -131,9 +131,10 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
             if(ArithDouble.parseDouble(bill.getAwardpoint()) > 0){
                 text_return_used_score.setText("-"+bill.getAwardpoint());
             }else {
-                text_return_used_score.setText(bill.getAwardpoint());
+                text_return_used_score.setText(ArithDouble.parseInt(bill.getAwardpoint())+"");
             }
-            text_score_good_return.setText(bill.getUsedpoint());
+
+            text_score_good_return.setText(ArithDouble.parseInt(bill.getUsedpoint())+"");
 
             ll_score_info.setVisibility(View.VISIBLE);
         }else{

@@ -12,6 +12,7 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.MainActivity;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.http.HttpActionHandle;
+import com.symboltech.wangpos.utils.Utils;
 
 /**
  * 切换销售模式
@@ -53,6 +54,9 @@ public class ChangeModeDialog extends Dialog implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		switch (v.getId()) {
 		case R.id.dialog_change_mode_yes:
 			if(isOnLine) {
