@@ -451,7 +451,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             }
         });
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        //params.setMargins(0, 20, 0, 0);
+        params.setMargins(0, 20, 0, 0);
         ll_add_return_payInfo.addView(view, params);
     }
 

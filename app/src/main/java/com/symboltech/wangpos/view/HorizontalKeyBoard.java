@@ -465,13 +465,13 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 			if(editText1 != null && editText1.getId() == v.getId()) {
 				flag = FLAG_EDIT;
 				editText1.requestFocus();
+				defalutStr = editText1.getText().toString();
 				if(isShowing()) {
 					return true;
 				}
 				if(editText1.getCompoundDrawables()[2] != null && event.getX() > (editText1.getWidth() - editText1.getTotalPaddingRight()+ 60) && (event.getX() < ((editText1.getWidth() - editText1.getPaddingRight()+ 80)))) {
 					return false;
 				}else {
-					defalutStr = editText1.getText().toString();
 					if(defalutStr != null){
 						editText1.setSelection(defalutStr.length());
 					}
@@ -481,10 +481,10 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 			}else if(editText2 != null && editText2.getId() == v.getId()) {
 				flag = FLAG_EDIT2;
 				editText2.requestFocus();
+				defalutStr = editText2.getText().toString();
 				if(isShowing()) {
 					return true;
 				}
-				defalutStr = editText2.getText().toString();
 				if(defalutStr != null)
 					editText2.setSelection(defalutStr.length());
 				editText2.cancelLongPress();
