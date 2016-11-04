@@ -3,6 +3,7 @@ package com.symboltech.wangpos.app;
 import android.app.Application;
 import android.content.Context;
 
+import com.symboltech.wangpos.exception.CrashHandler;
 import com.symboltech.wangpos.log.LogUtil;
 
 /**
@@ -19,6 +20,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         context = getApplicationContext();
+        //初始化成功自身捕获异常
+        CrashHandler.getInstance().init(context);
         LogUtil.i("lgs", "Myapplication--------");
     }
 }

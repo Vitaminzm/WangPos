@@ -51,7 +51,18 @@ public class OperateLog {
 	//用来记录当前存储日志总数
 	private static int count = 0;
 
-	private static Timer timer = null;
+	//用来控制线程退出的
+	private boolean isRun = true;
+
+	private  Thread thread = null;
+
+	public  void stopUpload(){
+		isRun = false;
+		if(thread != null && thread.isAlive()){
+			thread.interrupt();
+		}
+
+	}
 
 	private OperateLog(){
 	}
@@ -68,12 +79,6 @@ public class OperateLog {
 		};
 	};
 
-	public static void stopUpload(){
-		if(timer != null){
-			timer.cancel();
-			timer = null;
-		}
-	}
 	public static OperateLog getInstance() {
 		if (operateLog == null) {
 			synchronized (OperateLog.class) {
@@ -202,16 +207,13 @@ public class OperateLog {
 	 * @param time 单个日志文件上传时间间隔  单位：ms
 	 */
 	public void DeleteLog(final long time){
-		if(timer == null){
-			timer = new Timer();
-			timer.schedule(new TimerTask() {
+		if(thread == null || !thread.isAlive()) {
+			thread = new Thread(new Runnable() {
+
 				@Override
 				public void run() {
-					if(!AppConfigFile.isNetConnect()){
-						timer.cancel();
-						timer = null;
-						return;
-					}
+					isRun = true;
+					// TODO Auto-generated method stub
 					File file = new File(context.getFilesDir(), "Log");
 
 					File[] files = file.listFiles();
@@ -232,13 +234,24 @@ public class OperateLog {
 						}
 					});
 					//尽量保留最后一个日志文件，因为程序在不停的写日志
-					for (int i = 0;i < files.length - 1 ;i++) {
+					for (int i = 0; i < files.length - 1; i++) {
 						File f = files[i];
+
+						//服务退出时，能尽量及时退出线程
+						if (!isRun || AppConfigFile.isOffLineMode() || !AppConfigFile.isNetConnect()) {
+							break;
+						}
 						saveOperationLog(f);
-						break;
+						try {
+							Thread.sleep(time);
+						} catch (InterruptedException e) {
+							isRun = false;
+							e.printStackTrace();
+						}
 					}
 				}
-			}, 0, time);
+			});
+			thread.start();
 		}
 	}
 	/**

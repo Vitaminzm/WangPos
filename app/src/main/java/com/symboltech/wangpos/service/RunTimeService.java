@@ -37,7 +37,6 @@ import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
-import com.symboltech.wangpos.utils.ToastUtils;
 
 /**
  * 后台服务，提供日志上传等功能
@@ -60,6 +59,7 @@ public class RunTimeService extends Service {
 
 	@Override
 	public void onCreate() {
+		LogUtil.i("lgs","service_-------create");
 		checkNettimertask();
 		super.onCreate();
 	}
@@ -170,7 +170,7 @@ public class RunTimeService extends Service {
 				sendBankOffLineByLog(null, AppConfigFile.OFFLINE_DATA_COUNT);
 			}
 		}
-		return START_STICKY;
+		return START_NOT_STICKY;
 	}
 	
 	@Override
@@ -178,6 +178,7 @@ public class RunTimeService extends Service {
 		LogUtil.i("lgs", "onDestroy-------------");
 		cancel();
 		super.onDestroy();
+		System.exit(0);
 	}
 
 	@Nullable
