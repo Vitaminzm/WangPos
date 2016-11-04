@@ -152,6 +152,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         edit_username.setOnDrawableClickListener(new OnDrawableClickListener() {
             @Override
             public void onDrawableclick() {
+                if(Utils.isFastClick()){
+                    return;
+                }
                 showPopupList();
             }
         });
@@ -235,6 +238,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     private void showPopupList() {
         if(keyboard.isShowing()){
             keyboard.dismiss();
+            return;
         }
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm.isActive()) {
