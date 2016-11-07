@@ -178,7 +178,6 @@ public class RunTimeService extends Service {
 		LogUtil.i("lgs", "onDestroy-------------");
 		cancel();
 		super.onDestroy();
-		System.exit(0);
 	}
 
 	@Nullable

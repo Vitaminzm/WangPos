@@ -216,7 +216,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 stopService(service);
                 this.finish();
                 AppConfigFile.exit();
-               // System.exit(0);
+                System.exit(0);
                 break;
         }
     }
