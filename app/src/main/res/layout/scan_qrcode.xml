@@ -28,7 +28,7 @@
 
     <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="88px"
+        android:layout_height="@dimen/height_ne"
         android:layout_gravity="top"
         android:background="#080c14" >
 

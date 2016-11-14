@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -25,7 +24,6 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.dialog.UniversalHintDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -33,9 +31,9 @@ import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.AllMemeberInfoResult;
 import com.symboltech.wangpos.result.MemberInfoResult;
-import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -45,13 +43,11 @@ import com.symboltech.zxing.app.CaptureActivity;
 
 import org.json.JSONObject;
 
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import cn.koolcloud.engine.service.aidl.IMemberCardService;
 
@@ -214,7 +210,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        if (mMemberCardConnection != null) {
+        if (mCardService != null) {
             unbindService(mMemberCardConnection);
         }
         if (msrReceiver != null) {

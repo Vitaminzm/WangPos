@@ -16,9 +16,6 @@
 
 package com.symboltech.zxing.camera;
 
-import java.io.IOException;
-
-
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.graphics.Point;
@@ -29,6 +26,8 @@ import android.os.Handler;
 import android.view.SurfaceHolder;
 
 import com.symboltech.wangpos.log.LogUtil;
+
+import java.io.IOException;
 
 /**
  * This object wraps the Camera service object and expects to be the only one
@@ -42,9 +41,7 @@ public final class CameraManager {
 	private static final String TAG = CameraManager.class.getSimpleName();
 
 	private static final int MIN_FRAME_WIDTH = 240;
-	private static final int MIN_FRAME_HEIGHT = 240;
-	private static final int MAX_FRAME_WIDTH = 580;
-	private static final int MAX_FRAME_HEIGHT = 480;
+	private static final int MAX_FRAME_WIDTH = 1200;
 
 	private static CameraManager cameraManager;
 
@@ -246,23 +243,19 @@ public final class CameraManager {
 			if (camera == null) {
 				return null;
 			}
-			int width = screenResolution.x * 2 / 3;
+			int width = screenResolution.x * 5 / 8;
 			if (width < MIN_FRAME_WIDTH) {
 				width = MIN_FRAME_WIDTH;
 			} else if (width > MAX_FRAME_WIDTH) {
 				width = MAX_FRAME_WIDTH;
 			}
-			int height = screenResolution.y * 2 / 3;
-			if (height < MIN_FRAME_HEIGHT) {
-				height = MIN_FRAME_HEIGHT;
-			} else if (height > MAX_FRAME_HEIGHT) {
-				height = MAX_FRAME_HEIGHT;
-			}
+			int height = width;
 			int leftOffset = (screenResolution.x - width) / 2;
 			int topOffset = (screenResolution.y - height) / 2;
 			framingRect = new Rect(leftOffset, topOffset, leftOffset + width,
 					topOffset + height);
-			LogUtil.d(TAG, "Calculated framing rect: " + framingRect);
+			LogUtil.d("lgs", " rect: " + width+":"+height);
+			LogUtil.d("lgs", "Calculated framing rect: " + framingRect);
 		}
 		return framingRect;
 	}
