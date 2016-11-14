@@ -37,7 +37,7 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:orientation="horizontal">
-                <EditText
+                <TextView
                     android:id="@+id/edit_input_reason"
                     android:layout_width="@dimen/height_roz"
                     android:layout_height="wrap_content"

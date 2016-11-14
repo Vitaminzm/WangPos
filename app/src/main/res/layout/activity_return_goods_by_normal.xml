@@ -38,7 +38,7 @@
                 android:layout_gravity="center"
                 android:text="@string/return_good"
                 android:textColor="@color/font_color"/>
-            <EditText
+            <TextView
                 android:id="@+id/edit_return_good"
                 android:layout_width="@dimen/height_rxz"
                 android:layout_height="@dimen/height_xz"
@@ -99,7 +99,7 @@
                 android:layout_gravity="center"
                 android:text="@string/return_handperson"
                 android:textColor="@color/font_color"/>
-            <EditText
+            <TextView
                 android:id="@+id/edit_return_handperson"
                 android:layout_width="@dimen/height_rxz"
                 android:layout_height="@dimen/height_xz"

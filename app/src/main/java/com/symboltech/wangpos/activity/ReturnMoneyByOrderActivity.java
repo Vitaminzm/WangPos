@@ -26,8 +26,6 @@ import com.symboltech.wangpos.adapter.ReturnReasonAdapter;
 import com.symboltech.wangpos.adapter.ReturnTableAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
-import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.ThirdPayReturnDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -40,12 +38,10 @@ import com.symboltech.wangpos.msg.entity.ExchangeInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.RefundReasonInfo;
 import com.symboltech.wangpos.print.PrepareReceiptInfo;
-import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.SaveOrderResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
-import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -278,7 +274,8 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         listview_return_type.setAdapter(new ReturnTableAdapter(this, payMentsInfos));
         Intent printService = new Intent(IPrinterService.class.getName());
         printService = AndroidUtils.getExplicitIntent(this, printService);
-        bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        if(printService != null)
+            bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override

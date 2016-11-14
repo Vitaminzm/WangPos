@@ -1,5 +1,6 @@
 package com.symboltech.wangpos.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -7,6 +8,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -64,11 +66,11 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
     TextView text_desk_code;
 
     @Bind(R.id.edit_return_handperson)
-    EditText edit_return_handperson;
+    TextView edit_return_handperson;
     @Bind(R.id.edit_return_money)
     EditText edit_return_money;
     @Bind(R.id.edit_return_good)
-    EditText edit_return_good;
+    TextView edit_return_good;
     private List<GoodsInfo> goodinfos;
     private List<CashierInfo> sales;
 
@@ -150,6 +152,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
         setContentView(R.layout.activity_return_goods_by_normal);
         AppConfigFile.addActivity(this);
         ButterKnife.bind(this);
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         edit_return_handperson.setOnTouchListener(this);
         edit_return_good.setOnTouchListener(this);
         new HorizontalKeyBoard(this, this, edit_return_money,ll_keyboard);
@@ -288,7 +291,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
      * @param view textview
      * @return  如果没有内容 返回false
      */
-    private boolean checkParams(EditText view) {
+    private boolean checkParams(TextView view) {
         if(TextUtils.isEmpty(view.getText().toString()) || "".equals(view.getText().toString())) {
             return false;
         }

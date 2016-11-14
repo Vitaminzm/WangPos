@@ -307,7 +307,7 @@ public class ThirdPayReturnDialog extends BaseActivity{
 				finish();
 				break;
 			case R.id.text_confirm:
-				if(!text_confirm.getText().equals(getString(R.string.query))){
+				if(!text_confirm.getText().equals(getString(R.string.query)) && mYunService != null){
 					returnMoney();
 				}
 				break;

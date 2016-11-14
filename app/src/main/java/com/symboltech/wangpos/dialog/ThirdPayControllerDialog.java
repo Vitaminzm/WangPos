@@ -18,7 +18,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.ybq.android.spinkit.SpinKitView;
@@ -30,20 +29,14 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.BaseActivity;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
-import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.http.GsonUtil;
-import com.symboltech.wangpos.http.HttpActionHandle;
-import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
-import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.CodeBitmap;
 import com.symboltech.wangpos.utils.CurrencyUnit;
-import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
@@ -57,9 +50,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -531,7 +522,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		switch (PaymentTypeEnum.getpaymentstyle(Type)){
 			case WECHAT:
 				paymentInfo = getAidlPaymentInfoByName(paymentlist,getString(R.string.weichat));
-				if(paymentInfo != null){
+				if(paymentInfo != null && mYunService != null){
 					String transAmount = CurrencyUnit.yuan2fenStr(money+"");
 					SaleRequest request = new SaleRequest(paymentInfo
 							.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
@@ -586,7 +577,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				break;
 			case ALIPAY:
 				paymentInfo = getAidlPaymentInfoByName(paymentlist,getString(R.string.alipay));
-				if(paymentInfo != null){
+				if(paymentInfo != null && mYunService != null){
 					String transAmount = CurrencyUnit.yuan2fenStr(money+"");
 					SaleRequest request = new SaleRequest(paymentInfo
 							.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
@@ -642,7 +633,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				break;
 			case BANK:
 				paymentInfo = getAidlPaymentInfoBank(paymentlist);
-				if(paymentInfo != null){
+				if(paymentInfo != null && mYunService != null){
 					String transAmount = CurrencyUnit.yuan2fenStr(money+"");
 					SaleRequest request = new SaleRequest(paymentInfo
 							.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
@@ -700,7 +691,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 	}
 
 	public AidlPaymentInfo getAidlPaymentInfoByName(List<AidlPaymentInfo> paymentlist, String name){
-		if(name == null || name.equals("")){
+		if(name == null || name.equals("") || paymentlist == null){
 			return null;
 		}
 		for(AidlPaymentInfo info:paymentlist){
@@ -710,6 +701,8 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		return null;
 	}
 	public AidlPaymentInfo getAidlPaymentInfoBank(List<AidlPaymentInfo> paymentlist){
+		if(paymentlist == null)
+			return null;
 		for(AidlPaymentInfo info:paymentlist){
 			if(info.getProductNo().equals("0079"))
 				return info;

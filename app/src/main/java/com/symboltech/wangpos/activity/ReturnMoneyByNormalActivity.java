@@ -81,7 +81,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     LinearLayout ll_add_return_payInfo;
 
     @Bind(R.id.edit_input_reason)
-    EditText edit_input_reason;
+    TextView edit_input_reason;
     @Bind(R.id.imageview_drop_arrow)
     ImageView imageview_drop_arrow;
     @Bind(R.id.ll_keyboard)
@@ -261,7 +261,8 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         addReturnInfo(true);
         Intent printService = new Intent(IPrinterService.class.getName());
         printService = AndroidUtils.getExplicitIntent(this, printService);
-        bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        if(printService != null)
+            bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
@@ -354,7 +355,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     private void showReason(View v) {
         if(reasons!= null && reasons.size() > 0){
             if (null == PopupWindowReason) {
-                PopupWindowReason = new PopupWindow(reasonPop, 250, 200, true);
+                PopupWindowReason = new PopupWindow(reasonPop, Utils.dip2px(getApplicationContext(), 145), Utils.dip2px(getApplicationContext(), 100), true);
                 PopupWindowReason.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
                 PopupWindowReason.setAnimationStyle(R.style.PopupAnimation);
             }
@@ -406,7 +407,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void showStyle(View v) {
         if (null == PopupWindowStyle) {
-            PopupWindowStyle = new PopupWindow(stylePop, 200, 200, true);
+            PopupWindowStyle = new PopupWindow(stylePop, Utils.dip2px(getApplicationContext(), 70), Utils.dip2px(getApplicationContext(), 100), true);
             PopupWindowStyle.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
             PopupWindowStyle.setAnimationStyle(R.style.PopupAnimation);
         }

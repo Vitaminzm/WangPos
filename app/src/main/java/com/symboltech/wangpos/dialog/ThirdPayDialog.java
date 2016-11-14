@@ -385,7 +385,7 @@ public class ThirdPayDialog extends BaseActivity{
 				switch (PaymentTypeEnum.getpaymentstyle(Type)){
 					case WECHAT:
 						 paymentInfo = getAidlPaymentInfoByName(paymentlist,getString(R.string.weichat));
-						if(paymentInfo != null){
+						if(paymentInfo != null && mYunService != null){
 							String transAmount = CurrencyUnit.yuan2fenStr(money+"");
 							SaleRequest request = new SaleRequest(paymentInfo
 									.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
@@ -443,7 +443,7 @@ public class ThirdPayDialog extends BaseActivity{
 						break;
 					case ALIPAY:
 						paymentInfo = getAidlPaymentInfoByName(paymentlist,getString(R.string.alipay));
-						if(paymentInfo != null){
+						if(paymentInfo != null && mYunService != null){
 							String transAmount = CurrencyUnit.yuan2fenStr(money+"");
 							SaleRequest request = new SaleRequest(paymentInfo
 									.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
@@ -500,7 +500,7 @@ public class ThirdPayDialog extends BaseActivity{
 						break;
 					case BANK:
 						paymentInfo = getAidlPaymentInfoBank(paymentlist);
-						if(paymentInfo != null){
+						if(paymentInfo != null && mYunService != null){
 							String transAmount = CurrencyUnit.yuan2fenStr(money+"");
 							SaleRequest request = new SaleRequest(paymentInfo
 									.getPaymentId(), transAmount, qrcode, "", "");// 可以自行传入订单号、订单描述
@@ -587,6 +587,8 @@ public class ThirdPayDialog extends BaseActivity{
 		return null;
 	}
 	public AidlPaymentInfo getAidlPaymentInfoBank(List<AidlPaymentInfo> paymentlist){
+		if(paymentlist == null)
+			return null;
 		for(AidlPaymentInfo info:paymentlist){
 			if(info.getProductNo().equals("0079"))
 				return info;

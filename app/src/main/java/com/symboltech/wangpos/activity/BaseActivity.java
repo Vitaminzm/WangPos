@@ -3,23 +3,13 @@ package com.symboltech.wangpos.activity;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Binder;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 
-import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.http.HttpStringClient;
-import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.utils.HttpWaitDialogUtils;
-
-import java.lang.reflect.Method;
 
 /**
  * 
@@ -160,9 +150,9 @@ public abstract class BaseActivity extends Activity {
 		return super.onKeyDown(keyCode, event);
 	}
 
-	@Override
-	public void onAttachedToWindow(){
-		this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
-		super.onAttachedToWindow();
-	}
+//	@Override
+//	public void onAttachedToWindow(){
+//		this.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
+//		super.onAttachedToWindow();
+//	}
 }

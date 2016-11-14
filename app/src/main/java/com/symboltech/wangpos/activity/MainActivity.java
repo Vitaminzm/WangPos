@@ -48,15 +48,12 @@ import com.symboltech.wangpos.msg.entity.OfflineGoodsInfo;
 import com.symboltech.wangpos.msg.entity.OfflinePayTypeInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.print.PrepareReceiptInfo;
-import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.BillResult;
 import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.result.OfflineDataResult;
 import com.symboltech.wangpos.result.TicketFormatResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
-import com.symboltech.wangpos.utils.ArithDouble;
-import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -261,7 +258,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         Intent printService = new Intent(IPrinterService.class.getName());
         printService = AndroidUtils.getExplicitIntent(this, printService);
-        bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        if(printService != null)
+            bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
         Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
         yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
         if (yunIntent == null) {

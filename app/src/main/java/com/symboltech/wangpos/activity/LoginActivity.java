@@ -250,7 +250,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             if (null == mPopupWindow) {
                  adapter = new ArrayAdapter<>(LoginActivity.this, R.layout.popup_item, datas);
                 listview.setAdapter(adapter);
-                mPopupWindow = new PopupWindow(listview, 250, MachineUtils.dip2px(MyApplication.context, 105), true);
+                mPopupWindow = new PopupWindow(listview, Utils.dip2px(getApplicationContext(), 125), MachineUtils.dip2px(MyApplication.context, Utils.dip2px(getApplicationContext(), 50)), true);
                 mPopupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
                 mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
             }else {

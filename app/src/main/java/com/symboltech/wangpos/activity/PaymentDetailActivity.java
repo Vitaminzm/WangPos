@@ -21,7 +21,6 @@ import com.symboltech.wangpos.adapter.CouponsAdapter;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoDetailAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.SelectCarPlateDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -295,7 +294,8 @@ public class PaymentDetailActivity extends BaseActivity {
         }
         Intent printService = new Intent(IPrinterService.class.getName());
         printService = AndroidUtils.getExplicitIntent(this, printService);
-        bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        if(printService != null)
+            bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void addPayTypeInfo(String name, double changeMoney) {
