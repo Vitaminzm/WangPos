@@ -407,7 +407,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void showStyle(View v) {
         if (null == PopupWindowStyle) {
-            PopupWindowStyle = new PopupWindow(stylePop, Utils.dip2px(getApplicationContext(), 70), Utils.dip2px(getApplicationContext(), 100), true);
+            PopupWindowStyle = new PopupWindow(stylePop, Utils.dip2px(getApplicationContext(), 80), Utils.dip2px(getApplicationContext(), 100), true);
             PopupWindowStyle.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
             PopupWindowStyle.setAnimationStyle(R.style.PopupAnimation);
         }

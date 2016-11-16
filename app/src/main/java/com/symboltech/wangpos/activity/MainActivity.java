@@ -337,6 +337,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         AppConfigFile.delActivity(this);
     }
     public void print_last(String id){
+        if(mYunService== null){
+            ToastUtils.sendtoastbyhandler(handler, "打印服务异常");
+            return;
+        }
         if(id == null || "".equals(id)){
             AidlRequestManager.getInstance().aidlLastTransPrintRequest(mYunService, new AidlRequestManager.AidlRequestCallBack() {
 

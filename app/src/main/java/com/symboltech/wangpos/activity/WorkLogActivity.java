@@ -244,7 +244,8 @@ public class WorkLogActivity extends BaseActivity {
         });
         Intent printService = new Intent(IPrinterService.class.getName());
         printService = AndroidUtils.getExplicitIntent(this, printService);
-        bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        if(printService != null)
+            bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     @Override
