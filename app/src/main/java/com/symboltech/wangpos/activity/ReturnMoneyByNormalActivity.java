@@ -295,7 +295,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                 this.finish();
                 break;
             case R.id.text_edit:
-                if(text_edit.getText().equals(getString(R.string.edit))){
+                if(text_edit.getText().toString().equals(getString(R.string.edit))){
                     text_edit.setText(R.string.done);
                     image_add.setVisibility(View.VISIBLE);
                     isEdit = true;
@@ -628,11 +628,11 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void saveOrder() {
         if(reasons!= null && reasons.size() > 0){
-            if(edit_input_reason.getText().equals(getString(R.string.warning_no))){
+            if(edit_input_reason.getText().toString().equals(getString(R.string.warning_no))){
                 ToastUtils.sendtoastbyhandler(handler, getString(R.string.please_select_return_reason));
                 return;
             }
-            if(text_edit.getText().equals(getString(R.string.done))){
+            if(text_edit.getText().toString().equals(getString(R.string.done))){
                 ToastUtils.sendtoastbyhandler(handler, "请先完成支付方式编辑");
                 return;
             }

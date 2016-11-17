@@ -353,7 +353,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
      */
     private void saveOrder() {
         if(reasons!= null && reasons.size() > 0){
-            if(edit_input_reason.getText().equals(getString(R.string.warning_no))){
+            if(edit_input_reason.getText().toString().equals(getString(R.string.warning_no))){
                 ToastUtils.sendtoastbyhandler(handler, getString(R.string.please_select_return_reason));
                 return;
             }

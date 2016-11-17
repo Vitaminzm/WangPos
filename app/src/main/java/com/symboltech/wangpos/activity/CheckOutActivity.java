@@ -39,11 +39,9 @@ import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.SubmitGoods;
-import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.SaveOrderResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.ArithDouble;
-import com.symboltech.wangpos.utils.CodeBitmap;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
@@ -51,7 +49,7 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
-;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -64,6 +62,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
+
+;
 
 public class CheckOutActivity extends BaseActivity {
 
@@ -201,7 +201,7 @@ public class CheckOutActivity extends BaseActivity {
                 if(Utils.isFastClick()){
                     return;
                 }
-                if (null == edit_input_money.getText() || "".equals(edit_input_money.getText())) {
+                if (null == edit_input_money.getText() || "".equals(edit_input_money.getText().toString())) {
                     edit_input_money.setText("");
                     ToastUtils.sendtoastbyhandler(handler, "请先输入金额");
                     return;
@@ -394,7 +394,7 @@ public class CheckOutActivity extends BaseActivity {
             case R.id.text_submit_order:
                 payments.clear();
                 if(waitPayValue > 0.0){
-                    if(paymentTypeAdapter.getPayType() != null && !edit_input_money.getText().equals("") && paymentTypeAdapter.getPayType().getType().equals(PaymentTypeEnum.CASH.getStyletype())){
+                    if(paymentTypeAdapter.getPayType() != null && !edit_input_money.getText().toString().equals("") && paymentTypeAdapter.getPayType().getType().equals(PaymentTypeEnum.CASH.getStyletype())){
 
                         PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
                         payMentsInfoCoupon.setId(getPayTypeId(PaymentTypeEnum.CASH));

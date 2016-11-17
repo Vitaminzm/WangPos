@@ -74,6 +74,7 @@
         android:textColor="@color/font_color"/>
     <ImageView
         android:id="@+id/imageview_opt"
+        android:visibility="invisible"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginLeft="@dimen/margin_oz"

@@ -383,10 +383,10 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				}
 				break;
 			case R.id.text_confirm_query:
-				if (text_confirm_query.getText().equals(getString(R.string.confirm))){
+				if (text_confirm_query.getText().toString().equals(getString(R.string.confirm))){
 					//handleTransResult(true, dataString);
 					text_confirm_query.setText(R.string.query);
-				}else if(text_confirm_query.getText().equals(getString(R.string.query))){
+				}else if(text_confirm_query.getText().toString().equals(getString(R.string.query))){
 					imageview_close.setVisibility(View.GONE);
 					ll_paying_by_code.setVisibility(View.GONE);
 					ll_paying_msg.setVisibility(View.GONE);
