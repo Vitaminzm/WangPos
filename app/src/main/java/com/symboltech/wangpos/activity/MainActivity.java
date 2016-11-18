@@ -228,10 +228,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void initData() {
         if(AppConfigFile.isOffLineMode()){
-            //手动监测网络状态
-            Intent serviceintent = new Intent(MainActivity.this, RunTimeService.class);
-            serviceintent.putExtra(ConstantData.CHECK_NET, true);
-            mContext.startService(serviceintent);
             ChangeUI(1);
         }else{
             ChangeUI(0);
@@ -276,11 +272,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onResume() {
-//        if(AppConfigFile.isOffLineMode()){
-//            ChangeUI(1);
-//        }else {
-//            ChangeUI(0);
-//        }
+        if(AppConfigFile.isOffLineMode()){
+            //手动监测网络状态
+            Intent serviceintent = new Intent(MainActivity.this, RunTimeService.class);
+            serviceintent.putExtra(ConstantData.CHECK_NET, true);
+            mContext.startService(serviceintent);
+        }
         filter.addAction(ConstantData.OFFLINE_MODE);
         registerReceiver(receiver, filter);
         registerReceiver(broadcastReceiver, new IntentFilter(
