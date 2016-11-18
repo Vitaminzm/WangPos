@@ -1,15 +1,5 @@
 package com.symboltech.wangpos.service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -37,6 +27,16 @@ import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * 后台服务，提供日志上传等功能
@@ -82,7 +82,7 @@ public class RunTimeService extends Service {
 					checkNetStatus(false);
 				}
 			};
-			mTimer.schedule(mTask, 0, AppConfigFile.NETWORK_STATUS_INTERVAL);
+			mTimer.schedule(mTask, AppConfigFile.NETWORK_STATUS_INTERVAL, AppConfigFile.NETWORK_STATUS_INTERVAL);
 		}
 	}
 

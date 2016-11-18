@@ -113,11 +113,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         und = new UserNameDao(this);
         loginrole = getIntent().getIntExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
         switchrole();
-        if (getIntent().getBooleanExtra(ConstantData.LOGIN_FIRST, false)) {
-            //开启服务(上传日志及pos状态监听)
-            Intent service = new Intent(getApplicationContext(), RunTimeService.class);
-            startService(service);
-        }
+//        if (getIntent().getBooleanExtra(ConstantData.LOGIN_FIRST, false)) {
+//            //开启服务(上传日志及pos状态监听)
+//            Intent service = new Intent(getApplicationContext(), RunTimeService.class);
+//            startService(service);
+//        }
     }
 
     @Override
