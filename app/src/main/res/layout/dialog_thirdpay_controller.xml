@@ -3,14 +3,14 @@
     android:layout_width="@dimen/height_xzz"
     android:layout_height="@dimen/height_fzz"
     android:id="@+id/ll_keyboard"
-    android:background="@color/white"
+    android:background="@drawable/radiud_bg"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <RelativeLayout
         android:id="@+id/title_bar"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_vz"
-        android:background="@color/color_bg">
+        android:background="@drawable/radiud_lt_rt_bg">
         <ImageView
             android:visibility="gone"
             android:id="@+id/imageview_close"

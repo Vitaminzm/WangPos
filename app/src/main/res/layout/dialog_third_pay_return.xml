@@ -3,7 +3,7 @@
     android:layout_width="@dimen/height_xzz"
     android:layout_height="@dimen/height_fzz"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#f5f5f5"
+    android:background="@drawable/radiud_bg"
     android:shadowColor="#7f000000"
     android:shadowDx="5"
     android:shadowDy="5"
@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_sz"
-        android:background="@color/color_bg">
+        android:background="@drawable/radiud_lt_rt_bg">
         <TextView
             android:id="@+id/text_title"
             android:layout_width="wrap_content"

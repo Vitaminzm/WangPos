@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/height_xzz"
     android:layout_height="@dimen/height_fzz"
-    android:background="@color/white"
+    android:background="@drawable/radiud_bg"
     android:orientation="vertical" >
-    <ImageView
+    <TextView
         android:id="@+id/image_title"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/height_rz"
-        android:background="@color/color_bg" />
+        android:background="@drawable/radiud_lt_rt_bg" />
     <LinearLayout
         android:id="@+id/ll_input_money"
         android:layout_below="@id/image_title"

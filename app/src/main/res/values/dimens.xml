@@ -4,6 +4,8 @@
     <dimen name="activity_vertical_margin">12dp</dimen>
     <!-- 圆角度 -->
     <dimen name="corners_radius">3dp</dimen>
+    <dimen name="corners_radius_small">2dp</dimen>
+    <dimen name="corners_radius_big">2dp</dimen>
     <!-- btn 配置-->
     <dimen name="btn_width">136dp</dimen><!-- -->
     <dimen name="btn_margin">8dp</dimen>

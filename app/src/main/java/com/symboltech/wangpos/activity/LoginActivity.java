@@ -201,6 +201,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
 
     @Override
     public void onClick(View v) {
+        if(Utils.isFastClick()){
+            return;
+        }
         switch (v.getId()) {
             case R.id.text_login:
                 if (iscashier) {
