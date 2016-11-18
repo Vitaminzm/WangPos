@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/view_bg_color"
     android:id="@+id/ll_keyboard"
     tools:context="com.symboltech.wangpos.activity.PaymentActivity">
 
@@ -18,6 +17,7 @@
 
     <LinearLayout
         android:id="@+id/input_money"
+        android:background="@color/view_bg_color"
         android:layout_below="@id/view_sales_info"
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_otz"
@@ -80,6 +80,7 @@
     </FrameLayout>
 
     <LinearLayout
+        android:background="@color/view_bg_color"
         android:id="@+id/radioGroup_function"
         android:layout_above="@id/fl_bill_info"
         android:layout_width="match_parent"
@@ -133,14 +134,20 @@
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/add_saleman"/>
     </LinearLayout>
-    <com.baoyz.swipemenulistview.SwipeMenuListView
-        android:id="@+id/goods_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/icon_bg_scroll"
-        android:layout_marginRight="@dimen/margin_tz"
-        android:layout_marginLeft="@dimen/margin_tz"
-        android:scrollbars="none"
+    <FrameLayout
+        android:background="@color/view_bg_color"
         android:layout_above="@id/radioGroup_function"
-        android:layout_below="@id/input_money"/>
+        android:layout_below="@id/input_money"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.baoyz.swipemenulistview.SwipeMenuListView
+            android:id="@+id/goods_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/icon_bg_scroll"
+            android:layout_marginRight="@dimen/margin_tz"
+            android:layout_marginLeft="@dimen/margin_tz"
+            android:scrollbars="none"/>
+    </FrameLayout>
+
 </RelativeLayout>

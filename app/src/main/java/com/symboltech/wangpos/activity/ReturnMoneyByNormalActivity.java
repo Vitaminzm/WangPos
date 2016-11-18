@@ -434,7 +434,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         if(isEdit) {
             icon.setVisibility(View.VISIBLE);
         }else {
-            icon.setVisibility(View.GONE);
+            icon.setVisibility(View.INVISIBLE);
         }
         style.setOnClickListener(new View.OnClickListener() {
 
