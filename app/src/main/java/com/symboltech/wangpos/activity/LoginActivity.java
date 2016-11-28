@@ -27,6 +27,7 @@ import com.symboltech.wangpos.db.dao.UserNameDao;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.http.HttpServiceStringClient;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.interfaces.OnDrawableClickListener;
 import com.symboltech.wangpos.log.LogUtil;
@@ -115,8 +116,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         switchrole();
         if (getIntent().getBooleanExtra(ConstantData.LOGIN_FIRST, false)) {
             //开启服务(上传日志及pos状态监听)
-            Intent service = new Intent(getApplicationContext(), RunTimeService.class);
-            startService(service);
+            Intent serviceintent = new Intent(getApplicationContext(), RunTimeService.class);
+            serviceintent.putExtra(ConstantData.UPLOAD_LOG, true);
+            startService(serviceintent);
         }
     }
 
@@ -213,12 +215,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.imageview_loginout:
+                MyApplication.stopTask();
                 OperateLog.getInstance().stopUpload();
-                Intent service = new Intent(getApplicationContext(), RunTimeService.class);
                 InitializeConfig.clearCash(LoginActivity.this);
-                stopService(service);
                 this.finish();
                 AppConfigFile.exit();
+                HttpServiceStringClient.getinstance().cancleRequest();
                 System.exit(0);
                 break;
         }
@@ -407,10 +409,11 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     SpSaveUtils.writeboolean(MyApplication.context, ConstantData.IS_CONFIG_DOWNLOAD, true);
                     und.add(result.getLogininfo().getPersoncode());
                     savelogininfo(result.getLogininfo());
-                    Intent serviceintent = new Intent(getApplicationContext(), RunTimeService.class);
-                    serviceintent.putExtra(ConstantData.UPLOAD_LOG, true);
-                    serviceintent.putExtra(ConstantData.CASHIER_ID, result.getLogininfo().getPerson_id());
-                    startService(serviceintent);
+                    if (getIntent().getBooleanExtra(ConstantData.LOGIN_FIRST, false)) {
+                        //开启服务(pos状态监听)
+                        MyApplication.setCashierId(result.getLogininfo().getPerson_id());
+                        MyApplication.startTask();
+                    }
                     startforcashier();
                 } else {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());

@@ -1,16 +1,6 @@
 package com.symboltech.wangpos.service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import android.app.Service;
+import android.app.IntentService;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -24,7 +14,6 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
-import com.symboltech.wangpos.http.HttpServiceStringClient;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.msg.entity.OfflineBankInfo;
@@ -38,53 +27,78 @@ import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * 后台服务，提供日志上传等功能
  * 
  * @author zmm Email:mingming.zhang@symboltech.com 2015年12月15日
  * 
  */
-public class RunTimeService extends Service {
+public class RunTimeService extends IntentService {
+
 
 	/**
-	 * 监听pos状态需要传递的收款员
+	 * Creates an IntentService.  Invoked by your subclass's constructor.
+	 *
+	 * @param name Used to name the worker thread, important only for debugging.
 	 */
-	private String cashierId = "-1";
+	public RunTimeService(String name) {
+		super(name);
+	}
 
-	private Timer mTimer;
-
-	private TimerTask mTask;
-
-	private DateFormat formatContent = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public RunTimeService() {
+		super("RunTimeService");
+	}
 
 	@Override
 	public void onCreate() {
-		LogUtil.i("lgs","service_-------create");
-		checkNettimertask();
 		super.onCreate();
+		LogUtil.i("lgs", "RunTimeService-----------");
 	}
 
-	/**
-	 * 检测网络状态定时器
-	 * 
-	 * @author CWI-APST email:26873204@qq.com
-	 * @Description: TODO
-	 */
-	private void checkNettimertask() {
-		// TODO Auto-generated method stub
-		if (mTimer == null) {
-			mTimer = new Timer();
-		}
-		if (mTask == null) {
-			mTask = new TimerTask() {
-				@Override
-				public void run() {
-					checkNetStatus(false);
-				}
-			};
-			mTimer.schedule(mTask, 0, AppConfigFile.NETWORK_STATUS_INTERVAL);
+	@Override
+	protected void onHandleIntent(Intent intent) {
+		if (intent != null) {
+			if (intent.getBooleanExtra(ConstantData.UPLOAD_LOG, false)) {
+				// 上传操作日志
+				OperateLog.getInstance().DeleteLog(AppConfigFile.OPT_LOG_INTERVAL);
+			}else
+			if (intent.getBooleanExtra(ConstantData.CHECK_NET, false)) {
+				// 手动检测网络
+				checkNetStatus(true);
+			}else
+			if (intent.getBooleanExtra(ConstantData.UPLOAD_OFFLINE_DATA, false)) {
+				// 手动上传离线数据
+				uploadOfflineData(null, AppConfigFile.OFFLINE_DATA_COUNT);
+			}else
+			if(intent.getBooleanExtra(ConstantData.UPDATE_STATUS, false)){
+				setCashierId(intent.getStringExtra(ConstantData.CASHIER_ID));
+				checkNetStatus(false);
+			}
+			else
+			if(intent.getBooleanExtra(ConstantData.SAVE_THIRD_DATA, false)){
+				OrderBean res = (OrderBean) intent.getSerializableExtra(ConstantData.THIRD_DATA);
+				LogUtil.i("lgs", "========save third=====" + res.toString());
+				saveBanInfo(res);
+			}else
+			if(intent.getBooleanExtra(ConstantData.UPLOAD_OFFLINE_DATA_BYLOG, false)){
+				sendOffLineByLog(null, AppConfigFile.OFFLINE_DATA_COUNT);
+				sendBankOffLineByLog(null, AppConfigFile.OFFLINE_DATA_COUNT);
+			}else {
+				checkNetStatus(false);
+			}
 		}
 	}
+
+	private DateFormat formatContent = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 
 	/**
 	 * 检测网络状态，发送心跳包
@@ -94,7 +108,7 @@ public class RunTimeService extends Service {
 	 */
 	public void checkNetStatus(final boolean isCheck) {
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("cashier", cashierId);
+		map.put("cashier", MyApplication.getCashierId());
 		HttpRequestUtil.getinstance().monitorSKT(ConstantData.NET_TAG, map, BaseResult.class, new HttpActionHandle<BaseResult>() {
 
 			@Override
@@ -134,45 +148,9 @@ public class RunTimeService extends Service {
 	 * @param cashierId
 	 */
 	public void setCashierId(String cashierId) {
-		this.cashierId = cashierId;
+		MyApplication.setCashierId(cashierId);
 	}
 
-
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		if (intent != null) {
-			if (intent.getBooleanExtra(ConstantData.UPLOAD_LOG, false)) {
-				// 上传操作日志
-				OperateLog.getInstance().DeleteLog(AppConfigFile.OPT_LOG_INTERVAL);
-				setCashierId(intent.getStringExtra(ConstantData.CASHIER_ID));
-				checkNetStatus(false);
-			}
-			if (intent.getBooleanExtra(ConstantData.CHECK_NET, false)) {
-				// 手动检测网络
-				checkNetStatus(true);
-			}
-			if (intent.getBooleanExtra(ConstantData.UPLOAD_OFFLINE_DATA, false)) {
-				// 手动上传离线数据
-				uploadOfflineData(null, AppConfigFile.OFFLINE_DATA_COUNT);
-			}
-			if(intent.getBooleanExtra(ConstantData.UPDATE_STATUS, false)){
-				setCashierId(intent.getStringExtra(ConstantData.CASHIER_ID));
-				checkNetStatus(false);
-			}
-
-			if(intent.getBooleanExtra(ConstantData.SAVE_THIRD_DATA, false)){
-				OrderBean res = (OrderBean) intent.getSerializableExtra(ConstantData.THIRD_DATA);
-				LogUtil.i("lgs", "========save third=====" + res.toString());
-				saveBanInfo(res);
-			}
-			if(intent.getBooleanExtra(ConstantData.UPLOAD_OFFLINE_DATA_BYLOG, false)){
-				sendOffLineByLog(null, AppConfigFile.OFFLINE_DATA_COUNT);
-				sendBankOffLineByLog(null, AppConfigFile.OFFLINE_DATA_COUNT);
-			}
-		}
-		return START_NOT_STICKY;
-	}
-	
 	@Override
 	public void onDestroy() {
 		LogUtil.i("lgs", "onDestroy-------------");
@@ -187,17 +165,7 @@ public class RunTimeService extends Service {
 	}
 
 	public void cancel(){
-		if (mTask != null) {
-			mTask.cancel();
-			mTask = null;
-		}
-		
-		if (mTimer != null) {
-			mTimer.cancel();
-			mTimer.purge();
-			mTimer = null;
-		}
-		HttpServiceStringClient.getinstance().cancleRequest();
+		//HttpServiceStringClient.getinstance().cancleRequest();
 	}
 
 	/**

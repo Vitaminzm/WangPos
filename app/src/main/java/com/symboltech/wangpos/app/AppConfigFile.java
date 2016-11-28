@@ -61,6 +61,7 @@ public class AppConfigFile {
 			for (Activity activity : activityList) {
 				if (activity != null) {
 					activity.finish();
+					activity = null;
 				}
 			}
 		}

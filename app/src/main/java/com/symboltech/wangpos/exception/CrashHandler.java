@@ -1,5 +1,20 @@
 package com.symboltech.wangpos.exception;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
+import android.util.Log;
+
+import com.symboltech.wangpos.app.AppConfigFile;
+import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.config.InitializeConfig;
+import com.symboltech.wangpos.http.HttpServiceStringClient;
+import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.log.OperateLog;
+import com.symboltech.wangpos.utils.OptLogEnum;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -7,22 +22,6 @@ import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
-import android.os.Handler;
-import android.util.Log;
-
-import com.symboltech.wangpos.app.AppConfigFile;
-import com.symboltech.wangpos.config.InitializeConfig;
-import com.symboltech.wangpos.log.LogUtil;
-import com.symboltech.wangpos.log.OperateLog;
-import com.symboltech.wangpos.service.RunTimeService;
-import com.symboltech.wangpos.utils.OptLogEnum;
 
 /**
  * 捕获程序异常
@@ -54,9 +53,11 @@ public class CrashHandler implements UncaughtExceptionHandler {
 	}
 
 	public void exit(){
+		MyApplication.stopTask();
 		OperateLog.getInstance().stopUpload();
 		InitializeConfig.clearCash(mContext);
 		AppConfigFile.exit();
+		HttpServiceStringClient.getinstance().cancleRequest();
 		System.exit(1);
 	}
 	public void uncaughtException(Thread t, Throwable ex) {
