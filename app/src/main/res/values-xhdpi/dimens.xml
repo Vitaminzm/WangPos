@@ -12,8 +12,8 @@
     <!-- 自定义键盘-->
     <dimen name="font_size">36sp</dimen>
     <dimen name="key_height">90dp</dimen>
+    <dimen name="keyboard_height">415dp</dimen>
     <dimen name="key_margin">6dp</dimen>
-
     <dimen name="big_font_size">15sp</dimen>
 
     <!-- 登录界面-->
@@ -77,6 +77,7 @@
     <dimen name="height_oev">92dp</dimen>
     <dimen name="height_osz">85dp</dimen>
     <dimen name="height_oxz">80dp</dimen>
+    <dimen name="height_ovz">75dp</dimen>
     <dimen name="height_ofz">70dp</dimen>
     <dimen name="height_orz">65dp</dimen>
     <dimen name="height_otz">60dp</dimen>

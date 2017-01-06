@@ -6,10 +6,10 @@
 
     <ImageView
         android:id="@+id/title_icon_back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="match_parent"
         android:src="@mipmap/title_icon_back"
-        android:scaleType="centerCrop"
+        android:scaleType="centerInside"
         android:layout_centerVertical="true"
         android:layout_marginLeft="@dimen/margin_rz"/>
 

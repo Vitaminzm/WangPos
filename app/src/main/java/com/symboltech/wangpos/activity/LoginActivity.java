@@ -120,6 +120,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             serviceintent.putExtra(ConstantData.UPLOAD_LOG, true);
             startService(serviceintent);
         }
+        LogUtil.i("lgs", ""+Utils.px2dip(getApplicationContext(),200));
+        LogUtil.i("lgs", ""+Utils.px2dip(getApplicationContext(),100));
     }
 
     @Override
@@ -255,7 +257,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             if (null == mPopupWindow) {
                  adapter = new ArrayAdapter<>(LoginActivity.this, R.layout.popup_item, datas);
                 listview.setAdapter(adapter);
-                mPopupWindow = new PopupWindow(listview, Utils.dip2px(getApplicationContext(), 125), MachineUtils.dip2px(MyApplication.context, 105), true);
+                mPopupWindow = new PopupWindow(listview, (int)getResources().getDimension(R.dimen.height_txz), (int)getResources().getDimension(R.dimen.height_ttz), true);
                 mPopupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
                 mPopupWindow.setAnimationStyle(R.style.PopupAnimation);
             }else {

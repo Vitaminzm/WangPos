@@ -72,6 +72,7 @@
         android:layout_width="match_parent"
         android:text="@string/submit_return_order"
         android:gravity="center"
+        android:textSize="@dimen/big_font_size"
         android:textColor="@color/white"
         android:background="@drawable/btn_green_bg"
         android:layout_height="@dimen/height_ez" />

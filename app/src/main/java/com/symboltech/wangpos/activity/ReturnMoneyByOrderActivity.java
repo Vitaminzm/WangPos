@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -68,7 +67,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     TextView title_text_content;
 
     @Bind(R.id.edit_input_money)
-    EditText edit_input_reason;
+    TextView edit_input_reason;
     @Bind(R.id.imageview_drop_arrow)
     ImageView imageview_drop_arrow;
 
@@ -314,7 +313,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private void showReason(View v) {
         if(reasons!= null && reasons.size() > 0){
             if (null == PopupWindowReason) {
-                PopupWindowReason = new PopupWindow(reasonPop, 250, 200, true);
+                PopupWindowReason = new PopupWindow(reasonPop, (int)getResources().getDimension(R.dimen.height_tnz), (int)getResources().getDimension(R.dimen.height_tzz), true);
                 PopupWindowReason.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
                 PopupWindowReason.setAnimationStyle(R.style.PopupAnimation);
             }

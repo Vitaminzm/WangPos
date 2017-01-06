@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="360dp"
-    android:layout_height="380dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/keyboard_bg_color"
     android:orientation="horizontal"
     android:paddingBottom="11dp"
@@ -18,7 +18,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_7"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_marginBottom="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
@@ -31,7 +31,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_4"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_marginBottom="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
@@ -44,7 +44,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_1"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_marginBottom="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
@@ -57,7 +57,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_00"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
             android:gravity="center"
@@ -77,7 +77,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_8"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_marginBottom="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
@@ -90,7 +90,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_5"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_marginBottom="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
@@ -103,7 +103,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_2"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_marginBottom="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
@@ -116,7 +116,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_0"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
             android:gravity="center"
@@ -136,7 +136,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_9"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_marginBottom="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
@@ -149,7 +149,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_6"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_marginBottom="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
@@ -162,7 +162,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_3"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_marginBottom="@dimen/key_margin"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
@@ -175,7 +175,7 @@
         <TextView
             android:id="@+id/dialog_horizontal_keyboard_bt_dot"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/key_height"
             android:layout_weight="1"
             android:background="@drawable/light_gray_corner_bt_selector"
             android:gravity="center"
@@ -196,7 +196,7 @@
             <TextView
                 android:id="@+id/dialog_horizontal_keyboard_bt_cancle"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/key_height"
                 android:layout_marginBottom="@dimen/key_margin"
                 android:layout_weight="1"
                 android:background="@drawable/orange_corner_bt_selector"
@@ -208,7 +208,7 @@
             <TextView
                 android:id="@+id/dialog_horizontal_keyboard_bt_clean"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/key_height"
                 android:layout_marginBottom="@dimen/key_margin"
                 android:layout_weight="1"
                 android:background="@drawable/orange_corner_bt_selector"
@@ -219,7 +219,7 @@
             <TextView
                 android:id="@+id/dialog_horizontal_keyboard_bt_c"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/key_height"
                 android:layout_marginBottom="@dimen/key_margin"
                 android:layout_weight="1"
                 android:background="@drawable/orange_corner_bt_selector"
@@ -232,7 +232,7 @@
             <TextView
                 android:id="@+id/dialog_horizontal_keyboard_bt_confirm"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="@dimen/key_height"
                 android:layout_weight="1"
                 android:background="@drawable/green_corner_bt_selector"
                 android:gravity="center"

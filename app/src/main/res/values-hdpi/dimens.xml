@@ -1,0 +1,102 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <!-- 圆角度 -->
+    <dimen name="corners_radius">4dp</dimen>
+    <dimen name="corners_radius_small">3dp</dimen>
+    <dimen name="corners_radius_big">3dp</dimen>
+    <!-- btn 配置-->
+    <dimen name="btn_width">181dp</dimen><!-- -->
+    <dimen name="btn_margin">10dp</dimen>
+    <!-- 自定义键盘-->
+    <dimen name="font_size">48sp</dimen>
+    <dimen name="key_height">120dp</dimen>
+    <dimen name="key_margin">8dp</dimen>
+    <dimen name="keyboard_height">560dp</dimen>
+    <dimen name="big_font_size">20sp</dimen>
+
+    <!-- 登录界面-->
+    <dimen name="font_size_ez">53sp</dimen>
+    <dimen name="font_size_ft">28sp</dimen>
+    <dimen name="font_size_fz">26sp</dimen>
+    <dimen name="font_size_rx">24sp</dimen>
+    <dimen name="font_size_rv">22sp</dimen>
+    <dimen name="font_size_rz">20sp</dimen>
+    <dimen name="font_size_tf">16sp</dimen>
+    <dimen name="font_size_tz">13sp</dimen>
+
+    <dimen name="margin_rrz">220dp</dimen>
+    <dimen name="margin_tzz">133dp</dimen>
+    <dimen name="margin_ovv">103dp</dimen>
+    <dimen name="margin_oof">76dp</dimen>
+    <dimen name="margin_ooz">73dp</dimen>
+    <dimen name="margin_ozz">66dp</dimen>
+    <dimen name="margin_nv">63dp</dimen>
+    <dimen name="margin_nz">60dp</dimen>
+    <dimen name="margin_ez">53dp</dimen>
+    <dimen name="margin_sv">50dp</dimen>
+    <dimen name="margin_sz">46dp</dimen>
+    <dimen name="margin_xv">43dp</dimen>
+    <dimen name="margin_xz">40dp</dimen>
+    <dimen name="margin_vv">36dp</dimen>
+    <dimen name="margin_vz">33dp</dimen>
+    <dimen name="margin_fv">30dp</dimen>
+    <dimen name="margin_fz">26dp</dimen>
+    <dimen name="margin_rv">23dp</dimen>
+    <dimen name="margin_rz">20dp</dimen>
+    <dimen name="margin_tz">13dp</dimen>
+    <dimen name="margin_ov">10dp</dimen>
+    <dimen name="margin_oz">6dp</dimen>
+    <dimen name="margin_x">4dp</dimen>
+    <dimen name="margin_v">3dp</dimen>
+
+
+    <dimen name="height_xxz">440dp</dimen>
+    <dimen name="height_xzz">400dp</dimen>
+    <dimen name="height_vzz">333dp</dimen>
+    <dimen name="height_fnz">326dp</dimen>
+    <dimen name="height_fez">320dp</dimen>
+    <dimen name="height_fzz">266dp</dimen>
+    <dimen name="height_rsz">246dp</dimen>
+    <dimen name="height_rxs">244dp</dimen>
+    <dimen name="height_rxz">240dp</dimen>
+    <dimen name="height_rvz">233dp</dimen>
+    <dimen name="height_rrz">220dp</dimen>
+    <dimen name="height_rtt">214dp</dimen>
+    <dimen name="height_rtz">213dp</dimen>
+    <dimen name="height_roz">206dp</dimen>
+    <dimen name="height_rzt">201dp</dimen>
+    <dimen name="height_rzz">200dp</dimen>
+    <dimen name="height_tnz">193dp</dimen>
+    <dimen name="height_tez">186dp</dimen>
+    <dimen name="height_txz">173dp</dimen>
+    <dimen name="height_trz">153dp</dimen>
+    <dimen name="height_ttz">146dp</dimen>
+    <dimen name="height_tzz">133dp</dimen>
+    <dimen name="height_oev">122dp</dimen>
+    <dimen name="height_osz">113dp</dimen>
+    <dimen name="height_oxz">106dp</dimen>
+    <dimen name="height_ovz">100dp</dimen>
+    <dimen name="height_ofz">93dp</dimen>
+    <dimen name="height_orz">86dp</dimen>
+    <dimen name="height_otz">80dp</dimen>
+    <dimen name="height_ozz">66dp</dimen>
+    <dimen name="height_ne">62dp</dimen>
+    <dimen name="height_nz">60dp</dimen>
+    <dimen name="height_ef">56dp</dimen>
+    <dimen name="height_ez">53dp</dimen>
+    <dimen name="height_sz">46dp</dimen>
+    <dimen name="height_xv">42dp</dimen>
+    <dimen name="height_xz">40dp</dimen>
+    <dimen name="height_vz">33dp</dimen>
+    <dimen name="height_rz">20dp</dimen>
+
+    <dimen name="line_xez">453dp</dimen>
+    <dimen name="line_xzz">400dp</dimen>
+    <dimen name="line_rnz">260dp</dimen>
+    <dimen name="line_rxz">240dp</dimen>
+    <dimen name="line_txz">173dp</dimen>
+<!-- 0 1 2 3 4 5 6 7 8 9-->
+<!-- z o t r f v x s e n-->
+</resources>

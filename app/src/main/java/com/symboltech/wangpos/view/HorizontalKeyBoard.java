@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Rect;
-import android.text.Layout;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -22,9 +21,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +28,6 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 
@@ -198,8 +193,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 					  textView.getLocationOnScreen(pos);
 				  }
 			  }
-			  float height = dpToPx(getContext(), 410);
-
+			  float height = context.getResources().getDimension(R.dimen.keyboard_height);
 			  Rect outRect = new Rect();
 			  mContentView.getWindowVisibleDisplayFrame(outRect);
 
@@ -351,6 +345,8 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		LayoutParams params = window.getAttributes();
 		if(isFocusOutside)
 			params.flags = LayoutParams.FLAG_NOT_FOCUSABLE;
+		params.width = WindowManager.LayoutParams.MATCH_PARENT;
+		params.height = WindowManager.LayoutParams.WRAP_CONTENT;
 		window.setAttributes(params);
 	}
 

@@ -1,13 +1,6 @@
 package com.symboltech.wangpos.dialog;
 
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
@@ -15,7 +8,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -27,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.github.ybq.android.spinkit.SpinKitView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -38,6 +29,13 @@ import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.MyRadioGroup;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -142,8 +140,8 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 		bind_adapter.setDropDownViewResource(R.layout.item_car_plate_drop);
 		sp_bind_plate.setAdapter(bind_adapter);
 		
-		setDropDownHeight(sp_emporary_plate, 250);
-		setDropDownHeight(sp_bind_plate, 200);
+		setDropDownHeight(sp_emporary_plate, (int)context.getResources().getDimension(R.dimen.height_vzz));
+		setDropDownHeight(sp_bind_plate, (int)context.getResources().getDimension(R.dimen.height_fzz));
 		
 		radioGroup = (MyRadioGroup) findViewById(R.id.select_mode);
 		

@@ -33,7 +33,6 @@ import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.AllMemeberInfoResult;
-import com.symboltech.wangpos.result.MemberInfoResult;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -381,8 +380,8 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         Map<String, String> map = new HashMap<>();
         map.put("condType", verifyType);
         map.put("condValue", verifyValue);
-        HttpRequestUtil.getinstance().getmemberinfo(HTTP_TASK_KEY, map, MemberInfoResult.class,
-                new HttpActionHandle<MemberInfoResult>() {
+        HttpRequestUtil.getinstance().getAllMemberInfo(HTTP_TASK_KEY, map, AllMemeberInfoResult.class,
+                new HttpActionHandle<AllMemeberInfoResult>() {
 
                     @Override
                     public void handleActionStart() {
@@ -391,22 +390,24 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
                     @Override
                     public void handleActionFinish() {
+                        closewaitdialog();
                     }
 
                     @Override
                     public void handleActionError(String actionName, String errmsg) {
                         ToastUtils.sendtoastbyhandler(handler, errmsg);
-                        closewaitdialog();
                     }
 
                     @Override
-                    public void handleActionSuccess(String actionName, final MemberInfoResult result) {
-                        if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
-                            //OperateLog.getInstance().saveLog2File(OptLogEnum.MEMBER_VERIFY_SUCCCESS.getOptLogCode(), getString(R.string.member_verify_succcess));
-                            memberinfo = result.getDatamapclass().getMemberinfo();
-                            getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
-                        } else if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK_ADD_MEMBER)) {
-                            //OperateLog.getInstance().saveLog2File(OptLogEnum.MEMBER_ADD_SUCCESS.getOptLogCode(), getString(R.string.member_add_success));
+                    public void handleActionSuccess(String actionName, final AllMemeberInfoResult result) {
+                        if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+                            Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
+                            paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
+                            paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
+//                            paymentIntent.putExtra(ConstantData.MEMBER_IS_SECOND_VERIFY, isChecked);
+                            paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
+                            MemberAccessActivity.this.startActivity(paymentIntent);
+                        } else if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK_ADD_MEMBER)){
                             MemberAccessActivity.this.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
@@ -414,25 +415,21 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                                             new DialogFinishCallBack() {
                                                 @Override
                                                 public void finish(int p) {
-                                                    if (result.getDatamapclass() != null
-                                                            && result.getDatamapclass().getMemberinfo() != null
-                                                            && !StringUtil.isEmpty(result.getDatamapclass().getMemberinfo().getId())) {
-                                                        memberinfo = result.getDatamapclass().getMemberinfo();
-                                                        getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
-                                                    } else {
-                                                        closewaitdialog();
-                                                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.member_id_is_not_null));
-                                                    }
+                                                    Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
+                                                    paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
+                                                    paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
+                                                    paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
+                                                    MemberAccessActivity.this.startActivity(paymentIntent);
                                                 }
                                             });
                                     uhd.show();
                                 }
                             });
-                        } else {
-                            closewaitdialog();
+                        }else {
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                         }
                     }
+
                     @Override
                     public void startChangeMode() {
                         final HttpActionHandle httpActionHandle = this;
@@ -450,6 +447,75 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                         startActivity(intent);
                     }
                 });
+//        HttpRequestUtil.getinstance().getmemberinfo(HTTP_TASK_KEY, map, MemberInfoResult.class,
+//                new HttpActionHandle<MemberInfoResult>() {
+//
+//                    @Override
+//                    public void handleActionStart() {
+//                        startwaitdialog();
+//                    }
+//
+//                    @Override
+//                    public void handleActionFinish() {
+//                    }
+//
+//                    @Override
+//                    public void handleActionError(String actionName, String errmsg) {
+//                        ToastUtils.sendtoastbyhandler(handler, errmsg);
+//                        closewaitdialog();
+//                    }
+//
+//                    @Override
+//                    public void handleActionSuccess(String actionName, final MemberInfoResult result) {
+//                        if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
+//                            //OperateLog.getInstance().saveLog2File(OptLogEnum.MEMBER_VERIFY_SUCCCESS.getOptLogCode(), getString(R.string.member_verify_succcess));
+//                            memberinfo = result.getDatamapclass().getMemberinfo();
+//                            getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
+//                        } else if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK_ADD_MEMBER)) {
+//                            //OperateLog.getInstance().saveLog2File(OptLogEnum.MEMBER_ADD_SUCCESS.getOptLogCode(), getString(R.string.member_add_success));
+//                            MemberAccessActivity.this.runOnUiThread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    UniversalHintDialog uhd = new UniversalHintDialog(MemberAccessActivity.this, null, null,
+//                                            new DialogFinishCallBack() {
+//                                                @Override
+//                                                public void finish(int p) {
+//                                                    if (result.getDatamapclass() != null
+//                                                            && result.getDatamapclass().getMemberinfo() != null
+//                                                            && !StringUtil.isEmpty(result.getDatamapclass().getMemberinfo().getId())) {
+//                                                        memberinfo = result.getDatamapclass().getMemberinfo();
+//                                                        getAllMemberInfo(memberinfo.getId(), memberinfo.getIschecked(), verifyType);
+//                                                    } else {
+//                                                        closewaitdialog();
+//                                                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.member_id_is_not_null));
+//                                                    }
+//                                                }
+//                                            });
+//                                    uhd.show();
+//                                }
+//                            });
+//                        } else {
+//                            closewaitdialog();
+//                            ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+//                        }
+//                    }
+//                    @Override
+//                    public void startChangeMode() {
+//                        final HttpActionHandle httpActionHandle = this;
+//                        MemberAccessActivity.this.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                new ChangeModeDialog(MemberAccessActivity.this, httpActionHandle).show();
+//                            }
+//                        });
+//                    }
+//
+//                    @Override
+//                    public void handleActionChangeToOffLine() {
+//                        Intent intent = new Intent(MemberAccessActivity.this, MainActivity.class);
+//                        startActivity(intent);
+//                    }
+//                });
     }
 
     /**

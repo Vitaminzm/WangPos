@@ -2,7 +2,7 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tv_pop"
     android:layout_width="match_parent"
-    android:layout_height="35dp"
+    android:layout_height="@dimen/margin_sz"
     android:background="@drawable/popupwindow_listview_item_background_selector"
     android:gravity="center"
     android:minHeight="?android:attr/listPreferredItemHeightSmall"

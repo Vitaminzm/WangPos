@@ -98,6 +98,7 @@
             android:background="@null"
             android:drawableTop="@drawable/btn_select_good_selector"
             android:drawablePadding="@dimen/margin_ov"
+            android:textSize="@dimen/font_size_tf"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/select_good"/>
         <TextView
@@ -109,6 +110,7 @@
             android:layout_marginLeft="@dimen/margin_rv"
             android:drawableTop="@drawable/btn_add_score_good_selector"
             android:drawablePadding="@dimen/margin_ov"
+            android:textSize="@dimen/font_size_tf"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/add_score_good"/>
         <TextView
@@ -120,6 +122,7 @@
             android:drawableTop="@drawable/btn_look_member_selector"
             android:drawablePadding="@dimen/margin_ov"
             android:layout_marginLeft="@dimen/margin_rv"
+            android:textSize="@dimen/font_size_tf"
             android:textColor="@drawable/btn_font_color_selector"
             android:text="@string/look_member"/>
         <TextView
@@ -132,6 +135,7 @@
             android:drawableTop="@drawable/btn_add_saleman_selector"
             android:drawablePadding="@dimen/margin_ov"
             android:textColor="@drawable/btn_font_color_selector"
+            android:textSize="@dimen/font_size_tf"
             android:text="@string/add_saleman"/>
     </LinearLayout>
     <FrameLayout
