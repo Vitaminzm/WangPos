@@ -25,10 +25,13 @@ import com.symboltech.wangpos.adapter.ReturnReasonAdapter;
 import com.symboltech.wangpos.adapter.ReturnTableAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.dialog.AlipayAndWeixinPayReturnDialog;
 import com.symboltech.wangpos.dialog.ThirdPayReturnDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.OnReturnFinishListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BankPayInfo;
 import com.symboltech.wangpos.msg.entity.BillInfo;
@@ -36,18 +39,24 @@ import com.symboltech.wangpos.msg.entity.CouponInfo;
 import com.symboltech.wangpos.msg.entity.ExchangeInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.RefundReasonInfo;
+import com.symboltech.wangpos.msg.entity.ThirdPay;
+import com.symboltech.wangpos.msg.entity.WposBankRefundInfo;
 import com.symboltech.wangpos.print.PrepareReceiptInfo;
 import com.symboltech.wangpos.result.SaveOrderResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
+import com.symboltech.wangpos.utils.CashierSign;
+import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.ListViewForScrollView;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +69,11 @@ import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.weipass.pos.sdk.BizServiceInvoker;
+import cn.weipass.pos.sdk.LatticePrinter;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
+import cn.weipass.service.bizInvoke.RequestInvoke;
+import cn.weipass.service.bizInvoke.RequestResult;
 
 public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnTouchListener {
 
@@ -94,6 +108,10 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private LayoutInflater inflater;
     private BillInfo billInfo;
 
+    private Map<String, String> typeIds = new HashMap<String, String>();
+    private Map<String, String> idTypes = new HashMap<String, String>();
+    private Map<String, String> idNames = new HashMap<String, String>();
+
     private boolean flag = false;//是否已经处理过 默认是false
     /**commitStyles - 提交的退款方式*/
     private List<PayMentsInfo> commitStyles = new ArrayList<>();
@@ -106,6 +124,10 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
      * cashStyle-现金支付
      */
     private List<PayMentsInfo>  alipayStyle, weixinStyle, cashStyle;
+    /**支付宝id -- 对应id的支付详情集合*/
+    private List<ThirdPay> thirdAlipays = new ArrayList<ThirdPay>();
+    /**微信id -- 对应id的微信详情集合*/
+    private List<ThirdPay> thirdWeixins = new ArrayList<ThirdPay>();
     /**
      * bankStyle-银行卡支付
      */
@@ -201,6 +223,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     }
     static public boolean isPrinting = false;
     MyHandler handler = new MyHandler(this);
+    private LatticePrinter latticePrinter;// 点阵打印
     // 打印服务
     private static IPrinterService iPrinterService;
     private ServiceConnection printerServiceConnection = new ServiceConnection() {
@@ -243,6 +266,13 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         title_text_content.setText(getString(R.string.return_order_info));
         billInfo = (BillInfo) getIntent().getSerializableExtra(ConstantData.BILL);
         payMentsInfos = billInfo.getPaymentslist();
+        if(payMentsInfos != null && payMentsInfos.size() != 0) {
+            for (PayMentsInfo info : payMentsInfos) {
+                typeIds.put(info.getType(), info.getId());
+                idTypes.put(info.getId(), info.getType());
+                idNames.put(info.getId(), info.getName());
+            }
+        }
         text_return_total_money.setText(billInfo.getTotalmoney());
         if(billInfo.getMember() != null){
             ll_return_score_info.setVisibility(View.VISIBLE);
@@ -271,10 +301,19 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         getReturnMoneyInfo();
         realMoney = ArithDouble.sub(ArithDouble.parseDouble(billInfo.getTotalmoney()), ArithDouble.add(couponMoney, scoreMoney));
         listview_return_type.setAdapter(new ReturnTableAdapter(this, payMentsInfos));
-        Intent printService = new Intent(IPrinterService.class.getName());
-        printService = AndroidUtils.getExplicitIntent(this, printService);
-        if(printService != null)
-            bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        if(MyApplication.posType.equals("WPOS")){
+            try {
+                // 设备可能没有打印机，open会抛异常
+                latticePrinter = WeiposImpl.as().openLatticePrinter();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }else {
+            Intent printService = new Intent(IPrinterService.class.getName());
+            printService = AndroidUtils.getExplicitIntent(this, printService);
+            if (printService != null)
+                bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     @Override
@@ -357,7 +396,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 return;
             }
             resetStyle();
-            commitStyles.clear();
+            //commitStyles.clear();
             returnMoney();
         }else{
             ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_return_reason));
@@ -386,13 +425,16 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             if("true".equals(entity.getDes())){
                 bankFlag += 1;
             }else{
-                LogUtil.i("lgs","skfsid-----get-----"+entity.getSkfsid());
-                double money = ArithDouble.parseDouble(entity.getAmount());
-                Intent intentBank = new Intent(mContext, ThirdPayReturnDialog.class);
-                intentBank.putExtra(ConstantData.PAY_MONEY, money);
-                intentBank.putExtra(ConstantData.PAY_TYPE, getPayTypeById(entity.getSkfsid()));
-                intentBank.putExtra(ConstantData.PAY_ID, entity.getTradeno());
-                startActivityForResult(intentBank, ConstantData.THRID_CANCLE_REQUEST_CODE);
+                if(MyApplication.posType.equals("WPOS")){
+                    requestCashier(entity.getTradeno());
+                }else{
+                    double money = ArithDouble.parseDouble(entity.getAmount());
+                    Intent intentBank = new Intent(mContext, ThirdPayReturnDialog.class);
+                    intentBank.putExtra(ConstantData.PAY_MONEY, money);
+                    intentBank.putExtra(ConstantData.PAY_TYPE, getPayTypeById(entity.getSkfsid()));
+                    intentBank.putExtra(ConstantData.PAY_ID, entity.getTradeno());
+                    startActivityForResult(intentBank, ConstantData.THRID_CANCLE_REQUEST_CODE);
+                }
             }
         } else {
             returnAlipay();
@@ -403,12 +445,34 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
      * 退微钱包
      */
     private void returnWeiXinPay() {
-        if (weixinStyle != null && weixinFlag < weixinStyle.size()) {
-            allowanceWeixinFlag += 1;
-            if (weixinFlag < weixinStyle.size()) {
-                returnWeiXinPay();
-            } else {
-                returnAllowanceBank();
+        if (thirdWeixins != null && weixinFlag < thirdWeixins.size()) {
+            final ThirdPay thirdPay = thirdWeixins.get(weixinFlag);
+            if("true".equals(thirdPay.getPay_buyer())){
+                weixinFlag += 1;
+                if (weixinFlag < thirdWeixins.size()) {
+                    returnWeiXinPay();
+                } else {
+                    returnAllowanceBank();
+                }
+            }else {
+                new AlipayAndWeixinPayReturnDialog(this, thirdPay.getPay_type(), thirdPay.getTrade_no(), AppConfigFile.getBillId(), thirdPay.getPay_total_fee(), new OnReturnFinishListener() {
+
+                    @Override
+                    public void finish(boolean isSuccess) {
+                        thirdPay.setPay_buyer("true");
+                        if(isSuccess) {
+                            putPayments(thirdPay.getSkfsid(), idNames.get(thirdPay.getSkfsid()), PaymentTypeEnum.WECHAT.getStyletype(), "-"+ thirdPay.getPay_total_fee());
+                        }else {
+                            putPayments(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype()),  idNames.get(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype())), PaymentTypeEnum.WECHATRECORDED.getStyletype(), "-"+ thirdPay.getPay_total_fee());
+                        }
+                        weixinFlag += 1;
+                        if (weixinFlag < thirdWeixins.size()) {
+                            returnWeiXinPay();
+                        } else {
+                            returnAllowanceBank();
+                        }
+                    }
+                }).show();
             }
         } else {
             returnAllowanceBank();
@@ -420,15 +484,35 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
      *
      */
     private void returnAlipay() {
-        if (alipayStyle != null && alipayFlag < alipayStyle.size()) {
-            alipayFlag += 1;
-            if(alipayFlag < alipayStyle.size()){
-                returnAlipay();
-            }else{
-                returnWeiXinPay();
+        if (thirdAlipays != null && alipayFlag < thirdAlipays.size()) {
+            final ThirdPay thirdPay = thirdAlipays.get(alipayFlag);
+            if ("true".equals(thirdPay.getPay_buyer())) {
+                alipayFlag += 1;
+                if (alipayFlag < thirdAlipays.size()) {
+                    returnAlipay();
+                } else {
+                    returnWeiXinPay();
+                }
+            } else {
+                new AlipayAndWeixinPayReturnDialog(this, thirdPay.getPay_type(), thirdPay.getTrade_no(), AppConfigFile.getBillId(), thirdPay.getPay_total_fee(), new OnReturnFinishListener() {
+
+                    @Override
+                    public void finish(boolean isSuccess) {
+                        thirdPay.setPay_buyer("true");
+                        if (isSuccess) {
+                            putPayments(thirdPay.getSkfsid(), idNames.get(thirdPay.getSkfsid()), PaymentTypeEnum.ALIPAY.getStyletype(), "-" + thirdPay.getPay_total_fee());
+                        } else {
+                            putPayments(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())), PaymentTypeEnum.ALIPAYRECORDED.getStyletype(), "-" + thirdPay.getPay_total_fee());
+                        }
+                        alipayFlag += 1;
+                        if (alipayFlag < thirdAlipays.size()) {
+                            returnAlipay();
+                        } else {
+                            returnWeiXinPay();
+                        }
+                    }
+                }).show();
             }
-        } else {
-            returnWeiXinPay();
         }
     }
 
@@ -610,26 +694,30 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     }
 
     public void printBackByorder(final BillInfo billinfo){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Message msg1 = new Message();
-                msg1.what = printStart;
-                handler.sendMessage(msg1);
-                try {
-                    iPrinterService.registerPrintCallback(callback);
-                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
-                    // -999：不支持该功能（可以不支持）
-                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo, false)));
-                } catch (Exception e) {
-                    Message msg2 = new Message();
-                    msg2.what = printError;
-                    msg2.arg1 = -100;
-                    handler.sendMessage(msg2);
-                    e.printStackTrace();
+        if(MyApplication.posType.equals("WPOS")){
+            PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
+        }else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg1 = new Message();
+                    msg1.what = printStart;
+                    handler.sendMessage(msg1);
+                    try {
+                        iPrinterService.registerPrintCallback(callback);
+                        // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                        // -999：不支持该功能（可以不支持）
+                        iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter)));
+                    } catch (Exception e) {
+                        Message msg2 = new Message();
+                        msg2.what = printError;
+                        msg2.arg1 = -100;
+                        handler.sendMessage(msg2);
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     /**
@@ -705,6 +793,22 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 }else if (PaymentTypeEnum.SCORE.getStyletype().equals(type)) {
                     scoreMoney = ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage()));
                    deduction = info;
+                }
+            }
+        }
+        thirdAlipays.clear();
+        thirdWeixins.clear();
+        if(billInfo.getThirdpartypaylist() != null && billInfo.getThirdpartypaylist().size() != 0) {
+            List<ThirdPay> list = billInfo.getThirdpartypaylist();
+            for (ThirdPay thirdPay : list) {
+                if((ConstantData.PAYMODE_BY_ALIPAY+"").equals(thirdPay.getPay_type())) {
+                    ThirdPay info = thirdPay.clone();
+                    info.setPay_buyer("false");
+                    thirdAlipays.add(info);
+                }else if((ConstantData.PAYMODE_BY_WEIXIN+"").equals(thirdPay.getPay_type())) {
+                    ThirdPay info = thirdPay.clone();
+                    info.setPay_buyer("false");
+                    thirdWeixins.add(info);
                 }
             }
         }
@@ -808,5 +912,166 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private BizServiceInvoker mBizServiceInvoker;
+    //业务demo在bp平台中的的bpid，这里填写对应应用所属bp账号的bpid和对应的key--------------需要动态改变
+    private String InvokeCashier_BPID="53b3a1ca45ceb5f96d153eec";
+    private String InvokeCashier_KEY="LIz6bPS2z8jUnwLHRYzcJ6WK2X87ziWe";
+
+
+
+    // 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
+    //
+    // 2.调用收银支付成功后，收银支付结果页面完成后，BizServiceInvoker.OnResponseListener后收到响应的结果
+    //
+    // 3.如果需要页面调回到自己的App，需要在调用中增加参数package和classpath(如com.xxx.pay.ResultActivity)，并且这个跳转的Activity需要在AndroidManifest.xml中增加android:exported=”true”属性。
+    private void innerRequestCashier(String tradeNo) {
+        String seqNo = "1";//服务端请求序列,本地应用调用可固定写死为1
+        try {
+            RequestInvoke cashierReq = new RequestInvoke();
+            cashierReq.pkgName = this.getPackageName();
+            cashierReq.sdCode = CashierSign.Cashier_sdCode;// 收银服务的sdcode信息
+            cashierReq.bpId = InvokeCashier_BPID;
+            cashierReq.launchType = CashierSign.launchType;
+
+            cashierReq.params = CashierSign.refundsign(InvokeCashier_BPID, InvokeCashier_KEY, tradeNo);
+            cashierReq.seqNo = seqNo;
+
+            RequestResult r = mBizServiceInvoker.request(cashierReq);
+            LogUtil.i("lgs", r.token + "," + r.seqNo + "," + r.result);
+            // 发送调用请求
+            if (r != null) {
+                LogUtil.i("lgs", "request result:" + r.result + "|launchType:" + cashierReq.launchType);
+                String err = null;
+                switch (r.result) {
+                    case BizServiceInvoker.REQ_SUCCESS: {
+                        // 调用成功
+                        //ToastUtils.sendtoastbyhandler(handler, "收银服务调用成功");
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_ERR_INVAILD_PARAM: {
+                        ToastUtils.sendtoastbyhandler(handler, "请求参数错误！");
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_ERR_NO_BP: {
+                        ToastUtils.sendtoastbyhandler(handler, "未知的合作伙伴！");
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_ERR_NO_SERVICE: {
+                        //调用结果返回，没有订阅对应bp账号中的收银服务，则去调用sdk主动订阅收银服务
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                // TODO Auto-generated method stub
+                                ToastUtils.sendtoastbyhandler(handler, "正在申请订阅收银服务...");
+                                // 如果没有订阅，则主动请求订阅服务
+                                mBizServiceInvoker.subscribeService(CashierSign.Cashier_sdCode,
+                                        InvokeCashier_BPID);
+                            }
+                        });
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_NONE: {
+                        ToastUtils.sendtoastbyhandler(handler, "请求未知错误！");
+                        break;
+                    }
+                }
+                if (err != null) {
+                    LogUtil.i("lgs", "serviceInvoker request err:" + err);
+                }
+            }else{
+                ToastUtils.sendtoastbyhandler(handler, "请求结果对象为空！");
+            }
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 这个是服务调用完成后的响应监听方法
+     */
+    private BizServiceInvoker.OnResponseListener mOnResponseListener = new BizServiceInvoker.OnResponseListener() {
+
+        @Override
+        public void onResponse(String sdCode, String token, byte[] data) {
+            // 收银服务调用完成后的返回方法
+            String result = new String(data);
+            WposBankRefundInfo info = null;
+            try {
+                info = GsonUtil.jsonToBean(result, WposBankRefundInfo.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            LogUtil.i("lgs",
+                    "sdCode = " + sdCode + " , token = " + token + " , data = " + new String(data));
+            if(info != null){
+                if(info.getErrCode().equals("0")){
+                    BankPayInfo entity = bankStyle.get(bankFlag);
+                    entity.setDes("true");
+                    putPayments(entity.getSkfsid(), getPayNameById(entity.getSkfsid()), getPayTypeById(entity.getSkfsid()), "-" + entity.getAmount());
+                    OrderBean orderBean= new OrderBean();
+                    orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                    orderBean.setTxnId(info.getCashier_trade_no());
+                    orderBean.setRefNo(info.getRefund_ref_no());
+                    orderBean.setBatchId(info.getRefund_vouch_no());
+                    orderBean.setPaymentId(entity.getSkfsid());
+                    orderBean.setTransType(ConstantData.TRANS_RETURN);
+                    orderBean.setTraceId(AppConfigFile.getBillId());
+                    Intent serviceintent = new Intent(mContext, RunTimeService.class);
+                    serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+                    serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+                    startService(serviceintent);
+                    bankFlag += 1;
+                    if (bankFlag < bankStyle.size()) {
+                        returnBank();
+                    } else {
+                        returnAlipay();
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, info.getErrMsg());
+                }
+            }else{
+                ToastUtils.sendtoastbyhandler(handler, "未知错误");
+            }
+        }
+
+        @Override
+        public void onFinishSubscribeService(boolean result, String err) {
+            // TODO Auto-generated method stub
+            // 申请订阅收银服务结果返回
+            // bp订阅收银服务返回结果
+            if (!result) {
+                //订阅失败
+                ToastUtils.sendtoastbyhandler(handler, err);
+            }else{
+                //订阅成功
+                ToastUtils.sendtoastbyhandler(handler, "订阅收银服务成功，请按home键回调主页刷新订阅数据后重新进入调用收银");
+            }
+        }
+    };
+
+    /**
+     * 本地调用收银服务
+     */
+    private void requestCashier(String tradeNo) {
+
+        try {
+            // 初始化服务调用
+            mBizServiceInvoker = WeiposImpl.as().getService(BizServiceInvoker.class);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        if (mBizServiceInvoker == null) {
+            ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
+            return;
+        }
+        // 设置请求订阅服务监听结果的回调方法
+        mBizServiceInvoker.setOnResponseListener(mOnResponseListener);
+        innerRequestCashier(tradeNo);
     }
 }

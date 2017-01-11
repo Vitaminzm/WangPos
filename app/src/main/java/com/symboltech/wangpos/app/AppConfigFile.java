@@ -8,6 +8,8 @@ import com.symboltech.wangpos.utils.StringUtil;
 import java.util.LinkedList;
 import java.util.List;
 
+import cn.weipass.pos.sdk.impl.WeiposImpl;
+
 /**
 * @author  cwi-apst E-mail: 26873204@qq.com
 * @date 创建时间：2016年1月19日 下午3:09:59 
@@ -63,6 +65,12 @@ public class AppConfigFile {
 					activity.finish();
 					activity = null;
 				}
+			}
+		}
+		if(MyApplication.posType.equals("WPOS")){
+			try {
+				WeiposImpl.as().destroy();
+			} catch (Exception e) {
 			}
 		}
 	}

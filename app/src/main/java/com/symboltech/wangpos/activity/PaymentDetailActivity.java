@@ -21,6 +21,7 @@ import com.symboltech.wangpos.adapter.CouponsAdapter;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoDetailAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.SelectCarPlateDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -52,6 +53,8 @@ import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.weipass.pos.sdk.LatticePrinter;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
 
 public class PaymentDetailActivity extends BaseActivity {
 
@@ -156,6 +159,8 @@ public class PaymentDetailActivity extends BaseActivity {
             }
         }
     }
+
+    private LatticePrinter latticePrinter;// 点阵打印
     static public boolean isPrinting = false;
     MyHandler handler = new MyHandler(this);
     // 打印服务
@@ -268,7 +273,7 @@ public class PaymentDetailActivity extends BaseActivity {
                 text_score_deduction.setText(deductPoint+"");
             }
             totalPoint = ArithDouble.sub(awardPoint, ArithDouble.add(deductPoint, usedPoint));
-            text_now_score.setText(ArithDouble.add(ArithDouble.parseDouble(bill.getMember().getCent_total()), totalPoint)+"");
+            text_now_score.setText(ArithDouble.add(ArithDouble.parseDouble(bill.getMember().getCent_total()), totalPoint) + "");
         }
         MemberDetailActivity.MyLayoutManager linearLayoutManagerHold = new MemberDetailActivity.MyLayoutManager(this);
         linearLayoutManagerHold.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -292,10 +297,19 @@ public class PaymentDetailActivity extends BaseActivity {
         }else {
             ll_member_hold_coupon.setVisibility(View.GONE);
         }
-        Intent printService = new Intent(IPrinterService.class.getName());
-        printService = AndroidUtils.getExplicitIntent(this, printService);
-        if(printService != null)
-            bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        if(MyApplication.posType.equals("WPOS")){
+            try {
+                // 设备可能没有打印机，open会抛异常
+                latticePrinter = WeiposImpl.as().openLatticePrinter();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }else {
+            Intent printService = new Intent(IPrinterService.class.getName());
+            printService = AndroidUtils.getExplicitIntent(this, printService);
+            if (printService != null)
+                bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     private void addPayTypeInfo(String name, double changeMoney) {
@@ -365,26 +379,30 @@ public class PaymentDetailActivity extends BaseActivity {
     }
 
     public void printByorder(final BillInfo billinfo){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Message msg1 = new Message();
-                msg1.what = printStart;
-                handler.sendMessage(msg1);
-                try {
-                    iPrinterService.registerPrintCallback(callback);
-                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
-                    // -999：不支持该功能（可以不支持）
-                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printOrderList(billinfo, false)));
-                } catch (Exception e) {
-                    Message msg2 = new Message();
-                    msg2.what = printError;
-                    msg2.arg1 = -100;
-                    handler.sendMessage(msg2);
-                    e.printStackTrace();
+        if(MyApplication.posType.equals("WPOS")){
+            PrepareReceiptInfo.printOrderList(billinfo, false, latticePrinter);
+        }else{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg1 = new Message();
+                    msg1.what = printStart;
+                    handler.sendMessage(msg1);
+                    try {
+                        iPrinterService.registerPrintCallback(callback);
+                        // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                        // -999：不支持该功能（可以不支持）
+                        iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printOrderList(billinfo, false, latticePrinter)));
+                    } catch (Exception e) {
+                        Message msg2 = new Message();
+                        msg2.what = printError;
+                        msg2.arg1 = -100;
+                        handler.sendMessage(msg2);
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     private void getCouponPrintInfo() {
@@ -454,26 +472,30 @@ public class PaymentDetailActivity extends BaseActivity {
             }
         }
         if(couponInfos.size() > 0){
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    Message msg1 = new Message();
-                    msg1.what = printStart;
-                    handler.sendMessage(msg1);
-                    try {
-                        iPrinterService.registerPrintCallback(callback);
-                        // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
-                        // -999：不支持该功能（可以不支持）
-                        iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printCoupon(couponInfos)));
-                    } catch (Exception e) {
-                        Message msg2 = new Message();
-                        msg2.what = printError;
-                        msg2.arg1 = -100;
-                        handler.sendMessage(msg2);
-                        e.printStackTrace();
+            if(MyApplication.posType.equals("WPOS")){
+                PrepareReceiptInfo.printCoupon(couponInfos, latticePrinter);
+            }else{
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Message msg1 = new Message();
+                        msg1.what = printStart;
+                        handler.sendMessage(msg1);
+                        try {
+                            iPrinterService.registerPrintCallback(callback);
+                            // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                            // -999：不支持该功能（可以不支持）
+                            iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printCoupon(couponInfos, latticePrinter)));
+                        } catch (Exception e) {
+                            Message msg2 = new Message();
+                            msg2.what = printError;
+                            msg2.arg1 = -100;
+                            handler.sendMessage(msg2);
+                            e.printStackTrace();
+                        }
                     }
-                }
-            }).start();
+                }).start();
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 package com.symboltech.wangpos.print;
 
-public class PrinterManager {
+public class KposPrinterManager {
     //字体属性定义
     //支持异或加权 比如0x1000|0x0100|0x0010|0x0001，表示默认字体，普通大小，基本形态，未缩放
   

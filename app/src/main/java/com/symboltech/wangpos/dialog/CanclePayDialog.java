@@ -27,17 +27,21 @@ import com.symboltech.wangpos.adapter.CanclePayAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
-import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
-import com.symboltech.wangpos.result.BaseResult;
+import com.symboltech.wangpos.msg.entity.WposBankRefundInfo;
+import com.symboltech.wangpos.result.ThirdPayCancelResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
+import com.symboltech.wangpos.utils.CashierSign;
+import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
+import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -47,6 +51,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +64,10 @@ import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
 import cn.koolcloud.engine.thirdparty.aidlbean.LoginRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.SaleVoidRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
+import cn.weipass.pos.sdk.BizServiceInvoker;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
+import cn.weipass.service.bizInvoke.RequestInvoke;
+import cn.weipass.service.bizInvoke.RequestResult;
 
 /**
  * Description 通用提示dialog
@@ -193,12 +203,16 @@ public class CanclePayDialog extends BaseActivity{
 		if(cash > 0)
 			text_info.setText("(现金类 "+cash+")元");
 		if(totalMoney > cash){
-			Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
-			yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
-			setServiceStateChangeListerner(serviceStateChangeListerner1);
-			if (yunIntent == null) {
-			} else {
-				bindService(yunIntent, connection, Context.BIND_AUTO_CREATE);
+			if(MyApplication.posType.equals("WPOS")){
+				requestCashier();
+			}else{
+				Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
+				yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
+				setServiceStateChangeListerner(serviceStateChangeListerner1);
+				if (yunIntent == null) {
+				} else {
+					bindService(yunIntent, connection, Context.BIND_AUTO_CREATE);
+				}
 			}
 		}
 	}
@@ -309,54 +323,140 @@ public class CanclePayDialog extends BaseActivity{
 		}
 	}
 
-	public void saleVoid(int position){
-		if(!isLogin){
-			ToastUtils.sendtoastbyhandler(handler, "收银通未登录");
-			return;
+	/**
+	 * 支付撤销
+	 *
+	 * @author zmm Email:mingming.zhang@symboltech.com 2015年11月14日
+	 * @Description:
+	 */
+	private void thirdcancle(final int position) {
+		//LogUtil.i("lgs", "-----"+position);
+		isCancleCount++;
+		final PayMentsCancleInfo info = payments.get(position);
+		Map<String, String> map = new HashMap<String, String>();
+		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())) {
+			map.put("pay_type", ConstantData.PAYMODE_BY_ALIPAY+"");
+		}else if(info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
+			map.put("pay_type", ConstantData.PAYMODE_BY_WEIXIN+"");
 		}
-		if(isCancleCount > 0){
-			ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
-			return;
-		}
-		this.position = position;
-		if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
-				||payments.get(position).getDes().equals(getString(R.string.cancled))){
-			final PayMentsCancleInfo info = payments.get(position);
-			SaleVoidRequest saleVoidRequest = new SaleVoidRequest(info.getTxnid());
+		map.put("total_fee", MoneyAccuracyUtils.thirdpaymoneydealbyinput(info.getMoney()));
+		map.put("old_trade_no", info.getThridPay().getTrade_no());
+		map.put("billid", AppConfigFile.getBillId());
+		HttpRequestUtil.getinstance().thirdpaycancel(map, ThirdPayCancelResult.class,
+				new HttpActionHandle<ThirdPayCancelResult>() {
 
-			AidlRequestManager.getInstance().aidlSaleVoidRequest(mYunService,
-					saleVoidRequest, new AidlRequestManager.AidlRequestCallBack() {
+					@Override
+					public void handleActionStart() {
 
-						@Override
-						public void onTaskStart() {
-							isCancleCount++;
-							info.setDes(getString(R.string.cancleing_pay));
+					}
+
+					@Override
+					public void handleActionFinish() {
+						isCancleCount--;
+					}
+
+					@Override
+					public void handleActionError(String actionName, String errmsg) {
+						ToastUtils.sendtoastbyhandler(handler, errmsg);
+						info.setDes(getString(R.string.cancled_failed));
+						canclePayAdapter.notifyDataSetChanged();
+					}
+
+					@Override
+					public void handleActionSuccess(String actionName, ThirdPayCancelResult result) {
+						if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+							OperateLog.getInstance().saveLog2File(OptLogEnum.PAY_CANCLE_PAY_SUCCESS.getOptLogCode(), getString(R.string.pay_cancle_pay_success));
+							info.setIsCancle(true);
+							info.setDes(getString(R.string.cancled_pay));
 							canclePayAdapter.notifyDataSetChanged();
-						}
-
-						@Override
-						public void onTaskFinish(JSONObject rspJSON) {
-							isCancleCount--;
-							if (!rspJSON.optString("responseCode").equals("00")) {
-								info.setDes(getString(R.string.cancled_failed));
-								canclePayAdapter.notifyDataSetChanged();
-							}
-						}
-
-						@Override
-						public void onTaskCancelled() {
-						}
-
-						@Override
-						public void onException(Exception e) {
-							isCancleCount--;
+						} else {
+							OperateLog.getInstance().saveLog2File(OptLogEnum.PAY_CANCLE_PAY_FAILED.getOptLogCode(), getString(R.string.pay_cancle_pay_failed));
 							info.setDes(getString(R.string.cancled_failed));
 							canclePayAdapter.notifyDataSetChanged();
-							ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
 						}
-					});
-		}
+					}
 
+					@Override
+					public void handleActionOffLine() {
+						// TODO Auto-generated method stub
+						ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_waring));
+					}
+
+					@Override
+					public void handleActionChangeToOffLine() {
+						// TODO Auto-generated method stub
+
+					}
+				});
+	}
+
+	public void saleVoid(int position){
+		final PayMentsCancleInfo info = payments.get(position);
+		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype()) || info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
+			thirdcancle(position);
+		}else {
+			if (MyApplication.posType.equals("WPOS")){
+				if(isCancleCount > 0){
+					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+					return;
+				}
+				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
+						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+					isCancleCount++;
+					innerRequestCashier(info.getTxnid());
+				}
+			}else{
+				if(!isLogin){
+					ToastUtils.sendtoastbyhandler(handler, "收银通未登录");
+					return;
+				}
+				if(isCancleCount > 0){
+					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+					return;
+				}
+				this.position = position;
+				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
+						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+					SaleVoidRequest saleVoidRequest = new SaleVoidRequest(info.getTxnid());
+
+					AidlRequestManager.getInstance().aidlSaleVoidRequest(mYunService,
+							saleVoidRequest, new AidlRequestManager.AidlRequestCallBack() {
+
+								@Override
+								public void onTaskStart() {
+									isCancleCount++;
+									info.setDes(getString(R.string.cancleing_pay));
+									canclePayAdapter.notifyDataSetChanged();
+								}
+
+								@Override
+								public void onTaskFinish(JSONObject rspJSON) {
+									isCancleCount--;
+									if (!rspJSON.optString("responseCode").equals("00")) {
+										info.setDes(getString(R.string.cancled_failed));
+										canclePayAdapter.notifyDataSetChanged();
+									}else{
+										info.setIsCancle(true);
+										info.setDes(getString(R.string.cancled_pay));
+										canclePayAdapter.notifyDataSetChanged();
+									}
+								}
+
+								@Override
+								public void onTaskCancelled() {
+								}
+
+								@Override
+								public void onException(Exception e) {
+									isCancleCount--;
+									info.setDes(getString(R.string.cancled_failed));
+									canclePayAdapter.notifyDataSetChanged();
+									ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
+								}
+							});
+				}
+			}
+		}
 	}
 
 	private boolean isWaitSwip = false;
@@ -605,5 +705,166 @@ public class CanclePayDialog extends BaseActivity{
 //		}
 		// newBean.setSuccess(isSuccess);
 		return newBean;
+	}
+
+	private BizServiceInvoker mBizServiceInvoker;
+	//业务demo在bp平台中的的bpid，这里填写对应应用所属bp账号的bpid和对应的key--------------需要动态改变
+	private String InvokeCashier_BPID="53b3a1ca45ceb5f96d153eec";
+	private String InvokeCashier_KEY="LIz6bPS2z8jUnwLHRYzcJ6WK2X87ziWe";
+
+
+
+	// 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
+	//
+	// 2.调用收银支付成功后，收银支付结果页面完成后，BizServiceInvoker.OnResponseListener后收到响应的结果
+	//
+	// 3.如果需要页面调回到自己的App，需要在调用中增加参数package和classpath(如com.xxx.pay.ResultActivity)，并且这个跳转的Activity需要在AndroidManifest.xml中增加android:exported=”true”属性。
+	private void innerRequestCashier(String tradeNo) {
+		String seqNo = "1";//服务端请求序列,本地应用调用可固定写死为1
+		try {
+			RequestInvoke cashierReq = new RequestInvoke();
+			cashierReq.pkgName = this.getPackageName();
+			cashierReq.sdCode = CashierSign.Cashier_sdCode;// 收银服务的sdcode信息
+			cashierReq.bpId = InvokeCashier_BPID;
+			cashierReq.launchType = CashierSign.launchType;
+
+			cashierReq.params = CashierSign.refundsign(InvokeCashier_BPID, InvokeCashier_KEY, tradeNo);
+			cashierReq.seqNo = seqNo;
+
+			RequestResult r = mBizServiceInvoker.request(cashierReq);
+			LogUtil.i("lgs", r.token + "," + r.seqNo + "," + r.result);
+			// 发送调用请求
+			if (r != null) {
+				LogUtil.i("lgs", "request result:" + r.result + "|launchType:" + cashierReq.launchType);
+				String err = null;
+				switch (r.result) {
+					case BizServiceInvoker.REQ_SUCCESS: {
+						// 调用成功
+						//ToastUtils.sendtoastbyhandler(handler, "收银服务调用成功");
+						break;
+					}
+					case BizServiceInvoker.REQ_ERR_INVAILD_PARAM: {
+						ToastUtils.sendtoastbyhandler(handler, "请求参数错误！");
+						break;
+					}
+					case BizServiceInvoker.REQ_ERR_NO_BP: {
+						ToastUtils.sendtoastbyhandler(handler, "未知的合作伙伴！");
+						break;
+					}
+					case BizServiceInvoker.REQ_ERR_NO_SERVICE: {
+						//调用结果返回，没有订阅对应bp账号中的收银服务，则去调用sdk主动订阅收银服务
+						runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								ToastUtils.sendtoastbyhandler(handler, "正在申请订阅收银服务...");
+								// 如果没有订阅，则主动请求订阅服务
+								mBizServiceInvoker.subscribeService(CashierSign.Cashier_sdCode,
+										InvokeCashier_BPID);
+							}
+						});
+						break;
+					}
+					case BizServiceInvoker.REQ_NONE: {
+						ToastUtils.sendtoastbyhandler(handler, "请求未知错误！");
+						break;
+					}
+				}
+				if (err != null) {
+					LogUtil.i("lgs", "serviceInvoker request err:" + err);
+				}
+			}else{
+				ToastUtils.sendtoastbyhandler(handler, "请求结果对象为空！");
+			}
+
+		} catch (NoSuchAlgorithmException e) {
+			isCancleCount--;
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			isCancleCount--;
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 这个是服务调用完成后的响应监听方法
+	 */
+	private BizServiceInvoker.OnResponseListener mOnResponseListener = new BizServiceInvoker.OnResponseListener() {
+
+		@Override
+		public void onResponse(String sdCode, String token, byte[] data) {
+			// 收银服务调用完成后的返回方法
+			isCancleCount--;
+			String result = new String(data);
+			WposBankRefundInfo info = null;
+			try {
+				info = GsonUtil.jsonToBean(result, WposBankRefundInfo.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			LogUtil.i("lgs",
+					"sdCode = " + sdCode + " , token = " + token + " , data = " + new String(data));
+			if(info != null){
+				if(info.getErrCode().equals("0")){
+					payments.get(position).setIsCancle(true);
+					payments.get(position).setDes(getString(R.string.cancled_pay));
+					canclePayAdapter.notifyDataSetChanged();
+					OrderBean orderBean= new OrderBean();
+					orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(payments.get(position).getMoney()));
+					orderBean.setTxnId(info.getCashier_trade_no());
+					orderBean.setRefNo(info.getRefund_ref_no());
+					orderBean.setBatchId(info.getRefund_vouch_no());
+					orderBean.setPaymentId(payments.get(position).getId());
+					orderBean.setTransType(ConstantData.TRANS_REVOKE);
+					orderBean.setTraceId(AppConfigFile.getBillId());
+					Intent serviceintent = new Intent(mContext, RunTimeService.class);
+					serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+					serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+					startService(serviceintent);
+				}else{
+					payments.get(position).setDes(getString(R.string.cancled_failed));
+					canclePayAdapter.notifyDataSetChanged();
+					ToastUtils.sendtoastbyhandler(handler, info.getErrMsg());
+				}
+			}else{
+				payments.get(position).setDes(getString(R.string.cancled_failed));
+				canclePayAdapter.notifyDataSetChanged();
+				ToastUtils.sendtoastbyhandler(handler, "未知错误");
+			}
+		}
+
+		@Override
+		public void onFinishSubscribeService(boolean result, String err) {
+			// TODO Auto-generated method stub
+			// 申请订阅收银服务结果返回
+			// bp订阅收银服务返回结果
+			if (!result) {
+				//订阅失败
+				ToastUtils.sendtoastbyhandler(handler, err);
+			}else{
+				//订阅成功
+				ToastUtils.sendtoastbyhandler(handler, "订阅收银服务成功，请按home键回调主页刷新订阅数据后重新进入调用收银");
+			}
+		}
+	};
+
+	/**
+	 * 本地调用收银服务
+	 */
+	private void requestCashier() {
+
+		try {
+			// 初始化服务调用
+			mBizServiceInvoker = WeiposImpl.as().getService(BizServiceInvoker.class);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		if (mBizServiceInvoker == null) {
+			ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
+			return;
+		}
+		// 设置请求订阅服务监听结果的回调方法
+		mBizServiceInvoker.setOnResponseListener(mOnResponseListener);
 	}
 }

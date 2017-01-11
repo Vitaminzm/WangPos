@@ -81,6 +81,8 @@ import cn.koolcloud.engine.service.aidlbean.IMessage;
 import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransPrintRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
+import cn.weipass.pos.sdk.LatticePrinter;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -175,6 +177,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }
     }
+    private LatticePrinter latticePrinter;// 点阵打印
 
     MyHandler handler = new MyHandler(this);
     // 打印服务
@@ -252,15 +255,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             uploadOfflineData(true);
 
         }
-        Intent printService = new Intent(IPrinterService.class.getName());
-        printService = AndroidUtils.getExplicitIntent(this, printService);
-        if(printService != null)
-            bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
-        Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
-        yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
-        if (yunIntent == null) {
-        } else {
-            bindService(yunIntent, connection, Context.BIND_AUTO_CREATE);
+        if(MyApplication.posType.equals("WPOS")){
+            try {
+                // 设备可能没有打印机，open会抛异常
+                latticePrinter = WeiposImpl.as().openLatticePrinter();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }else{
+            Intent printService = new Intent(IPrinterService.class.getName());
+            printService = AndroidUtils.getExplicitIntent(this, printService);
+            if(printService != null)
+                bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+            Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
+            yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
+            if (yunIntent == null) {
+            } else {
+                bindService(yunIntent, connection, Context.BIND_AUTO_CREATE);
+            }
         }
     }
 
@@ -280,8 +292,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         filter.addAction(ConstantData.OFFLINE_MODE);
         registerReceiver(receiver, filter);
-        registerReceiver(broadcastReceiver, new IntentFilter(
-                "cn.koolcloud.engine.ThirdPartyTrans"));
+        if(MyApplication.posType.equals("WPOS")){
+
+        }else {
+            registerReceiver(broadcastReceiver, new IntentFilter(
+                    "cn.koolcloud.engine.ThirdPartyTrans"));
+        }
         super.onResume();
     }
 
@@ -289,7 +305,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onPause() {
         unregisterReceiver(receiver);
-        unregisterReceiver(broadcastReceiver);
+        if(MyApplication.posType.equals("WPOS")){
+
+        }else {
+            unregisterReceiver(broadcastReceiver);
+        }
         super.onPause();
     }
 
@@ -320,75 +340,85 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void recycleMemery() {
-        if (iPrinterService != null) {
-            unbindService(printerServiceConnection);
-        }
-        if(mYunService != null){
-            try {
-                unbindService(connection);
-            } catch (Exception e) {
-                // 如果重复解绑会抛异常
+        if(MyApplication.posType.equals("WPOS")){
+
+        }else {
+            if (iPrinterService != null) {
+                unbindService(printerServiceConnection);
+            }
+            if(mYunService != null){
+                try {
+                    unbindService(connection);
+                } catch (Exception e) {
+                    // 如果重复解绑会抛异常
+                }
             }
         }
         handler.removeCallbacksAndMessages(null);
         AppConfigFile.delActivity(this);
     }
     public void print_last(String id){
-        if(mYunService== null){
-            ToastUtils.sendtoastbyhandler(handler, "打印服务异常");
+        if(MyApplication.posType.equals("WPOS")){
+            ToastUtils.sendtoastbyhandler(handler, "暂不支持");
             return;
-        }
-        if(id == null || "".equals(id)){
-            AidlRequestManager.getInstance().aidlLastTransPrintRequest(mYunService, new AidlRequestManager.AidlRequestCallBack() {
+        }else {
+            if(mYunService== null){
+                ToastUtils.sendtoastbyhandler(handler, "打印服务异常");
+                return;
+            }
+            if(id == null || "".equals(id)){
+                AidlRequestManager.getInstance().aidlLastTransPrintRequest(mYunService, new AidlRequestManager.AidlRequestCallBack() {
 
-                @Override
-                public void onTaskStart() {
-                }
-
-                @Override
-                public void onTaskFinish(JSONObject rspJSON) {
-                    if (!rspJSON.optString("responseCode").equals("00")) {
-                        ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+                    @Override
+                    public void onTaskStart() {
                     }
-                }
 
-                @Override
-                public void onTaskCancelled() {
-                }
-
-                @Override
-                public void onException(Exception e) {
-                    LogUtil.i("lgs","---"+e.toString());
-                    ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
-                }
-            });
-        }else{
-            TransPrintRequest request = new TransPrintRequest(id);
-            AidlRequestManager aidlManager = AidlRequestManager.getInstance();
-            aidlManager.aidlTransPrintRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
-                @Override
-                public void onTaskStart() {
-
-                }
-
-                @Override
-                public void onTaskCancelled() {
-                    ToastUtils.sendtoastbyhandler(handler, "打印取消");
-                }
-
-                @Override
-                public void onTaskFinish(JSONObject rspJSON) {
-                    if (!rspJSON.optString("responseCode").equals("00")) {
-                        ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+                    @Override
+                    public void onTaskFinish(JSONObject rspJSON) {
+                        if (!rspJSON.optString("responseCode").equals("00")) {
+                            ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+                        }
                     }
-                }
 
-                @Override
-                public void onException(Exception e) {
-                    ToastUtils.sendtoastbyhandler(handler, "打印异常");
-                }
-            });
+                    @Override
+                    public void onTaskCancelled() {
+                    }
+
+                    @Override
+                    public void onException(Exception e) {
+                        LogUtil.i("lgs","---"+e.toString());
+                        ToastUtils.sendtoastbyhandler(handler, "发生异常，异常信息是：" + e.toString());
+                    }
+                });
+            }else{
+                TransPrintRequest request = new TransPrintRequest(id);
+                AidlRequestManager aidlManager = AidlRequestManager.getInstance();
+                aidlManager.aidlTransPrintRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
+                    @Override
+                    public void onTaskStart() {
+
+                    }
+
+                    @Override
+                    public void onTaskCancelled() {
+                        ToastUtils.sendtoastbyhandler(handler, "打印取消");
+                    }
+
+                    @Override
+                    public void onTaskFinish(JSONObject rspJSON) {
+                        if (!rspJSON.optString("responseCode").equals("00")) {
+                            ToastUtils.sendtoastbyhandler(handler, "打印失败：" + rspJSON.optString("errorMsg"));
+                        }
+                    }
+
+                    @Override
+                    public void onException(Exception e) {
+                        ToastUtils.sendtoastbyhandler(handler, "打印异常");
+                    }
+                });
+            }
         }
+
     }
 
     @Override
@@ -560,49 +590,57 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void printBackByorder(final BillInfo billinfo){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Message msg1 = new Message();
-                msg1.what = printStart;
-                handler.sendMessage(msg1);
-                try {
-                    iPrinterService.registerPrintCallback(callback);
-                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
-                    // -999：不支持该功能（可以不支持）
-                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo, true)));
-                } catch (Exception e) {
-                    Message msg2 = new Message();
-                    msg2.what = printError;
-                    msg2.arg1 = -100;
-                    handler.sendMessage(msg2);
-                    e.printStackTrace();
+        if(MyApplication.posType.equals("WPOS")){
+            PrepareReceiptInfo.printBackOrderList(billinfo, true, latticePrinter);
+        }else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg1 = new Message();
+                    msg1.what = printStart;
+                    handler.sendMessage(msg1);
+                    try {
+                        iPrinterService.registerPrintCallback(callback);
+                        // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                        // -999：不支持该功能（可以不支持）
+                        iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo, true, null)));
+                    } catch (Exception e) {
+                        Message msg2 = new Message();
+                        msg2.what = printError;
+                        msg2.arg1 = -100;
+                        handler.sendMessage(msg2);
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 
     public void printByorder(final BillInfo billinfo){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Message msg1 = new Message();
-                msg1.what = printStart;
-                handler.sendMessage(msg1);
-                try {
-                    iPrinterService.registerPrintCallback(callback);
-                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
-                    // -999：不支持该功能（可以不支持）
-                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printOrderList(billinfo,true)));
-                } catch (Exception e) {
-                    Message msg2 = new Message();
-                    msg2.what = printError;
-                    msg2.arg1 = -100;
-                    handler.sendMessage(msg2);
-                    e.printStackTrace();
+        if(MyApplication.posType.equals("WPOS")){
+            PrepareReceiptInfo.printOrderList(billinfo, true, latticePrinter);
+        }else{
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg1 = new Message();
+                    msg1.what = printStart;
+                    handler.sendMessage(msg1);
+                    try {
+                        iPrinterService.registerPrintCallback(callback);
+                        // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                        // -999：不支持该功能（可以不支持）
+                        iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printOrderList(billinfo,true, latticePrinter)));
+                    } catch (Exception e) {
+                        Message msg2 = new Message();
+                        msg2.what = printError;
+                        msg2.arg1 = -100;
+                        handler.sendMessage(msg2);
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
     private void printByorderforHttp(final String edit) {
         Map<String, String> map = new HashMap<String, String>();

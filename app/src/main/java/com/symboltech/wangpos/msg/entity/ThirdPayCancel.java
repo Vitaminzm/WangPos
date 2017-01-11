@@ -10,6 +10,7 @@ import java.io.Serializable;
 */
 public class ThirdPayCancel implements Serializable{
 
+	private static final long serialVersionUID = 1L;
 	/**支付类型 1、支付宝；2、银联；3、微信；4、全民付（银联商务） */
 	private String pay_type;
 	/**支付模式 1、手机APP快捷支付 2、手机网页支付3、被扫支付（支付宝当面付/微信刷卡支付）*/

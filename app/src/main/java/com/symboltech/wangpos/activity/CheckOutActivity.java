@@ -22,6 +22,7 @@ import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
+import com.symboltech.wangpos.dialog.AlipayAndWeixinPayControllerInterfaceDialog;
 import com.symboltech.wangpos.dialog.CanclePayDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.dialog.ThirdPayDialog;
@@ -39,9 +40,13 @@ import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.SubmitGoods;
+import com.symboltech.wangpos.msg.entity.ThirdPay;
+import com.symboltech.wangpos.msg.entity.WposPayInfo;
 import com.symboltech.wangpos.result.SaveOrderResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.ArithDouble;
+import com.symboltech.wangpos.utils.CashierSign;
+import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
@@ -51,7 +56,9 @@ import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -62,6 +69,11 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
+import cn.weipass.pos.sdk.BizServiceInvoker;
+import cn.weipass.pos.sdk.BizServiceInvoker.OnResponseListener;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
+import cn.weipass.service.bizInvoke.RequestInvoke;
+import cn.weipass.service.bizInvoke.RequestResult;
 
 ;
 
@@ -103,6 +115,8 @@ public class CheckOutActivity extends BaseActivity {
     private PaymentTypeAdapter paymentTypeAdapter;
     private ArrayList<PayMentsInfo> paymentTypes;
 
+    // 支付方式标识
+    private int paytype;
     //支付信息适配
     private List<PayMentsCancleInfo> payMentsCancle = new ArrayList<PayMentsCancleInfo>();
     private PaymentTypeInfoAdapter paymentTypeInfoadapter;
@@ -169,6 +183,8 @@ public class CheckOutActivity extends BaseActivity {
     // 使用积分信息
     private ExchangeInfo exchangeInfo;
     private List<PayMentsInfo> payments = new ArrayList<PayMentsInfo>();
+
+    private BizServiceInvoker mBizServiceInvoker;
     @Override
     protected void initData() {
         exchangeInfo = new ExchangeInfo();
@@ -231,6 +247,7 @@ public class CheckOutActivity extends BaseActivity {
             return;
         }
         paymentMoney = money;
+        Intent intent_qr;
         switch (PaymentTypeEnum.getpaymentstyle(type.trim())){
             case CASH:
                 double cash = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(paymentTypeAdapter.getPayType().getId()));
@@ -259,20 +276,38 @@ public class CheckOutActivity extends BaseActivity {
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
             case WECHAT:
-                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_WEIXIN_IS_INPUT, "0"))){
-                    Intent intent_qr = new Intent(this, CaptureActivity.class);
-                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
-                }else{
-                    Intent intent = new Intent(this, ThirdPayDialog.class);
-                    intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
-                    intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
-                    startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
-                }
+                intent_qr = new Intent(mContext, CaptureActivity.class);
+                intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
+                startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                paytype = ConstantData.PAYMODE_BY_ALIPAY;
+//                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_WEIXIN_IS_INPUT, "0"))){
+//                    Intent intent_qr = new Intent(this, CaptureActivity.class);
+//                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+//                }else{
+//                    Intent intent = new Intent(this, ThirdPayDialog.class);
+//                    intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
+//                    intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
+//                    startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
+//                }
                 break;
             case ALIPAY:
-                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
-                    Intent intent_qr = new Intent(this, CaptureActivity.class);
-                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                intent_qr = new Intent(mContext, CaptureActivity.class);
+                intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
+                startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                paytype = ConstantData.PAYMODE_BY_WEIXIN;
+//                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
+//                    Intent intent_qr = new Intent(this, CaptureActivity.class);
+//                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+//                }else{
+//                    Intent intent = new Intent(this, ThirdPayDialog.class);
+//                    intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
+//                    intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
+//                    startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
+//                }
+                break;
+            case BANK:
+                if(MyApplication.posType.equals("WPOS")){
+                    requestCashier(CurrencyUnit.yuan2fenStr(paymentMoney + ""));
                 }else{
                     Intent intent = new Intent(this, ThirdPayDialog.class);
                     intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
@@ -280,13 +315,189 @@ public class CheckOutActivity extends BaseActivity {
                     startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
                 }
                 break;
-            case BANK:
-                    Intent intent = new Intent(this, ThirdPayDialog.class);
-                    intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
-                    intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
-                    startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
-                break;
         }
+    }
+
+    //业务demo在bp平台中的的bpid，这里填写对应应用所属bp账号的bpid和对应的key--------------需要动态改变
+    private String InvokeCashier_BPID="53b3a1ca45ceb5f96d153eec";
+    private String InvokeCashier_KEY="LIz6bPS2z8jUnwLHRYzcJ6WK2X87ziWe";
+
+
+
+    // 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
+    //
+    // 2.调用收银支付成功后，收银支付结果页面完成后，BizServiceInvoker.OnResponseListener后收到响应的结果
+    //
+    // 3.如果需要页面调回到自己的App，需要在调用中增加参数package和classpath(如com.xxx.pay.ResultActivity)，并且这个跳转的Activity需要在AndroidManifest.xml中增加android:exported=”true”属性。
+    private void innerRequestCashier(String total_fee) {
+        // 1001 现金
+        // 1003 微信
+        // 1004 支付宝
+        // 1005 百度钱包
+        // 1006 银行卡
+        // 1007 易付宝
+        // 1009 京东钱包
+        // 1011 QQ钱包
+        String pay_type = "1006";
+        String channel = "POS";//标明是pos调用，不需改变
+        String seqNo = "1";//服务端请求序列,本地应用调用可固定写死为1
+        // String total_fee = "1";//支付金额，单位为分，1=0.01元，100=1元，不可空
+        // 如果需要页面调回到自己的App，需要在调用中增加参数package和classpath(如com.xxx.pay.ResultActivity)，并且这个跳转的Activity需要在AndroidManifest.xml中增加android:exported=”true”属性。
+        // 如果不需要回调页面，则backPkgName和backClassPath需要同时设置为空字符串 ："";
+        String backPkgName = null;//，可空
+        String backClassPath = null;//，可空
+        //指定接收收银结果的url地址默认为："http://apps.weipass.cn/pay/notify"，可填写自己服务器接收地址
+        String notifyUrl = null;//，可空
+        String body = SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, "")+"店铺商品";//订单body描述信息 ，不可空
+        String attach = "备注信息";//备注信息，可空，订单信息原样返回，可空
+        // 第三方订单流水号，非空,发起请求，tradeNo不能相同，相同在收银会提示有存在订单
+        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+        try {
+            RequestInvoke cashierReq = new RequestInvoke();
+            cashierReq.pkgName = this.getPackageName();
+            cashierReq.sdCode = CashierSign.Cashier_sdCode;// 收银服务的sdcode信息
+            cashierReq.bpId = InvokeCashier_BPID;
+            cashierReq.launchType = CashierSign.launchType;
+
+            cashierReq.params = CashierSign.sign(InvokeCashier_BPID, InvokeCashier_KEY, channel,
+                    pay_type, tradeNo, body, attach, total_fee, backPkgName, backClassPath, notifyUrl);
+            cashierReq.seqNo = seqNo;
+
+            RequestResult r = mBizServiceInvoker.request(cashierReq);
+            LogUtil.i("lgs", r.token + "," + r.seqNo + "," + r.result);
+            // 发送调用请求
+            if (r != null) {
+                LogUtil.i("lgs", "request result:" + r.result + "|launchType:" + cashierReq.launchType);
+                String err = null;
+                switch (r.result) {
+                    case BizServiceInvoker.REQ_SUCCESS: {
+                        // 调用成功
+                        //ToastUtils.sendtoastbyhandler(handler, "收银服务调用成功");
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_ERR_INVAILD_PARAM: {
+                        ToastUtils.sendtoastbyhandler(handler, "请求参数错误！");
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_ERR_NO_BP: {
+                        ToastUtils.sendtoastbyhandler(handler, "未知的合作伙伴！");
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_ERR_NO_SERVICE: {
+                        //调用结果返回，没有订阅对应bp账号中的收银服务，则去调用sdk主动订阅收银服务
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                // TODO Auto-generated method stub
+                                ToastUtils.sendtoastbyhandler(handler, "正在申请订阅收银服务...");
+                                // 如果没有订阅，则主动请求订阅服务
+                                mBizServiceInvoker.subscribeService(CashierSign.Cashier_sdCode,
+                                        InvokeCashier_BPID);
+                            }
+                        });
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_NONE: {
+                        ToastUtils.sendtoastbyhandler(handler, "请求未知错误！");
+                        break;
+                    }
+                }
+                if (err != null) {
+                    LogUtil.i("lgs", "serviceInvoker request err:" + err);
+                }
+            }else{
+                ToastUtils.sendtoastbyhandler(handler, "请求结果对象为空！");
+            }
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 这个是服务调用完成后的响应监听方法
+     */
+    private OnResponseListener mOnResponseListener = new OnResponseListener() {
+
+        @Override
+        public void onResponse(String sdCode, String token, byte[] data) {
+            // 收银服务调用完成后的返回方法
+            String result = new String(data);
+            WposPayInfo info = null;
+            try {
+                info = GsonUtil.jsonToBean(result, WposPayInfo.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            LogUtil.i("lgs",
+                   "sdCode = " + sdCode + " , token = " + token + " , data = " + new String(data));
+            if(info != null){
+                if(info.getErrCode().equals("0")){
+                    if(!"1001".equals(info.getPay_type())){
+                        if("PAY".equals(info.getTrade_status())){
+                            OrderBean orderBean= new OrderBean();
+                            orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(edit_input_money.getText().toString()));
+                            orderBean.setTxnId(info.getCashier_trade_no());
+                            if(info.getBuy_user_info() != null){
+                                orderBean.setAccountNo(info.getBuy_user_info().getBank_no());
+                                orderBean.setRefNo(info.getBuy_user_info().getRef_no());
+                                orderBean.setBatchId(info.getBuy_user_info().getVoucher_no());
+                            }
+                            Message msg = Message.obtain();
+                            msg.what = THIRD_PAY_INFO;
+                            msg.obj = orderBean;
+                            handler.sendMessage(msg);
+                        }else{
+                            //TODO
+                            ToastUtils.sendtoastbyhandler(handler, info.getPay_info());
+                        }
+                    }else{
+                        ToastUtils.sendtoastbyhandler(handler, "使用了现金交易，该交易不记账，小票无效");
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, info.getErrMsg());
+                }
+            }else{
+                ToastUtils.sendtoastbyhandler(handler, "未知错误");
+            }
+        }
+
+        @Override
+        public void onFinishSubscribeService(boolean result, String err) {
+            // TODO Auto-generated method stub
+            // 申请订阅收银服务结果返回
+            // bp订阅收银服务返回结果
+            if (!result) {
+                //订阅失败
+                ToastUtils.sendtoastbyhandler(handler, err);
+            }else{
+                //订阅成功
+                ToastUtils.sendtoastbyhandler(handler, "订阅收银服务成功，请按home键回调主页刷新订阅数据后重新进入调用收银");
+            }
+        }
+    };
+
+    /**
+     * 本地调用收银服务
+     */
+    private void requestCashier(String money) {
+
+        try {
+            // 初始化服务调用
+            mBizServiceInvoker = WeiposImpl.as().getService(BizServiceInvoker.class);
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+        if (mBizServiceInvoker == null) {
+            ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
+            return;
+        }
+        // 设置请求订阅服务监听结果的回调方法
+        mBizServiceInvoker.setOnResponseListener(mOnResponseListener);
+        innerRequestCashier(money);
     }
 
     private void addPayTypeInfo(PaymentTypeEnum enumValue, double money, int Overage, PayMentsInfo payType, PayMentsCancleInfo info) {
@@ -517,7 +728,7 @@ public class CheckOutActivity extends BaseActivity {
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         if(resultCode == ConstantData.MEMBER_EQUITY_RESULT_CODE){
             if(requestCode == ConstantData.MEMBER_EQUITY_REQUEST_CODE){
                 orderScoreOverrage = data.getDoubleExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, 0.0);
@@ -543,11 +754,47 @@ public class CheckOutActivity extends BaseActivity {
             }
         }else if(resultCode == ConstantData.QRCODE_RESULT_MEMBER_VERIFY){
             if(requestCode == ConstantData.QRCODE_REQURST_QR_PAY){
-                Intent intent = new Intent(this, ThirdPayDialog.class);
-                intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
-                intent.putExtra(ConstantData.BSC, data.getExtras().getString("QRcode"));
-                intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
-                startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
+                AlipayAndWeixinPayControllerInterfaceDialog paydialog = new AlipayAndWeixinPayControllerInterfaceDialog(this, paymentTypeAdapter.getPayType().getId(), paytype, ConstantData.THIRD_OPERATION_PAY, data.getExtras().getString("QRcode"), paymentMoney, true,
+                        new AlipayAndWeixinPayControllerInterfaceDialog.GetPayValue() {
+
+                            @Override
+                            public void getPayValue(ThirdPay value) {
+                                if (paytype == ConstantData.PAYMODE_BY_ALIPAY) {
+                                    PayMentsCancleInfo info = new PayMentsCancleInfo();
+                                    info.setId(paymentTypeAdapter.getPayType().getId());
+                                    info.setName(paymentTypeAdapter.getPayType().getName());
+                                    info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
+                                    info.setIsCancle(false);
+                                    info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                                    info.setThridPay(value);
+                                    info.setOverage("0");
+                                    addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
+                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+
+                                } else if (paytype == ConstantData.PAYMODE_BY_WEIXIN) {
+                                    PayMentsCancleInfo info = new PayMentsCancleInfo();
+                                    info.setId(paymentTypeAdapter.getPayType().getId());
+                                    info.setName(paymentTypeAdapter.getPayType().getName());
+                                    info.setType(PaymentTypeEnum.WECHAT.getStyletype());
+                                    info.setIsCancle(false);
+                                    info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                                    info.setThridPay(value);
+                                    info.setOverage("0");
+                                    addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
+                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                }
+                            }
+                        });
+                paydialog.show();
+//                Intent intent = new Intent(this, ThirdPayDialog.class);
+//                intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
+//                intent.putExtra(ConstantData.BSC, data.getExtras().getString("QRcode"));
+//                intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
+//                startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
             }
         }else if(resultCode == ConstantData.THRID_PAY_RESULT_CODE){
             if(requestCode == ConstantData.THRID_PAY_REQUEST_CODE){

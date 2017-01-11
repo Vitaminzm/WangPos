@@ -2,7 +2,6 @@ package com.symboltech.wangpos.http;
 
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 
 import java.util.Map;
 
@@ -69,9 +68,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void thirdpay(String tag, Map<String, String> param, final Class<T> clz,
+	public <T> void thirdpay(Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/paycenter/pay"), param, clz,
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/paycenter/pay"), param, clz,
 				httpactionhandler);
 	}
 
@@ -84,9 +83,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void thirdpaycancel(String tag, Map<String, String> param, final Class<T> clz,
+	public <T> void thirdpaycancel(Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/paycenter/cancel"), param, clz,
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/paycenter/cancel"), param, clz,
 				httpactionhandler);
 	}
 
@@ -99,9 +98,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void thirdpaysalesreturn(String tag, Map<String, String> param, final Class<T> clz,
+	public <T> void thirdpaysalesreturn(Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/paycenter/refund"), param, clz,
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/paycenter/refund"), param, clz,
 				httpactionhandler);
 	}
 
@@ -114,9 +113,9 @@ public class HttpRequestUtil {
 	 * @param clz
 	 * @param httpactionhandler
 	 */
-	public <T> void thirdpayquery(String tag, Map<String, String> param, final Class<T> clz,
+	public <T> void thirdpayquery(Map<String, String> param, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/paycenter/query"), param, clz,
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/paycenter/query"), param, clz,
 				httpactionhandler);
 	}
 

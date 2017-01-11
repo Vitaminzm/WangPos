@@ -29,10 +29,12 @@ import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
+import com.symboltech.wangpos.dialog.AlipayAndWeixinPayReturnDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.OnReturnFinishListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
@@ -65,6 +67,8 @@ import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.weipass.pos.sdk.LatticePrinter;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
 
 public class ReturnMoneyByNormalActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnTouchListener {
 
@@ -206,6 +210,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         }
     }
     MyHandler handler = new MyHandler(this);
+    private LatticePrinter latticePrinter;// 点阵打印
     // 打印服务
     private static IPrinterService iPrinterService;
     private ServiceConnection printerServiceConnection = new ServiceConnection() {
@@ -259,10 +264,19 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             edit_input_reason.setText(R.string.warning_no);
         }
         addReturnInfo(true);
-        Intent printService = new Intent(IPrinterService.class.getName());
-        printService = AndroidUtils.getExplicitIntent(this, printService);
-        if(printService != null)
-            bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        if(MyApplication.posType.equals("WPOS")){
+            try {
+                // 设备可能没有打印机，open会抛异常
+                latticePrinter = WeiposImpl.as().openLatticePrinter();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }else {
+            Intent printService = new Intent(IPrinterService.class.getName());
+            printService = AndroidUtils.getExplicitIntent(this, printService);
+            if (printService != null)
+                bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     @Override
@@ -710,14 +724,27 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void returnAlipay() {
         if (alipayStyle != null && alipayFlag < alipayStyle.size()) {
-            double money = getDoubleMoney(alipayStyle.get(alipayFlag).getMoney());
-            putPayments(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())), PaymentTypeEnum.ALIPAYRECORDED.getStyletype(), "-" + money);
-            alipayFlag += 1;
-            if(alipayFlag < alipayStyle.size()){
-                returnAlipay();
-            }else{
-                returnWeiXinPay();
-            }
+            final String id = alipayStyle.get(alipayFlag).getId();
+            final double money = getDoubleMoney(alipayStyle.get(alipayFlag).getMoney());
+            new AlipayAndWeixinPayReturnDialog(this, ConstantData.PAYMODE_BY_ALIPAY + "", null, AppConfigFile.getBillId(),
+                    money + "", new OnReturnFinishListener() {
+
+                @Override
+                public void finish(boolean isSuccess) {
+                    alipayFlag += 1;
+                    if (isSuccess) {
+                        putPayments(id, idNames.get(id), PaymentTypeEnum.ALIPAY.getStyletype(), "-" + money);
+                    } else {
+                        putPayments(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())),
+                                PaymentTypeEnum.ALIPAYRECORDED.getStyletype(), "-" + money);
+                    }
+                    if (alipayFlag < alipayStyle.size()) {
+                        returnAlipay();
+                    } else {
+                        returnWeiXinPay();
+                    }
+                }
+            }).show();
         } else {
             returnWeiXinPay();
         }
@@ -728,14 +755,27 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void returnWeiXinPay() {
         if (weixinStyle != null && weixinFlag < weixinStyle.size()) {
-            double money = getDoubleMoney(weixinStyle.get(weixinFlag).getMoney());
-            putPayments(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype())), PaymentTypeEnum.WECHATRECORDED.getStyletype(), "-" + money);
-            weixinFlag += 1;
-            if (weixinFlag < weixinStyle.size()) {
-                returnWeiXinPay();
-            } else {
-                returnAllowanceBank();
-            }
+            final String id = weixinStyle.get(weixinFlag).getId();
+            final double money = getDoubleMoney(weixinStyle.get(weixinFlag).getMoney());
+            new AlipayAndWeixinPayReturnDialog(this, ConstantData.PAYMODE_BY_WEIXIN + "", null, AppConfigFile.getBillId(), money + "",
+                    new OnReturnFinishListener() {
+
+                        @Override
+                        public void finish(boolean isSuccess) {
+                            weixinFlag += 1;
+                            if (isSuccess) {
+                                putPayments(id, idNames.get(id), PaymentTypeEnum.WECHAT.getStyletype(), "-" + money);
+                            } else {
+                                putPayments(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype())),
+                                        PaymentTypeEnum.WECHATRECORDED.getStyletype(), "-" + money);
+                            }
+                            if (weixinFlag < weixinStyle.size()) {
+                                returnWeiXinPay();
+                            } else {
+                                returnAllowanceBank();
+                            }
+                        }
+                    }).show();
         } else {
             returnAllowanceBank();
         }
@@ -908,25 +948,29 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     }
 
     public void printBackByorder(final BillInfo billinfo){
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Message msg1 = new Message();
-                msg1.what = printStart;
-                handler.sendMessage(msg1);
-                try {
-                    iPrinterService.registerPrintCallback(callback);
-                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
-                    // -999：不支持该功能（可以不支持）
-                    iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo, false)));
-                } catch (Exception e) {
-                    Message msg2 = new Message();
-                    msg2.what = printError;
-                    msg2.arg1 = -100;
-                    handler.sendMessage(msg2);
-                    e.printStackTrace();
+        if(MyApplication.posType.equals("WPOS")){
+            PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
+        }else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg1 = new Message();
+                    msg1.what = printStart;
+                    handler.sendMessage(msg1);
+                    try {
+                        iPrinterService.registerPrintCallback(callback);
+                        // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                        // -999：不支持该功能（可以不支持）
+                        iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter)));
+                    } catch (Exception e) {
+                        Message msg2 = new Message();
+                        msg2.what = printError;
+                        msg2.arg1 = -100;
+                        handler.sendMessage(msg2);
+                        e.printStackTrace();
+                    }
                 }
-            }
-        }).start();
+            }).start();
+        }
     }
 }

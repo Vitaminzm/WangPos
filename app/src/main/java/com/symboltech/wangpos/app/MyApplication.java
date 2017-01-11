@@ -10,6 +10,9 @@ import com.symboltech.wangpos.service.RunTimeService;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import cn.weipass.pos.sdk.Weipos;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
+
 /**
  * Created by symbol on 2016/3/8.
  */
@@ -27,6 +30,8 @@ public class MyApplication extends Application {
      * 监听pos状态需要传递的收款员
      */
     private static String cashierId = "-1";
+
+    public static String posType="WPOS";//KPOS
     @Override
     public void onCreate() {
         super.onCreate();
@@ -35,6 +40,39 @@ public class MyApplication extends Application {
         //CrashHandler.getInstance().init(context);
         LogUtil.i("lgs", "Myapplication--------");
         checkNettimertask();
+        if(posType.equals("WPOS")){
+            initSdk(context);
+        }
+    }
+
+    /**
+     * 初始化SDK
+     *
+     * @param context
+     */
+    public void initSdk(Context context) {
+        /**
+         * WeiposImpl的初始化（init函数）和销毁（destroy函数），
+         * 最好分别放在一级页面的onCreate和onDestroy中执行。 其他子页面不用再调用，可以直接获取能力对象并使用。
+         */
+        WeiposImpl.as().init(context, new Weipos.OnInitListener() {
+
+            @Override
+            public void onInitOk() {
+                LogUtil.e("lgs", "onInitOk--------------");
+            }
+
+            @Override
+            public void onError(String message) {
+                final String msg = message;
+                LogUtil.e("lgs", "onError--------------" + msg);
+            }
+
+            @Override
+            public void onDestroy() {
+                LogUtil.e("lgs", "onDestroy--------------");
+            }
+        });
     }
 
     /**

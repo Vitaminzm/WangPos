@@ -218,6 +218,12 @@ public class ConstantData {
 	/** 脱机上传状态 */
 	public static final String UP_STATUS = "up_status";
 
+	/** 第三方需要输入单号 */
+	public static final String THIRD_NEED_INPUT = "0";
+
+	/** 第三方不需要输入单号 */
+	public static final String THIRD_NOT_INPUT = "1";
+
 	/** 订单 */
 	public static final String BILL = "bill";
 

@@ -347,6 +347,46 @@
     <string name="sale">销售</string>
     <string name="trans">交易</string>
 
+    <!-- 微信支付宝支付相关 -->
+    <string name="thirdpay_deal_time">"交易金额： "</string>
+    <string name="please_input_alipay_trade_no">请输入支付宝流水号</string>
+    <string name="please_input_weixin_trade_no">请输入微信流水号</string>
+    <string name="pay_cancle_pay_success">撤销支付成功</string>
+    <string name="pay_cancle_pay_failed">撤销支付失败</string>
+    <string name="please_input_trade_no">请输入第三方流水号</string>
+    <string name="please_input_correct_money">请输入正确金额！！！</string>
+    <string name="alipay_trade">支付宝交易</string>
+    <string name="alipay_trade_success">支付宝交易成功</string>
+    <string name="alipay_trade_failed">支付宝交易失败</string>
+    <string name="alipay_trade_cancle">支付宝交易取消</string>
+    <string name="alipay_query">支付宝查询</string>
+    <string name="alipay_query_success">支付宝查询成功</string>
+    <string name="alipay_query_failed">支付宝查询失败</string>
+    <string name="alipay_query_cancle">支付宝查询取消</string>
+    <string name="alipay_repeal">支付宝撤销</string>
+    <string name="alipay_repeal_success">支付宝撤销成功</string>
+    <string name="alipay_repeal_failed">支付宝撤销失败</string>
+    <string name="alipay_repeal_cancle">支付宝撤销取消</string>
+    <string name="alipay_return">支付宝退货</string>
+    <string name="alipay_return_success">支付宝退货成功</string>
+    <string name="alipay_return_failed">支付宝退货失败</string>
+    <string name="alipay_return_cancle">支付宝退货取消</string>
+    <string name="wechat_trade">微钱宝交易</string>
+    <string name="wechat_trade_success">微钱宝交易成功</string>
+    <string name="wechat_trade_failed">微钱宝交易失败</string>
+    <string name="wechat_trade_cancle">微钱宝交易取消</string>
+    <string name="wechat_query">微钱宝查询</string>
+    <string name="wechat_query_success">微钱宝查询成功</string>
+    <string name="wechat_query_failed">微钱宝查询失败</string>
+    <string name="wechat_query_cancle">微钱宝查询取消</string>
+    <string name="wechat_repeal">微钱宝撤销</string>
+    <string name="wechat_repeal_success">微钱宝撤销成功</string>
+    <string name="wechat_repeal_failed">微钱宝撤销失败</string>
+    <string name="wechat_repeal_cancle">微钱宝撤销取消</string>
+    <string name="wechat_return">微钱宝退货</string>
+    <string name="wechat_return_success">微钱宝退货成功</string>
+    <string name="wechat_return_failed">微钱宝退货失败</string>
+    <string name="wechat_return_cancle">微钱宝退货取消</string>
     <!-- 定义字符串数组资源常量 -->
     <string-array name="cities">
         <item>湘</item>

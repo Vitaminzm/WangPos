@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/height_xzz"
+    android:layout_height="@dimen/height_fzz"
+    android:layout_gravity="center" >
+
+    <LinearLayout
+        android:id="@+id/ll_thirdpay_money_input"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/tv_thirdpay_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_sz"
+            android:background="#384252"
+            android:gravity="center"
+            android:text="请输入金额"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_font_size" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:background="@color/view_bg_color"
+            android:orientation="vertical" >
+
+            <EditText
+                android:id="@+id/et_thirdpay_input"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/height_xz"
+                android:layout_marginTop="@dimen/margin_vz"
+                android:layout_marginLeft="@dimen/margin_sz"
+                android:layout_marginRight="@dimen/margin_sz"
+                android:layout_marginBottom="@dimen/margin_vz"
+                android:background="@drawable/icon_edittext_bg_press"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:hint="请输入金额"
+                android:inputType="numberDecimal"
+                android:singleLine="true" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingLeft="45dp"
+                android:paddingRight="45dp" >
+
+                <TextView
+                    android:id="@+id/tv_thirdpay_cancel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/height_ez"
+                    android:layout_marginRight="23dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/orange_corner_bt_selector"
+                    android:gravity="center"
+                    android:text="@string/cancle"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_rz" />
+
+                <TextView
+                    android:id="@+id/tv_thirdpay_enter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/height_ez"
+                    android:layout_marginLeft="23dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/btn_green_bg"
+                    android:gravity="center"
+                    android:text="@string/confirm"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_thirdpay_hint"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="#f5f5f5"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/height_sz"
+            android:background="#384252" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" >
+
+            <LinearLayout
+                android:id="@+id/ll_thirdpay_result_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center_vertical" >
+
+                <com.github.ybq.android.spinkit.SpinKitView
+                    android:id="@+id/tv_thirdpay_result_img"
+                    style="@style/SpinKitView.FadingCircle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:SpinKit_Color="@color/colorPrimary" />
+
+                <TextView
+                    android:id="@+id/tv_thirdpay_result_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:gravity="center"
+                    android:text="交易成功"
+                    android:textColor="#e85a43"
+                    android:textSize="@dimen/font_size_fz" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_thirdpay_paying_result"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@color/view_bg_color"
+                android:gravity="center_vertical"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_thirdpay_paying_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="等待付款......"
+                    android:textColor="#e85a43"
+                    android:textSize="@dimen/font_size_fz" />
+
+                <com.symboltech.wangpos.view.TextScrollView
+                    android:id="@+id/tv_thirdpay_paying_msg"
+                    android:layout_width="match_parent"
+                    android:padding="5dp"
+                    android:layout_height="@dimen/height_ez"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/margin_fv"
+                    android:ellipsize="marquee"
+                    android:focusable="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:gravity="center_horizontal"
+                    android:text="付款成功, 请确认"
+                    android:textColor="#e85a43"
+                    android:textSize="@dimen/font_size_ft" />
+
+                <TextView
+                    android:id="@+id/tv_paying_enter"
+                    android:layout_width="@dimen/height_tnz"
+                    android:layout_height="@dimen/height_ez"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="50dp"
+                    android:background="#2ab4b2"
+                    android:gravity="center"
+                    android:text="确认"
+                    android:textColor="#ffffff"
+                    android:textSize="@dimen/font_size_fz" />
+
+                <LinearLayout
+                    android:id="@+id/ll_paying_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="50dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingLeft="45dp"
+                    android:paddingRight="45dp" >
+
+                    <TextView
+                        android:id="@+id/tv_thirdpay_paying_cancel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="70dp"
+                        android:layout_marginRight="23dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/orange_corner_bt_selector"
+                        android:gravity="center"
+                        android:text="@string/cancle"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/tv_thirdpay_paying_enter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="70dp"
+                        android:layout_marginLeft="23dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_green_bg"
+                        android:gravity="center"
+                        android:text="@string/confirm"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</FrameLayout>
