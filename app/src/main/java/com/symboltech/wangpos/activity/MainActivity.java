@@ -540,6 +540,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 Type = PaymentTypeEnum.WECHAT.getStyletype();
                 Intent intent = new Intent(this,ThirdPayControllerDialog.class);
                 intent.putExtra(ConstantData.PAY_TYPE, PaymentTypeEnum.WECHAT.getStyletype());
+                intent.putExtra(ConstantData.PAY_MODE, ConstantData.PAYMODE_BY_WEIXIN+"");
                 startActivity(intent);
                 break;
         }

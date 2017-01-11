@@ -22,6 +22,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.PaymentAdapter;
 import com.symboltech.wangpos.adapter.ReturnReasonAdapter;
@@ -31,28 +32,36 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.AlipayAndWeixinPayReturnDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
+import com.symboltech.wangpos.dialog.InputDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.interfaces.OnReturnFinishListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.RefundReasonInfo;
 import com.symboltech.wangpos.msg.entity.ReturnEntity;
+import com.symboltech.wangpos.msg.entity.WposBankRefundInfo;
 import com.symboltech.wangpos.print.PrepareReceiptInfo;
 import com.symboltech.wangpos.result.SaveOrderResult;
+import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
+import com.symboltech.wangpos.utils.CashierSign;
+import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -67,8 +76,11 @@ import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.weipass.pos.sdk.BizServiceInvoker;
 import cn.weipass.pos.sdk.LatticePrinter;
 import cn.weipass.pos.sdk.impl.WeiposImpl;
+import cn.weipass.service.bizInvoke.RequestInvoke;
+import cn.weipass.service.bizInvoke.RequestResult;
 
 public class ReturnMoneyByNormalActivity extends BaseActivity implements AdapterView.OnItemClickListener, View.OnTouchListener {
 
@@ -682,15 +694,24 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void returnBank() {
         if (bankFlag < bankStyle.size()) {
-            ReturnEntity entity = bankStyle.get(bankFlag);
-            double money = getDoubleMoney(entity.getMoney());
-            putPayments(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype())), PaymentTypeEnum.HANDRECORDED.getStyletype(), "-" + money);
-            bankFlag += 1;
-            if (bankFlag < bankStyle.size()) {
-                returnBank();
-            } else {
-                returnAlipay();
-            }
+            final ReturnEntity entity = bankStyle.get(bankFlag);
+            new InputDialog(this, "银行卡退款", new GeneralEditListener(){
+                @Override
+                public void editinput(String edit) {
+                    if(MyApplication.posType.equals("WPOS")){
+                        requestCashier(edit);
+                    }else{
+                        double money = getDoubleMoney(entity.getMoney());
+                        putPayments(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype())), PaymentTypeEnum.HANDRECORDED.getStyletype(), "-" + money);
+                        bankFlag += 1;
+                        if (bankFlag < bankStyle.size()) {
+                            returnBank();
+                        } else {
+                            returnAlipay();
+                        }
+                    }
+                }
+            }).show();
         } else {
             returnAlipay();
         }
@@ -971,6 +992,167 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                     }
                 }
             }).start();
+        }
+    }
+
+    private BizServiceInvoker mBizServiceInvoker;
+    //业务demo在bp平台中的的bpid，这里填写对应应用所属bp账号的bpid和对应的key--------------需要动态改变
+    private String InvokeCashier_BPID="53b3a1ca45ceb5f96d153eec";
+    private String InvokeCashier_KEY="LIz6bPS2z8jUnwLHRYzcJ6WK2X87ziWe";
+
+    // 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
+    //
+    // 2.调用收银支付成功后，收银支付结果页面完成后，BizServiceInvoker.OnResponseListener后收到响应的结果
+    //
+    // 3.如果需要页面调回到自己的App，需要在调用中增加参数package和classpath(如com.xxx.pay.ResultActivity)，并且这个跳转的Activity需要在AndroidManifest.xml中增加android:exported=”true”属性。
+    private void innerRequestCashier(String tradeNo) {
+        String seqNo = "1";//服务端请求序列,本地应用调用可固定写死为1
+        try {
+            RequestInvoke cashierReq = new RequestInvoke();
+            cashierReq.pkgName = this.getPackageName();
+            cashierReq.sdCode = CashierSign.Cashier_sdCode;// 收银服务的sdcode信息
+            cashierReq.bpId = InvokeCashier_BPID;
+            cashierReq.launchType = CashierSign.launchType;
+
+            cashierReq.params = CashierSign.refundsign(InvokeCashier_BPID, InvokeCashier_KEY, tradeNo);
+            cashierReq.seqNo = seqNo;
+
+            RequestResult r = mBizServiceInvoker.request(cashierReq);
+            LogUtil.i("lgs", r.token + "," + r.seqNo + "," + r.result);
+            // 发送调用请求
+            if (r != null) {
+                LogUtil.i("lgs", "request result:" + r.result + "|launchType:" + cashierReq.launchType);
+                String err = null;
+                switch (r.result) {
+                    case BizServiceInvoker.REQ_SUCCESS: {
+                        // 调用成功
+                        //ToastUtils.sendtoastbyhandler(handler, "收银服务调用成功");
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_ERR_INVAILD_PARAM: {
+                        ToastUtils.sendtoastbyhandler(handler, "请求参数错误！");
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_ERR_NO_BP: {
+                        ToastUtils.sendtoastbyhandler(handler, "未知的合作伙伴！");
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_ERR_NO_SERVICE: {
+                        //调用结果返回，没有订阅对应bp账号中的收银服务，则去调用sdk主动订阅收银服务
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                // TODO Auto-generated method stub
+                                ToastUtils.sendtoastbyhandler(handler, "正在申请订阅收银服务...");
+                                // 如果没有订阅，则主动请求订阅服务
+                                mBizServiceInvoker.subscribeService(CashierSign.Cashier_sdCode,
+                                        InvokeCashier_BPID);
+                            }
+                        });
+                        break;
+                    }
+                    case BizServiceInvoker.REQ_NONE: {
+                        ToastUtils.sendtoastbyhandler(handler, "请求未知错误！");
+                        break;
+                    }
+                }
+                if (err != null) {
+                    LogUtil.i("lgs", "serviceInvoker request err:" + err);
+                }
+            }else{
+                ToastUtils.sendtoastbyhandler(handler, "请求结果对象为空！");
+            }
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 这个是服务调用完成后的响应监听方法
+     */
+    private BizServiceInvoker.OnResponseListener mOnResponseListener = new BizServiceInvoker.OnResponseListener() {
+
+        @Override
+        public void onResponse(String sdCode, String token, byte[] data) {
+            // 收银服务调用完成后的返回方法
+            String result = new String(data);
+            WposBankRefundInfo info = null;
+            try {
+                info = GsonUtil.jsonToBean(result, WposBankRefundInfo.class);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            LogUtil.i("lgs",
+                    "sdCode = " + sdCode + " , token = " + token + " , data = " + new String(data));
+            final ReturnEntity entity = bankStyle.get(bankFlag);
+            if(info != null){
+                if(info.getErrCode().equals("0")){
+                    putPayments(entity.getId(), idNames.get(entity.getId()), typeIds.get(entity.getId()), "-" + getDoubleMoney(entity.getMoney()));
+                    OrderBean orderBean= new OrderBean();
+                    orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(getDoubleMoney(entity.getMoney())+""));
+                    orderBean.setTxnId(info.getCashier_trade_no());
+                    orderBean.setRefNo(info.getRefund_ref_no());
+                    orderBean.setBatchId(info.getRefund_vouch_no());
+                    orderBean.setPaymentId(entity.getId());
+                    orderBean.setTransType(ConstantData.TRANS_RETURN);
+                    orderBean.setTraceId(AppConfigFile.getBillId());
+                    Intent serviceintent = new Intent(mContext, RunTimeService.class);
+                    serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+                    serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+                    startService(serviceintent);
+                    bankFlag += 1;
+                    if (bankFlag < bankStyle.size()) {
+                        returnBank();
+                    } else {
+                        returnAlipay();
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, info.getErrMsg());
+                }
+            }else{
+                ToastUtils.sendtoastbyhandler(handler, "未知错误");
+            }
+        }
+
+        @Override
+        public void onFinishSubscribeService(boolean result, String err) {
+            // TODO Auto-generated method stub
+            // 申请订阅收银服务结果返回
+            // bp订阅收银服务返回结果
+            if (!result) {
+                //订阅失败
+                ToastUtils.sendtoastbyhandler(handler, err);
+            }else{
+                //订阅成功
+                ToastUtils.sendtoastbyhandler(handler, "订阅收银服务成功，请按home键回调主页刷新订阅数据后重新进入调用收银");
+            }
+        }
+    };
+    /**
+     * 本地调用收银服务
+     */
+    private void requestCashier(String tradeNo) {
+        if (mBizServiceInvoker == null) {
+            try {
+                // 初始化服务调用
+                mBizServiceInvoker = WeiposImpl.as().getService(BizServiceInvoker.class);
+                if (mBizServiceInvoker == null) {
+                    ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
+                    return;
+                }else{
+                    // 设置请求订阅服务监听结果的回调方法
+                    mBizServiceInvoker.setOnResponseListener(mOnResponseListener);
+                    innerRequestCashier(tradeNo);
+                }
+            } catch (Exception e) {
+                ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
+            }
+        }else{
+            innerRequestCashier(tradeNo);
         }
     }
 }

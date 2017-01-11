@@ -263,6 +263,8 @@ public class PrepareReceiptInfo {
 				latticePrinter.printQrCode(couponInfo.getCouponno(), 400, IPrint.Gravity.CENTER);
 			}
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "起始时间:" + couponInfo.getBegindate() + ":" + couponInfo.getEnddate(), KposPrinterManager.CONTENT_ALIGN_LEFT);
+			if(!TextUtils.isEmpty(couponInfo.getContent()))
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "用券说明:" + couponInfo.getContent()	, KposPrinterManager.CONTENT_ALIGN_LEFT);
 			addBlankLine(array, latticePrinter);
 			addBlankLine(array, latticePrinter);
 			addBlankLine(array, latticePrinter);

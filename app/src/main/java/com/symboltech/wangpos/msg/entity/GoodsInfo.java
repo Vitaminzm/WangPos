@@ -219,7 +219,7 @@ public class GoodsInfo implements Serializable, Cloneable {
 		// TODO Auto-generated method stub
 		try {
 			if (!StringUtil.isEmpty(this.point) && !StringUtil.isEmpty(this.salecount)) {
-				this.usedpointtemp = ArithDouble.parseInt(this.salecount) * ArithDouble.parseInt(this.point) + "";
+				this.usedpointtemp = ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.point) + "";
 			}
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block

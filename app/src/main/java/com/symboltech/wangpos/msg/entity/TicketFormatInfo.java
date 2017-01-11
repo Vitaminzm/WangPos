@@ -58,6 +58,8 @@ public class TicketFormatInfo implements Serializable{
         private String usecoupon;
         private String owncoupon;
         private String report;
+        private String park;
+
         /**
          * conditionindex : [{"id":32,"conditionid":1,"yxj":1},{"id":32,"conditionid":3,"yxj":2},{"id":32,"conditionid":4,"yxj":3},{"id":32,"conditionid":5,"yxj":4},{"id":32,"conditionid":8,"yxj":5},{"id":32,"conditionid":7,"yxj":6},{"id":32,"conditionid":9,"yxj":7},{"id":32,"conditionid":2,"yxj":8},{"id":32,"conditionid":6,"yxj":9}]
          * id : 32
@@ -170,7 +172,16 @@ public class TicketFormatInfo implements Serializable{
             return report;
         }
 
-        public TickbasicEntity getTickbasic() {
+        
+        public String getPark() {
+			return park;
+		}
+
+		public void setPark(String park) {
+			this.park = park;
+		}
+
+		public TickbasicEntity getTickbasic() {
             return tickbasic;
         }
 

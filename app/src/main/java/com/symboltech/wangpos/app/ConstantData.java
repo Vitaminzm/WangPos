@@ -409,6 +409,7 @@ public class ConstantData {
 	/** 收银通三方支付参数*/
 	public static final String PAY_ID = "pay_id";
 	public static final String PAY_TYPE = "pay_type";
+	public static final String PAY_MODE = "pay_mode";
 	public static final String PAY_MONEY = "pay_money";
 	public static final String ORDER_BEAN = "order_bean";
 	public static final String PAY_TYPE_LIST = "pay_type_list";

@@ -53,6 +53,26 @@ public class CouponInfo implements Serializable {
 	private String enddate;
 	private String money;
 	private String availablemoney;
+	private String cashflag;//是否是现金券
+	private String content;//使用说明
+	
+	
+	
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getCashflag() {
+		return cashflag;
+	}
+
+	public void setCashflag(String cashflag) {
+		this.cashflag = cashflag;
+	}
 
 	public String getAvailablemoney() {
 		return availablemoney;

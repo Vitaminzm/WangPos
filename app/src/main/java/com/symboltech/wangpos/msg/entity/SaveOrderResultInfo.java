@@ -15,9 +15,26 @@ public class SaveOrderResultInfo implements Serializable {
 	private String billid; // 新的小票号
 	private String gainpoint; // 本交易获得积分值
 	private String totalpoint; // 本卡总积分
+	private String parkcouponhour; // 赠送的停车券时长
+	private String parkcouponaddhour; //赠送的停车券有效日期
 	private List<CouponInfo> grantcouponlist; // 返券列表
 	private List<CouponInfo> allcouponlist;//会员总积分
 	
+	
+	public String getParkcouponhour() {
+		return parkcouponhour;
+	}
+	public void setParkcouponhour(String parkcouponhour) {
+		this.parkcouponhour = parkcouponhour;
+	}
+	
+	
+	public String getParkcouponaddhour() {
+		return parkcouponaddhour;
+	}
+	public void setParkcouponaddhour(String parkcouponaddhour) {
+		this.parkcouponaddhour = parkcouponaddhour;
+	}
 	public List<CouponInfo> getAllcouponlist() {
 		return allcouponlist;
 	}

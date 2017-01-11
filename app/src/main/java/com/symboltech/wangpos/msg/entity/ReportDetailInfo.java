@@ -1,5 +1,7 @@
 package com.symboltech.wangpos.msg.entity;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 
 /**
@@ -12,6 +14,8 @@ public class ReportDetailInfo implements Serializable{
 	private String code;
 	private String name;
 	private String money;
+	@SerializedName("billcount")
+	private String count;
 	public String getCode() {
 		return code;
 	}
@@ -30,6 +34,11 @@ public class ReportDetailInfo implements Serializable{
 	public void setMoney(String money) {
 		this.money = money;
 	}
-	
+	public String getCount() {
+		return count;
+	}
+	public void setCount(String count) {
+		this.count = count;
+	}
 	
 }

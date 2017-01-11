@@ -28,6 +28,24 @@ public class MemberInfo implements Serializable {
 	private List<String> membertag;//会员标签
 	private List<String> behaviortag;//行为标签
 	private List<String> saletag;//消费标签
+	private String status;// 积分规则描述
+	private List<CarInfo> listcar;
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public List<CarInfo> getListcar() {
+		return listcar;
+	}
+
+	public void setListcar(List<CarInfo> listcar) {
+		this.listcar = listcar;
+	}
 
 	public String getPointrule() {
 		return pointrule;

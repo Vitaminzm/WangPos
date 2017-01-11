@@ -339,6 +339,7 @@ public class PaymentDetailActivity extends BaseActivity {
         AppConfigFile.delActivity(this);
     }
 
+    private boolean isSended = false;
     @OnClick({R.id.text_print_coupon, R.id.text_selected_plate, R.id.text_done})
     public void click(View view){
         if(Utils.isFastClick()){
@@ -367,7 +368,24 @@ public class PaymentDetailActivity extends BaseActivity {
                 getCouponPrintInfo();
                 break;
             case R.id.text_selected_plate:
-                new SelectCarPlateDialog(this).show();
+                if(isSended){
+                    ToastUtils.sendtoastbyhandler(handler, "不能重复发放！");
+                }else{
+                    if(ArithDouble.parseDouble(bill.getParkcouponhour()) > 0){
+                        SelectCarPlateDialog selectcarplateDialog = new SelectCarPlateDialog(PaymentDetailActivity.this, bill.getMember(), bill.getParkcouponhour(), bill.getParkcouponaddhour(), bill.getBillid(), new SelectCarPlateDialog.FinishSendCoupon() {
+
+                            @Override
+                            public void finishSendCoupon(String carNo, String hour) {
+                                // TODO Auto-generated method stub
+                                isSended = true;
+                                bill.setCarno(carNo);
+                            }
+                        });
+                        selectcarplateDialog.show();
+                    }else{
+                        ToastUtils.sendtoastbyhandler(handler, "没有赠送停车券");
+                    }
+                }
                 break;
             case R.id.text_done:
                 printByorder(bill);

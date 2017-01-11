@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.dialog.UniversalHintDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -49,6 +50,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import cn.koolcloud.engine.service.aidl.IMemberCardService;
+import cn.weipass.pos.sdk.MagneticReader;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
 
 public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
 
@@ -100,15 +103,19 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     break;
                 case Vipcard:
                     memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_MAGCARD, (String) msg.obj);
-                    try {
-                        if (mCardService != null) {
-                            isSwipVipCard = true;
-                            mCardService.startReadCard();
-                        } else {
-                            LogUtil.e("lgs", "mCardService==null");
+                    if(MyApplication.posType.equals("WPOS")){
+
+                    }else{
+                        try {
+                            if (mCardService != null) {
+                                isSwipVipCard = true;
+                                mCardService.startReadCard();
+                            } else {
+                                LogUtil.e("lgs", "mCardService==null");
+                            }
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
                         }
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
                     }
                     break;
             }
@@ -132,20 +139,27 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         }
     };
     private MsrBroadcastReceiver msrReceiver = new MsrBroadcastReceiver();
+    MagneticReader mMagneticReader;
     @Override
     protected void initData() {
         title_text_content.setText(getString(R.string.number_access));
         right_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
         left_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in);
-        Intent intent = new Intent(IMemberCardService.class.getName());
-
-        intent = AndroidUtils.getExplicitIntent(this, intent);
-        if (intent != null) {
-            bindService(intent, mMemberCardConnection, Context.BIND_AUTO_CREATE);
-        } else {
-            ToastUtils.sendtoastbyhandler(handler, "Check engine application version");
+        if(MyApplication.posType.equals("WPOS")){
+            mMagneticReader = WeiposImpl.as().openMagneticReader();
+            if (mMagneticReader == null) {
+                ToastUtils.sendtoastbyhandler(handler, "磁条卡读取服务不可用！");
+            }
+        }else{
+            Intent intent = new Intent(IMemberCardService.class.getName());
+            intent = AndroidUtils.getExplicitIntent(this, intent);
+            if (intent != null) {
+                bindService(intent, mMemberCardConnection, Context.BIND_AUTO_CREATE);
+            } else {
+                ToastUtils.sendtoastbyhandler(handler, "Check engine application version");
+            }
+            registerReceiver(msrReceiver, new IntentFilter("cn.koolcloud.engine.memberCard"));
         }
-        registerReceiver(msrReceiver, new IntentFilter("cn.koolcloud.engine.memberCard"));
     }
 
 
@@ -211,10 +225,9 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         }
         if (mCardService != null) {
             unbindService(mMemberCardConnection);
-        }
-        if (msrReceiver != null) {
             unregisterReceiver(msrReceiver);
         }
+
         handler.removeCallbacksAndMessages(null);
         AppConfigFile.delActivity(this);
     }
@@ -238,16 +251,23 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     public void verifyByPhone(){
         if(radioGroup_type.getCheckedRadioButtonId() == R.id.text_phone_number){
-            if(isSwipVipCard){
-                try {
-                    if (mCardService != null) {
-                        isSwipVipCard = false;
-                        mCardService.stopReadCard();
-                    } else {
-                        LogUtil.e("lgs", "mCardService==null");
+            if(MyApplication.posType.equals("WPOS")){
+                if (mReadMagTask != null) {
+                    mReadMagTask.interrupt();
+                    mReadMagTask = null;
+                }
+            }else{
+                if(isSwipVipCard){
+                    try {
+                        if (mCardService != null) {
+                            isSwipVipCard = false;
+                            mCardService.stopReadCard();
+                        } else {
+                            LogUtil.e("lgs", "mCardService==null");
+                        }
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
                     }
-                } catch (RemoteException e) {
-                    e.printStackTrace();
                 }
             }
             verify_type = ConstantData.MEMBER_VERIFY_BY_PHONE;
@@ -272,19 +292,27 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
             ll_phone_number.startAnimation(right_In_Animation);
         }
     }
-
+    private ReadMagTask mReadMagTask = null;
     public void verifyByVipCard() {
         if(radioGroup_type.getCheckedRadioButtonId() == R.id.text_vip_card){
-            try {
-                if (mCardService != null) {
-                    isSwipVipCard = true;
-                    mCardService.startReadCard();
-                } else {
-                    LogUtil.e("lgs", "mCardService==null");
+            if(MyApplication.posType.equals("WPOS")){
+                if (mReadMagTask == null) {
+                    mReadMagTask = new ReadMagTask();
+                    mReadMagTask.start();
                 }
-            } catch (RemoteException e) {
-                e.printStackTrace();
+            }else{
+                try {
+                    if (mCardService != null) {
+                        isSwipVipCard = true;
+                        mCardService.startReadCard();
+                    } else {
+                        LogUtil.e("lgs", "mCardService==null");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
+
             verify_type = ConstantData.MEMBER_VERIFY_BY_MEMBERCARD;
             left_In_Animation.setAnimationListener(new Animation.AnimationListener() {
                 @Override
@@ -309,17 +337,24 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     }
 
     public void verifyByQR(){
-        try {
-            if (mCardService != null) {
-                if(isSwipVipCard){
-                    isSwipVipCard = false;
-                    mCardService.stopReadCard();
-                }
-            } else {
-                LogUtil.e("lgs", "mCardService==null");
+        if(MyApplication.posType.equals("WPOS")){
+            if (mReadMagTask != null) {
+                mReadMagTask.interrupt();
+                mReadMagTask = null;
             }
-        } catch (RemoteException e) {
-            e.printStackTrace();
+        }else{
+            try {
+                if (mCardService != null) {
+                    if(isSwipVipCard){
+                        isSwipVipCard = false;
+                        mCardService.stopReadCard();
+                    }
+                } else {
+                    LogUtil.e("lgs", "mCardService==null");
+                }
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
         Intent intent_qr = new Intent(this, CaptureActivity.class);
         startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
@@ -376,7 +411,11 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
      * @param verifyValue
      *            验证value
      */
+    private boolean isVerify = false;
     private  void memberverifymethodbyhttp(final String verifyType, String verifyValue) {
+        if(isVerify){
+            return;
+        }
         Map<String, String> map = new HashMap<>();
         map.put("condType", verifyType);
         map.put("condValue", verifyValue);
@@ -385,11 +424,13 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
                     @Override
                     public void handleActionStart() {
+                        isVerify = true;
                         startwaitdialog();
                     }
 
                     @Override
                     public void handleActionFinish() {
+                        isVerify = false;
                         closewaitdialog();
                     }
 
@@ -573,6 +614,58 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                 });
     }
 
+    class ReadMagTask extends Thread {
+        private boolean isRun = false;
+        @Override
+        public void run() {
+            isRun = true;
+            // 磁卡刷卡后，主动获取解码后的字符串数据信息
+            try {
+                while (isRun) {
+                    String decodeData = getMagneticReaderInfo();
+                    if (decodeData != null && decodeData.length() != 0) {
+                        System.out.println("final============>>>" + decodeData);
+                        Message m = Message.obtain();
+                        m.obj = decodeData;
+                        m.what = Vipcard;
+                        handler.sendMessage(m);
+                    }
+                    Thread.sleep(500);
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                isRun = false;
+            }
+        }
+    }
+
+    public String getMagneticReaderInfo() {
+        if (mMagneticReader == null) {
+            ToastUtils.sendtoastbyhandler(handler, "初始化磁条卡sdk失败");
+            return "";
+        }
+        // 刷卡后，主动获取磁卡的byte[]数据
+        // byte[] cardByte = mMagneticReader.readCard();
+        // String decodeData = mMagneticReader.getCardDecodeData();
+        // 磁卡刷卡后，主动获取解码后的字符串数据信息
+        String[] decodeData = mMagneticReader.getCardDecodeThreeTrackData();//
+        if (decodeData != null && decodeData.length > 0) {
+            /**
+             * 1：刷会员卡返回会员卡号后面变动的卡号，前面为固定卡号（没有写入到磁卡中）
+             * 如会员卡号：9999100100030318，读卡返回数据为00030318，前面99991001在磁卡中没有写入
+             * 2：刷银行卡返回数据格式为：卡号=有效期。
+             */
+            for (int i = 0; i < decodeData.length; i++) {
+                if (decodeData[i] == null)
+                    continue;
+                return decodeData[i];
+            }
+            return "";
+        } else {
+            return "";
+        }
+    }
     class MsrBroadcastReceiver extends BroadcastReceiver {
 
         @Override

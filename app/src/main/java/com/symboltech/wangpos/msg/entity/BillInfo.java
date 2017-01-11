@@ -75,10 +75,38 @@ public class BillInfo implements Serializable {
 
 	private MemberInfo member;
 	private ExchangeInfo exchange;//积分兑换信息
+	private String parkcouponhour;//赠送的停车券时长
+	private String parkcouponaddhour;//赠送的停车券有效日期
+	private String carno;
 	private List<GoodsInfo> goodslist;
 	private List<PayMentsInfo> paymentslist;
 	private List<CouponInfo> usedcouponlist;// 交易用卷信息
 	private List<CouponInfo> allcouponlist;// 用户持有用卷信息
+	
+	public String getCarno() {
+		return carno;
+	}
+
+	public void setCarno(String carno) {
+		this.carno = carno;
+	}
+
+	public String getParkcouponaddhour() {
+		return parkcouponaddhour;
+	}
+
+	public void setParkcouponaddhour(String parkcouponaddhour) {
+		this.parkcouponaddhour = parkcouponaddhour;
+	}
+
+	public String getParkcouponhour() {
+		return parkcouponhour;
+	}
+
+	public void setParkcouponhour(String parkcouponhour) {
+		this.parkcouponhour = parkcouponhour;
+	}
+
 	public List<CouponInfo> getAllcouponlist() {
 		return allcouponlist;
 	}

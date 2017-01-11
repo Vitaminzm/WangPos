@@ -1059,19 +1059,22 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
      * 本地调用收银服务
      */
     private void requestCashier(String tradeNo) {
-
-        try {
-            // 初始化服务调用
-            mBizServiceInvoker = WeiposImpl.as().getService(BizServiceInvoker.class);
-        } catch (Exception e) {
-            // TODO: handle exception
-        }
         if (mBizServiceInvoker == null) {
-            ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
-            return;
+            try {
+                // 初始化服务调用
+                mBizServiceInvoker = WeiposImpl.as().getService(BizServiceInvoker.class);
+                if (mBizServiceInvoker == null) {
+                    ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
+                    return;
+                }else{
+                    // 设置请求订阅服务监听结果的回调方法
+                    mBizServiceInvoker.setOnResponseListener(mOnResponseListener);
+                }
+            } catch (Exception e) {
+                ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
+            }
+        }else{
+            innerRequestCashier(tradeNo);
         }
-        // 设置请求订阅服务监听结果的回调方法
-        mBizServiceInvoker.setOnResponseListener(mOnResponseListener);
-        innerRequestCashier(tradeNo);
     }
 }

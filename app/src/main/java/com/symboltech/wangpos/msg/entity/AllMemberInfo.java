@@ -9,6 +9,10 @@ public class AllMemberInfo implements Serializable {
 	private MemberInfo member;
 	private List<CouponInfo> couponlist;
 	private List<GoodsInfo> goodslist;
+
+	private List<HistorySaleInfo> historysalelist;
+
+	private HistoryAllSaleInfo historyallsale;
 	public MemberInfo getMember() {
 		return member;
 	}
@@ -27,5 +31,16 @@ public class AllMemberInfo implements Serializable {
 	public void setGoodslist(List<GoodsInfo> goodslist) {
 		this.goodslist = goodslist;
 	}
-	
+	public List<HistorySaleInfo> getHistorysalelist() {
+		return historysalelist;
+	}
+	public void setHistorysalelist(List<HistorySaleInfo> historysalelist) {
+		this.historysalelist = historysalelist;
+	}
+	public HistoryAllSaleInfo getHistoryallsale() {
+		return historyallsale;
+	}
+	public void setHistoryallsale(HistoryAllSaleInfo historyallsale) {
+		this.historyallsale = historyallsale;
+	}
 }

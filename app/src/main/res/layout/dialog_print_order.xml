@@ -75,6 +75,8 @@
         android:layout_width="fill_parent"
         android:layout_marginLeft="@dimen/margin_sz"
         android:layout_marginRight="@dimen/margin_sz"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:layout_height="fill_parent"
         android:gravity="center"
         android:orientation="vertical" >
