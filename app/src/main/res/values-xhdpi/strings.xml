@@ -81,6 +81,7 @@
     <string name="input_money">请输入金额</string>
     <string name="cancle_pay">撤销支付</string>
     <string name="submit_order">提交订单</string>
+    <string name="submit">提交</string>
     <string name="waring_format_msg">输入格式异常</string>
     <string name="waring_money_over">输入金额过大</string>
     <string name="waring_money_not_zero">输入金额不能为零</string>
@@ -320,7 +321,11 @@
     <string name="change_job_report">班报</string>
     <string name="change_day_report">日报</string>
     <string name="change_manager">切换操作员</string>
-
+    <string name="demand_note">缴款单</string>
+    <string name="desk_demand">收款台缴款</string>
+    <string name="total_bi_total">笔数合计</string>
+    <string name="bi">笔</string>
+    <string name="table_total_money">总金额（元）</string>
     <!-- 会员激活-->
     <string name="please_input_name">请输入姓名</string>
     <string name="please_input_shenfen">请输入身份证号</string>

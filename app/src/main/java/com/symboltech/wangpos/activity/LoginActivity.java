@@ -487,9 +487,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         AppConfigFile.setBillId(String.valueOf(billid));
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_DESK_CODE, logininfo.getPosno());
         SpSaveUtils.write(MyApplication.context, ConstantData.RECEIPT_NUMBER, logininfo.getBillid());
-        SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_ID, logininfo.getShopinfo().getId());
-        SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_CODE, logininfo.getShopinfo().getCode());
-        SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_NAME, logininfo.getShopinfo().getName());
+        if(logininfo.getShopinfo() != null){
+            SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_ID, logininfo.getShopinfo().getId());
+            SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_CODE, logininfo.getShopinfo().getCode());
+            SpSaveUtils.write(MyApplication.context, ConstantData.SHOP_NAME, logininfo.getShopinfo().getName());
+        }else{
+            SpSaveUtils.delete(MyApplication.context, ConstantData.SHOP_ID);
+            SpSaveUtils.delete(MyApplication.context, ConstantData.SHOP_CODE);
+            SpSaveUtils.delete(MyApplication.context, ConstantData.SHOP_NAME);
+        }
+        if(logininfo.getMallinfo() != null){
+            SpSaveUtils.write(MyApplication.context, ConstantData.MALL_ID, logininfo.getMallinfo().getId());
+            SpSaveUtils.write(MyApplication.context, ConstantData.MALL_CODE, logininfo.getMallinfo().getCode());
+            SpSaveUtils.write(MyApplication.context, ConstantData.MALL_NAME, logininfo.getMallinfo().getName());
+        }else{
+            SpSaveUtils.delete(MyApplication.context, ConstantData.MALL_ID);
+            SpSaveUtils.delete(MyApplication.context, ConstantData.MALL_CODE);
+            SpSaveUtils.delete(MyApplication.context, ConstantData.MALL_NAME);
+        }
+        SpSaveUtils.write(MyApplication.context, ConstantData.CASH_TYPE, logininfo.getIsmallpos());
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_NAME, logininfo.getPerson_name());
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_ID, logininfo.getPerson_id());
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_CODE, logininfo.getPersoncode());

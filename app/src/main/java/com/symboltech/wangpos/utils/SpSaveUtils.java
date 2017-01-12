@@ -1,15 +1,14 @@
 package com.symboltech.wangpos.utils;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
-import android.util.Log;
 
 /**
  * sharedPreferences utils simple introduction
@@ -24,9 +23,9 @@ import android.util.Log;
 public class SpSaveUtils {
 
 	public static final String SAVE_FOR_SP_KEY = "SaveForSharedPreferences";
-
+	public static final String SAVE_FOR_SP_KEY_OFFLINE = "SaveForSharedPreferencesOffline";
 	/**
-	 * 
+	 *
 	 * @author CWI-APST emial:26873204@qq.com
 	 * @Description: TODO(saveObject by SharedPreferences )
 	 * @param context
@@ -40,6 +39,12 @@ public class SpSaveUtils {
 		edit.commit();
 	}
 
+	public static void saveObject(Context context, String name, String key, Object obj) {
+		SharedPreferences sp = context.getSharedPreferences(name, Context.MODE_PRIVATE);
+		Editor edit = sp.edit();
+		edit.putString(key, serialize(obj));
+		edit.commit();
+	}
 	/**
 	 * 
 	 * @author CWI-APST emial:26873204@qq.com
@@ -53,6 +58,10 @@ public class SpSaveUtils {
 		return deSerialization(sp.getString(key, null));
 	}
 
+	public static Object getObject(Context context, String name, String key) {
+		SharedPreferences sp = context.getSharedPreferences(name, Context.MODE_PRIVATE);
+		return deSerialization(sp.getString(key, null));
+	}
 	/**
 	 * 读取默认的sp中键对应的值
 	 * 

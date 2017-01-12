@@ -41,7 +41,19 @@
         android:gravity="center_horizontal"
         android:orientation="vertical" >
 
+        <TextView
+            android:layout_marginTop="@dimen/margin_vz"
+            android:visibility="gone"
+            android:id="@+id/dialog_change_manager_demand"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_ez"
+            android:background="@drawable/btn_green_bg"
+            android:gravity="center"
+            android:text="@string/desk_demand"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size_rz" />
         <LinearLayout
+            android:id="@+id/ll_dialog_change_manager"
             android:layout_marginTop="@dimen/margin_vz"
             android:orientation="horizontal"
             android:gravity="center"

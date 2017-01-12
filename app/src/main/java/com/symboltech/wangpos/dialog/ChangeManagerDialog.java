@@ -7,16 +7,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.activity.LoginActivity;
+import com.symboltech.wangpos.activity.DemandNoteActivity;
 import com.symboltech.wangpos.activity.WorkLogActivity;
-import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
-import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 
 /**
@@ -29,7 +27,8 @@ import com.symboltech.wangpos.utils.Utils;
 public class ChangeManagerDialog extends Dialog implements View.OnClickListener {
 	private  DialogFinishCallBack callBack;
 	public Context context;
-	private TextView text_job_report, text_day_report, text_change_manager;
+	private LinearLayout ll_dialog_change_manager;
+	private TextView text_job_report, text_day_report, text_change_manager, dialog_change_manager_demand;
 	private ImageView imageview_close;
 
 	public ChangeManagerDialog(Context context, DialogFinishCallBack callBack) {
@@ -47,14 +46,21 @@ public class ChangeManagerDialog extends Dialog implements View.OnClickListener 
 	}
 
 	private void initUI() {
+		ll_dialog_change_manager = (LinearLayout) findViewById(R.id.ll_dialog_change_manager);
+		dialog_change_manager_demand = (TextView) findViewById(R.id.dialog_change_manager_demand);
 		text_job_report = (TextView) findViewById(R.id.text_job_report);
 		text_day_report = (TextView) findViewById(R.id.text_day_report);
 		text_change_manager = (TextView) findViewById(R.id.text_change_manager);
 		imageview_close = (ImageView) findViewById(R.id.imageview_close);
+		dialog_change_manager_demand.setOnClickListener(this);
 		text_job_report.setOnClickListener(this);
 		text_day_report.setOnClickListener(this);
 		text_change_manager.setOnClickListener(this);
 		imageview_close.setOnClickListener(this);
+		//if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(context, ConstantData.CASH_TYPE, ConstantData.CASH_COLLECT))){
+			ll_dialog_change_manager.setVisibility(View.GONE);
+			dialog_change_manager_demand.setVisibility(View.VISIBLE);
+		//}
 	}
 
 	@Override
@@ -80,6 +86,10 @@ public class ChangeManagerDialog extends Dialog implements View.OnClickListener 
 				}
 				break;
 			case R.id.imageview_close:
+				break;
+			case R.id.dialog_change_manager_demand:
+				Intent intent = new Intent(context, DemandNoteActivity.class);
+				context.startActivity(intent);
 				break;
 		}
 		dismiss();

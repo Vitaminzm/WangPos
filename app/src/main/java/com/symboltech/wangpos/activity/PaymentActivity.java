@@ -26,15 +26,19 @@ import com.symboltech.wangpos.dialog.AddGoodDialog;
 import com.symboltech.wangpos.dialog.AddSalemanDialog;
 import com.symboltech.wangpos.dialog.AddScoreGoodDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
+import com.symboltech.wangpos.dialog.InputDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
+import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.msg.entity.AllMemberInfo;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.CashierInfo;
+import com.symboltech.wangpos.msg.entity.GoodsAndSalerInfo;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
+import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.result.SubmitGoodsResult;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
@@ -245,8 +249,14 @@ public class PaymentActivity extends BaseActivity {
      * 初始化销售员和商品
      */
     public void initsalesandgoods() {
-        goodinfos = (List<GoodsInfo>) SpSaveUtils.getObject(MyApplication.context, ConstantData.BRANDGOODSLIST);
-        sales = (List<CashierInfo>) SpSaveUtils.getObject(MyApplication.context, ConstantData.SALEMANLIST);
+        goodinfos = new ArrayList<GoodsInfo>();
+        if (SpSaveUtils.getObject(MyApplication.context, ConstantData.BRANDGOODSLIST) != null) {
+            goodinfos = (List<GoodsInfo>) SpSaveUtils.getObject(MyApplication.context, ConstantData.BRANDGOODSLIST);
+        }
+        sales = new ArrayList<CashierInfo>();
+        if (SpSaveUtils.getObject(MyApplication.context, ConstantData.SALEMANLIST) != null) {
+            sales = (List<CashierInfo>) SpSaveUtils.getObject(MyApplication.context, ConstantData.SALEMANLIST);
+        }
         title_text_content.setText(getString(R.string.pay));
         text_desk_code.setText(SpSaveUtils.read(getApplication(), ConstantData.CASHIER_DESK_CODE, ""));
         text_bill_id.setText(AppConfigFile.getBillId());
@@ -380,22 +390,157 @@ public class PaymentActivity extends BaseActivity {
                 }
                 break;
             case R.id.radio_add_salesman:
-                if (sales != null && sales.size() > 0) {
-                    new AddSalemanDialog(PaymentActivity.this, sales, new DialogFinishCallBack() {
+                if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
+                    new InputDialog(this, "请输入销售员编码", new GeneralEditListener(){
+
                         @Override
-                        public void finish(int position) {
-                            text_saleman_name.setText(sales.get(position).getCashiername());
-                            text_saleman_name.setTag(sales.get(position).getCashierid());
+                        public void editinput(final String edit) {
+                            if(AppConfigFile.isOffLineMode()){
+                                PaymentActivity.this.runOnUiThread(new Runnable(){
+
+                                    @Override
+                                    public void run() {
+                                        getGoodsByrydmOffline(edit);
+                                    }});
+                            }else{
+                                getGoodsFromRydm(edit);
+                            }
                         }
                     }).show();
-                } else {
-                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_saleman));
+
+                }else{
+                    if (sales != null && sales.size() > 0) {
+                        new AddSalemanDialog(PaymentActivity.this, sales, new DialogFinishCallBack() {
+                            @Override
+                            public void finish(int position) {
+                                text_saleman_name.setText(sales.get(position).getCashiername());
+                                text_saleman_name.setTag(sales.get(position).getCashierid());
+                            }
+                        }).show();
+                    } else {
+                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_saleman));
+                    }
                 }
                 break;
             case R.id.radio_look_member:
                 lookMember();
                 break;
         }
+    }
+
+    public void getGoodsByrydmOffline(String rydm){
+        boolean isFind = false;
+        List<GoodsAndSalerInfo> datas =(List<GoodsAndSalerInfo>)SpSaveUtils.getObject(getApplicationContext(), SpSaveUtils.SAVE_FOR_SP_KEY_OFFLINE, ConstantData.OFFLINE_CASH);
+        if(datas!= null && datas.size() > 0){
+            for(GoodsAndSalerInfo info:datas){
+                if(info.getSalemanlist()!= null && info.getSalemanlist().size() > 0){
+                    for(CashierInfo cashier:info.getSalemanlist()){
+                        if(cashier!= null && cashier.getCashiercode().equals(rydm)){
+                            sales.clear();
+                            sales.add(cashier);
+                            text_saleman_name.setText(cashier.getCashiername());
+                            text_saleman_name.setTag(cashier.getCashierid());
+                            List<GoodsInfo> goods = info.getBrandgoodlist();
+                            goodinfos.clear();
+                            goodinfos.addAll(goods);
+                            if(goodinfos != null && goodinfos.size() > 0){
+                                new AddGoodDialog(PaymentActivity.this, goodinfos, new DialogFinishCallBack() {
+                                    @Override
+                                    public void finish(int p) {
+                                        if (goodinfos.get(p).getSpmode().trim().equals("0")) {
+                                            addcartgoods(null, p, ConstantData.GOOD_PRICE_NO_CHANGE);
+                                        } else {
+                                            position = p;
+                                            keyboard.show();
+                                        }
+                                    }
+                                }).show();
+                            }else{
+                                ToastUtils.sendtoastbyhandler(handler, "该销售人员没有商品");
+                            }
+                            isFind = true;
+                            break;
+                        }
+                    }
+                }
+                if(isFind){
+                    break;
+                }
+            }
+        }
+        if(!isFind){
+            ToastUtils.sendtoastbyhandler(handler, "该销售人员不存在");
+        }
+    }
+
+    private void getGoodsFromRydm(String rydm){
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("rydm", rydm);
+        HttpRequestUtil.getinstance().getgoodsfromrydm(map, InitializeInfResult.class, new HttpActionHandle<InitializeInfResult>(){
+
+            @Override
+            public void handleActionStart() {
+                startwaitdialog();
+            }
+
+            @Override
+            public void handleActionFinish() {
+                closewaitdialog();
+            }
+
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName,
+                                            final InitializeInfResult result) {
+                PaymentActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
+                            List<CashierInfo> salesinfo= result.getInitializeInfo().getSalemanlist();
+                            List<GoodsInfo> goods = result.getInitializeInfo().getBrandgoodslist();
+                            if(goods != null && goods.size()>0){
+                                goodinfos.clear();
+                                goodinfos.addAll(goods);
+                            }
+                            if(salesinfo != null && salesinfo.size()>0){
+                                sales.clear();
+                                sales.addAll(salesinfo);
+                                text_saleman_name.setText(sales.get(0).getCashiername());
+                                text_saleman_name.setTag(sales.get(0).getCashierid());
+                            }
+                            if(goodinfos != null && goodinfos.size() > 0){
+                                new AddGoodDialog(PaymentActivity.this, goodinfos, new DialogFinishCallBack() {
+                                    @Override
+                                    public void finish(int p) {
+                                        if (goodinfos.get(p).getSpmode().trim().equals("0")) {
+                                            addcartgoods(null, p, ConstantData.GOOD_PRICE_NO_CHANGE);
+                                        } else {
+                                            position = p;
+                                            keyboard.show();
+                                        }
+                                    }
+                                }).show();
+                            }
+                        }else {
+                            goodinfos.clear();
+                            text_saleman_name.setText("");
+                            text_saleman_name.setTag("");
+                            ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     /**

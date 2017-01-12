@@ -155,13 +155,22 @@ public class ConstantData {
 	public static final String RECEIPT_NUMBER_LAST = "receipt_number_last";
 
 	/** 店铺ID */
-	public static final String SHOP_ID = "mall_id";
+	public static final String SHOP_ID = "shop_id";
 
 	/** 店铺代码 */
-	public static final String SHOP_CODE = "mall_code";
+	public static final String SHOP_CODE = "shop_code";
 
 	/** 店铺名称 */
-	public static final String SHOP_NAME = "mall_name";
+	public static final String SHOP_NAME = "shop_name";
+
+	/** 门店ID */
+	public static final String MALL_ID = "mall_id";
+
+	/** 门店代码 */
+	public static final String MALL_CODE = "mall_code";
+
+	/** 门店名称 */
+	public static final String MALL_NAME = "mall_name";
 
 	/** 舍零方式 */
 	public static final String MALL_MONEY_OMIT = "mall_money_omit";
@@ -171,6 +180,21 @@ public class ConstantData {
 
 	/** 微信是否输入单号 */
 	public static final String MALL_WEIXIN_IS_INPUT = "mall_weixin_is_input";
+
+	/** 收银类型 */
+	public static final String CASH_TYPE = "cash_type";
+
+	/** 普通收银 */
+	public static final String CASH_NORMAL = "0";
+
+	/** 集中收银 */
+	public static final String CASH_COLLECT = "1";
+
+	/** 离线商品缓存时间 */
+	public static final String OFFLINE_CASH_TIME = "offline_cash_time";
+
+	/** 离线商品缓存 */
+	public static final String OFFLINE_CASH = "offline_cash";
 
 	/** 收银员姓名 */
 	public static final String CASHIER_NAME = "cashier_name";

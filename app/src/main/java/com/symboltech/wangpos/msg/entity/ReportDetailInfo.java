@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author so
  *
  */
-public class ReportDetailInfo implements Serializable{
+public class ReportDetailInfo implements Serializable, Cloneable{
 
 	private String code;
 	private String name;
@@ -40,5 +40,14 @@ public class ReportDetailInfo implements Serializable{
 	public void setCount(String count) {
 		this.count = count;
 	}
-	
+	@Override
+	public ReportDetailInfo clone() {
+		ReportDetailInfo clone = null;
+		try {
+			clone = (ReportDetailInfo) super.clone();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return clone;
+	}
 }

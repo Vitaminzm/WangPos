@@ -101,6 +101,7 @@
         android:layout_height="@dimen/height_ez" />
     <com.symboltech.wangpos.view.DecoratorViewPager
         android:id="@+id/view_pager_statistics"
+        android:overScrollMode="never"
         android:layout_below="@id/ll_shop_info"
         android:layout_above="@id/text_print"
         android:layout_marginRight="@dimen/margin_rz"

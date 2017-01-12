@@ -21,6 +21,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <uses-permission android:name="cn.koolcloud.pos.SERVICE" />
+    <uses-permission android:name="com.wangpos.cashiercoreapp.coreapi" />
 
     <application
         android:name=".app.MyApplication"
@@ -55,6 +56,7 @@
         <activity android:name=".activity.ReturnGoodsByOrderActivity" />
         <activity android:name=".activity.ReturnMoneyByOrderActivity"/>
         <activity android:name=".activity.WorkLogActivity"/>
+        <activity android:name=".activity.DemandNoteActivity"/>
         <activity android:name=".activity.MemberActivateActivity"/>
         <activity android:name=".dialog.ThirdPayDialog"
                 android:theme="@style/dialog_login_bg"/>

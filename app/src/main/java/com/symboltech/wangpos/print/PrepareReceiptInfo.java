@@ -33,6 +33,7 @@ import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.TicketFormatEnum;
 import com.symboltech.wangpos.utils.Utils;
 
@@ -321,6 +322,75 @@ public class PrepareReceiptInfo {
 	}
 
 	/**
+	 * 打印收款台缴款单
+	 * @param total
+	 */
+	public static JSONObject printDemandNote(TotalReportInfo total, LatticePrinter latticePrinter){
+		JSONArray array = new JSONArray();
+		addBlankLine(array, latticePrinter);
+		addBlankLine(array, latticePrinter);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), KposPrinterManager.CONTENT_ALIGN_LEFT);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT);
+		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
+			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "门店:" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+		}else{
+			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "店铺:" + SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+		}
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "打印时间:" + Utils.formatDate(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"), KposPrinterManager.CONTENT_ALIGN_LEFT);
+		addDashLine(array, latticePrinter);
+		if (total != null) {
+			if (total.getTotalmoney() != null) {
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "总金额		" + total.getTotalmoney(), KposPrinterManager.CONTENT_ALIGN_LEFT);
+			} else {
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "总金额		" + 0, KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+			if (total.getBillcount() != null) {
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "总笔数		" + total.getBillcount(), KposPrinterManager.CONTENT_ALIGN_LEFT);
+			} else {
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "总笔数		" + 0, KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+		}
+		if (total.getTotallist() != null) {
+			for (ReportDetailInfo info : total.getTotallist()) {
+				if (info.getName() != null && info.getMoney() != null) {
+					addTextJson(array, latticePrinter, FONT_DEFAULT, StringUtil.formatLString(8, info.getName()) + "	"
+							+ StringUtil.formatLString(8, info.getMoney().replaceAll("-", "")) + " 笔数：" + info.getCount(), KposPrinterManager.CONTENT_ALIGN_LEFT);
+				}else{
+					addTextJson(array, latticePrinter, FONT_DEFAULT, StringUtil.formatLString(8, info.getName()) + "	"
+							+ StringUtil.formatLString(8, "0.00") + " 笔数：" + info.getCount(), KposPrinterManager.CONTENT_ALIGN_LEFT);
+				}
+			}
+		}
+		addDashLine(array, latticePrinter);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "收银员签字:", KposPrinterManager.CONTENT_ALIGN_LEFT);
+		addBlankLine(array, latticePrinter);
+		addBlankLine(array, latticePrinter);
+		addBlankLine(array, latticePrinter);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "财务签字:", KposPrinterManager.CONTENT_ALIGN_LEFT);
+		addBlankLine(array, latticePrinter);
+		addBlankLine(array, latticePrinter);
+		addBlankLine(array, latticePrinter);
+		addBlankLine(array, latticePrinter);
+		addBlankLine(array, latticePrinter);
+		addBlankLine(array, latticePrinter);
+		JSONObject jsonObject = new JSONObject();
+		if(latticePrinter!= null){
+			// 真正提交打印事件
+			latticePrinter.submitPrint();
+		}else{
+			try {
+				jsonObject.put("page", array);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return jsonObject;
+	}
+	/**
 	 * 打印班报日报
 	 *
 	 * @param isJob
@@ -363,6 +433,7 @@ public class PrepareReceiptInfo {
 			PrintString tickbegin = new PrintString(ticketFormat.getTickbegin());
 			tickbegin.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 					.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
+					.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
 					.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""))
 					.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 			if(isJob){
@@ -576,7 +647,15 @@ public class PrepareReceiptInfo {
 		if (isJob) {
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT);
 		}
-		addTextJson(array, latticePrinter, FONT_DEFAULT, "店铺:" + SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT);
+		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
+			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "门店:" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+		}else{
+			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "店铺:" + SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+		}
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "打印时间:" + Utils.formatDate(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"), KposPrinterManager.CONTENT_ALIGN_LEFT);
 		addDashLine(array, latticePrinter);
 		// printSale
@@ -755,6 +834,7 @@ public class PrepareReceiptInfo {
 							PrintString tickbegin = new PrintString(ticketFormat.getTickbegin());
 							tickbegin.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
+									.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
 									.replace(TicketFormatEnum.TICKET_BILL_NO.getLable(), bill.getBillid())
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
@@ -788,6 +868,7 @@ public class PrepareReceiptInfo {
 							PrintString tickend = new PrintString(ticketFormat.getTickend());
 							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
+									.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
 									.replace(TicketFormatEnum.TICKET_BILL_NO.getLable(), bill.getBillid())
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
@@ -1125,8 +1206,16 @@ public class PrepareReceiptInfo {
 		double totalPoint = 0;// 积分累计
 		addBlankLine(array, latticePrinter);
 		addBlankLine(array, latticePrinter);
-		addTextJson(array, latticePrinter, FONT_BIG, "欢迎光临" + SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""), KposPrinterManager.CONTENT_ALIGN_CENTER);
-		addTextJson(array, latticePrinter, FONT_DEFAULT, "店铺：" + SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT);
+		addTextJson(array, latticePrinter, FONT_BIG, "欢迎光临" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""), KposPrinterManager.CONTENT_ALIGN_CENTER);
+		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
+			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "门店:" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+		}else{
+			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "店铺:" + SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+		}
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "订单号：" + bill.getBillid(), KposPrinterManager.CONTENT_ALIGN_LEFT);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号：" + bill.getPosno(), KposPrinterManager.CONTENT_ALIGN_LEFT);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员：" + bill.getCashiername(), KposPrinterManager.CONTENT_ALIGN_LEFT);
@@ -1393,6 +1482,7 @@ public class PrepareReceiptInfo {
 							PrintString tickbegin = new PrintString(ticketFormat.getTickbegin());
 							tickbegin.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
+									.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
 									.replace(TicketFormatEnum.TICKET_BILL_NO.getLable(), bill.getBillid())
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
@@ -1432,6 +1522,7 @@ public class PrepareReceiptInfo {
 							PrintString tickend = new PrintString(ticketFormat.getTickend());
 							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
+									.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
 									.replace(TicketFormatEnum.TICKET_BILL_NO.getLable(), bill.getBillid())
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
@@ -1770,7 +1861,15 @@ public class PrepareReceiptInfo {
 		JSONArray array = new JSONArray();
 		addBlankLine(array, latticePrinter);
 		addBlankLine(array, latticePrinter);
-		addTextJson(array, latticePrinter, FONT_DEFAULT, "店铺:" + SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT);
+		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
+			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "门店:" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+		}else{
+			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "店铺:" + SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT);
+			}
+		}
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "退货单号:" + bill.getBillid(), KposPrinterManager.CONTENT_ALIGN_LEFT);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号:" + bill.getPosno(), KposPrinterManager.CONTENT_ALIGN_LEFT);
 		if (bill.getCashiername() != null && !"".equals(bill.getCashiername())) {

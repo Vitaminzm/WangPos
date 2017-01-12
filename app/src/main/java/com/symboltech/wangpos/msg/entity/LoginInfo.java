@@ -28,7 +28,16 @@ public class LoginInfo implements Serializable{
 	private String person_name;
 	private String personcode;
 	private String posno;
+	private String ismallpos;//0 普通收银 1集中收银
 	private String serviceurl = ""; //修改本地IP地址
+
+	public String getIsmallpos() {
+		return ismallpos;
+	}
+
+	public void setIsmallpos(String ismallpos) {
+		this.ismallpos = ismallpos;
+	}
 
 	public String getServiceurl() {
 		return serviceurl;

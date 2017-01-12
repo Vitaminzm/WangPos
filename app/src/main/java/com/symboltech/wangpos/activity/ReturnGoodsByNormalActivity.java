@@ -18,20 +18,23 @@ import android.widget.Toast;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.dialog.AddGoodDialog;
 import com.symboltech.wangpos.dialog.AddSalemanDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
+import com.symboltech.wangpos.dialog.InputDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
+import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.CashierInfo;
+import com.symboltech.wangpos.msg.entity.GoodsAndSalerInfo;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
 import com.symboltech.wangpos.result.CommitOrderResult;
+import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
@@ -40,6 +43,7 @@ import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -91,21 +95,157 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
                     ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_good));
                 }
             }else if(id == R.id.edit_return_handperson){
-                if(sales != null && sales.size() > 0){
-                    new AddSalemanDialog(ReturnGoodsByNormalActivity.this, sales, new DialogFinishCallBack() {
+                if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
+                    new InputDialog(this, "请输入销售员编码", new GeneralEditListener(){
+
                         @Override
-                        public void finish(int position) {
-                            edit_return_handperson.setText(sales.get(position).getCashiername());
-                            edit_return_handperson.setTag(position);
+                        public void editinput(final String edit) {
+                            if(AppConfigFile.isOffLineMode()){
+                                ReturnGoodsByNormalActivity.this.runOnUiThread(new Runnable(){
+
+                                    @Override
+                                    public void run() {
+                                        getGoodsByrydmOffline(edit);
+                                    }});
+                            }else{
+                                getGoodsFromRydm(edit);
+                            }
                         }
                     }).show();
-                }else{
-                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_saleman));
-                }
 
+                }else{
+                    if(sales != null && sales.size() > 0){
+                        new AddSalemanDialog(ReturnGoodsByNormalActivity.this, sales, new DialogFinishCallBack() {
+                            @Override
+                            public void finish(int position) {
+                                edit_return_handperson.setText(sales.get(position).getCashiername());
+                                edit_return_handperson.setTag(position);
+                            }
+                        }).show();
+                    }else{
+                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_saleman));
+                    }
+                }
             }
         }
         return false;
+    }
+
+    public void getGoodsByrydmOffline(String rydm){
+        boolean isFind = false;
+        List<GoodsAndSalerInfo> datas =(List<GoodsAndSalerInfo>)SpSaveUtils.getObject(getApplicationContext(), SpSaveUtils.SAVE_FOR_SP_KEY_OFFLINE, ConstantData.OFFLINE_CASH);
+        if(datas!= null && datas.size() > 0){
+            for(GoodsAndSalerInfo info:datas){
+                if(info.getSalemanlist()!= null && info.getSalemanlist().size() > 0){
+                    for(CashierInfo cashier:info.getSalemanlist()){
+                        if(cashier!= null && cashier.getCashiercode().equals(rydm)){
+                            sales.clear();
+                            sales.add(cashier);
+                            edit_return_handperson.setText(cashier.getCashiername());
+                            edit_return_handperson.setTag(0);
+                            List<GoodsInfo> goods = info.getBrandgoodlist();
+                            if(goods != null && goods.size()>0){
+                                goodinfos.clear();
+                                goodinfos.addAll(goods);
+                                new AddGoodDialog(ReturnGoodsByNormalActivity.this, goodinfos, new DialogFinishCallBack() {
+                                    @Override
+                                    public void finish(int p) {
+                                        edit_return_good.setTag(p);
+                                        edit_return_good.setText(goodinfos.get(p).getGoodsname());
+                                    }
+                                }).show();
+                            }
+                            isFind = true;
+                            break;
+                        }
+                    }
+                }
+                if(isFind){
+                    break;
+                }
+            }
+        }
+        if(!isFind){
+            sales.clear();
+            edit_return_handperson.setText("");
+            edit_return_handperson.setTag("");
+            goodinfos.clear();
+            edit_return_good.setTag("");
+            edit_return_good.setText("");
+            ToastUtils.sendtoastbyhandler(handler, "该销售人员不存在");
+        }
+    }
+
+    private void getGoodsFromRydm(String rydm){
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("rydm", rydm);
+        HttpRequestUtil.getinstance().getgoodsfromrydm(map, InitializeInfResult.class, new HttpActionHandle<InitializeInfResult>(){
+
+            @Override
+            public void handleActionStart() {
+                startwaitdialog();
+            }
+
+            @Override
+            public void handleActionFinish() {
+                closewaitdialog();
+            }
+
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName,
+                                            final InitializeInfResult result) {
+                ReturnGoodsByNormalActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
+                            List<CashierInfo> salers = result.getInitializeInfo().getSalemanlist();
+                            if(salers != null && salers.size()> 0){
+                                sales.clear();
+                                sales.addAll(salers);
+                                edit_return_handperson.setText(sales.get(0).getCashiername());
+                                edit_return_handperson.setTag(0);
+                            }else{
+                                sales.clear();
+                                edit_return_handperson.setText("");
+                                edit_return_handperson.setTag("");
+                            }
+                            List<GoodsInfo> goods = result.getInitializeInfo().getBrandgoodslist();
+                            if(goods != null && goods.size()>0){
+                                goodinfos.clear();
+                                goodinfos.addAll(goods);
+                                new AddGoodDialog(ReturnGoodsByNormalActivity.this, goodinfos, new DialogFinishCallBack() {
+                                    @Override
+                                    public void finish(int p) {
+                                        edit_return_good.setTag(p);
+                                        edit_return_good.setText(goodinfos.get(p).getGoodsname());
+                                    }
+                                }).show();
+                            }
+
+                        }else {
+                            sales.clear();
+                            edit_return_handperson.setText("");
+                            edit_return_handperson.setTag("");
+                            goodinfos.clear();
+                            edit_return_good.setTag("");
+                            edit_return_good.setText("");
+                            ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void handleActionChangeToOffLine() {
+                Intent intent = new Intent(ReturnGoodsByNormalActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     static class MyHandler extends Handler {
@@ -129,8 +269,14 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
     MyHandler handler = new MyHandler(this);
     @Override
     protected void initData() {
-        sales = (List<CashierInfo>) SpSaveUtils.getObject(MyApplication.context, ConstantData.SALEMANLIST);
-        goodinfos = (List<GoodsInfo>) SpSaveUtils.getObject(MyApplication.context, ConstantData.BRANDGOODSLIST);
+        goodinfos = new ArrayList<GoodsInfo>();
+        if(SpSaveUtils.getObject(ReturnGoodsByNormalActivity.this, ConstantData.BRANDGOODSLIST) != null){
+            goodinfos = (List<GoodsInfo>) SpSaveUtils.getObject(ReturnGoodsByNormalActivity.this, ConstantData.BRANDGOODSLIST);
+        }
+        sales = new ArrayList<CashierInfo>();
+        if(SpSaveUtils.getObject(ReturnGoodsByNormalActivity.this, ConstantData.SALEMANLIST) != null){
+            sales = (List<CashierInfo>) SpSaveUtils.getObject(ReturnGoodsByNormalActivity.this, ConstantData.SALEMANLIST);
+        }
         ll_saleman.setVisibility(View.INVISIBLE);
         title_text_content.setText(getString(R.string.return_normal));
         text_desk_code.setText(SpSaveUtils.read(getApplication(), ConstantData.CASHIER_DESK_CODE, ""));

@@ -175,6 +175,44 @@ public class HttpRequestUtil {
 	}
 
 	/**
+	 * 集中收银获取销售员和商品
+	 * TODO
+	 * @author so
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void getOfflineData(Map<String, String> param, final Class<T> clz,
+								   final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/getallgoods"), param, clz,
+				httpactionhandler);
+	}
+
+	/**
+	 * 根据收银员id获取商品信息   集中收银
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void getgoodsfromrydm(Map<String, String> param, final Class<T> clz,
+									 final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/getgoodsfromrydm"), param, clz,
+				httpactionhandler);
+	}
+
+	/**
+	 * 提交缴款单
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void jkd(Map<String, String> param, final Class<T> clz,
+						final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/jkd"), param, clz,
+				httpactionhandler);
+	}
+
+	/**
 	 * @Description 获取订单信息
 	 * @author so
 	 * @param param

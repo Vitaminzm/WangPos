@@ -29,17 +29,21 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.BaseActivity;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
+import com.symboltech.wangpos.msg.entity.WposBankRefundInfo;
+import com.symboltech.wangpos.msg.entity.WposPayInfo;
 import com.symboltech.wangpos.result.ThirdPayCancelResult;
 import com.symboltech.wangpos.result.ThirdPayQueryResult;
 import com.symboltech.wangpos.result.ThirdPayResult;
 import com.symboltech.wangpos.result.ThirdPaySalesReturnResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.ArithDouble;
+import com.symboltech.wangpos.utils.CashierSign;
 import com.symboltech.wangpos.utils.CodeBitmap;
 import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
@@ -50,12 +54,18 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
+import com.wangpos.pay.UnionPay.PosConfig;
+import com.wangpos.poscore.PosCore;
+import com.wangpos.poscore.impl.PosCoreFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,11 +79,17 @@ import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
 import cn.koolcloud.engine.thirdparty.aidlbean.LoginRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.SaleRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
+import cn.weipass.pos.sdk.BizServiceInvoker;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
+import cn.weipass.service.bizInvoke.RequestInvoke;
+import cn.weipass.service.bizInvoke.RequestResult;
 
 public class ThirdPayControllerDialog extends BaseActivity{
 
 	@Bind(R.id.ll_function)
 	LinearLayout ll_function;
+	@Bind(R.id.tv_query)
+	TextView tv_query;
 
 	@Bind(R.id.ll_input_money)
 	LinearLayout ll_input_money;
@@ -160,6 +176,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 	private HorizontalKeyBoard keyboard;
 	private double money;
 	private boolean isrunning = false;
+	private PosCore pCore;
 
 	private void login() {
 		LoginRequest request = new LoginRequest(SpSaveUtils.read(ThirdPayControllerDialog.this, ConstantData.CUSTOMERID,""), SpSaveUtils.read(ThirdPayControllerDialog.this, ConstantData.USERID,""), SpSaveUtils.read(ThirdPayControllerDialog.this, ConstantData.PWD,""));
@@ -284,6 +301,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 	MyHandler handler = new MyHandler(this);
 
 	public void initUi(){
+		trade_no = null;
 		setFinishOnTouchOutside(true);
 		ll_function.setVisibility(View.VISIBLE);
 		ll_paying_by_code.setVisibility(View.GONE);
@@ -300,6 +318,10 @@ public class ThirdPayControllerDialog extends BaseActivity{
 	protected void initData() {
 		this.Type = getIntent().getStringExtra(ConstantData.PAY_TYPE);
 		this.payMode = getIntent().getStringExtra(ConstantData.PAY_MODE);
+		if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
+			initPosCore();
+			tv_query.setText("查余");
+		}
 //		Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
 //		yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
 //		setServiceStateChangeListerner(serviceStateChangeListerner1);
@@ -422,7 +444,11 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				edit_money.setHint("请输入支付金额");
 				break;
 			case R.id.ll_pay_search:
-				ToastUtils.sendtoastbyhandler(handler,"暂不支持");
+				if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
+					doChaXunYuE();
+				}else{
+					ToastUtils.sendtoastbyhandler(handler,"暂不支持");
+				}
 //				type_function = ConstantData.TRANS_QUERY;
 //				ll_function.setVisibility(View.GONE);
 //				ll_input_money.setVisibility(View.VISIBLE);
@@ -534,6 +560,10 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				});
 	}
 	public void doReturn(){
+		if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
+			doRevoke();
+			return;
+		}
 		if(trade_no == null){
 			if(edit_money.getText() == null || "".equals(edit_money.getText().toString())){
 				ToastUtils.sendtoastbyhandler(handler, "请先输入订单号");
@@ -670,79 +700,82 @@ public class ThirdPayControllerDialog extends BaseActivity{
 			ToastUtils.sendtoastbyhandler(handler, "请先输入订单号");
 			return;
 		}
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("operater", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_CODE, ""));
-		map.put("pay_type", payMode);
-		map.put("old_trade_no", edit_money.getText().toString());
-		map.put("billid", "-" + AppConfigFile.getBillId());
-		LogUtil.i("lgs", "old_trade_no===" + map.get("old_trade_no") + "==billid==" + map.get("billid") + "===" + "=="
-				+ map.get("pay_type"));
-		HttpRequestUtil.getinstance().thirdpaycancel(map, ThirdPayCancelResult.class,
-				new HttpActionHandle<ThirdPayCancelResult>() {
+		if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
+			requestRefundCashier(edit_money.getText().toString());
+		}else {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("operater", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_CODE, ""));
+			map.put("pay_type", payMode);
+			map.put("old_trade_no", edit_money.getText().toString());
+			map.put("billid", "-" + AppConfigFile.getBillId());
+			LogUtil.i("lgs", "old_trade_no===" + map.get("old_trade_no") + "==billid==" + map.get("billid") + "===" + "=="
+					+ map.get("pay_type"));
+			HttpRequestUtil.getinstance().thirdpaycancel(map, ThirdPayCancelResult.class,
+					new HttpActionHandle<ThirdPayCancelResult>() {
 
-					@Override
-					public void handleActionStart() {
-						ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								ll_input_money.setVisibility(View.GONE);
-								ll_paying_status.setVisibility(View.VISIBLE);
-								spin_kit.setVisibility(View.VISIBLE);
-								text_status.setText(R.string.thirdpay_requesting);
-							}
-						});
-					}
-
-					@Override
-					public void handleActionError(String actionName, String errmsg) {
-						ToastUtils.sendtoastbyhandler(handler, errmsg);
-						handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
-					}
-
-					@Override
-					public void handleActionSuccess(String actionName, final ThirdPayCancelResult result) {
-						// TODO Auto-generated method stub
-						if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+						@Override
+						public void handleActionStart() {
 							ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
-									imageview_close.setVisibility(View.GONE);
-									ll_paying_by_code.setVisibility(View.GONE);
-									ll_paying_msg.setVisibility(View.VISIBLE);
-									ll_input_money.setVisibility(View.GONE);
-									ll_paying_status.setVisibility(View.GONE);
-									text_confirm_query.setVisibility(View.GONE);
-									text_paying_msg.setText("撤销成功");
-								}
-							});
-							handler.postDelayed(new Runnable() {
-								@Override
-								public void run() {
-									ThirdPayControllerDialog.this.finish();
-								}
-							}, 1000);
-						} else {
-							ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									imageview_close.setVisibility(View.GONE);
-									ll_paying_by_code.setVisibility(View.GONE);
-									ll_paying_msg.setVisibility(View.GONE);
 									ll_input_money.setVisibility(View.GONE);
 									ll_paying_status.setVisibility(View.VISIBLE);
-									spin_kit.setVisibility(View.GONE);
-									// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
-									text_status.setText(result.getMsg());
-									handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+									spin_kit.setVisibility(View.VISIBLE);
+									text_status.setText(R.string.thirdpay_requesting);
 								}
 							});
 						}
-					}
-				});
+
+						@Override
+						public void handleActionError(String actionName, String errmsg) {
+							ToastUtils.sendtoastbyhandler(handler, errmsg);
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+						}
+
+						@Override
+						public void handleActionSuccess(String actionName, final ThirdPayCancelResult result) {
+							// TODO Auto-generated method stub
+							if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+								ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										imageview_close.setVisibility(View.GONE);
+										ll_paying_by_code.setVisibility(View.GONE);
+										ll_paying_msg.setVisibility(View.VISIBLE);
+										ll_input_money.setVisibility(View.GONE);
+										ll_paying_status.setVisibility(View.GONE);
+										text_confirm_query.setVisibility(View.GONE);
+										text_paying_msg.setText("撤销成功");
+									}
+								});
+								handler.postDelayed(new Runnable() {
+									@Override
+									public void run() {
+										ThirdPayControllerDialog.this.finish();
+									}
+								}, 1000);
+							} else {
+								ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+									@Override
+									public void run() {
+										imageview_close.setVisibility(View.GONE);
+										ll_paying_by_code.setVisibility(View.GONE);
+										ll_paying_msg.setVisibility(View.GONE);
+										ll_input_money.setVisibility(View.GONE);
+										ll_paying_status.setVisibility(View.VISIBLE);
+										spin_kit.setVisibility(View.GONE);
+										// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+										text_status.setText(result.getMsg());
+										handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+									}
+								});
+							}
+						}
+					});
+		}
 	}
 
 	public void doTrans(){
-		LogUtil.i("lgs", edit_money.getText().toString());
 		if(edit_money.getText() == null || "".equals(edit_money.getText().toString())){
 			ToastUtils.sendtoastbyhandler(handler, "请先输入支付金额");
 			return;
@@ -752,8 +785,12 @@ public class ThirdPayControllerDialog extends BaseActivity{
 			ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_money_not_zero));
 			return;
 		}
-		Intent intent_qr = new Intent(this, CaptureActivity.class);
-		startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+		if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
+			requestCashier(CurrencyUnit.yuan2fenStr(money + ""));
+		}else{
+			Intent intent_qr = new Intent(this, CaptureActivity.class);
+			startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+		}
 //		if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
 //			Intent intent_qr = new Intent(this, CaptureActivity.class);
 //			startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
@@ -1633,5 +1670,435 @@ public class ThirdPayControllerDialog extends BaseActivity{
 			}
 		}
 		return null;
+	}
+
+	private BizServiceInvoker mBizServiceInvoker;
+	//业务demo在bp平台中的的bpid，这里填写对应应用所属bp账号的bpid和对应的key--------------需要动态改变
+	private String InvokeCashier_BPID="53b3a1ca45ceb5f96d153eec";
+	private String InvokeCashier_KEY="LIz6bPS2z8jUnwLHRYzcJ6WK2X87ziWe";
+
+	// 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
+	//
+	// 2.调用收银支付成功后，收银支付结果页面完成后，BizServiceInvoker.OnResponseListener后收到响应的结果
+	//
+	// 3.如果需要页面调回到自己的App，需要在调用中增加参数package和classpath(如com.xxx.pay.ResultActivity)，并且这个跳转的Activity需要在AndroidManifest.xml中增加android:exported=”true”属性。
+	private void innerRequestCashier(String total_fee) {
+		ll_input_money.setVisibility(View.GONE);
+		ll_paying_status.setVisibility(View.VISIBLE);
+		spin_kit.setVisibility(View.VISIBLE);
+		text_status.setText(R.string.thirdpay_requesting);
+		// 1001 现金
+		// 1003 微信
+		// 1004 支付宝
+		// 1005 百度钱包
+		// 1006 银行卡
+		// 1007 易付宝
+		// 1009 京东钱包
+		// 1011 QQ钱包
+		String pay_type = "1006";
+		String channel = "POS";//标明是pos调用，不需改变
+		String seqNo = "1";//服务端请求序列,本地应用调用可固定写死为1
+		// String total_fee = "1";//支付金额，单位为分，1=0.01元，100=1元，不可空
+		// 如果需要页面调回到自己的App，需要在调用中增加参数package和classpath(如com.xxx.pay.ResultActivity)，并且这个跳转的Activity需要在AndroidManifest.xml中增加android:exported=”true”属性。
+		// 如果不需要回调页面，则backPkgName和backClassPath需要同时设置为空字符串 ："";
+		String backPkgName = null;//，可空
+		String backClassPath = null;//，可空
+		//指定接收收银结果的url地址默认为："http://apps.weipass.cn/pay/notify"，可填写自己服务器接收地址
+		String notifyUrl = null;//，可空
+		String body = SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, "")+"店铺商品";//订单body描述信息 ，不可空
+		String attach = "备注信息";//备注信息，可空，订单信息原样返回，可空
+		// 第三方订单流水号，非空,发起请求，tradeNo不能相同，相同在收银会提示有存在订单
+		String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+		try {
+			RequestInvoke cashierReq = new RequestInvoke();
+			cashierReq.pkgName = this.getPackageName();
+			cashierReq.sdCode = CashierSign.Cashier_sdCode;// 收银服务的sdcode信息
+			cashierReq.bpId = InvokeCashier_BPID;
+			cashierReq.launchType = CashierSign.launchType;
+
+			cashierReq.params = CashierSign.sign(InvokeCashier_BPID, InvokeCashier_KEY, channel,
+					pay_type, tradeNo, body, attach, total_fee, backPkgName, backClassPath, notifyUrl);
+			cashierReq.seqNo = seqNo;
+
+			RequestResult r = mBizServiceInvoker.request(cashierReq);
+			LogUtil.i("lgs", r.token + "," + r.seqNo + "," + r.result);
+			// 发送调用请求
+			if (r != null) {
+				LogUtil.i("lgs", "request result:" + r.result + "|launchType:" + cashierReq.launchType);
+				String err = null;
+				switch (r.result) {
+					case BizServiceInvoker.REQ_SUCCESS: {
+						// 调用成功
+						//ToastUtils.sendtoastbyhandler(handler, "收银服务调用成功");
+						break;
+					}
+					case BizServiceInvoker.REQ_ERR_INVAILD_PARAM: {
+						ToastUtils.sendtoastbyhandler(handler, "请求参数错误！");
+						break;
+					}
+					case BizServiceInvoker.REQ_ERR_NO_BP: {
+						ToastUtils.sendtoastbyhandler(handler, "未知的合作伙伴！");
+						break;
+					}
+					case BizServiceInvoker.REQ_ERR_NO_SERVICE: {
+						//调用结果返回，没有订阅对应bp账号中的收银服务，则去调用sdk主动订阅收银服务
+						runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								ToastUtils.sendtoastbyhandler(handler, "正在申请订阅收银服务...");
+								// 如果没有订阅，则主动请求订阅服务
+								mBizServiceInvoker.subscribeService(CashierSign.Cashier_sdCode,
+										InvokeCashier_BPID);
+							}
+						});
+						break;
+					}
+					case BizServiceInvoker.REQ_NONE: {
+						ToastUtils.sendtoastbyhandler(handler, "请求未知错误！");
+						break;
+					}
+				}
+				if (err != null) {
+					LogUtil.i("lgs", "serviceInvoker request err:" + err);
+				}
+			}else{
+				ToastUtils.sendtoastbyhandler(handler, "请求结果对象为空！");
+			}
+
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 这个是服务调用完成后的响应监听方法
+	 */
+	private BizServiceInvoker.OnResponseListener mOnResponseListener = new BizServiceInvoker.OnResponseListener() {
+
+		@Override
+		public void onResponse(String sdCode, String token, byte[] data) {
+			// 收银服务调用完成后的返回方法
+			String result = new String(data);
+			WposPayInfo info = null;
+			try {
+				info = GsonUtil.jsonToBean(result, WposPayInfo.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			LogUtil.i("lgs",
+					"sdCode = " + sdCode + " , token = " + token + " , data = " + new String(data));
+			if(info != null){
+				if(info.getErrCode().equals("0")){
+					if(!"1001".equals(info.getPay_type())){
+						if("PAY".equals(info.getTrade_status())){
+							imageview_close.setVisibility(View.GONE);
+							ll_paying_by_code.setVisibility(View.GONE);
+							ll_paying_msg.setVisibility(View.VISIBLE);
+							ll_input_money.setVisibility(View.GONE);
+							ll_paying_status.setVisibility(View.GONE);
+							text_confirm_query.setVisibility(View.GONE);
+							text_paying_msg.setText("顾客已支付完成");
+							handler.postDelayed(new Runnable() {
+								@Override
+								public void run() {
+									ThirdPayControllerDialog.this.finish();
+								}
+							}, 1000);
+						}else{
+							imageview_close.setVisibility(View.GONE);
+							ll_paying_by_code.setVisibility(View.GONE);
+							ll_paying_msg.setVisibility(View.GONE);
+							ll_input_money.setVisibility(View.GONE);
+							ll_paying_status.setVisibility(View.VISIBLE);
+							spin_kit.setVisibility(View.GONE);
+							// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+							text_status.setText(info.getPay_info());
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+							ToastUtils.sendtoastbyhandler(handler, info.getPay_info());
+						}
+					}else{
+						imageview_close.setVisibility(View.GONE);
+						ll_paying_by_code.setVisibility(View.GONE);
+						ll_paying_msg.setVisibility(View.GONE);
+						ll_input_money.setVisibility(View.GONE);
+						ll_paying_status.setVisibility(View.VISIBLE);
+						spin_kit.setVisibility(View.GONE);
+						// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+						text_status.setText("使用了现金交易，该交易不记账，小票无效");
+						handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+						ToastUtils.sendtoastbyhandler(handler, "使用了现金交易，该交易不记账，小票无效");
+					}
+				}else{
+					imageview_close.setVisibility(View.GONE);
+					ll_paying_by_code.setVisibility(View.GONE);
+					ll_paying_msg.setVisibility(View.GONE);
+					ll_input_money.setVisibility(View.GONE);
+					ll_paying_status.setVisibility(View.VISIBLE);
+					spin_kit.setVisibility(View.GONE);
+					// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+					text_status.setText(info.getErrMsg());
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+					ToastUtils.sendtoastbyhandler(handler, info.getErrMsg());
+				}
+			}else{
+				imageview_close.setVisibility(View.GONE);
+				ll_paying_by_code.setVisibility(View.GONE);
+				ll_paying_msg.setVisibility(View.GONE);
+				ll_input_money.setVisibility(View.GONE);
+				ll_paying_status.setVisibility(View.VISIBLE);
+				spin_kit.setVisibility(View.GONE);
+				// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+				text_status.setText("未知错误");
+				handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+				ToastUtils.sendtoastbyhandler(handler, "未知错误");
+			}
+		}
+
+		@Override
+		public void onFinishSubscribeService(boolean result, String err) {
+			// TODO Auto-generated method stub
+			// 申请订阅收银服务结果返回
+			// bp订阅收银服务返回结果
+			if (!result) {
+				//订阅失败
+				ToastUtils.sendtoastbyhandler(handler, err);
+			}else{
+				//订阅成功
+				ToastUtils.sendtoastbyhandler(handler, "订阅收银服务成功，请按home键回调主页刷新订阅数据后重新进入调用收银");
+			}
+		}
+	};
+
+	/**
+	 * 本地调用收银服务
+	 */
+	private void requestCashier(String money) {
+		try {
+			// 初始化服务调用
+			mBizServiceInvoker = WeiposImpl.as().getService(BizServiceInvoker.class);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		if (mBizServiceInvoker == null) {
+			ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
+			return;
+		}
+		// 设置请求订阅服务监听结果的回调方法
+		mBizServiceInvoker.setOnResponseListener(mOnResponseListener);
+		innerRequestCashier(money);
+	}
+
+	/**
+	 * 本地调用收银服务
+	 */
+	private void requestRefundCashier(String tradeNo) {
+		try {
+			// 初始化服务调用
+			mBizServiceInvoker = WeiposImpl.as().getService(BizServiceInvoker.class);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		if (mBizServiceInvoker == null) {
+			ToastUtils.sendtoastbyhandler(handler, "初始化服务调用失败");
+			return;
+		}
+		// 设置请求订阅服务监听结果的回调方法
+		mBizServiceInvoker.setOnResponseListener(mOnRefundResponseListener);
+		innerRefundRequestCashier(tradeNo);
+	}
+	private void innerRefundRequestCashier(String tradeNo) {
+		String seqNo = "1";//服务端请求序列,本地应用调用可固定写死为1
+		ll_input_money.setVisibility(View.GONE);
+		ll_paying_status.setVisibility(View.VISIBLE);
+		spin_kit.setVisibility(View.VISIBLE);
+		text_status.setText(R.string.thirdpay_requesting);
+		try {
+			RequestInvoke cashierReq = new RequestInvoke();
+			cashierReq.pkgName = this.getPackageName();
+			cashierReq.sdCode = CashierSign.Cashier_sdCode;// 收银服务的sdcode信息
+			cashierReq.bpId = InvokeCashier_BPID;
+			cashierReq.launchType = CashierSign.launchType;
+
+			cashierReq.params = CashierSign.refundsign(InvokeCashier_BPID, InvokeCashier_KEY, tradeNo);
+			cashierReq.seqNo = seqNo;
+
+			RequestResult r = mBizServiceInvoker.request(cashierReq);
+			LogUtil.i("lgs", r.token + "," + r.seqNo + "," + r.result);
+			// 发送调用请求
+			if (r != null) {
+				LogUtil.i("lgs", "request result:" + r.result + "|launchType:" + cashierReq.launchType);
+				String err = null;
+				switch (r.result) {
+					case BizServiceInvoker.REQ_SUCCESS: {
+						// 调用成功
+						//ToastUtils.sendtoastbyhandler(handler, "收银服务调用成功");
+						break;
+					}
+					case BizServiceInvoker.REQ_ERR_INVAILD_PARAM: {
+						ToastUtils.sendtoastbyhandler(handler, "请求参数错误！");
+						break;
+					}
+					case BizServiceInvoker.REQ_ERR_NO_BP: {
+						ToastUtils.sendtoastbyhandler(handler, "未知的合作伙伴！");
+						break;
+					}
+					case BizServiceInvoker.REQ_ERR_NO_SERVICE: {
+						//调用结果返回，没有订阅对应bp账号中的收银服务，则去调用sdk主动订阅收银服务
+						runOnUiThread(new Runnable() {
+
+							@Override
+							public void run() {
+								// TODO Auto-generated method stub
+								ToastUtils.sendtoastbyhandler(handler, "正在申请订阅收银服务...");
+								// 如果没有订阅，则主动请求订阅服务
+								mBizServiceInvoker.subscribeService(CashierSign.Cashier_sdCode,
+										InvokeCashier_BPID);
+							}
+						});
+						break;
+					}
+					case BizServiceInvoker.REQ_NONE: {
+						ToastUtils.sendtoastbyhandler(handler, "请求未知错误！");
+						break;
+					}
+				}
+				if (err != null) {
+					LogUtil.i("lgs", "serviceInvoker request err:" + err);
+				}
+			}else{
+				ToastUtils.sendtoastbyhandler(handler, "请求结果对象为空！");
+			}
+
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 这个是服务调用完成后的响应监听方法
+	 */
+	private BizServiceInvoker.OnResponseListener mOnRefundResponseListener = new BizServiceInvoker.OnResponseListener() {
+
+		@Override
+		public void onResponse(String sdCode, String token, byte[] data) {
+			// 收银服务调用完成后的返回方法
+			String result = new String(data);
+			WposBankRefundInfo info = null;
+			try {
+				info = GsonUtil.jsonToBean(result, WposBankRefundInfo.class);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			LogUtil.i("lgs",
+					"sdCode = " + sdCode + " , token = " + token + " , data = " + new String(data));
+			if(info != null){
+				if(info.getErrCode().equals("0")){
+					ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							imageview_close.setVisibility(View.GONE);
+							ll_paying_by_code.setVisibility(View.GONE);
+							ll_paying_msg.setVisibility(View.VISIBLE);
+							ll_input_money.setVisibility(View.GONE);
+							ll_paying_status.setVisibility(View.GONE);
+							text_confirm_query.setVisibility(View.GONE);
+							text_paying_msg.setText("退货成功");
+						}
+					});
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+				}else{
+					imageview_close.setVisibility(View.GONE);
+					ll_paying_by_code.setVisibility(View.GONE);
+					ll_paying_msg.setVisibility(View.GONE);
+					ll_input_money.setVisibility(View.GONE);
+					ll_paying_status.setVisibility(View.VISIBLE);
+					spin_kit.setVisibility(View.GONE);
+					// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+					text_status.setText(info.getErrMsg());
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+					ToastUtils.sendtoastbyhandler(handler, info.getErrMsg());
+				}
+			}else{
+				imageview_close.setVisibility(View.GONE);
+				ll_paying_by_code.setVisibility(View.GONE);
+				ll_paying_msg.setVisibility(View.GONE);
+				ll_input_money.setVisibility(View.GONE);
+				ll_paying_status.setVisibility(View.VISIBLE);
+				spin_kit.setVisibility(View.GONE);
+				text_status.setText("未知错误");
+				handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+				ToastUtils.sendtoastbyhandler(handler, "未知错误");
+			}
+		}
+
+		@Override
+		public void onFinishSubscribeService(boolean result, String err) {
+			// TODO Auto-generated method stub
+			// 申请订阅收银服务结果返回
+			// bp订阅收银服务返回结果
+			if (!result) {
+				//订阅失败
+				ToastUtils.sendtoastbyhandler(handler, err);
+			}else{
+				//订阅成功
+				ToastUtils.sendtoastbyhandler(handler, "订阅收银服务成功，请按home键回调主页刷新订阅数据后重新进入调用收银");
+			}
+		}
+	};
+
+	private void initPosCore() {
+		if (pCore == null) {
+			// 配置参数表
+			HashMap<String, String> ps = new HashMap<>();
+			// 核心服务包名
+			ps.put(PosConfig.Name_EX + "1100", "cn.weipass.cashier");
+			// 核心服务类名
+			ps.put(PosConfig.Name_EX + "1101", "com.wangpos.cashiercoreapp.services.CoreAppService");
+			{
+//				// TODO 这组参数仅用于开发阶段;
+//				// 对于POS已经配置好通道的情况下, 不需要配置这些参数;
+//				// 这里配置的是一个测试通道,消费不会扣钱,请输密123456;
+//				// 配置插件包名
+//				ps.put(PosConfig.Name_EX + "1080", "com.wangpos.pos.plugin.unipayplugindemo");
+//				// 配置插件启动类
+//				ps.put(PosConfig.Name_EX + "1081", ".IBankSerivce4CoreApp");
+//				// 配置商户号,为了防止与别人相同,这里请自己修改成一个不同的值
+//				ps.put(PosConfig.Name_MerchantNo, "831551148160897");
+//				// 配置终端号,为了防止与别人相同,这里请自己修改成一个不同的值
+//				ps.put(PosConfig.Name_TerminalNo, "00000459");
+//				// 配置主密钥明文
+//				ps.put(PosConfig.Name_MainKey, "267CC46D293D4C89FE7C0B73CB388937");
+//				// 测试通道服务器
+//				ps.put(PosConfig.Name_Server, "115.28.46.12:50505");
+//				// 配置通道ID
+//				ps.put(PosConfig.Name_EX + "1052", "10001");
+//				// 商户名
+//				ps.put(PosConfig.Name_MerchantName, "coreApp");
+			}
+			pCore = PosCoreFactory.newInstance(this, ps);
+		}
+	}
+
+	/**
+	 * 查询余额
+	 */
+	private void doChaXunYuE() {
+		new Thread() {
+			public void run() {
+				try {
+					PosCore.RChaXunYuE rChaXunYuE = pCore.chaXunYuE(null);
+					ToastUtils.sendtoastbyhandler(handler, "余额为:" + rChaXunYuE.amountStr);
+				} catch (Exception e) {
+					ToastUtils.sendtoastbyhandler(handler, "查询余额:" + e.getLocalizedMessage());
+					e.printStackTrace();
+				}
+			}
+		}.start();
 	}
 }

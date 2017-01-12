@@ -49,6 +49,7 @@ import com.symboltech.wangpos.msg.entity.OfflinePayTypeInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.print.PrepareReceiptInfo;
 import com.symboltech.wangpos.result.BillResult;
+import com.symboltech.wangpos.result.GoodsAndSalerInfoResult;
 import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.result.OfflineDataResult;
 import com.symboltech.wangpos.result.TicketFormatResult;
@@ -235,6 +236,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }else{
             ChangeUI(0);
         }
+        if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_COLLECT))){
+            SpSaveUtils.delete(mContext,  ConstantData.BRANDGOODSLIST);
+            SpSaveUtils.delete(mContext, ConstantData.SALEMANLIST);
+        }
         if (SpSaveUtils.readboolean(MyApplication.context, ConstantData.IS_CONFIG_DOWNLOAD, true)) {
             //尝试删除已经上传成功的过期数据
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -250,8 +255,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             //删除那些交易未成功的数据
             dao.deleteOrderbyState();
             getconfigInfo();
+            if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
+                String timeNow = Utils.formatDate( new Date(System.currentTimeMillis()), "yyyy-MM-dd");
+                String time = SpSaveUtils.read(getApplicationContext(), ConstantData.OFFLINE_CASH_TIME, "");
+                if(!time.equals(timeNow)){
+                    getOfflineData(timeNow);
+                }
+            }
             //获取小票格式
-          //  getTickdatas();
+            getTickdatas();
             uploadOfflineData(true);
 
         }
@@ -280,6 +292,34 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if(view_pager != null){
             view_pager.setCurrentItem(mode);
         }
+    }
+
+    private void getOfflineData(final String timeNow) {
+        HttpRequestUtil.getinstance().getOfflineData(null, GoodsAndSalerInfoResult.class, new HttpActionHandle<GoodsAndSalerInfoResult>(){
+
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName,
+                                            GoodsAndSalerInfoResult result) {
+                if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
+                    LogUtil.d("lgs", "解析成功");
+                    SpSaveUtils.write(MyApplication.context, ConstantData.OFFLINE_CASH_TIME, timeNow);
+                    if(result.getAllInfo() != null){
+                        SpSaveUtils.saveObject(getApplicationContext(),SpSaveUtils.SAVE_FOR_SP_KEY_OFFLINE,  ConstantData.OFFLINE_CASH,result.getAllInfo().getList());
+                    }else{
+                        SpSaveUtils.delete(getApplicationContext(),SpSaveUtils.SAVE_FOR_SP_KEY_OFFLINE,  ConstantData.OFFLINE_CASH);
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                }
+            }
+
+        });
+
     }
 
     @Override
