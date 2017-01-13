@@ -67,6 +67,41 @@ public class PrepareReceiptInfo {
 	private static final int FONT_DEFAULT = 0x1111;
 	private static final int FONT_BIG = 0x1124;
 
+	public static String getPrintErrorInfo(int what, String info) {
+		String message = "未知错误";
+		switch (what) {
+			case IPrint.EVENT_CONNECT_FAILD:
+				message = "连接打印机失败";
+				break;
+			case IPrint.EVENT_CONNECTED:
+				// Log.e("subscribe_msg", "连接打印机成功");
+				break;
+			case IPrint.EVENT_PAPER_JAM:
+				message = "打印机卡纸";
+				break;
+			case IPrint.EVENT_UNKNOW:
+				message = "打印机未知错误";
+				break;
+			case IPrint.EVENT_STATE_OK:
+				//打印机状态正常
+				break;
+			case IPrint.EVENT_OK://
+				// 回调函数中不能做UI操作，所以可以使用runOnUiThread函数来包装一下代码块
+				// 打印完成结束
+				break;
+			case IPrint.EVENT_NO_PAPER:
+				message = "打印机缺纸";
+				break;
+			case IPrint.EVENT_HIGH_TEMP:
+				message = "打印机高温";
+				break;
+			case IPrint.EVENT_PRINT_FAILD:
+				message = "打印失败";
+				break;
+		}
+
+		return message;
+	}
 	private static final String unit = "						元";
 	/**
 	 * 封装酷券核销小票打印信息

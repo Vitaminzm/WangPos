@@ -82,6 +82,7 @@ import cn.koolcloud.engine.service.aidlbean.IMessage;
 import cn.koolcloud.engine.thirdparty.aidl.IKuYunThirdPartyService;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransPrintRequest;
 import cn.koolcloud.engine.thirdparty.aidlbean.TransState;
+import cn.weipass.pos.sdk.IPrint;
 import cn.weipass.pos.sdk.LatticePrinter;
 import cn.weipass.pos.sdk.impl.WeiposImpl;
 
@@ -295,7 +296,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     private void getOfflineData(final String timeNow) {
-        HttpRequestUtil.getinstance().getOfflineData(null, GoodsAndSalerInfoResult.class, new HttpActionHandle<GoodsAndSalerInfoResult>(){
+        HttpRequestUtil.getinstance().getOfflineData(null, GoodsAndSalerInfoResult.class, new HttpActionHandle<GoodsAndSalerInfoResult>() {
 
             @Override
             public void handleActionError(String actionName, String errmsg) {
@@ -308,12 +309,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
                     LogUtil.d("lgs", "解析成功");
                     SpSaveUtils.write(MyApplication.context, ConstantData.OFFLINE_CASH_TIME, timeNow);
-                    if(result.getAllInfo() != null){
-                        SpSaveUtils.saveObject(getApplicationContext(),SpSaveUtils.SAVE_FOR_SP_KEY_OFFLINE,  ConstantData.OFFLINE_CASH,result.getAllInfo().getList());
-                    }else{
-                        SpSaveUtils.delete(getApplicationContext(),SpSaveUtils.SAVE_FOR_SP_KEY_OFFLINE,  ConstantData.OFFLINE_CASH);
+                    if (result.getAllInfo() != null) {
+                        SpSaveUtils.saveObject(getApplicationContext(), SpSaveUtils.SAVE_FOR_SP_KEY_OFFLINE, ConstantData.OFFLINE_CASH, result.getAllInfo().getList());
+                    } else {
+                        SpSaveUtils.delete(getApplicationContext(), SpSaveUtils.SAVE_FOR_SP_KEY_OFFLINE, ConstantData.OFFLINE_CASH);
                     }
-                }else{
+                } else {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
             }
@@ -632,6 +633,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void printBackByorder(final BillInfo billinfo){
         if(MyApplication.posType.equals("WPOS")){
+            if(latticePrinter == null){
+                ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                return;
+            }
+            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                @Override
+                public void onEvent(final int what, String in) {
+                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                }
+            });
             PrepareReceiptInfo.printBackOrderList(billinfo, true, latticePrinter);
         }else {
             new Thread(new Runnable() {
@@ -659,6 +671,17 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     public void printByorder(final BillInfo billinfo){
         if(MyApplication.posType.equals("WPOS")){
+            if(latticePrinter == null){
+                ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                return;
+            }
+            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                @Override
+                public void onEvent(final int what, String in) {
+                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                }
+            });
             PrepareReceiptInfo.printOrderList(billinfo, true, latticePrinter);
         }else{
             new Thread(new Runnable() {

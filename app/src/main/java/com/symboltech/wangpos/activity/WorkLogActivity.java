@@ -54,6 +54,7 @@ import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.weipass.pos.sdk.IPrint;
 import cn.weipass.pos.sdk.LatticePrinter;
 import cn.weipass.pos.sdk.impl.WeiposImpl;
 
@@ -364,6 +365,17 @@ public class WorkLogActivity extends BaseActivity {
     }
     public void printReport(final boolean flag, final ReportInfo reportInfo){
         if(MyApplication.posType.equals("WPOS")){
+            if(latticePrinter == null){
+                ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                return;
+            }
+            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                @Override
+                public void onEvent(final int what, String in) {
+                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                }
+            });
             PrepareReceiptInfo.printReportFrom(flag, reportInfo, latticePrinter);
         }else {
             new Thread(new Runnable() {

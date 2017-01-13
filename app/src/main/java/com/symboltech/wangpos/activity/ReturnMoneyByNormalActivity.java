@@ -77,6 +77,7 @@ import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
 import cn.weipass.pos.sdk.BizServiceInvoker;
+import cn.weipass.pos.sdk.IPrint;
 import cn.weipass.pos.sdk.LatticePrinter;
 import cn.weipass.pos.sdk.impl.WeiposImpl;
 import cn.weipass.service.bizInvoke.RequestInvoke;
@@ -970,6 +971,17 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
 
     public void printBackByorder(final BillInfo billinfo){
         if(MyApplication.posType.equals("WPOS")){
+            if(latticePrinter == null){
+                ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                return;
+            }
+            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                @Override
+                public void onEvent(final int what, String in) {
+                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                }
+            });
             PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
         }else {
             new Thread(new Runnable() {

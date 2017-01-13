@@ -4,14 +4,17 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +28,7 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.RefundReportInfo;
@@ -43,6 +47,7 @@ import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
+import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -58,6 +63,7 @@ import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.weipass.pos.sdk.IPrint;
 import cn.weipass.pos.sdk.LatticePrinter;
 import cn.weipass.pos.sdk.impl.WeiposImpl;
 
@@ -77,6 +83,7 @@ public class DemandNoteActivity extends BaseActivity {
     protected static final int printEnd = 1;
     protected static final int printError = 2;
     private ArrayList<ReportDetailInfo> infos;
+    private HorizontalKeyBoard keyboard;
 
     /** refresh UI By handler */
     static class MyHandler extends Handler {
@@ -176,8 +183,23 @@ public class DemandNoteActivity extends BaseActivity {
     protected void initData() {
         infos = new ArrayList<>();
         initDataByPaymentId(infos);
-        myAdapter = new DemandNoteTableAdapter(getApplicationContext(), infos);
+        myAdapter = new DemandNoteTableAdapter(getApplicationContext(), infos, new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    if(!keyboard.isShowing()){
+                        keyboard.setEdittext((EditText)v);
+                        keyboard.show();
+                    }
+                    return false;
+                }else{
+                    return false;
+                }
+            }
+        });
+        myAdapter.registerDataSetObserver(new MoneyDataObserver());
         listview_statistics.setAdapter(myAdapter);
+
         if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
             text_shop_tip.setVisibility(View.GONE);
             text_shop.setVisibility(View.GONE);
@@ -220,6 +242,7 @@ public class DemandNoteActivity extends BaseActivity {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
             }
+
             @Override
             public void handleActionOffLine() {
                 ToastUtils.sendtoastbyhandler(handler, "离线模式无数据");
@@ -229,6 +252,45 @@ public class DemandNoteActivity extends BaseActivity {
             public void handleActionChangeToOffLine() {
                 Intent intent = new Intent(DemandNoteActivity.this, MainActivity.class);
                 startActivity(intent);
+            }
+        });
+        keyboard = new HorizontalKeyBoard(this, this, true, new KeyBoardListener(){
+
+            @Override
+            public void onComfirm() {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onValue(String value) {
+                double money ;
+                try{
+                    money = Double.parseDouble(value);;
+                }catch(Exception e){
+                    e.printStackTrace();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_format_msg));
+                    return;
+                }
+                if(money >= 0){
+                    EditText edit = keyboard.getEdittext();
+                    if(edit != null && edit.getTag() != null){
+                        String[] flag = ((String)edit.getTag()).split("-");
+                        if("1".equals(flag[0])){
+                            infos.get(Integer.parseInt(flag[1])).setMoney(MoneyAccuracyUtils.getmoneybytwo(money));
+                            myAdapter.notifyDataSetChanged();
+                        }else if("2".equals(flag[0])){
+                            infos.get(Integer.parseInt(flag[1])).setCount(ArithDouble.parseInt(value)+"");
+                            myAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_format_msg));
+                }
             }
         });
         if(MyApplication.posType.equals("WPOS")){
@@ -391,7 +453,7 @@ public class DemandNoteActivity extends BaseActivity {
         }
 
         if(infoList.size() ==0){
-            Toast.makeText(mContext, "数据为空,不能提交", Toast.LENGTH_SHORT).show();
+            ToastUtils.sendtoastbyhandler(handler, "数据为空,不能提交");
             return;
         }
         info.setTotallist(infoList);
@@ -418,14 +480,26 @@ public class DemandNoteActivity extends BaseActivity {
 
             @Override
             public void handleActionError(String actionName, String errmsg) {
-                Toast.makeText(mContext, errmsg, Toast.LENGTH_SHORT).show();
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
             }
 
             @Override
             public void handleActionSuccess(String actionName, BaseResult result) {
                 if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-                    Toast.makeText(mContext, "提交成功", Toast.LENGTH_SHORT).show();
+                    ToastUtils.sendtoastbyhandler(handler, "提交成功");
                     if(MyApplication.posType.equals("WPOS")){
+                        if(latticePrinter == null){
+                            ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                            DemandNoteActivity.this.finish();
+                            return;
+                        }
+                        latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                            @Override
+                            public void onEvent(final int what, String in) {
+                                ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                            }
+                        });
                         PrepareReceiptInfo.printDemandNote(info, latticePrinter);
                     }else {
                         new Thread(new Runnable() {
@@ -451,13 +525,13 @@ public class DemandNoteActivity extends BaseActivity {
                     }
                     DemandNoteActivity.this.finish();
                 }else {
-                    Toast.makeText(mContext, result.getMsg(), Toast.LENGTH_SHORT).show();
+                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
             }
 
             @Override
             public void handleActionOffLine() {
-                Toast.makeText(mContext, getString(R.string.offline_waring), Toast.LENGTH_SHORT).show();
+                ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_waring));
             }
 
             @Override
@@ -488,13 +562,24 @@ public class DemandNoteActivity extends BaseActivity {
             }
         }
         if(infoList.size() ==0){
-            Toast.makeText(mContext, "数据为空,不能打印", Toast.LENGTH_SHORT).show();
+            ToastUtils.sendtoastbyhandler(handler, "数据为空,不能打印");
             return;
         }
         info.setTotallist(infoList);
         info.setBillcount(tv_count_total.getText().toString());
         info.setTotalmoney(tv_money_total.getText().toString());
         if(MyApplication.posType.equals("WPOS")){
+            if(latticePrinter == null){
+                ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                return;
+            }
+            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                @Override
+                public void onEvent(final int what, String in) {
+                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                }
+            });
             PrepareReceiptInfo.printDemandNote(info, latticePrinter);
         }else {
             new Thread(new Runnable() {
@@ -594,6 +679,26 @@ public class DemandNoteActivity extends BaseActivity {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
+        }
+    }
+
+    class MoneyDataObserver extends DataSetObserver {
+        @Override
+        public void onChanged() {
+            super.onChanged();
+            double sum = 0;
+            int count = 0;
+            for(ReportDetailInfo info:infos){
+                sum = ArithDouble.add(sum, ArithDouble.parseDouble(info.getMoney()));
+                count = count+ ArithDouble.parseInt(info.getCount());
+            }
+            tv_money_total.setText(MoneyAccuracyUtils.getmoneybytwo(sum));
+            tv_count_total.setText(count+"");
+        }
+
+        @Override
+        public void onInvalidated() {
+            super.onInvalidated();
         }
     }
 }

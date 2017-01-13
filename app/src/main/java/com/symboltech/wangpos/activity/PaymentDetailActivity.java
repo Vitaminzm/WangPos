@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CouponsAdapter;
+import com.symboltech.wangpos.adapter.ParkCouponsAdapter;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoDetailAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
@@ -53,6 +54,7 @@ import cn.koolcloud.engine.service.aidl.IPrintCallback;
 import cn.koolcloud.engine.service.aidl.IPrinterService;
 import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
 import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.weipass.pos.sdk.IPrint;
 import cn.weipass.pos.sdk.LatticePrinter;
 import cn.weipass.pos.sdk.impl.WeiposImpl;
 
@@ -85,6 +87,8 @@ public class PaymentDetailActivity extends BaseActivity {
     LinearLayout ll_score_info;
     @Bind(R.id.ll_member_hold_coupon)
     LinearLayout ll_member_hold_coupon;
+    @Bind(R.id.ll_member_park_coupon)
+    LinearLayout ll_member_park_coupon;
 
     @Bind(R.id.text_now_score)
     TextView text_now_score;
@@ -102,6 +106,9 @@ public class PaymentDetailActivity extends BaseActivity {
     @Bind(R.id.recycleview_send_coupon)
     RecyclerView recycleview_send_coupon;
     private CouponsAdapter sendAdapter;
+    @Bind(R.id.recycleview_park_coupon)
+    RecyclerView recycleview_park_coupon;
+    private ParkCouponsAdapter parkAdapter;
 
     protected static final int printStart = 0;
     protected static final int printEnd = 1;
@@ -297,6 +304,17 @@ public class PaymentDetailActivity extends BaseActivity {
         }else {
             ll_member_hold_coupon.setVisibility(View.GONE);
         }
+        MemberDetailActivity.MyLayoutManager linearLayoutManagerPark = new MemberDetailActivity.MyLayoutManager(this);
+        linearLayoutManagerPark.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recycleview_park_coupon.setLayoutManager(linearLayoutManagerPark);
+        if(ArithDouble.parseDouble(bill.getParkcouponhour()) > 0){
+            List<String> carCoupons = new ArrayList<String>();
+            carCoupons.add(bill.getParkcouponhour());
+            ParkCouponsAdapter parkCouponsAdapter = new ParkCouponsAdapter(carCoupons, 0, false, mContext);
+            recycleview_park_coupon.setAdapter(parkCouponsAdapter);
+        }else{
+            ll_member_park_coupon.setVisibility(View.GONE);
+        }
         if(MyApplication.posType.equals("WPOS")){
             try {
                 // 设备可能没有打印机，open会抛异常
@@ -398,6 +416,17 @@ public class PaymentDetailActivity extends BaseActivity {
 
     public void printByorder(final BillInfo billinfo){
         if(MyApplication.posType.equals("WPOS")){
+            if(latticePrinter == null){
+                ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                return;
+            }
+            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                @Override
+                public void onEvent(final int what, String in) {
+                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                }
+            });
             PrepareReceiptInfo.printOrderList(billinfo, false, latticePrinter);
         }else{
             new Thread(new Runnable() {
@@ -491,6 +520,19 @@ public class PaymentDetailActivity extends BaseActivity {
         }
         if(couponInfos.size() > 0){
             if(MyApplication.posType.equals("WPOS")){
+                if(MyApplication.posType.equals("WPOS")){
+                    if(latticePrinter == null){
+                        ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                        return;
+                    }
+                    latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                        @Override
+                        public void onEvent(final int what, String in) {
+                            ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                        }
+                    });
+            }
                 PrepareReceiptInfo.printCoupon(couponInfos, latticePrinter);
             }else{
                 new Thread(new Runnable() {

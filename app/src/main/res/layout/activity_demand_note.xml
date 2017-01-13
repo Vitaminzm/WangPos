@@ -527,7 +527,7 @@
             android:id="@+id/activity_work_log_money_total_tips"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_oof"
+            android:layout_marginLeft="@dimen/margin_fz"
             android:layout_marginRight="@dimen/margin_rz"
             android:text="@string/table_total_money"
             android:textColor="@color/black"

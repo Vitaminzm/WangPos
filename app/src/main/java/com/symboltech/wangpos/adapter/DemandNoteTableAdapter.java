@@ -21,6 +21,7 @@ public class DemandNoteTableAdapter extends BaseAdapter {
 
 	private Context context;
 	List<ReportDetailInfo> datas;
+	private View.OnTouchListener listener;
 	private LayoutInflater inflater;
 
 	public void refreshData(List<ReportDetailInfo> infos) {
@@ -32,11 +33,12 @@ public class DemandNoteTableAdapter extends BaseAdapter {
 
 	String coupon;
 	String store;
-	public DemandNoteTableAdapter(Context context, List<ReportDetailInfo> datas) {
+	public DemandNoteTableAdapter(Context context, List<ReportDetailInfo> datas, View.OnTouchListener listener) {
 		super();
 		inflater = LayoutInflater.from(context);
 		this.context = context;
 		this.datas = datas;
+		this.listener = listener;
 		coupon = getSKFSByType(PaymentTypeEnum.COUPON.getStyletype());
 		store = getSKFSByType(PaymentTypeEnum.STORE.getStyletype());
 	}
@@ -74,9 +76,17 @@ public class DemandNoteTableAdapter extends BaseAdapter {
 			holder.tv_name = (TextView) convertView.findViewById(R.id.text_sale_total);
 			holder.tv_money = (TextView) convertView.findViewById(R.id.text_sale_times);
 			holder.tv_count = (TextView) convertView.findViewById(R.id.text_unit_price);
+			holder.tv_money.setTag("1-"+position);
+			holder.tv_count.setTag("2-"+position);
+			if(listener != null){
+				holder.tv_money.setOnTouchListener(listener);
+				holder.tv_count.setOnTouchListener(listener);
+			}
 			convertView.setTag(holder);
 		}else {
 			holder = (Viewholder) convertView.getTag();
+			holder.tv_money.setTag("1-"+position);
+			holder.tv_count.setTag("2-"+position);
 		}
 		ReportDetailInfo info = datas.get(position);
 //		if(PaymentTypeEnum.ALIPAY.getStyletype().equals(info.getCode())

@@ -11,8 +11,8 @@
     <dimen name="btn_margin">8dp</dimen>
     <!-- 自定义键盘-->
     <dimen name="font_size">36sp</dimen>
-    <dimen name="key_height">90dp</dimen>
-    <dimen name="keyboard_height">415dp</dimen>
+    <dimen name="key_height">80dp</dimen>
+    <dimen name="keyboard_height">400dp</dimen>
     <dimen name="key_margin">6dp</dimen>
     <dimen name="big_font_size">15sp</dimen>
 

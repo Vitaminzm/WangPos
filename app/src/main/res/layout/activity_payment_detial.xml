@@ -7,26 +7,27 @@
     tools:context="com.symboltech.wangpos.activity.PaymentDetailActivity">
     <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_below="@id/common_title_bar"
-        android:layout_above="@+id/ll_member_hold_coupon"
+        android:layout_above="@+id/ll_function"
         android:layout_marginBottom="@dimen/margin_ov"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginTop="@dimen/margin_tz"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <ScrollView
-            android:background="@drawable/icon_bg_scroll"
+        <LinearLayout
             android:layout_width="match_parent"
+            android:orientation="vertical"
             android:layout_height="match_parent">
             <LinearLayout
+                android:background="@drawable/icon_bg_scroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/margin_fz"
                 android:paddingRight="@dimen/margin_fz"
                 android:paddingTop="@dimen/margin_rz"
-                android:paddingBottom="@dimen/margin_rz"
+                android:paddingBottom="@dimen/margin_xz"
                 android:orientation="vertical">
                 <TextView
                     android:layout_width="wrap_content"
@@ -321,8 +322,61 @@
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </ScrollView>
-    </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_member_hold_coupon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_rz"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_rz"
+                    android:textColor="@color/font_color"
+                    android:layout_centerVertical="true"
+                    android:text="@string/send_coupon"
+                    android:gravity="center"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycleview_send_coupon"
+                    android:layout_marginTop="@dimen/margin_rz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    android:overScrollMode="never"
+                    android:listSelector="@drawable/gridview_selector"
+                    android:cacheColorHint="@color/transparent" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_member_park_coupon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_rz"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_rz"
+                    android:textColor="@color/font_color"
+                    android:layout_centerVertical="true"
+                    android:text="@string/send_park_coupon"
+                    android:gravity="center"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recycleview_park_coupon"
+                    android:layout_marginTop="@dimen/margin_rz"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    android:overScrollMode="never"
+                    android:listSelector="@drawable/gridview_selector"
+                    android:cacheColorHint="@color/transparent" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 
 
@@ -369,31 +423,4 @@
             android:layout_height="match_parent" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_member_hold_coupon"
-        android:layout_above="@id/ll_function"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_rz"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_rz"
-            android:textColor="@color/font_color"
-            android:layout_centerVertical="true"
-            android:text="@string/send_coupon"
-            android:gravity="center"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycleview_send_coupon"
-            android:layout_marginTop="@dimen/margin_rz"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:overScrollMode="never"
-            android:listSelector="@drawable/gridview_selector"
-            android:cacheColorHint="@color/transparent" />
-    </LinearLayout>
 </RelativeLayout>

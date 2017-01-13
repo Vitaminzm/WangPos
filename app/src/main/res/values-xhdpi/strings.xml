@@ -145,6 +145,7 @@
     <string name="now_score_m">当前积分：</string>
     <string name="score_exchange">积分抵现</string>
     <string name="send_coupon">交易发券</string>
+    <string name="send_park_coupon">交易发停车券</string>
     <string name="print_coupon">打印优惠券</string>
     <string name="selected_plate">选择停车牌</string>
     <string name="done">完成</string>
@@ -325,7 +326,7 @@
     <string name="desk_demand">收款台缴款</string>
     <string name="total_bi_total">笔数合计</string>
     <string name="bi">笔</string>
-    <string name="table_total_money">总金额（元）</string>
+    <string name="table_total_money">总金额</string>
     <!-- 会员激活-->
     <string name="please_input_name">请输入姓名</string>
     <string name="please_input_shenfen">请输入身份证号</string>
