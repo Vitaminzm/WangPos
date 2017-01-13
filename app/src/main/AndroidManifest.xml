@@ -58,6 +58,7 @@
         <activity android:name=".activity.WorkLogActivity"/>
         <activity android:name=".activity.DemandNoteActivity"/>
         <activity android:name=".activity.MemberActivateActivity"/>
+        <activity android:name=".activity.SendPackCouponActivity"/>
         <activity android:name=".dialog.ThirdPayDialog"
                 android:theme="@style/dialog_login_bg"/>
         <activity android:name=".dialog.CanclePayDialog"

@@ -484,6 +484,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
                     return;
                 }
+                gotoFunction(SendPackCouponActivity.class);
                 break;
             case R.id.rl_pay:
                 if(AppConfigFile.isOffLineMode()){

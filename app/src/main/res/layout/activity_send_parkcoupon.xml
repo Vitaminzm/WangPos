@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/ll_keyboard"
+    android:background="@color/view_bg_color"
+    tools:context="com.symboltech.wangpos.activity.WorkLogActivity">
+    <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
+    <LinearLayout
+        android:id="@+id/ll_shop_info"
+        android:layout_below="@id/common_title_bar"
+        android:layout_margin="@dimen/margin_rz"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_rv"
+            android:layout_gravity="center"
+            android:textColor="@color/font_color"
+            android:text="@string/desk_code_no"/>
+        <TextView
+            android:id="@+id/text_desk_code"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_rv"
+            android:layout_gravity="center"
+            android:textColor="@color/font_color"/>
+        <TextView
+            android:id="@+id/shop_mall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_rv"
+            android:layout_marginLeft="@dimen/margin_rz"
+            android:layout_gravity="center"
+            android:textColor="@color/font_color"
+            android:text="@string/shop_m"/>
+        <TextView
+            android:id="@+id/text_shop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_rv"
+            android:layout_gravity="center"
+            android:textColor="@color/font_color"/>
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_below="@id/ll_shop_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:paddingTop="@dimen/margin_ozz" >
+
+        <LinearLayout
+            android:id="@+id/time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/height_vz"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:layout_width="@dimen/height_tzz"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:text="@string/pack_coupon"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:orientation="horizontal" >
+
+                <EditText
+                    android:id="@+id/pack_coupon_time"
+                    android:layout_width="@dimen/height_ttz"
+                    android:layout_height="@dimen/height_xz"
+                    android:layout_gravity="center"
+                    android:background="@drawable/plate_edittext_selector"
+                    android:gravity="center"
+                    android:hint="@string/please_input_pack_coupon_time"
+                    android:singleLine="true"
+                    android:textColor="@color/font_color"
+                    android:inputType="numberDecimal"
+                    android:textSize="@dimen/font_size_tf" />
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="right"
+                    android:text="@string/hour"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.symboltech.wangpos.view.MyRadioGroup
+            android:id="@+id/select_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/time"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/ll_bind_car_plate"
+                android:layout_width="wrap_content"
+                android:layout_marginTop="40dp"
+                android:visibility="gone"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <RadioButton
+                    android:id="@+id/btn_bind"
+                    android:layout_width="@dimen/height_vz"
+                    android:layout_height="@dimen/height_vz"
+                    android:layout_gravity="center"
+                    android:background="@drawable/radio_bt_selector"
+                    android:button="@null"
+                    android:gravity="center" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="@dimen/height_tzz"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:text="@string/bind_plate"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_size_rz" />
+
+                    <Spinner
+                        android:id="@+id/bind_palte"
+                        android:layout_width="@dimen/height_rzz"
+                        android:layout_height="@dimen/height_xz"
+                        android:background="@drawable/plate_spinner_selector"
+                        android:dropDownWidth="@dimen/height_tez"
+                        android:spinnerMode="dropdown"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_size_rz" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_marginTop="40dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" >
+
+                <RadioButton
+                    android:id="@+id/btn_emporary"
+                    android:layout_width="@dimen/height_vz"
+                    android:layout_height="@dimen/height_vz"
+                    android:visibility="invisible"
+                    android:layout_gravity="center"
+                    android:background="@drawable/radio_bt_selector"
+                    android:button="@null"
+                    android:checked="true"
+                    android:gravity="center" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
+
+                    <TextView
+                        android:layout_width="@dimen/height_tzz"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:gravity="center_vertical"
+                        android:text="@string/emporary_plate"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_size_rz" />
+
+                    <Spinner
+                        android:id="@+id/emporary_plate"
+                        android:layout_width="@dimen/height_otz"
+                        android:layout_height="@dimen/height_xz"
+                        android:layout_gravity="center"
+                        android:background="@drawable/plate_spinner_selector"
+                        android:dropDownWidth="@dimen/height_otz"
+                        android:spinnerMode="dropdown"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_size_rz" />
+
+                    <EditText
+                        android:id="@+id/et_emporary_plate"
+                        android:layout_width="@dimen/height_osz"
+                        android:layout_height="@dimen/height_xz"
+                        android:layout_gravity="center"
+                        android:layout_marginLeft="@dimen/margin_ot"
+                        android:background="@drawable/plate_edittext_selector"
+                        android:gravity="center"
+                        android:inputType="number"
+                        android:digits="0123456789abcdefghgklmnpqrstuvwxyzABCDEFGHGKLMNPQRSTUVWXYZ"
+                        android:hint="@string/please_input_plate"
+                        android:singleLine="true"
+                        android:textColor="@color/font_color"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.symboltech.wangpos.view.MyRadioGroup>
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/ll_function"
+        android:layout_width="match_parent"
+        android:layout_above="@id/text_done"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/margin_rz"
+        android:orientation="horizontal"
+        android:layout_height="@dimen/height_ez">
+        <TextView
+            android:id="@+id/text_add_member"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/add_member"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_marginRight="@dimen/margin_rz"
+            android:background="@drawable/btn_blue_bg"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/text_send_parkcoupon"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/send_parkcoupon"
+            android:background="@drawable/btn_green_bg"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+</RelativeLayout>

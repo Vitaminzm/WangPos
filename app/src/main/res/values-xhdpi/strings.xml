@@ -173,7 +173,7 @@
     <string name="send_failed">发送失败</string>
     <string name="waring_no_bind_plate">没有绑定车牌</string>
     <string name="waring_input_park_coupon_time">没有停车券时间</string>
-    <string name="waring_input_plate">请输入车牌</string>
+    <string name="waring_input_plate">请输入正确的车牌</string>
     <string name="order_seach_success">查询成功</string>
     <string name="waring_putfull_roder">请补全退货单</string>
     <string name="waring_return_moeny_right_err">请填写正确的金额</string>
@@ -251,6 +251,7 @@
     <string name="day_report">本日报表</string>
     <string name="shop">店铺</string>
     <string name="shop_m">店铺：</string>
+    <string name="mall_m">门店：</string>
     <string name="return_count">退款笔数</string>
     <string name="return_count_total">退款笔数合计</string>
     <string name="return_statistics">退款统计</string>
@@ -393,6 +394,20 @@
     <string name="wechat_return_success">微钱宝退货成功</string>
     <string name="wechat_return_failed">微钱宝退货失败</string>
     <string name="wechat_return_cancle">微钱宝退货取消</string>
+
+    <string name="add_member">添加会员</string>
+    <string name="send_parkcoupon">发送停车券</string>
+    <string name="hour">小时</string>
+    <string name="pack_coupon">停车券</string>
+    <string name="please_input_pack_coupon_time">请输入停车券时长</string>
+    <string name="select_plate">选择本次到场车牌</string>
+    <string name="bind_plate">已绑定车牌</string>
+    <string name="emporary_plate">临时车牌</string>
+    <string name="send_pack_coupon">发放停车券</string>
+    <string name="select_car_plate">选择停车牌</string>
+    <string name="car_plate_sending">停车券发送中...</string>
+    <string name="car_plate_send_success">停车券发送成功！</string>
+    <string name="car_plate_send_failed">停车券发送失败！</string>
     <!-- 定义字符串数组资源常量 -->
     <string-array name="cities">
         <item>湘</item>
