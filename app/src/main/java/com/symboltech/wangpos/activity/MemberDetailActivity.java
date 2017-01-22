@@ -9,17 +9,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CouponsAdapter;
+import com.symboltech.wangpos.adapter.HistorySaleAdapter;
 import com.symboltech.wangpos.adapter.RecommandGoodAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.msg.entity.AllMemberInfo;
 import com.symboltech.wangpos.msg.entity.CouponInfo;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
+import com.symboltech.wangpos.msg.entity.HistoryAllSaleInfo;
+import com.symboltech.wangpos.msg.entity.HistorySaleInfo;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
@@ -47,6 +50,18 @@ public class MemberDetailActivity extends BaseActivity {
     @Bind(R.id.ll_member_hold_coupon)
     LinearLayout ll_member_hold_coupon;
     private CouponsAdapter holdAdapter;
+
+    @Bind(R.id.ll_sale_info)
+    LinearLayout ll_sale_info;
+    @Bind(R.id.text_sale_total)
+    TextView text_sale_total;
+    @Bind(R.id.text_sale_times)
+    TextView text_sale_times;
+    @Bind(R.id.text_unit_price)
+    TextView text_unit_price;
+    @Bind(R.id.listview_info)
+    ListView listview_info;
+
 
     @Bind(R.id.ll_member_recommand_goods)
     LinearLayout ll_member_recommand_goods;
@@ -110,6 +125,23 @@ public class MemberDetailActivity extends BaseActivity {
         }else{
             ll_member_recommand_goods.setVisibility(View.GONE);
         }
+
+        HistoryAllSaleInfo allSaleInfo = memberBigdate.getHistoryallsale();
+        List<HistorySaleInfo> saleInfos = memberBigdate.getHistorysalelist();
+        if(allSaleInfo != null || (saleInfos != null && saleInfos.size() > 0)) {
+            if(allSaleInfo !=null) {
+                text_sale_total.setText(allSaleInfo.getSalemoney());
+                text_sale_times.setText(allSaleInfo.getSaleamount());
+                text_unit_price.setText(allSaleInfo.getAvge());
+            }
+            if(saleInfos != null && saleInfos.size() > 0){
+                HistorySaleAdapter memberAdvanceAdapter = new HistorySaleAdapter(mContext, saleInfos);
+                listview_info.setAdapter(memberAdvanceAdapter);
+            }
+            ll_sale_info.setVisibility(View.VISIBLE);
+        }else {
+            ll_sale_info.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -136,9 +168,14 @@ public class MemberDetailActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.text_member_activate:
-                Intent intent = new Intent(this, MemberActivateActivity.class);
-                intent.putExtra(ConstantData.ALLMEMBERINFO , memberBigdate.getMember());
-                startActivity(intent);
+                MemberInfo info = memberBigdate.getMember();
+                if(info != null && info.getStatus()!= null && "待验证".equals(info.getStatus())){
+                    Intent intent = new Intent(this, MemberActivateActivity.class);
+                    intent.putExtra(ConstantData.ALLMEMBERINFO , memberBigdate.getMember());
+                    startActivity(intent);
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, "该会员不能激活");
+                }
                 break;
         }
     }

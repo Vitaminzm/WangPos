@@ -84,6 +84,10 @@ public class CheckOutActivity extends BaseActivity {
 
     @Bind(R.id.text_order_total_money)
     TextView text_order_total_money;
+    @Bind(R.id.text_order_manjian_money)
+    TextView text_order_manjian_money;
+    @Bind(R.id.rl_order_manjian_money)
+    RelativeLayout rl_order_manjian_money;
 
     @Bind(R.id.rl_member_equity)
     RelativeLayout rl_member_equity;
@@ -108,6 +112,8 @@ public class CheckOutActivity extends BaseActivity {
     RelativeLayout ll_keyboard;
     //订单总额
     private double orderTotleValue;
+    //订单满减金额
+    private double orderManjianValue;
     //待支付金额
     private double waitPayValue;
     private HorizontalKeyBoard keyboard;
@@ -149,7 +155,7 @@ public class CheckOutActivity extends BaseActivity {
                     infobank.setMoney(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
                     infobank.setOverage("0");
                     addPayTypeInfo(PaymentTypeEnum.BANK, 0, 0, null, infobank);
-                    waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                     text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                     edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                     break;
@@ -191,6 +197,7 @@ public class CheckOutActivity extends BaseActivity {
         exchangeInfo.setExchangemoney("0");
         exchangeInfo.setExchangepoint("0");
         title_text_content.setText(getString(R.string.checkout));
+
         cartgoods = (List<GoodsInfo>) getIntent().getSerializableExtra(ConstantData.CART_HAVE_GOODS);
         salesman = getIntent().getStringExtra(ConstantData.SALESMAN_NAME);
         isMember = getIntent().getIntExtra(ConstantData.VERIFY_IS_MEMBER, ConstantData.MEMBER_IS_NOT_VERITY);
@@ -198,14 +205,24 @@ public class CheckOutActivity extends BaseActivity {
             member = (MemberInfo) getIntent().getSerializableExtra(ConstantData.GET_MEMBER_INFO);
             member_type =  getIntent().getStringExtra(ConstantData.MEMBER_VERIFY);
             member_equity =  (SubmitGoods) getIntent().getSerializableExtra(ConstantData.MEMBER_EQUITY);
+            if(member_equity != null && (member_equity.getCouponInfos() != null || member_equity.getLimitpoint()!= null)){
+                rl_member_equity.setVisibility(View.VISIBLE);
+            }else{
+                rl_member_equity.setVisibility(View.GONE);
+            }
         }else{
             rl_member_equity.setVisibility(View.GONE);
         }
         orderTotleValue = getIntent().getDoubleExtra(ConstantData.GET_ORDER_VALUE_INFO, 0.0);
         text_order_total_money.setText(MoneyAccuracyUtils.getmoneybytwo(orderTotleValue));
-
-        waitPayValue = orderTotleValue;
-        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(orderTotleValue));
+        orderManjianValue = getIntent().getDoubleExtra(ConstantData.GET_ORDER_MANJIAN_VALUE_INFO, 0.0);
+        if(orderManjianValue != 0){
+            text_order_manjian_money.setText(MoneyAccuracyUtils.getmoneybytwo(orderManjianValue));
+        }else{
+            rl_order_manjian_money.setVisibility(View.GONE);
+        }
+        waitPayValue = ArithDouble.sub(orderTotleValue, orderManjianValue);
+        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
         text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
 
         paymentTypes = new ArrayList<>();
@@ -271,7 +288,7 @@ public class CheckOutActivity extends BaseActivity {
                         addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
                     }
                 }
-                waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
@@ -318,12 +335,6 @@ public class CheckOutActivity extends BaseActivity {
         }
     }
 
-    //业务demo在bp平台中的的bpid，这里填写对应应用所属bp账号的bpid和对应的key--------------需要动态改变
-    private String InvokeCashier_BPID="53b3a1ca45ceb5f96d153eec";
-    private String InvokeCashier_KEY="LIz6bPS2z8jUnwLHRYzcJ6WK2X87ziWe";
-
-
-
     // 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
     //
     // 2.调用收银支付成功后，收银支付结果页面完成后，BizServiceInvoker.OnResponseListener后收到响应的结果
@@ -356,10 +367,10 @@ public class CheckOutActivity extends BaseActivity {
             RequestInvoke cashierReq = new RequestInvoke();
             cashierReq.pkgName = this.getPackageName();
             cashierReq.sdCode = CashierSign.Cashier_sdCode;// 收银服务的sdcode信息
-            cashierReq.bpId = InvokeCashier_BPID;
+            cashierReq.bpId = AppConfigFile.InvokeCashier_BPID;
             cashierReq.launchType = CashierSign.launchType;
 
-            cashierReq.params = CashierSign.sign(InvokeCashier_BPID, InvokeCashier_KEY, channel,
+            cashierReq.params = CashierSign.sign(AppConfigFile.InvokeCashier_BPID, AppConfigFile.InvokeCashier_KEY, channel,
                     pay_type, tradeNo, body, attach, total_fee, backPkgName, backClassPath, notifyUrl);
             cashierReq.seqNo = seqNo;
 
@@ -393,7 +404,7 @@ public class CheckOutActivity extends BaseActivity {
                                 ToastUtils.sendtoastbyhandler(handler, "正在申请订阅收银服务...");
                                 // 如果没有订阅，则主动请求订阅服务
                                 mBizServiceInvoker.subscribeService(CashierSign.Cashier_sdCode,
-                                        InvokeCashier_BPID);
+                                        AppConfigFile.InvokeCashier_BPID);
                             }
                         });
                         break;
@@ -504,7 +515,7 @@ public class CheckOutActivity extends BaseActivity {
         if (info != null) {
             paymentTypeInfoadapter.add(info);
             paymentTypeAdapter.setPayTpyeNull();
-            waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
             text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
             edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
             return;
@@ -594,7 +605,7 @@ public class CheckOutActivity extends BaseActivity {
         int id = view.getId();
         switch (id){
             case R.id.text_cancle_pay:
-                if(ArithDouble.sub(orderTotleValue, waitPayValue) <= 0){
+                if(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), waitPayValue) <= 0){
                     ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_pay_return_no));
                     return;
                 }
@@ -684,7 +695,7 @@ public class CheckOutActivity extends BaseActivity {
                 }
                 break;
             case R.id.title_icon_back:
-                if(ArithDouble.sub(orderTotleValue, waitPayValue) > 0){
+                if(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), waitPayValue) > 0){
                     ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_pay_return_failed));
                     return;
                 }
@@ -722,7 +733,7 @@ public class CheckOutActivity extends BaseActivity {
         }
 
         paymentTypeInfoadapter.notifyDataSetChanged();
-        waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+        waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
         text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
         edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
     }
@@ -747,7 +758,7 @@ public class CheckOutActivity extends BaseActivity {
                     text_coupon_deduction_money.setText(orderCoupon + "");
                 }
                 // 设置实付金额和待付金额
-                waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
 
@@ -769,7 +780,7 @@ public class CheckOutActivity extends BaseActivity {
                                     info.setThridPay(value);
                                     info.setOverage("0");
                                     addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
-                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                                     text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                                     edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
 
@@ -783,7 +794,7 @@ public class CheckOutActivity extends BaseActivity {
                                     info.setThridPay(value);
                                     info.setOverage("0");
                                     addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
-                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(orderTotleValue, ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                                     text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                                     edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                                 }
@@ -826,6 +837,7 @@ public class CheckOutActivity extends BaseActivity {
         }
         bill.setPaymentslist(payments);
         bill.setExchange(exchangeInfo);
+        bill.setTotalmbjmoney(orderManjianValue+"");
         Map<String, String> map = new HashMap<String, String>();
         try {
             map.put("billInfo", GsonUtil.beanToJson(bill));

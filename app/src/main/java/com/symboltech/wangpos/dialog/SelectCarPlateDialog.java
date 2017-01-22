@@ -17,7 +17,6 @@ import android.widget.RadioButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.ConstantData;
@@ -63,7 +62,9 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 	private RelativeLayout rl_sendcarcoupon;
 	private LinearLayout ll_status;
 	private FinishSendCoupon finish;
-	
+	public static final int START = 1;
+	public static final int FINISH = 2;
+	public static final int DOFINISH = 3;
 	private Handler mHandler = new Handler(){
 		@Override
 		public void dispatchMessage(Message msg) {
@@ -71,7 +72,22 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 			case ToastUtils.TOAST_WHAT:
 				ToastUtils.showtaostbyhandler(context, msg);
 				break;
-
+			case START:
+				imageview_close.setVisibility(View.GONE);
+				rl_sendcarcoupon.setVisibility(View.GONE);
+				ll_status.setVisibility(View.VISIBLE);
+				break;
+			case FINISH:
+				imageview_close.setVisibility(View.VISIBLE);
+				rl_sendcarcoupon.setVisibility(View.VISIBLE);
+				ll_status.setVisibility(View.GONE);
+				break;
+				case DOFINISH:
+					String carno = (String) msg.obj;
+					if(finish != null){
+						finish.finishSendCoupon(carno, hour);
+					}
+					break;
 			default:
 				break;
 			}
@@ -232,29 +248,26 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 
 			@Override
 			public void handleActionStart() {
-				imageview_close.setVisibility(View.GONE);
-				rl_sendcarcoupon.setVisibility(View.GONE);
-				ll_status.setVisibility(View.VISIBLE);
+				mHandler.sendEmptyMessage(START);
 			}
 
 			@Override
 			public void handleActionFinish() {
-				imageview_close.setVisibility(View.VISIBLE);
-				rl_sendcarcoupon.setVisibility(View.VISIBLE);
-				ll_status.setVisibility(View.GONE);
+				mHandler.sendEmptyMessage(FINISH);
 			}
 
 			@Override
 			public void handleActionError(String actionName, String errmsg) {
-				Toast.makeText(context, errmsg, Toast.LENGTH_SHORT).show();
+				ToastUtils.sendtoastbyhandler(mHandler, errmsg);
 			}
 
 			@Override
 			public void handleActionSuccess(String actionName, BaseResult result) {
 				if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
-					if(finish != null){
-						finish.finishSendCoupon(carno, hour);
-					}
+					Message message=Message.obtain();
+					message.what = 5;
+					message.obj = carno;
+					mHandler.sendMessage(message);
 					ToastUtils.sendtoastbyhandler(mHandler, context.getString(R.string.send_success));
 					dismiss();
 				}else{

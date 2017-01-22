@@ -24,6 +24,7 @@ import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.result.ThirdPaySalesReturnResult;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.util.HashMap;
@@ -219,8 +220,8 @@ public class AlipayAndWeixinPayReturnDialog extends Dialog implements View.OnCli
 
 			@Override
 			public void handleActionError(String actionName, String errmsg) {
-				statusTips.setText(errmsg);
-				mHandler.sendEmptyMessageDelayed(STATUS_CODE_ERROR, 1500);
+				ToastUtils.sendtoastbyhandler(mHandler, errmsg);
+				mHandler.sendEmptyMessageDelayed(STATUS_CODE_ERROR, 500);
 			}
 
 			@Override

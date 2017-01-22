@@ -95,9 +95,8 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 		this.listener = listener;
 		this.isDemand = isdemand;
 		flag = FLAG_EDIT;
-
-		setCanceledOnTouchOutside(true);
 		initView();
+		setCanceledOnTouchOutside(false);
 	}
 	/**
 	 * @param context 上下文
@@ -174,6 +173,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 	}
 	
 	private void initView() {
+		setCanceledOnTouchOutside(true);
 		setContentView(R.layout.dialog_horizontal_keyboard);
 		bt0 = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_0);
 		bt1 = (TextView) findViewById(R.id.dialog_horizontal_keyboard_bt_1);

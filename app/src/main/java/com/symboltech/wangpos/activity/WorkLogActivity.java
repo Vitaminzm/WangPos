@@ -36,6 +36,7 @@ import com.symboltech.wangpos.print.PrepareReceiptInfo;
 import com.symboltech.wangpos.result.ReportResult;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.DecoratorViewPager;
@@ -254,6 +255,16 @@ public class WorkLogActivity extends BaseActivity {
             } catch (Exception e) {
                 // TODO: handle exception
             }
+            if(latticePrinter != null){
+                latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                    @Override
+                    public void onEvent(final int what, String in) {
+                        if(!StringUtil.isEmpty(PrepareReceiptInfo.getPrintErrorInfo(what, in)))
+                            ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                    }
+                });
+            }
         }else {
             Intent printService = new Intent(IPrinterService.class.getName());
             printService = AndroidUtils.getExplicitIntent(this, printService);
@@ -369,13 +380,6 @@ public class WorkLogActivity extends BaseActivity {
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;
             }
-            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
-
-                @Override
-                public void onEvent(final int what, String in) {
-                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
-                }
-            });
             PrepareReceiptInfo.printReportFrom(flag, reportInfo, latticePrinter);
         }else {
             new Thread(new Runnable() {

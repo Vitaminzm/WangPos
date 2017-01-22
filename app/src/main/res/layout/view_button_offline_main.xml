@@ -83,23 +83,19 @@
         android:layout_weight="1"
         android:layout_marginTop="@dimen/btn_margin"
         android:orientation="horizontal" >
-
         <RelativeLayout
-            android:id="@+id/rl_salereturn"
+            android:id="@+id/rl_sendcarcoupon"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_marginRight="@dimen/btn_margin"
-            android:layout_weight="1"
             android:gravity="center"
+            android:layout_weight="1"
             android:background="@drawable/btn_blue_bg" >
-
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/btn_salereturn_icon" />
+                android:src="@mipmap/btn_sendcarcoupon_icon" />
 
         </RelativeLayout>
-
         <RelativeLayout
             android:id="@+id/rl_add"
             android:layout_width="0dp"

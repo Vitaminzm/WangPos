@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.MainActivity;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -35,6 +36,7 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 	private ImageView imageview_close;
 	private GeneralEditListener gel;
 	private String title;
+	private String hit = null;
 
 	public Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -52,6 +54,7 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 	};
 	private HorizontalKeyBoard keyboard;
 
+	boolean flag = true;
 	public InputDialog(Context context, String title, GeneralEditListener gel) {
 		super(context, R.style.dialog_login_bg);
 		this.context = context;
@@ -59,6 +62,14 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 		this.gel = gel;
 	}
 
+	public InputDialog(Context context, String title, String hit,GeneralEditListener gel, boolean flag) {
+		super(context, R.style.dialog_login_bg);
+		this.context = context;
+		this.title = title;
+		this.gel = gel;
+		this.hit = hit;
+		this.flag = flag;
+	}
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -70,7 +81,15 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 
 	private void initData() {
 		text_title.setText(title);
-		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
+		if(!StringUtil.isEmpty(hit)){
+			edit_input_order_no.setHint(hit);
+		}
+		if(flag)
+			keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
+		else{
+			if(!StringUtil.isEmpty(AppConfigFile.getHost_config()))
+				edit_input_order_no.setText(AppConfigFile.getHost_config());
+		}
 	}
 
 	private void initUI() {
@@ -95,6 +114,9 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 	@Override
 	public void dismiss() {
 		super.dismiss();
+		if( keyboard!= null && keyboard.isShowing()){
+			keyboard.dismiss();
+		}
 		handler.removeCallbacksAndMessages(null);
 	}
 
@@ -107,19 +129,21 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 		int id = v.getId();
 		switch (id){
 			case R.id.text_cancle:
-				if(keyboard.isShowing()){
-					keyboard.dismiss();
-				}
 				dismiss();
 				break;
 			case R.id.text_confirm:
 				if (!StringUtil.isEmpty(edit_input_order_no.getText().toString().trim())) {
-					boolean result=edit_input_order_no.getText().toString().trim().matches("[0-9]{1,10}");
-					if(result){
+					if(!flag){
 						gel.editinput(edit_input_order_no.getText().toString().trim());
 						this.dismiss();
 					}else{
-						ToastUtils.sendtoastbyhandler(handler, context.getString(R.string.waring_format_msg));
+						boolean result=edit_input_order_no.getText().toString().trim().matches("[0-9]{1,10}");
+						if(result){
+							gel.editinput(edit_input_order_no.getText().toString().trim());
+							this.dismiss();
+						}else{
+							ToastUtils.sendtoastbyhandler(handler, context.getString(R.string.waring_format_msg));
+						}
 					}
 				} else {
 					ToastUtils.sendtoastbyhandler(handler,context.getString(R.string.pleae_order_number));

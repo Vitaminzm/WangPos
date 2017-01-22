@@ -8,25 +8,18 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.msg.entity.ReportDetailInfo;
+import com.symboltech.wangpos.msg.entity.HistorySaleInfo;
 
 import java.util.List;
 
 
-public class ReportTableAdapter extends BaseAdapter {
+public class HistorySaleAdapter extends BaseAdapter {
 
 	private Context context;
-	List<ReportDetailInfo> datas;
+	List<HistorySaleInfo> datas;
 	private LayoutInflater inflater;
 
-	public void refreshData(List<ReportDetailInfo> infos) {
-		if(infos != null && infos.size() > 0){
-			this.datas.addAll(infos);
-			notifyDataSetChanged();
-		}
-	}
-
-	public ReportTableAdapter(Context context, List<ReportDetailInfo> datas) {
+	public HistorySaleAdapter(Context context, List<HistorySaleInfo> datas) {
 		super();
 		inflater = LayoutInflater.from(context);
 		this.context = context;
@@ -61,9 +54,9 @@ public class ReportTableAdapter extends BaseAdapter {
 		}else {
 			holder = (Viewholder) convertView.getTag();
 		}
-		holder.tv_name.setText(datas.get(position).getName());
-		holder.tv_money.setText(datas.get(position).getMoney());
-		holder.tv_count.setText(datas.get(position).getCount());
+		holder.tv_name.setText(datas.get(position).getSalemoney());
+		holder.tv_money.setText(datas.get(position).getSaletime());
+		holder.tv_count.setText(datas.get(position).getCouponmoney());
 		return convertView;
 	}
 	

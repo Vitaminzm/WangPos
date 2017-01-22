@@ -32,7 +32,17 @@ public class BillInfo implements Serializable {
 	private String changemoney;//找零
 	private String usedpointmoney;//积分抵扣金额
 	private String totalpoint;//会员总积分
-	
+
+	private String totalmbjmoney;//扣减金额
+
+	public String getTotalmbjmoney() {
+		return totalmbjmoney;
+	}
+
+	public void setTotalmbjmoney(String totalmbjmoney) {
+		this.totalmbjmoney = totalmbjmoney;
+	}
+
 	public String getTotalpoint() {
 		return totalpoint;
 	}

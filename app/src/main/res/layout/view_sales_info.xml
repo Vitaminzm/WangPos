@@ -103,7 +103,7 @@
         </LinearLayout>
     </RelativeLayout>
     <View
-        android:id="@+id/view_line"
+        android:id="@+id/view_line_bg"
         android:layout_gravity="center"
         android:layout_width="@dimen/line_xez"
         android:background="@color/view_line_color"

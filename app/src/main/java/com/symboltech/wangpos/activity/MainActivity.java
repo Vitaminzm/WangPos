@@ -57,6 +57,7 @@ import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.MyscollView;
@@ -237,7 +238,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }else{
             ChangeUI(0);
         }
-        if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_COLLECT))){
+        if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
             SpSaveUtils.delete(mContext,  ConstantData.BRANDGOODSLIST);
             SpSaveUtils.delete(mContext, ConstantData.SALEMANLIST);
         }
@@ -274,6 +275,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 latticePrinter = WeiposImpl.as().openLatticePrinter();
             } catch (Exception e) {
                 // TODO: handle exception
+            }
+            if(latticePrinter != null){
+                latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                    @Override
+                    public void onEvent(final int what, String in) {
+                        if(!StringUtil.isEmpty(PrepareReceiptInfo.getPrintErrorInfo(what, in)))
+                            ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                    }
+                });
             }
         }else{
             Intent printService = new Intent(IPrinterService.class.getName());
@@ -638,13 +649,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;
             }
-            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
-
-                @Override
-                public void onEvent(final int what, String in) {
-                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
-                }
-            });
             PrepareReceiptInfo.printBackOrderList(billinfo, true, latticePrinter);
         }else {
             new Thread(new Runnable() {
@@ -676,13 +680,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;
             }
-            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
-
-                @Override
-                public void onEvent(final int what, String in) {
-                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
-                }
-            });
             PrepareReceiptInfo.printOrderList(billinfo, true, latticePrinter);
         }else{
             new Thread(new Runnable() {
@@ -800,9 +797,14 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
 
                     @Override
-                    public void handleActionSuccess(String actionName, InitializeInfResult result) {
+                    public void handleActionSuccess(String actionName, final InitializeInfResult result) {
                         if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-                            InitializeConfig.initialize(MainActivity.this, result.getInitializeInfo());
+                            MainActivity.this.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    InitializeConfig.initialize(MainActivity.this, result.getInitializeInfo());
+                                }
+                            });
                             SpSaveUtils.writeboolean(MyApplication.context, ConstantData.IS_CONFIG_DOWNLOAD, false);
                         } else {
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
@@ -872,16 +874,16 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             ButterKnife.findById(v1, R.id.rl_member).setOnClickListener(onClickListener);
             ButterKnife.findById(v1, R.id.rl_pay).setOnClickListener(onClickListener);
             ButterKnife.findById(v1, R.id.rl_billprint).setOnClickListener(onClickListener);
-            ButterKnife.findById(v1, R.id.rl_sendcarcoupon).setOnClickListener(onClickListener);
+            ButterKnife.findById(v1, R.id.rl_salereturn).setOnClickListener(onClickListener);
             ButterKnife.findById(v1, R.id.rl_lockscreen).setOnClickListener(onClickListener);
             ButterKnife.findById(v1, R.id.rl_change).setOnClickListener(onClickListener);
             views.add(v1);
             View v2 = mLayoutInflater.inflate(R.layout.view_button_offline_main, null);
             ButterKnife.findById(v2, R.id.rl_upload).setOnClickListener(onClickListener);
+            ButterKnife.findById(v2, R.id.rl_sendcarcoupon).setOnClickListener(onClickListener);
             ButterKnife.findById(v2, R.id.rl_offline).setOnClickListener(onClickListener);
             ButterKnife.findById(v2, R.id.rl_weichat).setOnClickListener(onClickListener);
             ButterKnife.findById(v2, R.id.rl_bank).setOnClickListener(onClickListener);
-            ButterKnife.findById(v2, R.id.rl_salereturn).setOnClickListener(onClickListener);
             views.add(v2);
         }
 

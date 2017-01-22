@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@drawable/radiud_bg"
+    android:layout_width="@dimen/height_xzz"
+    android:layout_height="@dimen/height_fzz" >
+    <TextView
+        android:id="@+id/image_title"
+        android:layout_width="fill_parent"
+        android:background="#384252"
+        android:layout_height="@dimen/height_sz" />
+    <LinearLayout
+        android:id="@+id/ll_icon"
+        android:layout_marginTop="@dimen/margin_fv"
+        android:layout_below="@id/image_title"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/view_bg_color"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/height_ez"
+            android:layout_height="@dimen/height_ez"
+            android:src="@mipmap/pos_icon"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_tz"
+            android:text="@string/app_name"
+            android:textColor="@color/green"
+            android:textSize="@dimen/font_size_ft"
+            android:textStyle="bold"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_version"
+        android:layout_marginTop="@dimen/margin_ov"
+        android:layout_below="@id/ll_icon"
+        android:layout_centerInParent="true"
+        android:orientation="horizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="V1.0.0"
+            android:textColor="@color/green"
+            android:textSize="@dimen/font_size_rx"
+            android:textStyle="bold"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:layout_below="@id/ll_version"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_ov"
+            android:text="更新时间:"
+            android:textColor="#9f9f9f"
+            android:textSize="@dimen/font_size_rx"/>
+        <TextView
+            android:id="@+id/tv_updateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_ov"
+            android:textColor="#9f9f9f"
+            android:textSize="@dimen/font_size_rx"/>
+    </LinearLayout>
+</RelativeLayout>

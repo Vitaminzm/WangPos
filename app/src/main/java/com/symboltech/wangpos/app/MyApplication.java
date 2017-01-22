@@ -31,7 +31,7 @@ public class MyApplication extends Application {
      */
     private static String cashierId = "-1";
 
-    public static String posType="WPOS";//KPOS
+    public static String posType="WPOS";//"KPOS";//
     @Override
     public void onCreate() {
         super.onCreate();

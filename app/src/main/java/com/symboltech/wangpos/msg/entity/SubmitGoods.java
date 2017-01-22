@@ -15,11 +15,21 @@ public class SubmitGoods implements Serializable{
 
 	/** TODO*/
 	private static final long serialVersionUID = 1L;
-	
+
+	private String totalmbjmoney;
+
 	@SerializedName("maxcanexchangepoint")
 	private String limitpoint;
 	@SerializedName("usedcouponlist")
 	private List<CouponInfo> CouponInfos;
+
+	public String getTotalmbjmoney() {
+		return totalmbjmoney;
+	}
+
+	public void setTotalmbjmoney(String totalmbjmoney) {
+		this.totalmbjmoney = totalmbjmoney;
+	}
 
 	public String getLimitpoint() {
 		return limitpoint;

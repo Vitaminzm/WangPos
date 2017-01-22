@@ -286,6 +286,8 @@ public class ConstantData {
 
 	/** 订单总额 */
 	public static final String GET_ORDER_VALUE_INFO = "get_order_value_info";
+	/** 订单满减金额 */
+	public static final String GET_ORDER_MANJIAN_VALUE_INFO = "get_order_manjian_value_info";
 
 	/** 可用纸券 */
 	public static final String GET_ORDER_COUPON_INFO = "get_order_cash_info";

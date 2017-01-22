@@ -20,7 +20,7 @@ public class AppConfigFile {
 
 	/**监测网络状态发送间隔*/
 	public static final long NETWORK_STATUS_INTERVAL = 2 * 60 * 1000;
-	
+
 	/**用户登录信息保存时间*/
 	public static final long USER_LOGIN_SAVE_TIME = 1000 * 60 * 60 * 24 * 15;
 	
@@ -39,9 +39,16 @@ public class AppConfigFile {
 	/** activity manange list */
 	public static List<Activity> activityList = new LinkedList<>();
 	//private static  String host_config = "192.168.28.234:82";//239
-	 private static  String host_config = "210.14.129.42:82";  //41
+	// private static  String host_config = "210.14.129.42:82";  //41
+	// private static  String host_config = "210.14.129.41:85";  //步步高百货
+	//private static  String host_config = "192.168.6.61:81";  //步步高百货
+	private static  String host_config;
 	private static String billId;
 	private static String last_billid;
+
+	//业务demo在bp平台中的的bpid，这里填写对应应用所属bp账号的bpid和对应的key--------------需要动态改变
+	public static String InvokeCashier_BPID="58736568eb67006043453858";
+	public static String InvokeCashier_KEY="MRs74WmlqkoaFFN7iEvaObnDEjUNTO2V";
 
     /*----------------------------------------------------------------*/
 	/**

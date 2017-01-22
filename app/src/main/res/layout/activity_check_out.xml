@@ -6,80 +6,141 @@
     android:layout_height="match_parent"
     android:background="@color/view_bg_color"
     tools:context="com.symboltech.wangpos.activity.CheckOutActivity">
-    <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
 
-    <RelativeLayout
-        android:id="@+id/rl_order_total_money"
+    <include
+        android:id="@+id/common_title_bar"
+        layout="@layout/common_title_bar" />
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/margin_tz"
+        android:id="@+id/ll_order_total_money"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/common_title_bar"
-        android:layout_marginRight="@dimen/margin_rz"
-        android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_height="@dimen/height_ozz">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textSize="@dimen/font_size_rz"
-            android:textColor="@color/font_color"
-            android:gravity="center"
-            android:text="@string/order_total_money"/>
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_alignParentRight="true">
-
-            <TextView
-                android:id="@+id/text_order_total_money"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_fz"
-                android:textColor="@color/red"
-                android:layout_marginRight="@dimen/margin_ov"
-                android:text="0" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_rz"
-                android:textColor="@color/font_color"
-                android:text="@string/yuan"/>
-        </LinearLayout>
-        <View
-            android:layout_gravity="center"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:background="@color/view_line_color"
-            android:layout_alignParentBottom="true"
-            android:layout_height="1dp"/>
-    </RelativeLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/margin_rz"
+            android:layout_marginRight="@dimen/margin_rz">
+
+            <TextView
+                android:id="@+id/tv_total_money_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/order_total_money"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_order_total_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin_ov"
+                    android:text="0"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/font_size_fz" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yuan"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/rl_order_manjian_money"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_ot"
+            android:layout_marginLeft="@dimen/margin_rz"
+            android:layout_marginRight="@dimen/margin_rz">
+
+            <TextView
+                android:id="@+id/tv_manjian_money_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/order_manjian_money"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_order_manjian_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/margin_ov"
+                    android:text="0"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/font_size_fz" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yuan"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/margin_oz"
+            android:layout_height="1dp"
+            android:layout_gravity="center"
+            android:background="@color/view_line_color" />
+    </LinearLayout>
+
 
     <RelativeLayout
         android:id="@+id/rl_member_equity"
-        android:layout_below="@id/rl_order_total_money"
         android:layout_width="match_parent"
-        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_height="@dimen/height_orz"
+        android:layout_below="@id/ll_order_total_money"
         android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_height="@dimen/height_orz">
+        android:layout_marginRight="@dimen/margin_rz">
 
         <ImageView
             android:id="@+id/imageview_more"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:src="@mipmap/icon_more"/>
+            android:src="@mipmap/icon_more" />
+
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_toLeftOf="@id/imageview_more"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/imageview_more"
+            android:orientation="vertical">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:textSize="@dimen/font_size_rz"
-                android:textColor="@color/font_color"
                 android:gravity="center"
-                android:text="@string/member_equity"/>
+                android:text="@string/member_equity"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -90,105 +151,114 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
                     android:text="@string/coupon_deduction"
-                    android:textColor="@color/font_color"/>
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_tf" />
+
                 <TextView
                     android:id="@+id/text_coupon_deduction_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_rz"
                     android:layout_marginLeft="5dp"
                     android:text="0"
-                    android:textColor="@color/red"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
-                    android:layout_marginLeft="5dp"
-                    android:text="@string/yuan"
-                    android:textColor="@color/font_color"/>
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/font_size_rz" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/yuan"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_tf" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_ozz"
                     android:text="@string/score_deduction"
-                    android:textColor="@color/font_color"/>
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_tf" />
+
                 <TextView
                     android:id="@+id/text_score_deduction_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_rz"
                     android:layout_marginLeft="5dp"
                     android:text="0"
-                    android:textColor="@color/red"/>
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/font_size_rz" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_tf"
                     android:layout_marginLeft="5dp"
                     android:text="@string/fen"
-                    android:textColor="@color/font_color"/>
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_size_tf" />
             </LinearLayout>
         </LinearLayout>
+
         <View
-            android:layout_gravity="center"
             android:layout_width="match_parent"
-            android:background="@color/view_line_color"
+            android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:layout_height="1dp"/>
+            android:layout_gravity="center"
+            android:background="@color/view_line_color" />
     </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/rl_payment"
-        android:layout_below="@id/rl_member_equity"
         android:layout_width="match_parent"
-        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_height="@dimen/height_oxz"
+        android:layout_below="@id/rl_member_equity"
         android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_height="@dimen/height_oxz">
+        android:layout_marginRight="@dimen/margin_rz">
+
         <RelativeLayout
             android:id="@+id/rl_wait_money"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/margin_tz"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_tz">
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_rz"
-                android:textColor="@color/font_color"
                 android:gravity="center"
-                android:text="@string/wait_money"/>
+                android:text="@string/wait_money"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_alignParentRight="true"
                 android:gravity="center"
-                android:layout_alignParentRight="true">
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/text_wait_money"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_fz"
-                    android:textColor="@color/red"
                     android:layout_marginRight="@dimen/margin_ov"
-                    android:text="0" />
+                    android:text="0"
+                    android:textColor="@color/red"
+                    android:textSize="@dimen/font_size_fz" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textSize="@dimen/font_size_rz"
+                    android:text="@string/yuan"
                     android:textColor="@color/font_color"
-                    android:text="@string/yuan"/>
+                    android:textSize="@dimen/font_size_rz" />
             </LinearLayout>
         </RelativeLayout>
 
         <RelativeLayout
             android:id="@+id/input_money"
-            android:layout_below="@id/rl_wait_money"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/rl_wait_money"
             android:layout_marginTop="@dimen/margin_ov"
             android:gravity="center_vertical">
 
@@ -197,138 +267,148 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/margin_ov"
-                android:textSize="@dimen/font_size_rz"
-                android:textColor="@color/font_color"
                 android:gravity="center"
-                android:text="@string/pay_money"/>
+                android:text="@string/pay_money"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
+
             <LinearLayout
-                android:layout_toRightOf="@id/text_pay_money"
                 android:layout_width="@dimen/line_rnz"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:layout_marginLeft="@dimen/margin_xz"
+                android:layout_toRightOf="@id/text_pay_money"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:layout_marginLeft="@dimen/margin_xz">
+                android:orientation="vertical">
 
                 <EditText
                     android:id="@+id/edit_input_money"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@null"
                     android:gravity="center"
-                    android:textSize="@dimen/font_size_rv"
-                    android:textColorHint="@color/hint_color"
-                    android:textColor="@color/edit_font_color"
-                    android:singleLine="true"
                     android:hint="@string/please_input_money"
-                    android:background="@null"/>
+                    android:singleLine="true"
+                    android:textColor="@color/edit_font_color"
+                    android:textColorHint="@color/hint_color"
+                    android:textSize="@dimen/font_size_rv" />
+
                 <View
                     android:id="@+id/view_line"
                     android:layout_width="match_parent"
                     android:layout_height="3dp"
                     android:layout_marginTop="5dp"
-                    android:background="@color/view_black_line_color"/>
+                    android:background="@color/view_black_line_color" />
             </LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_ov"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="center"
-                android:textSize="@dimen/font_size_rz"
+                android:layout_marginTop="@dimen/margin_ov"
+                android:text="@string/yuan"
                 android:textColor="@color/font_color"
-                android:text="@string/yuan"/>
+                android:textSize="@dimen/font_size_rz" />
         </RelativeLayout>
+
         <View
-            android:layout_gravity="center"
             android:layout_width="match_parent"
-            android:background="@color/view_line_color"
+            android:layout_height="1dp"
             android:layout_alignParentBottom="true"
-            android:layout_height="1dp"/>
+            android:layout_gravity="center"
+            android:background="@color/view_line_color" />
     </RelativeLayout>
 
     <LinearLayout
-        android:layout_below="@id/rl_payment"
         android:id="@+id/ll_pay_type_ditch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_rz"
-        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_below="@id/rl_payment"
         android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginTop="@dimen/margin_rz"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_rz"
-            android:textColor="@color/font_color"
             android:gravity="center"
-            android:text="@string/pay_type_ditch"/>
+            android:text="@string/pay_type_ditch"
+            android:textColor="@color/font_color"
+            android:textSize="@dimen/font_size_rz" />
+
         <GridView
-            android:paddingTop="@dimen/margin_oz"
             android:id="@+id/activity_payment_gridview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:cacheColorHint="@color/transparent"
             android:listSelector="@drawable/gridview_selector"
             android:numColumns="4"
-            android:scrollbars="none"/>
+            android:paddingTop="@dimen/margin_oz"
+            android:scrollbars="none" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_function"
         android:layout_width="match_parent"
+        android:layout_height="@dimen/height_ez"
         android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/margin_rz"
-        android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginBottom="@dimen/margin_fz"
-        android:orientation="horizontal"
-        android:layout_height="@dimen/height_ez">
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:orientation="horizontal">
+
         <TextView
             android:id="@+id/text_cancle_pay"
             android:layout_width="0dp"
-            android:layout_weight="1"
-            android:text="@string/cancle_pay"
-            android:gravity="center"
-            android:textColor="@color/white"
+            android:layout_height="match_parent"
             android:layout_marginRight="@dimen/margin_rz"
+            android:layout_weight="1"
             android:background="@drawable/btn_red_bg"
-            android:layout_height="match_parent" />
+            android:gravity="center"
+            android:text="@string/cancle_pay"
+            android:textColor="@color/white" />
+
         <TextView
             android:id="@+id/text_submit_order"
             android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/submit_order"
             android:background="@drawable/btn_green_bg"
-            android:textColor="@color/white"
             android:gravity="center"
-            android:layout_height="match_parent" />
+            android:text="@string/submit_order"
+            android:textColor="@color/white" />
     </LinearLayout>
+
     <LinearLayout
-        android:layout_below="@id/ll_pay_type_ditch"
-        android:layout_above="@id/ll_function"
-        android:layout_marginRight="@dimen/margin_rz"
-        android:layout_marginLeft="@dimen/margin_rz"
-        android:background="@drawable/icon_bg_scroll"
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@id/ll_function"
+        android:layout_below="@id/ll_pay_type_ditch"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:background="@drawable/icon_bg_scroll"
+        android:orientation="vertical">
+
         <TextView
-            android:layout_marginTop="@dimen/margin_rz"
-            android:layout_marginLeft="@dimen/margin_rz"
-            android:layout_marginBottom="@dimen/margin_tz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_rz"
+            android:layout_marginBottom="@dimen/margin_tz"
+            android:layout_marginLeft="@dimen/margin_rz"
+            android:layout_marginTop="@dimen/margin_rz"
+            android:text="@string/pay_info"
             android:textColor="@color/font_color"
-            android:text="@string/pay_info"/>
+            android:textSize="@dimen/font_size_rz" />
+
         <ListView
             android:id="@+id/listview_pay_info"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none"
+            android:cacheColorHint="@color/transparent"
             android:divider="@color/transparent"
-            android:dividerHeight = "@dimen/margin_ov"
+            android:dividerHeight="@dimen/margin_ov"
             android:listSelector="@drawable/gridview_selector"
-            android:cacheColorHint="@color/transparent"/>
+            android:scrollbars="none" />
     </LinearLayout>
 </RelativeLayout>

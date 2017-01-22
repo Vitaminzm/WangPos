@@ -493,13 +493,6 @@ public class DemandNoteActivity extends BaseActivity {
                             DemandNoteActivity.this.finish();
                             return;
                         }
-                        latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
-
-                            @Override
-                            public void onEvent(final int what, String in) {
-                                ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
-                            }
-                        });
                         PrepareReceiptInfo.printDemandNote(info, latticePrinter);
                     }else {
                         new Thread(new Runnable() {
@@ -577,7 +570,8 @@ public class DemandNoteActivity extends BaseActivity {
 
                 @Override
                 public void onEvent(final int what, String in) {
-                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                    if(!StringUtil.isEmpty(PrepareReceiptInfo.getPrintErrorInfo(what, in)))
+                        ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
                 }
             });
             PrepareReceiptInfo.printDemandNote(info, latticePrinter);

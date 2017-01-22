@@ -53,6 +53,7 @@ import com.symboltech.wangpos.utils.CashierSign;
 import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
@@ -283,6 +284,16 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                 latticePrinter = WeiposImpl.as().openLatticePrinter();
             } catch (Exception e) {
                 // TODO: handle exception
+            }
+            if(latticePrinter != null){
+                latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                    @Override
+                    public void onEvent(final int what, String in) {
+                        if(!StringUtil.isEmpty(PrepareReceiptInfo.getPrintErrorInfo(what, in)))
+                            ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                    }
+                });
             }
         }else {
             Intent printService = new Intent(IPrinterService.class.getName());
@@ -975,13 +986,6 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;
             }
-            latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
-
-                @Override
-                public void onEvent(final int what, String in) {
-                    ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
-                }
-            });
             PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
         }else {
             new Thread(new Runnable() {
@@ -1008,9 +1012,6 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     }
 
     private BizServiceInvoker mBizServiceInvoker;
-    //业务demo在bp平台中的的bpid，这里填写对应应用所属bp账号的bpid和对应的key--------------需要动态改变
-    private String InvokeCashier_BPID="53b3a1ca45ceb5f96d153eec";
-    private String InvokeCashier_KEY="LIz6bPS2z8jUnwLHRYzcJ6WK2X87ziWe";
 
     // 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
     //
@@ -1023,10 +1024,10 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             RequestInvoke cashierReq = new RequestInvoke();
             cashierReq.pkgName = this.getPackageName();
             cashierReq.sdCode = CashierSign.Cashier_sdCode;// 收银服务的sdcode信息
-            cashierReq.bpId = InvokeCashier_BPID;
+            cashierReq.bpId = AppConfigFile.InvokeCashier_BPID;
             cashierReq.launchType = CashierSign.launchType;
 
-            cashierReq.params = CashierSign.refundsign(InvokeCashier_BPID, InvokeCashier_KEY, tradeNo);
+            cashierReq.params = CashierSign.refundsign(AppConfigFile.InvokeCashier_BPID, AppConfigFile.InvokeCashier_KEY, tradeNo);
             cashierReq.seqNo = seqNo;
 
             RequestResult r = mBizServiceInvoker.request(cashierReq);
@@ -1059,7 +1060,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                                 ToastUtils.sendtoastbyhandler(handler, "正在申请订阅收银服务...");
                                 // 如果没有订阅，则主动请求订阅服务
                                 mBizServiceInvoker.subscribeService(CashierSign.Cashier_sdCode,
-                                        InvokeCashier_BPID);
+                                        AppConfigFile.InvokeCashier_BPID);
                             }
                         });
                         break;

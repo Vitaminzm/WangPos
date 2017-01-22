@@ -80,6 +80,8 @@ public enum TicketFormatEnum {
 	TICKET_TOTAL_USED_SCORE("\\[总消耗积分\\]"),
 	/** 总新增积分*/
 	TICKET_TOTAL_ADD_SCORE("\\[总新增积分\\]"),
+	/** 满减金额*/
+	TICKET_MANJIAN_MONEY("\\[满减金额\\]"),
 	/** 代金券名称*/
 	TICKET_CASH_COUPON_NAME("\\[代金券名称\\]"),
 	/** 代金券金额*/

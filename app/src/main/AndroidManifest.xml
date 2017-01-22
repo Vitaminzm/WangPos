@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.symboltech.wangpos"
     android:versionCode="1603081005"
     android:versionName="1.0.0" >
 
-    <uses-sdk
-        tools:overrideLibrary="com.github.ybq.android.library" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -68,6 +65,11 @@
         <activity android:name=".dialog.ThirdPayControllerDialog"
             android:theme="@style/dialog_login_bg"/>
         <service android:name=".service.RunTimeService" />
+
+        <meta-data
+            android:name="pos_update_time"
+            android:value="2017年1月9日 " >
+        </meta-data>
     </application>
 
 </manifest>

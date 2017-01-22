@@ -150,7 +150,7 @@ public class PaymentActivity extends BaseActivity {
 
                 @Override
                 public void onCancel() {
-
+                    edit_input_money.setText("");
                 }
 
                 @Override
@@ -161,6 +161,7 @@ public class PaymentActivity extends BaseActivity {
                     }
                     if(goodinfos != null && goodinfos.size() > 0){
                         addcartgoods(value, position, ConstantData.GOOD_PRICE_CAN_CHANGE);
+                        edit_input_money.setText("");
                     }else{
                         ToastUtils.sendtoastbyhandler(handler,getString(R.string.warning_no_good));
                     }
@@ -302,7 +303,7 @@ public class PaymentActivity extends BaseActivity {
     }
 
     public void lookMember(){
-        Intent intent = new Intent(this,MemberDetailActivity.class);
+        Intent intent = new Intent(this, MemberDetailActivity.class);
         intent.putExtra(ConstantData.ALLMEMBERINFO, memberBigdate);
         startActivity(intent);
     }
@@ -633,6 +634,7 @@ public class PaymentActivity extends BaseActivity {
                         intent_payment.putExtra(ConstantData.GET_ORDER_VALUE_INFO, ArithDouble.parseDouble(MoneyAccuracyUtils.getmoneybytwo(
                                 ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type))));
                         intent_payment.putExtra(ConstantData.MEMBER_VERIFY, member_type);
+                        intent_payment.putExtra(ConstantData.GET_ORDER_MANJIAN_VALUE_INFO, ArithDouble.parseDouble(result.getSubmitgoods().getTotalmbjmoney()));
                         intent_payment.putExtra(ConstantData.MEMBER_EQUITY, result.getSubmitgoods());
                         intent_payment.putExtra(ConstantData.GET_MEMBER_INFO, memberBigdate.getMember());
                         intent_payment.putExtra(ConstantData.CART_HAVE_GOODS, (Serializable) shopCarList);
@@ -645,6 +647,7 @@ public class PaymentActivity extends BaseActivity {
                         // 订单总额
                         intent_payment.putExtra(ConstantData.GET_ORDER_VALUE_INFO, ArithDouble.parseDouble(MoneyAccuracyUtils.getmoneybytwo(
                                 ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type))));
+                        intent_payment.putExtra(ConstantData.GET_ORDER_MANJIAN_VALUE_INFO, ArithDouble.parseDouble(result.getSubmitgoods().getTotalmbjmoney()));
                         intent_payment.putExtra(ConstantData.CART_HAVE_GOODS, (Serializable) shopCarList);
                         startActivity(intent_payment);
                     }

@@ -17,7 +17,6 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CouponsAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.dialog.CouponWaringDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -317,24 +316,29 @@ public class MemberEquityActivity extends BaseActivity {
 
                     @Override
                     public void handleActionSuccess(String actionName,
-                                                    CouponResult result) {
+                                                    final CouponResult result) {
                         if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
                             // 获取数据，刷新
                             if (result != null && result.getCouponinfo() != null) {
-                                recycleview_hold_coupon.setVisibility(View.VISIBLE);
-                                if (sendAdapter.isExit(result.getCouponinfo())) {
-                                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_scan_coupon_msg));
-                                    return;
-                                }
+                                MemberEquityActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        recycleview_hold_coupon.setVisibility(View.VISIBLE);
+                                        if (sendAdapter.isExit(result.getCouponinfo())) {
+                                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_scan_coupon_msg));
+                                            return;
+                                        }
 
-                                if ((ArithDouble.sub(orderTotleValue, orderScore)) < orderCoupon) {
-                                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_coupon_over_msg));
-                                    return;
-                                }
-                                orderCoupon = ArithDouble.add(orderCoupon, ArithDouble.parseDouble(result.getCouponinfo().getAvailablemoney()));
-                                sendAdapter.add(result.getCouponinfo());
-                                sendAdapter.addSelect(sendAdapter.getItemCount() - 1);
-                                couponList.add(result.getCouponinfo());
+                                        if ((ArithDouble.sub(orderTotleValue, orderScore)) < orderCoupon) {
+                                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_coupon_over_msg));
+                                            return;
+                                        }
+                                        orderCoupon = ArithDouble.add(orderCoupon, ArithDouble.parseDouble(result.getCouponinfo().getAvailablemoney()));
+                                        sendAdapter.add(result.getCouponinfo());
+                                        sendAdapter.addSelect(sendAdapter.getItemCount() - 1);
+                                        couponList.add(result.getCouponinfo());
+                                    }
+                                });
                             }
 
                         } else {
@@ -389,42 +393,47 @@ public class MemberEquityActivity extends BaseActivity {
             }
 
             @Override
-            public void handleActionSuccess(String actionName, ExchangemsgResult result) {
-                if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
-                    ExchangemsgInfo info = result.getInfo().getExchmsg();
-                    if (info != null) {
-                        exchangeInfo.setExchangemoney(info.getExchangemoney());
-                        exchangeInfo.setExchangepoint(info.getUsepoint());
-                    }
+            public void handleActionSuccess(String actionName, final ExchangemsgResult result) {
+                MemberEquityActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
+                            ExchangemsgInfo info = result.getInfo().getExchmsg();
+                            if (info != null) {
+                                exchangeInfo.setExchangemoney(info.getExchangemoney());
+                                exchangeInfo.setExchangepoint(info.getUsepoint());
+                            }
 
 
-                    orderScore = ArithDouble.parseDouble(exchangeInfo.getExchangemoney());
-                    //抵扣值大于0才显示
-                    if (orderScore >= 0) {
-                        if (orderScore == 0) {
+                            orderScore = ArithDouble.parseDouble(exchangeInfo.getExchangemoney());
+                            //抵扣值大于0才显示
+                            if (orderScore >= 0) {
+                                if (orderScore == 0) {
+                                    edit_used_score.setText(exchangeInfo.getExchangepoint());
+                                    text_deduction_money.setText(exchangeInfo.getExchangemoney());
+                                    return;
+                                }
+                                if (orderScore > ArithDouble.sub(orderTotleValue, orderCoupon)) {
+                                    edit_used_score.setText(exchangeInfo.getExchangepoint());
+                                    text_deduction_money.setText(exchangeInfo.getExchangemoney());
+                                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_score_over_msg));
+                                    return;
+                                }
+                                edit_used_score.setText(exchangeInfo.getExchangepoint());
+                                text_deduction_money.setText(exchangeInfo.getExchangemoney());
+                            } else {
+                                ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_cannot_use_msg));
+                            }
+                        } else {
+                            ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                            orderScore = 0;
+                            exchangeInfo.setExchangemoney("0");
+                            exchangeInfo.setExchangepoint("0");
                             edit_used_score.setText(exchangeInfo.getExchangepoint());
                             text_deduction_money.setText(exchangeInfo.getExchangemoney());
-                            return;
                         }
-                        if (orderScore > ArithDouble.sub(orderTotleValue, orderCoupon)) {
-                            edit_used_score.setText(exchangeInfo.getExchangepoint());
-                            text_deduction_money.setText(exchangeInfo.getExchangemoney());
-                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_score_over_msg));
-                            return;
-                        }
-                        edit_used_score.setText(exchangeInfo.getExchangepoint());
-                        text_deduction_money.setText(exchangeInfo.getExchangemoney());
-                    } else {
-                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_cannot_use_msg));
                     }
-                } else {
-                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
-                    orderScore = 0;
-                    exchangeInfo.setExchangemoney("0");
-                    exchangeInfo.setExchangepoint("0");
-                    edit_used_score.setText(exchangeInfo.getExchangepoint());
-                    text_deduction_money.setText(exchangeInfo.getExchangemoney());
-                }
+                });
             }
             @Override
             public void startChangeMode() {

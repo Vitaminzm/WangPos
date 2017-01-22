@@ -24,10 +24,13 @@ import com.symboltech.wangpos.config.InitializeConfig;
 import com.symboltech.wangpos.db.dao.LoginDao;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.db.dao.UserNameDao;
+import com.symboltech.wangpos.dialog.AppAboutDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
+import com.symboltech.wangpos.dialog.InputDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.http.HttpServiceStringClient;
+import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.interfaces.OnDrawableClickListener;
 import com.symboltech.wangpos.log.LogUtil;
@@ -56,7 +59,7 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener, View.OnFocusChangeListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener, View.OnFocusChangeListener, AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener, View.OnLongClickListener {
 
     @Bind(R.id.edit_username)DrawableEditText edit_username;
     @Bind(R.id.edit_password)EditText edit_password;
@@ -84,6 +87,25 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             und.delete(datas.get(position));
         mPopupWindow.dismiss();
         return true;
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()){
+            case R.id.imageview_about:
+                new InputDialog(LoginActivity.this, "请输入服务器IP", "请输入服务器IP", new GeneralEditListener() {
+                    @Override
+                    public void editinput(String edit) {
+                        if(!StringUtil.isEmpty(edit))
+                            AppConfigFile.setHost_config(edit);
+                        else {
+                            ToastUtils.sendtoastbyhandler(handler, "输入为空！");
+                        }
+                    }
+                }, false).show();
+                break;
+        }
+        return false;
     }
 
     static class MyHandler extends Handler {
@@ -120,8 +142,18 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             serviceintent.putExtra(ConstantData.UPLOAD_LOG, true);
             startService(serviceintent);
         }
-        LogUtil.i("lgs", ""+Utils.px2dip(getApplicationContext(),200));
-        LogUtil.i("lgs", ""+Utils.px2dip(getApplicationContext(),100));
+        if(StringUtil.isEmpty(AppConfigFile.getHost_config())){
+            new InputDialog(LoginActivity.this, "请输入服务器IP", "请输入服务器IP", new GeneralEditListener() {
+                @Override
+                public void editinput(String edit) {
+                    if(!StringUtil.isEmpty(edit))
+                        AppConfigFile.setHost_config(edit);
+                    else {
+                        ToastUtils.sendtoastbyhandler(handler, "输入为空！");
+                    }
+                }
+            }, false).show();
+        }
     }
 
     @Override
@@ -156,7 +188,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         edit_username.setOnDrawableClickListener(new OnDrawableClickListener() {
             @Override
             public void onDrawableclick() {
-                if(Utils.isFastClick()){
+                if (Utils.isFastClick()) {
                     return;
                 }
                 showPopupList();
@@ -169,7 +201,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         listview = (ListView) LayoutInflater.from(this).inflate(R.layout.popup_list, null);
         listview.setOnItemClickListener(this);
         listview.setOnItemLongClickListener(this);
-
+        imageview_about.setOnLongClickListener(this);
     }
 
     /**
@@ -224,6 +256,9 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 AppConfigFile.exit();
                 HttpServiceStringClient.getinstance().cancleRequest();
                 System.exit(0);
+                break;
+            case R.id.imageview_about:
+                new AppAboutDialog(LoginActivity.this).show();
                 break;
         }
     }
@@ -384,7 +419,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      */
     private void loginforhttp(final String username, final String password) {
         Map<String, String> map = new HashMap<>();
-        map.put("machinecode", "0055DA1009B4");
+        map.put("machinecode", MachineUtils.getUid(MyApplication.context));
         map.put("personcode", username);
         map.put("password", MD5Utils.md5(password));
         LogUtil.i("lgs", "MachineUtils.getUid==========" + MachineUtils.getUid(MyApplication.context));

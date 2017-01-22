@@ -15,6 +15,7 @@ import com.symboltech.wangpos.activity.DemandNoteActivity;
 import com.symboltech.wangpos.activity.WorkLogActivity;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
+import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.Utils;
 
 /**
@@ -57,10 +58,10 @@ public class ChangeManagerDialog extends Dialog implements View.OnClickListener 
 		text_day_report.setOnClickListener(this);
 		text_change_manager.setOnClickListener(this);
 		imageview_close.setOnClickListener(this);
-		//if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(context, ConstantData.CASH_TYPE, ConstantData.CASH_COLLECT))){
+		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
 			ll_dialog_change_manager.setVisibility(View.GONE);
 			dialog_change_manager_demand.setVisibility(View.VISIBLE);
-		//}
+		}
 	}
 
 	@Override

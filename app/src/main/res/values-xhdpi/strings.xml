@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">旺POS</string>
+    <string name="app_name">智能POS专柜收银</string>
     <string name="exception_opt">服务器数据异常</string>
     <string name="intelligentPOS">智能POS系统</string>
     <string name="desk_code">收款台：</string>
@@ -69,6 +69,7 @@
     <string name="query">查询</string>
     <string name="cancle">取消</string>
     <string name="checkout">结账</string>
+    <string name="order_manjian_money">满减金额</string>
     <string name="order_total_money">订单总额</string>
     <string name="member_equity">会员权益</string>
     <string name="coupon_deduction">优惠券抵扣</string>

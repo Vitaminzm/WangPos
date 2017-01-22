@@ -358,22 +358,32 @@ public class CanclePayDialog extends BaseActivity{
 					@Override
 					public void handleActionError(String actionName, String errmsg) {
 						ToastUtils.sendtoastbyhandler(handler, errmsg);
-						info.setDes(getString(R.string.cancled_failed));
-						canclePayAdapter.notifyDataSetChanged();
+						CanclePayDialog.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								info.setDes(getString(R.string.cancled_failed));
+								canclePayAdapter.notifyDataSetChanged();
+							}
+						});
 					}
 
 					@Override
-					public void handleActionSuccess(String actionName, ThirdPayCancelResult result) {
-						if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-							OperateLog.getInstance().saveLog2File(OptLogEnum.PAY_CANCLE_PAY_SUCCESS.getOptLogCode(), getString(R.string.pay_cancle_pay_success));
-							info.setIsCancle(true);
-							info.setDes(getString(R.string.cancled_pay));
-							canclePayAdapter.notifyDataSetChanged();
-						} else {
-							OperateLog.getInstance().saveLog2File(OptLogEnum.PAY_CANCLE_PAY_FAILED.getOptLogCode(), getString(R.string.pay_cancle_pay_failed));
-							info.setDes(getString(R.string.cancled_failed));
-							canclePayAdapter.notifyDataSetChanged();
-						}
+					public void handleActionSuccess(String actionName, final ThirdPayCancelResult result) {
+						CanclePayDialog.this.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+									OperateLog.getInstance().saveLog2File(OptLogEnum.PAY_CANCLE_PAY_SUCCESS.getOptLogCode(), getString(R.string.pay_cancle_pay_success));
+									info.setIsCancle(true);
+									info.setDes(getString(R.string.cancled_pay));
+									canclePayAdapter.notifyDataSetChanged();
+								} else {
+									OperateLog.getInstance().saveLog2File(OptLogEnum.PAY_CANCLE_PAY_FAILED.getOptLogCode(), getString(R.string.pay_cancle_pay_failed));
+									info.setDes(getString(R.string.cancled_failed));
+									canclePayAdapter.notifyDataSetChanged();
+								}
+							}
+						});
 					}
 
 					@Override
@@ -708,11 +718,6 @@ public class CanclePayDialog extends BaseActivity{
 	}
 
 	private BizServiceInvoker mBizServiceInvoker;
-	//业务demo在bp平台中的的bpid，这里填写对应应用所属bp账号的bpid和对应的key--------------需要动态改变
-	private String InvokeCashier_BPID="53b3a1ca45ceb5f96d153eec";
-	private String InvokeCashier_KEY="LIz6bPS2z8jUnwLHRYzcJ6WK2X87ziWe";
-
-
 
 	// 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
 	//
@@ -725,10 +730,10 @@ public class CanclePayDialog extends BaseActivity{
 			RequestInvoke cashierReq = new RequestInvoke();
 			cashierReq.pkgName = this.getPackageName();
 			cashierReq.sdCode = CashierSign.Cashier_sdCode;// 收银服务的sdcode信息
-			cashierReq.bpId = InvokeCashier_BPID;
+			cashierReq.bpId = AppConfigFile.InvokeCashier_BPID;
 			cashierReq.launchType = CashierSign.launchType;
 
-			cashierReq.params = CashierSign.refundsign(InvokeCashier_BPID, InvokeCashier_KEY, tradeNo);
+			cashierReq.params = CashierSign.refundsign(AppConfigFile.InvokeCashier_BPID, AppConfigFile.InvokeCashier_KEY, tradeNo);
 			cashierReq.seqNo = seqNo;
 
 			RequestResult r = mBizServiceInvoker.request(cashierReq);
@@ -761,7 +766,7 @@ public class CanclePayDialog extends BaseActivity{
 								ToastUtils.sendtoastbyhandler(handler, "正在申请订阅收银服务...");
 								// 如果没有订阅，则主动请求订阅服务
 								mBizServiceInvoker.subscribeService(CashierSign.Cashier_sdCode,
-										InvokeCashier_BPID);
+										AppConfigFile.InvokeCashier_BPID);
 							}
 						});
 						break;

@@ -68,7 +68,7 @@ public class PrepareReceiptInfo {
 	private static final int FONT_BIG = 0x1124;
 
 	public static String getPrintErrorInfo(int what, String info) {
-		String message = "未知错误";
+		String message = "";
 		switch (what) {
 			case IPrint.EVENT_CONNECT_FAILD:
 				message = "连接打印机失败";
@@ -99,7 +99,6 @@ public class PrepareReceiptInfo {
 				message = "打印失败";
 				break;
 		}
-
 		return message;
 	}
 	private static final String unit = "						元";
@@ -232,7 +231,7 @@ public class PrepareReceiptInfo {
 	 */
 	private static void addMultiTextJson(JSONArray array, LatticePrinter latticePrinter, int size, String textLeftAlign, String textRightAlign) {
 		if(latticePrinter != null){
-			latticePrinter.printText(textLeftAlign+"          "+textRightAlign.replace("	", "")+"\n", FontFamily.SONG, FontSize.MEDIUM, FontStyle.NORMAL);
+			latticePrinter.printText(StringUtil.formatLString(16, textLeftAlign)+StringUtil.formatLString(10, textRightAlign.replace("	", ""))+"\n", FontFamily.SONG, FontSize.MEDIUM, FontStyle.NORMAL);
 		}else {
 			try {
 				JSONObject json = new JSONObject();
@@ -831,6 +830,7 @@ public class PrepareReceiptInfo {
 		double changeMoney = 0;//找零
 		double cardValue = 0;//代金券
 		double totalPoint = 0;//积分累计
+		double manjianMoney = 0;//满减金额
 		String scorePay = null;
 		String cardPay = null;
 		if (bill.getGoodslist() != null) {
@@ -856,6 +856,7 @@ public class PrepareReceiptInfo {
 				}
 			}
 		}
+		manjianMoney = ArithDouble.parseDouble(bill.getTotalmbjmoney());
 		if(bill.getChangemoney() != null){
 			changeMoney = ArithDouble.parseDouble(bill.getChangemoney());
 		}
@@ -972,11 +973,12 @@ public class PrepareReceiptInfo {
 						if(ticketFormat.getMoneys() != null){
 							PrintString moneys = new PrintString(ticketFormat.getMoneys()).replace("\\s*", "")
 									.replace(TicketFormatEnum.TICKET_EXCHANGE.getLable(), "\t\t" + formatRString(8, bill.getChangemoney()))
-									.replace(TicketFormatEnum.TICKET_TOTAL_COUNT.getLable(), formatRString(8,""+goodNumber))
+									.replace(TicketFormatEnum.TICKET_TOTAL_COUNT.getLable(), formatRString(8, "" + goodNumber))
 									.replace(TicketFormatEnum.TICKET_TOTAL_MONEY.getLable(), "\t"+formatRString(8,bill.getTotalmoney()))
 									.replace(TicketFormatEnum.TICKET_TOTAL_USED_SCORE.getLable(), "    "+scoreUsed)
-									.replace(TicketFormatEnum.TICKET_DEAL_MONEY.getLable(), "\t\t" +formatRString(8, ""+ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue)))
-									.replace(TicketFormatEnum.TICKET_REAL_MONEY.getLable(), "\t\t" +formatRString(8, ""+ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), changeMoney)));
+									.replace(TicketFormatEnum.TICKET_DEAL_MONEY.getLable(), "\t\t" +formatRString(8, ""+ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), manjianMoney)))
+									.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable(), "\t\t" +formatRString(8, ""+ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue)))
+									.replace(TicketFormatEnum.TICKET_REAL_MONEY.getLable(), "\t\t" + formatRString(8, "" + ArithDouble.sub(ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), changeMoney),manjianMoney)));
 //
 							if(scoreValue ==0){
 								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable()+TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");
@@ -1279,7 +1281,6 @@ public class PrepareReceiptInfo {
 		if (!TextUtils.isEmpty(bill.getTotalmoney())) {
 			addMultiTextJson(array, latticePrinter, FONT_DEFAULT, "合计：", bill.getTotalmoney() + unit);
 		}
-
 		if (bill.getPaymentslist() != null) {
 			for (PayMentsInfo info : bill.getPaymentslist()) {
 				if (PaymentTypeEnum.getpaymentstyle(info.getType()) == PaymentTypeEnum.COUPON) {
@@ -1304,10 +1305,13 @@ public class PrepareReceiptInfo {
 		if (bill.getChangemoney() != null) {
 			changeMoney = ArithDouble.parseDouble(bill.getChangemoney());
 		}
-		addMultiTextJson(array, latticePrinter, FONT_DEFAULT, "应付：", ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), score), cardValue) + unit);
+		if (ArithDouble.parseDouble(bill.getTotalmbjmoney()) > 0) {
+			addMultiTextJson(array, latticePrinter, FONT_DEFAULT, "满减金额：", bill.getTotalmbjmoney() + unit);
+		}
+		addMultiTextJson(array, latticePrinter, FONT_DEFAULT, "应付：", ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), score), cardValue), ArithDouble.parseDouble(bill.getTotalmbjmoney())) + unit);
 
 		addDashLine(array, latticePrinter);
-		addMultiTextJson(array, latticePrinter, FONT_DEFAULT, "实付：", ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), score), cardValue), changeMoney) + unit);
+		addMultiTextJson(array, latticePrinter, FONT_DEFAULT, "实付：", ArithDouble.sub(ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), score), cardValue), changeMoney), ArithDouble.parseDouble(bill.getTotalmbjmoney())) + unit);
 		if (bill.getPaymentslist() != null) {
 			for (PayMentsInfo info : bill.getPaymentslist()) {
 				if (PaymentTypeEnum.getpaymentstyle(info.getType()) != PaymentTypeEnum.SCORE
