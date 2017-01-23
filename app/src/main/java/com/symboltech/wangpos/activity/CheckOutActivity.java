@@ -256,6 +256,7 @@ public class CheckOutActivity extends BaseActivity {
 
     private void doPay(double money) {
         String type = paymentTypeAdapter.getPayType().getType();
+        String payid = paymentTypeAdapter.getPayType().getId();
         //待支付的金额为0时，不允许继续支付
         if (waitPayValue <= 0) {
             ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_pay_success));
@@ -293,10 +294,6 @@ public class CheckOutActivity extends BaseActivity {
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
             case WECHAT:
-                intent_qr = new Intent(mContext, CaptureActivity.class);
-                intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
-                startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
-                paytype = ConstantData.PAYMODE_BY_ALIPAY;
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_WEIXIN_IS_INPUT, "0"))){
 //                    Intent intent_qr = new Intent(this, CaptureActivity.class);
 //                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
@@ -306,12 +303,19 @@ public class CheckOutActivity extends BaseActivity {
 //                    intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
 //                    startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
 //                }
-                break;
+           //     break;
             case ALIPAY:
-                intent_qr = new Intent(mContext, CaptureActivity.class);
-                intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
-                startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
-                paytype = ConstantData.PAYMODE_BY_WEIXIN;
+                if(ConstantData.WECHAT_ID.equals(payid)){
+                    intent_qr = new Intent(mContext, CaptureActivity.class);
+                    intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
+                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                    paytype = ConstantData.PAYMODE_BY_ALIPAY;
+                }else if(ConstantData.ALPAY_ID.equals(payid)){
+                    intent_qr = new Intent(mContext, CaptureActivity.class);
+                    intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
+                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                    paytype = ConstantData.PAYMODE_BY_WEIXIN;
+                }
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
 //                    Intent intent_qr = new Intent(this, CaptureActivity.class);
 //                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
@@ -872,7 +876,8 @@ public class CheckOutActivity extends BaseActivity {
                         bill.setExchangedpoint(exchangeInfo.getExchangepoint());
                         bill.setTotalpoint(result.getSaveOrderInfo().getTotalpoint());
                     }
-
+                    bill.setParkcouponhour(result.getSaveOrderInfo().getParkcouponhour());
+                    bill.setParkcouponaddhour(result.getSaveOrderInfo().getParkcouponaddhour());
                     bill.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
                     bill.setCashier(SpSaveUtils.read(mContext, ConstantData.CASHIER_CODE, ""));
                     bill.setCashiername(SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""));

@@ -12,7 +12,7 @@ import java.util.List;
 public class MemberInfo implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
-	private String id;// 会员唯一ID
+	//private String id;// 会员唯一ID
 	private String memberno;// 会员卡号
 	private String membertype;// 会员类型
 	private String membername;// 会员名称
@@ -71,13 +71,13 @@ public class MemberInfo implements Serializable {
 		this.membername = membername;
 	}
 
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
+//	public String getId() {
+//		return id;
+//	}
+//
+//	public void setId(String id) {
+//		this.id = id;
+//	}
 
 	public String getMemberno() {
 		return memberno;

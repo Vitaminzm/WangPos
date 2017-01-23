@@ -7,11 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.msg.entity.CashierInfo;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 
@@ -99,25 +98,28 @@ public class PaymentTypeAdapter extends BaseAdapter {
 	private void switchUI(int position, Viewholder holder) {
 		switch (PaymentTypeEnum.getpaymentstyle(paymentsInfo.get(position).getType().trim())) {
 			case WECHAT:
-				if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.WECHAT && paymentsInfo.get(position).getId().equals(payType.getId())) {
-					holder.image_key.setImageResource(R.mipmap.weixin_icon_select);
-					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
-				} else {
-					holder.image_key.setImageResource(R.mipmap.weixin_icon);
-					holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
-				}
-				holder.name_key.setText(paymentsInfo.get(position).getName());
-				break;
 			case ALIPAY:
-				if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.ALIPAY && paymentsInfo.get(position).getId().equals(payType.getId())) {
-					holder.image_key.setImageResource(R.mipmap.zhifubao_icon_select);
-					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
-				} else {
-					holder.image_key.setImageResource(R.mipmap.zhifubao_icon);
-					holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
+				if(ConstantData.WECHAT_ID.equals(paymentsInfo.get(position).getId())){
+					if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.WECHAT && paymentsInfo.get(position).getId().equals(payType.getId())) {
+						holder.image_key.setImageResource(R.mipmap.weixin_icon_select);
+						holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
+					} else {
+						holder.image_key.setImageResource(R.mipmap.weixin_icon);
+						holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
+					}
+					holder.name_key.setText(paymentsInfo.get(position).getName());
+					break;
+				}else if(ConstantData.ALPAY_ID.equals(paymentsInfo.get(position).getId())){
+					if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.ALIPAY && paymentsInfo.get(position).getId().equals(payType.getId())) {
+						holder.image_key.setImageResource(R.mipmap.zhifubao_icon_select);
+						holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
+					} else {
+						holder.image_key.setImageResource(R.mipmap.zhifubao_icon);
+						holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
+					}
+					holder.name_key.setText(paymentsInfo.get(position).getName());
+					break;
 				}
-				holder.name_key.setText(paymentsInfo.get(position).getName());
-				break;
 			case BANK:
 				if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.BANK && paymentsInfo.get(position).getId().equals(payType.getId())) {
 					holder.image_key.setImageResource(R.mipmap.card_icon_selcet);

@@ -9,7 +9,7 @@ package com.symboltech.wangpos.utils;
  */
 public enum PaymentTypeEnum {
 
-	CASH("1"), STORE("2"), BANK("3"), WECHAT("5"), ALIPAY("4"), COUPON("6"), ICBC_BANK("7"), ICBC_BUSY("8"), LING("99999"), HANDRECORDED("101"), ALIPAYRECORDED("102"), WECHATRECORDED("103") ,RECORDED_CAREDUCTION("104"), ALLWANCE_COMPENSATION("105"),SCORE("106"), ERR("201");
+	CASH("0"), STORE("2"), BANK("7"), WECHAT("12"), ALIPAY("12"), COUPON("4"), LING("99999"), HANDRECORDED("101"), ALIPAYRECORDED("102"), WECHATRECORDED("103") ,RECORDED_CAREDUCTION("104"), ALLWANCE_COMPENSATION("105"),SCORE("106"), ERR("201");
 	
 	private String styletype;
 	
@@ -24,7 +24,17 @@ public enum PaymentTypeEnum {
 		}
 		return ERR;
 	}
-	
+
+	public static boolean isPaymentstyle(String type){
+		if(!StringUtil.isEmpty(type)){
+			for (PaymentTypeEnum couponstyle : PaymentTypeEnum.values()) {
+				if (!StringUtil.isEmpty(type) && couponstyle.getStyletype().equals(type)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	
 	private PaymentTypeEnum(String styletype) {
 		this.styletype = styletype;

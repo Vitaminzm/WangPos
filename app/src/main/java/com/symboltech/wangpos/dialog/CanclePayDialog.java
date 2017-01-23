@@ -334,9 +334,9 @@ public class CanclePayDialog extends BaseActivity{
 		isCancleCount++;
 		final PayMentsCancleInfo info = payments.get(position);
 		Map<String, String> map = new HashMap<String, String>();
-		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())) {
+		if(info.getId().equals(ConstantData.ALPAY_ID)) {
 			map.put("pay_type", ConstantData.PAYMODE_BY_ALIPAY+"");
-		}else if(info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
+		}else if(info.getId().equals(ConstantData.WECHAT_ID)){
 			map.put("pay_type", ConstantData.PAYMODE_BY_WEIXIN+"");
 		}
 		map.put("total_fee", MoneyAccuracyUtils.thirdpaymoneydealbyinput(info.getMoney()));

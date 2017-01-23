@@ -109,6 +109,12 @@ public class ConstantData {
 	/**三方撤销结果*/
 	public static final int THRID_CANCLE_RESULT_CODE = BASE_CODE + 34;
 
+	/**支付宝id*/
+	public static final String ALPAY_ID = "68";
+
+	/**微信id*/
+	public static final String WECHAT_ID = "63";
+
 	/**在线状态*/
 	public static final int ONLINE_STATE = 0;
 
@@ -272,11 +278,17 @@ public class ConstantData {
 	/** 微信支付渠道 */
 	public static final int PAYMODE_BY_WEIXIN = 3;
 
-	/** 0品牌商品 */
-	public static final int GOODS_SOURCE_BY_BRAND = 0;
+	/** 0品种商品 */
+	public static final String GOODS_SOURCE_BY_BRAND = "0";
 
 	/** 1积分商品 */
-	public static final int GOODS_SOURCE_BY_INTEGRAL = 1;
+	public static final String GOODS_SOURCE_BY_INTEGRAL = "1";
+
+	/** 2部分积分 */
+	public static final String GOODS_SOURCE_BY_SINTEGRAL = "2";
+
+	/** 3大类商品 */
+	public static final String GOODS_SOURCE_BY_BINTEGRAL = "3";
 
 	/** 是否是会员 */
 	public static final String VERIFY_IS_MEMBER = "ismember";

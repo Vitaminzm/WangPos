@@ -57,7 +57,9 @@
     <string name="score">积分</string>
     <string name="warning_no_saleman">没有销售员！</string>
     <string name="warning_no_good">没有商品！</string>
-    <string name="brand_good">品牌商品</string>
+    <string name="brand_good">品种商品</string>
+    <string name="sscore_good">部分积分商品</string>
+    <string name="brandbig_good">大类商品</string>
     <string name="warning_no_input_format">输入格式不正确</string>
     <string name="warning_select_saleman">请选择一个销售员</string>
     <string name="warning_select_good">请选择一个商品</string>
@@ -138,6 +140,7 @@
     <string name="order_money">订单金额：</string>
     <string name="coupon">代金券</string>
     <string name="coupon_m">代金券：</string>
+    <string name="manjian_m">满减金额：</string>
     <string name="real_pay">实际支付</string>
     <string name="real_pay_m">实际支付：</string>
     <string name="score_info">积分信息</string>

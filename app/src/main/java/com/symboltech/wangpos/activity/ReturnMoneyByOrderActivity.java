@@ -110,7 +110,6 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private LayoutInflater inflater;
     private BillInfo billInfo;
 
-    private Map<String, String> typeIds = new HashMap<String, String>();
     private Map<String, String> idTypes = new HashMap<String, String>();
     private Map<String, String> idNames = new HashMap<String, String>();
 
@@ -270,7 +269,6 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         payMentsInfos = billInfo.getPaymentslist();
         if(payMentsInfos != null && payMentsInfos.size() != 0) {
             for (PayMentsInfo info : payMentsInfos) {
-                typeIds.put(info.getType(), info.getId());
                 idTypes.put(info.getId(), info.getType());
                 idNames.put(info.getId(), info.getName());
             }
@@ -475,7 +473,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                         if(isSuccess) {
                             putPayments(thirdPay.getSkfsid(), idNames.get(thirdPay.getSkfsid()), PaymentTypeEnum.WECHAT.getStyletype(), "-"+ thirdPay.getPay_total_fee());
                         }else {
-                            putPayments(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype()),  idNames.get(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype())), PaymentTypeEnum.WECHATRECORDED.getStyletype(), "-"+ thirdPay.getPay_total_fee());
+                            putPayments(getPayTypeId(PaymentTypeEnum.WECHATRECORDED),  idNames.get(getPayTypeId(PaymentTypeEnum.WECHATRECORDED)), PaymentTypeEnum.WECHATRECORDED.getStyletype(), "-"+ thirdPay.getPay_total_fee());
                         }
                         weixinFlag += 1;
                         if (weixinFlag < thirdWeixins.size()) {
@@ -514,7 +512,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                         if (isSuccess) {
                             putPayments(thirdPay.getSkfsid(), idNames.get(thirdPay.getSkfsid()), PaymentTypeEnum.ALIPAY.getStyletype(), "-" + thirdPay.getPay_total_fee());
                         } else {
-                            putPayments(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())), PaymentTypeEnum.ALIPAYRECORDED.getStyletype(), "-" + thirdPay.getPay_total_fee());
+                            putPayments(getPayTypeId(PaymentTypeEnum.ALIPAYRECORDED), idNames.get(getPayTypeId(PaymentTypeEnum.ALIPAYRECORDED)), PaymentTypeEnum.ALIPAYRECORDED.getStyletype(), "-" + thirdPay.getPay_total_fee());
                         }
                         alipayFlag += 1;
                         if (alipayFlag < thirdAlipays.size()) {
@@ -1088,5 +1086,23 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         }else{
             innerRequestCashier(tradeNo);
         }
+    }
+
+    /**
+     * @author zmm emial:mingming.zhang@symboltech.com 2015年11月17日
+     * @Description: 获取支付方式Id
+     *
+     */
+    private String getPayTypeId(PaymentTypeEnum typeEnum) {
+
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getType().equals(typeEnum.getStyletype())) {
+                return paymentslist.get(i).getId();
+            }
+        }
+        return null;
     }
 }

@@ -137,12 +137,12 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
 
     /** 支付名称-支付id */
     private Map<String, String> nameIds = new HashMap<>();
+    /** 支付id-支付类型 */
+    private Map<String, String> idTypes = new HashMap<>();
     /** 支付id - 支付名称*/
     private Map<String, String> idNames = new HashMap<>();
     /** 支付名称-支付类型 */
     private Map<String, String> nameTypes = new HashMap<>();
-    /** 支付类型-支付id */
-    private Map<String, String> typeIds = new HashMap<>();
     /** 退货原因-原因id */
     private Map<String, String> reasonIds = new HashMap<>();
     private double totalReturnMoney;
@@ -363,9 +363,9 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     private void initids() {
         if(paymentInfos != null && paymentInfos.size() != 0) {
             for (PayMentsInfo info : paymentInfos) {
+                idTypes.put(info.getId(), info.getType());
                 nameIds.put(info.getName(), info.getId());
                 idNames.put(info.getId(), info.getName());
-                typeIds.put(info.getType(), info.getId());
                 nameTypes.put(info.getName(), info.getType());
             }
         }
@@ -422,17 +422,19 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         List<PayMentsInfo> visiblePayments = new ArrayList<>();
         if(paymentInfos != null && paymentInfos.size() != 0) {
             for (PayMentsInfo pay : paymentInfos) {
-                //过滤类型大于100的收款方式 以及优惠券方式
-                if(Integer.parseInt(pay.getType()) > 100 || pay.getType().equals(PaymentTypeEnum.COUPON.getStyletype())){
-                    continue;
-                }
-                if(AppConfigFile.isOffLineMode()) {
-                    /**保证现金类收款方式 */
-                    if(PaymentTypeEnum.CASH.getStyletype().equals(pay.getType())) {
+                if(PaymentTypeEnum.isPaymentstyle(pay.getType())){
+                    //过滤类型大于100的收款方式 以及优惠券方式
+                    if(Integer.parseInt(pay.getType()) > 100 || pay.getType().equals(PaymentTypeEnum.COUPON.getStyletype())){
+                        continue;
+                    }
+                    if(AppConfigFile.isOffLineMode()) {
+                        /**保证现金类收款方式 */
+                        if(PaymentTypeEnum.CASH.getStyletype().equals(pay.getType())) {
+                            visiblePayments.add(pay);
+                        }
+                    }else {
                         visiblePayments.add(pay);
                     }
-                }else {
-                        visiblePayments.add(pay);
                 }
             }
         }
@@ -714,7 +716,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                         requestCashier(edit);
                     }else{
                         double money = getDoubleMoney(entity.getMoney());
-                        putPayments(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype())), PaymentTypeEnum.HANDRECORDED.getStyletype(), "-" + money);
+                        putPayments(getPayTypeId(PaymentTypeEnum.HANDRECORDED), idNames.get(getPayTypeId(PaymentTypeEnum.HANDRECORDED)), PaymentTypeEnum.HANDRECORDED.getStyletype(), "-" + money);
                         bankFlag += 1;
                         if (bankFlag < bankStyle.size()) {
                             returnBank();
@@ -768,7 +770,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                     if (isSuccess) {
                         putPayments(id, idNames.get(id), PaymentTypeEnum.ALIPAY.getStyletype(), "-" + money);
                     } else {
-                        putPayments(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())),
+                        putPayments(getPayTypeId(PaymentTypeEnum.ALIPAYRECORDED), idNames.get(getPayTypeId(PaymentTypeEnum.ALIPAYRECORDED)),
                                 PaymentTypeEnum.ALIPAYRECORDED.getStyletype(), "-" + money);
                     }
                     if (alipayFlag < alipayStyle.size()) {
@@ -799,7 +801,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                             if (isSuccess) {
                                 putPayments(id, idNames.get(id), PaymentTypeEnum.WECHAT.getStyletype(), "-" + money);
                             } else {
-                                putPayments(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype())),
+                                putPayments(getPayTypeId(PaymentTypeEnum.WECHATRECORDED), idNames.get(getPayTypeId(PaymentTypeEnum.WECHATRECORDED)),
                                         PaymentTypeEnum.WECHATRECORDED.getStyletype(), "-" + money);
                             }
                             if (weixinFlag < weixinStyle.size()) {
@@ -820,7 +822,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     private void returnAllowanceBank() {
         if (allowanceBankStyle != null && allowanceBankFlag < allowanceBankStyle.size()) {
             double money = getDoubleMoney(allowanceBankStyle.get(allowanceBankFlag));
-            putPayments(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.HANDRECORDED.getStyletype())), PaymentTypeEnum.HANDRECORDED.getStyletype(), "-" + money);
+            putPayments(getPayTypeId(PaymentTypeEnum.HANDRECORDED), idNames.get(getPayTypeId(PaymentTypeEnum.HANDRECORDED)), PaymentTypeEnum.HANDRECORDED.getStyletype(), "-" + money);
             allowanceBankFlag += 1;
             if (allowanceBankFlag < allowanceBankStyle.size()) {
                 returnAllowanceBank();
@@ -838,7 +840,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     private void returnAllowanceAlipay() {
         if (allowanceAlipayStyle != null && allowanceAlipayFlag < allowanceAlipayStyle.size()) {
             double money = getDoubleMoney(allowanceAlipayStyle.get(allowanceAlipayFlag));
-            putPayments(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())), PaymentTypeEnum.ALIPAYRECORDED.getStyletype(), "-" + money);
+            putPayments(getPayTypeId(PaymentTypeEnum.ALIPAYRECORDED), idNames.get(getPayTypeId(PaymentTypeEnum.ALIPAYRECORDED)), PaymentTypeEnum.ALIPAYRECORDED.getStyletype(), "-" + money);
             allowanceAlipayFlag += 1;
             if (allowanceAlipayFlag < allowanceAlipayStyle.size()) {
                 returnAllowanceAlipay();
@@ -856,7 +858,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     private void returnAllowanceWeixin() {
         if (allowanceWeixinStyle != null && allowanceWeixinFlag < allowanceWeixinStyle.size()) {
             double money = getDoubleMoney(allowanceWeixinStyle.get(allowanceWeixinFlag));
-            putPayments(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype()), idNames.get(typeIds.get(PaymentTypeEnum.WECHATRECORDED.getStyletype())), PaymentTypeEnum.WECHATRECORDED.getStyletype(), "-" + money);
+            putPayments(getPayTypeId(PaymentTypeEnum.WECHATRECORDED), idNames.get(getPayTypeId(PaymentTypeEnum.WECHATRECORDED)), PaymentTypeEnum.WECHATRECORDED.getStyletype(), "-" + money);
             allowanceWeixinFlag += 1;
             if (allowanceWeixinFlag < allowanceWeixinStyle.size()) {
                 returnAllowanceWeixin();
@@ -1104,7 +1106,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             final ReturnEntity entity = bankStyle.get(bankFlag);
             if(info != null){
                 if(info.getErrCode().equals("0")){
-                    putPayments(entity.getId(), idNames.get(entity.getId()), typeIds.get(entity.getId()), "-" + getDoubleMoney(entity.getMoney()));
+                    putPayments(entity.getId(), idNames.get(entity.getId()), idTypes.get(entity.getId()), "-" + getDoubleMoney(entity.getMoney()));
                     OrderBean orderBean= new OrderBean();
                     orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(getDoubleMoney(entity.getMoney())+""));
                     orderBean.setTxnId(info.getCashier_trade_no());
@@ -1167,5 +1169,22 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         }else{
             innerRequestCashier(tradeNo);
         }
+    }
+
+    /**
+     * @author zmm emial:mingming.zhang@symboltech.com 2015年11月17日
+     * @Description: 获取支付方式Id
+     *
+     */
+    private String getPayTypeId(PaymentTypeEnum typeEnum) {
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getType().equals(typeEnum.getStyletype())) {
+                return paymentslist.get(i).getId();
+            }
+        }
+        return null;
     }
 }

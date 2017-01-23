@@ -158,7 +158,7 @@ public class MemberEquityActivity extends BaseActivity {
                             if(member != null){
                                 if(getPayTypeId(PaymentTypeEnum.SCORE)!=null){
                                     edit_used_score.setText(String.valueOf(score));
-                                    scoreforhttp(member.getId(), String.valueOf(score));
+                                    scoreforhttp(member.getMemberno(), String.valueOf(score));
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
                                 }

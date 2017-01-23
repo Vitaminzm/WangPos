@@ -1,5 +1,6 @@
 package com.symboltech.wangpos.msg.entity;
 
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.StringUtil;
 
@@ -33,7 +34,7 @@ public class GoodsInfo implements Serializable, Cloneable {
 	private String unit;// 单位
 	private String point = "0";// 单品消耗积分
 	private String addprice; // 积分换购价格
-	private String sptype;// 商品类型 0 品牌商品 1 积分商品
+	private String sptype;// 商品类型 0 品种商品 1 积分商品 2部分积分 3大类商品
 	private String usedpointtemp = "0";// 消耗的积分临时变量
 	private String spmode = ""; //0:定价商品，不许修改单价
 
@@ -229,9 +230,9 @@ public class GoodsInfo implements Serializable, Cloneable {
 		try {
 			if (!StringUtil.isEmpty(sptype) && !StringUtil.isEmpty(this.salecount)
 					&& (!StringUtil.isEmpty(this.price) || !StringUtil.isEmpty(this.addprice))) {
-				if ("0".equals(sptype)) {
+				if (ConstantData.GOODS_SOURCE_BY_BRAND.equals(sptype) || ConstantData.GOODS_SOURCE_BY_BINTEGRAL.equals(sptype)) {
 					this.saleamt = ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.price) + "";
-				} else if ("1".equals(sptype)) {
+				} else if (ConstantData.GOODS_SOURCE_BY_INTEGRAL.equals(sptype)|| ConstantData.GOODS_SOURCE_BY_SINTEGRAL.equals(sptype)) {
 					this.saleamt = ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.addprice) + "";
 				}
 			}

@@ -708,7 +708,7 @@ public class PaymentActivity extends BaseActivity {
             if (shopCarList != null && shopCarList.size() > 0) {
                 for (GoodsInfo goodinfo : shopCarList) {
                     summoney += ArithDouble.parseDouble(goodinfo.getSaleamt());
-                    if (!StringUtil.isEmpty(goodinfo.getSptype()) && "1".equals(goodinfo.getSptype())) {
+                    if (!StringUtil.isEmpty(goodinfo.getSptype()) && (ConstantData.GOODS_SOURCE_BY_INTEGRAL.equals(goodinfo.getSptype()) || ConstantData.GOODS_SOURCE_BY_SINTEGRAL.equals(goodinfo.getSptype()))) {
                         sumintegral += ArithDouble.parseInt(goodinfo.getUsedpointtemp());
                     }
                 }

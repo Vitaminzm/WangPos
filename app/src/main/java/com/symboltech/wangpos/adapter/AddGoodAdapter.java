@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
 
 import java.util.List;
@@ -66,7 +67,7 @@ public class AddGoodAdapter extends BaseAdapter {
 			holder = (Viewholder) convertView.getTag();
 		}
 		holder.tv_name.setText(goods.get(position).getGoodsname());
-		if(goods.get(position).getSptype().equals("0")){
+		if(ConstantData.GOODS_SOURCE_BY_BRAND.equals(goods.get(position).getSptype()) || ConstantData.GOODS_SOURCE_BY_BINTEGRAL.equals(goods.get(position).getSptype())){
 			holder.tv_info.setText("￥"+goods.get(position).getPrice());
 		}else {
 			holder.tv_info.setText("￥"+goods.get(position).getPrice()+"  积分"+goods.get(position).getPoint());

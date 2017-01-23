@@ -77,6 +77,10 @@ public class PaymentDetailActivity extends BaseActivity {
     TextView text_coupon;
     @Bind(R.id.ll_coupon)
     LinearLayout ll_coupon;
+    @Bind(R.id.text_manjian)
+    TextView text_manjian;
+    @Bind(R.id.ll_manjian)
+    LinearLayout ll_manjian;
 
     @Bind(R.id.ll_score_deduction)
     LinearLayout ll_score_deduction;
@@ -221,10 +225,18 @@ public class PaymentDetailActivity extends BaseActivity {
         text_order_id.setText(bill.getBillid());
         text_order_time.setText(bill.getSaletime());
         text_order_money.setText(bill.getTotalmoney());
-        text_real_pay_money.setText(bill.getRealmoney());
+
+
         // 是否显示卡券总额
         double card_coupon = 0;
         double scoreDeduction = 0;
+        double manjian = 0;
+        manjian = ArithDouble.parseDouble(bill.getTotalmbjmoney());
+        if(manjian > 0){
+            ll_manjian.setVisibility(View.VISIBLE);
+            text_manjian.setText(manjian+"");
+        }
+        text_real_pay_money.setText(ArithDouble.sub(ArithDouble.parseDouble(bill.getRealmoney()), manjian)+"");
         for (int i = 0; i < bill.getPaymentslist().size(); i++) {
             PayMentsInfo info = bill.getPaymentslist().get(i);
             if (info.getType().equals(PaymentTypeEnum.CASH.getStyletype())) {
@@ -460,8 +472,8 @@ public class PaymentDetailActivity extends BaseActivity {
         Map<String, String> map = new HashMap<String, String>();
         map.put("cashier", SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""));
         map.put("billid", bill.getBillid());
-        if (bill.getMember() != null && bill.getMember().getId() != null) {
-            map.put("cardno", bill.getMember().getId());
+        if (bill.getMember() != null && bill.getMember().getMemberno() != null) {
+            map.put("cardno", bill.getMember().getMemberno());
         }
         try {
             String json = GsonUtil.beanToJson(couponInfos);

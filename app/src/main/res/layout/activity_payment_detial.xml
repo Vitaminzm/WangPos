@@ -75,36 +75,35 @@
                         android:textColor="@color/font_color"/>
                 </LinearLayout>
                 <LinearLayout
+                    android:layout_marginTop="@dimen/margin_ov"
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="@string/order_money"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:id="@+id/text_order_money"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:text="0"
+                        android:textColor="@color/font_color"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="@dimen/font_size_tf"
+                        android:layout_marginLeft="@dimen/margin_oz"
+                        android:text="@string/yuan"
+                        android:textColor="@color/font_color"/>
+                </LinearLayout>
+                <LinearLayout
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <LinearLayout
-                        android:layout_marginTop="@dimen/margin_ov"
-                        android:orientation="horizontal"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_tf"
-                            android:text="@string/order_money"
-                            android:textColor="@color/font_color"/>
-                        <TextView
-                            android:id="@+id/text_order_money"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_tf"
-                            android:text="0"
-                            android:textColor="@color/font_color"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="@dimen/font_size_tf"
-                            android:layout_marginLeft="@dimen/margin_oz"
-                            android:text="@string/yuan"
-                            android:textColor="@color/font_color"/>
-                    </LinearLayout>
                     <LinearLayout
                         android:id="@+id/ll_coupon"
                         android:visibility="gone"
@@ -121,6 +120,35 @@
                             android:textColor="@color/font_color"/>
                         <TextView
                             android:id="@+id/text_coupon"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="0"
+                            android:textColor="@color/font_color"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:layout_marginLeft="@dimen/margin_oz"
+                            android:text="@string/yuan"
+                            android:textColor="@color/font_color"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/ll_manjian"
+                        android:visibility="gone"
+                        android:layout_marginTop="@dimen/margin_ov"
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="@dimen/font_size_tf"
+                            android:text="@string/manjian_m"
+                            android:textColor="@color/font_color"/>
+                        <TextView
+                            android:id="@+id/text_manjian"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="@dimen/font_size_tf"

@@ -130,7 +130,7 @@ public class ParkCouponsAdapter extends RecyclerView.Adapter<ParkCouponsAdapter.
 	public void onBindViewHolder(ViewHolder holder, int position) {
 		holder.coupon_name.setText("停车券");
 		holder.coupon_unit.setText("小时");
-		holder.item_unit.setVisibility(View.GONE);
+		holder.item_unit.setVisibility(View.INVISIBLE);
 		holder.coupon_value.setText(couponinfos.get(position));
 	}
 
