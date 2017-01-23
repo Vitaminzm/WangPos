@@ -103,7 +103,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     break;
                 case Vipcard:
                     memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_MAGCARD, (String) msg.obj);
-                    if(MyApplication.posType.equals("WPOS")){
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 
                     }else{
                         try {
@@ -145,7 +145,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         title_text_content.setText(getString(R.string.number_access));
         right_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
         left_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in);
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             mMagneticReader = WeiposImpl.as().openMagneticReader();
             if (mMagneticReader == null) {
                 ToastUtils.sendtoastbyhandler(handler, "磁条卡读取服务不可用！");
@@ -251,7 +251,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     public void verifyByPhone(){
         if(radioGroup_type.getCheckedRadioButtonId() == R.id.text_phone_number){
-            if(MyApplication.posType.equals("WPOS")){
+            if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                 if (mReadMagTask != null) {
                     mReadMagTask.interrupt();
                     mReadMagTask = null;
@@ -295,7 +295,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     private ReadMagTask mReadMagTask = null;
     public void verifyByVipCard() {
         if(radioGroup_type.getCheckedRadioButtonId() == R.id.text_vip_card){
-            if(MyApplication.posType.equals("WPOS")){
+            if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                 if (mReadMagTask == null) {
                     mReadMagTask = new ReadMagTask();
                     mReadMagTask.start();
@@ -337,7 +337,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     }
 
     public void verifyByQR(){
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             if (mReadMagTask != null) {
                 mReadMagTask.interrupt();
                 mReadMagTask = null;

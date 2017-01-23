@@ -278,7 +278,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             edit_input_reason.setText(R.string.warning_no);
         }
         addReturnInfo(true);
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             try {
                 // 设备可能没有打印机，open会抛异常
                 latticePrinter = WeiposImpl.as().openLatticePrinter();
@@ -712,7 +712,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             new InputDialog(this, "银行卡退款", new GeneralEditListener(){
                 @Override
                 public void editinput(String edit) {
-                    if(MyApplication.posType.equals("WPOS")){
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                         requestCashier(edit);
                     }else{
                         double money = getDoubleMoney(entity.getMoney());
@@ -983,7 +983,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     }
 
     public void printBackByorder(final BillInfo billinfo){
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             if(latticePrinter == null){
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;

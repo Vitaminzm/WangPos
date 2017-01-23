@@ -293,7 +293,7 @@ public class DemandNoteActivity extends BaseActivity {
                 }
             }
         });
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             try {
                 // 设备可能没有打印机，open会抛异常
                 latticePrinter = WeiposImpl.as().openLatticePrinter();
@@ -487,7 +487,7 @@ public class DemandNoteActivity extends BaseActivity {
             public void handleActionSuccess(String actionName, BaseResult result) {
                 if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
                     ToastUtils.sendtoastbyhandler(handler, "提交成功");
-                    if(MyApplication.posType.equals("WPOS")){
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                         if(latticePrinter == null){
                             ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                             DemandNoteActivity.this.finish();
@@ -561,7 +561,7 @@ public class DemandNoteActivity extends BaseActivity {
         info.setTotallist(infoList);
         info.setBillcount(tv_count_total.getText().toString());
         info.setTotalmoney(tv_money_total.getText().toString());
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             if(latticePrinter == null){
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;

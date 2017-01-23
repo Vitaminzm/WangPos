@@ -248,7 +248,7 @@ public class WorkLogActivity extends BaseActivity {
                 });
             }
         });
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             try {
                 // 设备可能没有打印机，open会抛异常
                 latticePrinter = WeiposImpl.as().openLatticePrinter();
@@ -375,7 +375,7 @@ public class WorkLogActivity extends BaseActivity {
         }
     }
     public void printReport(final boolean flag, final ReportInfo reportInfo){
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             if(latticePrinter == null){
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;

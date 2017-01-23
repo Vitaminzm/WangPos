@@ -203,7 +203,7 @@ public class CanclePayDialog extends BaseActivity{
 		if(cash > 0)
 			text_info.setText("(现金类 "+cash+")元");
 		if(totalMoney > cash){
-			if(MyApplication.posType.equals("WPOS")){
+			if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				requestCashier();
 			}else{
 				Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
@@ -405,7 +405,7 @@ public class CanclePayDialog extends BaseActivity{
 		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype()) || info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
 			thirdcancle(position);
 		}else {
-			if (MyApplication.posType.equals("WPOS")){
+			if (MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				if(isCancleCount > 0){
 					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
 					return;

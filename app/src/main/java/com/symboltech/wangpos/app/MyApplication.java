@@ -31,7 +31,7 @@ public class MyApplication extends Application {
      */
     private static String cashierId = "-1";
 
-    public static String posType="WPOS";//"KPOS";//
+    public static String posType= ConstantData.POS_TYPE_W;
     @Override
     public void onCreate() {
         super.onCreate();
@@ -40,7 +40,7 @@ public class MyApplication extends Application {
         //CrashHandler.getInstance().init(context);
         LogUtil.i("lgs", "Myapplication--------");
         checkNettimertask();
-        if(posType.equals("WPOS")){
+        if(posType.equals(ConstantData.POS_TYPE_W)){
             initSdk(context);
         }
     }

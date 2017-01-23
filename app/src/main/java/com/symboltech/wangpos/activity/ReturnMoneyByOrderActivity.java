@@ -301,7 +301,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
         getReturnMoneyInfo();
         realMoney = ArithDouble.sub(ArithDouble.parseDouble(billInfo.getTotalmoney()), ArithDouble.add(couponMoney, scoreMoney));
         listview_return_type.setAdapter(new ReturnTableAdapter(this, payMentsInfos));
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             try {
                 // 设备可能没有打印机，open会抛异常
                 latticePrinter = WeiposImpl.as().openLatticePrinter();
@@ -435,7 +435,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             if("true".equals(entity.getDes())){
                 bankFlag += 1;
             }else{
-                if(MyApplication.posType.equals("WPOS")){
+                if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                     requestCashier(entity.getTradeno());
                 }else{
                     double money = ArithDouble.parseDouble(entity.getAmount());
@@ -706,7 +706,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     }
 
     public void printBackByorder(final BillInfo billinfo){
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             if(latticePrinter == null){
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;

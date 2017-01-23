@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -82,12 +83,13 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 				rl_sendcarcoupon.setVisibility(View.VISIBLE);
 				ll_status.setVisibility(View.GONE);
 				break;
-				case DOFINISH:
-					String carno = (String) msg.obj;
-					if(finish != null){
-						finish.finishSendCoupon(carno, hour);
-					}
-					break;
+			case DOFINISH:
+				String carno = (String) msg.obj;
+				if(finish != null){
+					finish.finishSendCoupon(carno, hour);
+				}
+				dismiss();
+				break;
 			default:
 				break;
 			}
@@ -156,8 +158,8 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 		bind_adapter.setDropDownViewResource(R.layout.item_car_plate_drop);
 		sp_bind_plate.setAdapter(bind_adapter);
 		
-		setDropDownHeight(sp_emporary_plate, (int)context.getResources().getDimension(R.dimen.height_vzz));
-		setDropDownHeight(sp_bind_plate, (int)context.getResources().getDimension(R.dimen.height_fzz));
+		setDropDownHeight(sp_emporary_plate, (int)context.getResources().getDimension(R.dimen.height_fzz));
+		setDropDownHeight(sp_bind_plate, (int)context.getResources().getDimension(R.dimen.height_txz));
 		
 		radioGroup = (MyRadioGroup) findViewById(R.id.select_mode);
 		
@@ -218,7 +220,7 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 				}
 			}else{
 				plate = et_emporary_plate.getText().toString();
-				if(plate != null){
+				if(plate != null && plate.length() == 6){
 					if(member == null){
 						manualParkCouponbyhttp(hour, addhour, sp_emporary_plate.getSelectedItem().toString()+plate, null);
 					}else{
@@ -237,6 +239,10 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 	}
 	
 	private void manualParkCouponbyhttp(final String hour, String addhour, final String carno, String cardno){
+		InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+		if (imm.isActive()) {
+			imm.hideSoftInputFromWindow(et_emporary_plate.getWindowToken(), 0); // 强制隐藏键盘
+		}
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("hour", hour);
 		map.put("addhour", addhour);
@@ -265,11 +271,10 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 			public void handleActionSuccess(String actionName, BaseResult result) {
 				if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
 					Message message=Message.obtain();
-					message.what = 5;
+					message.what = DOFINISH;
 					message.obj = carno;
 					mHandler.sendMessage(message);
 					ToastUtils.sendtoastbyhandler(mHandler, context.getString(R.string.send_success));
-					dismiss();
 				}else{
 					ToastUtils.sendtoastbyhandler(mHandler, context.getString(R.string.send_failed));
 				}

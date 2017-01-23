@@ -328,7 +328,7 @@ public class PaymentDetailActivity extends BaseActivity {
         }else{
             ll_member_park_coupon.setVisibility(View.GONE);
         }
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             try {
                 // 设备可能没有打印机，open会抛异常
                 latticePrinter = WeiposImpl.as().openLatticePrinter();
@@ -438,7 +438,7 @@ public class PaymentDetailActivity extends BaseActivity {
     }
 
     public void printByorder(final BillInfo billinfo){
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             if(latticePrinter == null){
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;
@@ -535,8 +535,8 @@ public class PaymentDetailActivity extends BaseActivity {
             }
         }
         if(couponInfos.size() > 0){
-            if(MyApplication.posType.equals("WPOS")){
-                if(MyApplication.posType.equals("WPOS")){
+            if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
+                if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                     if(latticePrinter == null){
                         ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                         return;

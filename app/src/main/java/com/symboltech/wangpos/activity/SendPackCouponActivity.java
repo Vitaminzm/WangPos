@@ -106,8 +106,8 @@ public class SendPackCouponActivity extends BaseActivity {
         emporary_adapter = new ArrayAdapter<String>(mContext, R.layout.item_car_plate, emporary_data);
         emporary_adapter.setDropDownViewResource(R.layout.item_car_plate_drop);
         emporary_plate.setAdapter(emporary_adapter);
-        setDropDownHeight(emporary_plate, 250);
-        //初始化显示
+        setDropDownHeight(emporary_plate, (int) getResources().getDimension(R.dimen.height_rsz));
+
         radioGroup.setOnCheckedChangeListener(new MyRadioGroup.OnCheckedChangeListener() {
 
             @Override
@@ -299,6 +299,7 @@ public class SendPackCouponActivity extends BaseActivity {
                                         bind_adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.item_car_plate, bind_data);
                                         bind_adapter.setDropDownViewResource(R.layout.item_car_plate_drop);
                                         bind_plate.setAdapter(bind_adapter);
+                                        setDropDownHeight(bind_plate, (int) getResources().getDimension(R.dimen.height_txz));
                                         bind_plate.setEnabled(false);
                                         btn_emporary.setVisibility(View.VISIBLE);
                                         ll_bind_car_plate.setVisibility(View.VISIBLE);

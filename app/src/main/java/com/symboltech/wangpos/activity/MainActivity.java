@@ -269,7 +269,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             uploadOfflineData(true);
 
         }
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             try {
                 // 设备可能没有打印机，open会抛异常
                 latticePrinter = WeiposImpl.as().openLatticePrinter();
@@ -344,7 +344,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         }
         filter.addAction(ConstantData.OFFLINE_MODE);
         registerReceiver(receiver, filter);
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 
         }else {
             registerReceiver(broadcastReceiver, new IntentFilter(
@@ -357,7 +357,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onPause() {
         unregisterReceiver(receiver);
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 
         }else {
             unregisterReceiver(broadcastReceiver);
@@ -392,7 +392,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void recycleMemery() {
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 
         }else {
             if (iPrinterService != null) {
@@ -410,7 +410,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         AppConfigFile.delActivity(this);
     }
     public void print_last(String id){
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             ToastUtils.sendtoastbyhandler(handler, "暂不支持");
             return;
         }else {
@@ -644,7 +644,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void printBackByorder(final BillInfo billinfo){
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             if(latticePrinter == null){
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;
@@ -675,7 +675,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     }
 
     public void printByorder(final BillInfo billinfo){
-        if(MyApplication.posType.equals("WPOS")){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             if(latticePrinter == null){
                 ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
                 return;

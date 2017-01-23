@@ -74,7 +74,7 @@ public class AppConfigFile {
 				}
 			}
 		}
-		if(MyApplication.posType.equals("WPOS")){
+		if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 			try {
 				WeiposImpl.as().destroy();
 			} catch (Exception e) {
