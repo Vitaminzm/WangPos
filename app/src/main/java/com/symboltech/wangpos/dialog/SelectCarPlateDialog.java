@@ -24,6 +24,7 @@ import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.http.HttpStringClient;
+import com.symboltech.wangpos.msg.entity.CarInfo;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -139,14 +140,14 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 		et_emporary_plate = (EditText) findViewById(R.id.et_emporary_plate);
 		
 		bind_data = new ArrayList<String>();
-//		if(member != null && member.getListcar() != null && member.getListcar().size() > 0){
-//			for(CarInfo carinfo:member.getListcar()){
-//				bind_data.add(carinfo.getCarnum());
-//			}
-//			et_emporary_plate.setEnabled(false);
-//			sp_bind_plate.setEnabled(true);
-//			sp_emporary_plate.setEnabled(false);
-//		}else
+		if(member != null && member.getListcar() != null && member.getListcar().size() > 0){
+			for(CarInfo carinfo:member.getListcar()){
+				bind_data.add(carinfo.getCarnum());
+			}
+			et_emporary_plate.setEnabled(false);
+			sp_bind_plate.setEnabled(true);
+			sp_emporary_plate.setEnabled(false);
+		}else
 		{
 			((RadioButton)findViewById(R.id.btn_emporary)).setChecked(true);
 			sp_bind_plate.setEnabled(false);

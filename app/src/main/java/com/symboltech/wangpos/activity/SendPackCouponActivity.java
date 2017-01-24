@@ -300,7 +300,6 @@ public class SendPackCouponActivity extends BaseActivity {
                                         bind_adapter.setDropDownViewResource(R.layout.item_car_plate_drop);
                                         bind_plate.setAdapter(bind_adapter);
                                         setDropDownHeight(bind_plate, (int) getResources().getDimension(R.dimen.height_txz));
-                                        bind_plate.setEnabled(false);
                                         btn_emporary.setVisibility(View.VISIBLE);
                                         ll_bind_car_plate.setVisibility(View.VISIBLE);
                                     }else{

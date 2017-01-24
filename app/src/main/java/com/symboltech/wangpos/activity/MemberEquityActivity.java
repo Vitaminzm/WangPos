@@ -222,7 +222,7 @@ public class MemberEquityActivity extends BaseActivity {
         AppConfigFile.delActivity(this);
     }
 
-    @OnClick({R.id.title_icon_back, R.id.imageview_qr})
+    @OnClick({R.id.title_icon_back, R.id.imageview_qr, R.id.text_confirm})
     public void click(View view){
         if(Utils.isFastClick()){
             return;
@@ -230,9 +230,10 @@ public class MemberEquityActivity extends BaseActivity {
         int id = view.getId();
         switch (id){
             case R.id.title_icon_back:
-                if(couponList.size()>0){
-                    checkPaperCoupon(AppConfigFile.getBillId(), couponList);
-                }else
+            case R.id.text_confirm:
+//                if(couponList.size()>0){
+//                    checkPaperCoupon(AppConfigFile.getBillId(), couponList);
+//                }else
                 {
                     goPayment(couponList, null);
                 }

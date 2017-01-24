@@ -227,7 +227,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
             unbindService(mMemberCardConnection);
             unregisterReceiver(msrReceiver);
         }
-
+        isRun = false;
         handler.removeCallbacksAndMessages(null);
         AppConfigFile.delActivity(this);
     }
@@ -614,8 +614,8 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                 });
     }
 
+    private boolean isRun = false;
     class ReadMagTask extends Thread {
-        private boolean isRun = false;
         @Override
         public void run() {
             isRun = true;
