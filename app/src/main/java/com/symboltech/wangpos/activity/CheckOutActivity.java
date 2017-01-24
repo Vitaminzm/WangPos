@@ -680,26 +680,32 @@ public class CheckOutActivity extends BaseActivity {
                 commitOrder();
                 break;
             case R.id.imageview_more:
-                if(member_equity != null && member_equity.getCouponInfos() != null && member_equity.getLimitpoint()!= null){
-                    Intent intent = new Intent(this, MemberEquityActivity.class);
-                    intent.putExtra(ConstantData.CART_ALL_MONEY, ArithDouble.add(ArithDouble.add(waitPayValue, orderScore), orderCoupon)+"");
-                    intent.putExtra(ConstantData.MEMBER_EQUITY, member_equity);
-                    intent.putExtra(ConstantData.GET_MEMBER_INFO, member);
+            case R.id.ll_member_equity:
+                if(member_type != null && !member_type.equals(ConstantData.MEMBER_VERIFY_BY_PHONE)){
+                    if(member_equity != null && (member_equity.getCouponInfos() != null || member_equity.getLimitpoint()!= null)){
+                        Intent intent = new Intent(this, MemberEquityActivity.class);
+                        intent.putExtra(ConstantData.CART_ALL_MONEY, ArithDouble.add(ArithDouble.add(waitPayValue, orderScore), orderCoupon)+"");
+                        intent.putExtra(ConstantData.MEMBER_EQUITY, member_equity);
+                        intent.putExtra(ConstantData.GET_MEMBER_INFO, member);
 
-                    intent.putExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, orderScoreOverrage);
-                    intent.putExtra(ConstantData.GET_ORDER_SCORE_INFO, orderScore);
-                    intent.putExtra(ConstantData.USE_INTERRAL, (Serializable)exchangeInfo);
+                        intent.putExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, orderScoreOverrage);
+                        intent.putExtra(ConstantData.GET_ORDER_SCORE_INFO, orderScore);
+                        intent.putExtra(ConstantData.USE_INTERRAL, (Serializable)exchangeInfo);
 
-                    intent.putExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, orderCouponOverrage);
-                    intent.putExtra(ConstantData.GET_ORDER_COUPON_INFO, orderCoupon);
-                    intent.putExtra(ConstantData.CAN_USED_COUPON, (Serializable)coupons);
-                    startActivityForResult(intent, ConstantData.MEMBER_EQUITY_REQUEST_CODE);
-                }else {
-                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_no_equity));
+                        intent.putExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, orderCouponOverrage);
+                        intent.putExtra(ConstantData.GET_ORDER_COUPON_INFO, orderCoupon);
+                        intent.putExtra(ConstantData.CAN_USED_COUPON, (Serializable)coupons);
+                        startActivityForResult(intent, ConstantData.MEMBER_EQUITY_REQUEST_CODE);
+                    }else {
+                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_no_equity));
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, "手机号验证会员不允许使用权益");
+                    return;
                 }
                 break;
             case R.id.title_icon_back:
-                if(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), waitPayValue) > 0){
+                if (payMentsCancle.size()>0) {
                     ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_pay_return_failed));
                     return;
                 }
@@ -749,18 +755,14 @@ public class CheckOutActivity extends BaseActivity {
                 orderScoreOverrage = data.getDoubleExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, 0.0);
                 // 使用的积分抵扣金额
                 orderScore = ArithDouble.sub(data.getDoubleExtra(ConstantData.GET_ORDER_SCORE_INFO, 0.0), orderScoreOverrage);
-                if (orderScore > 0) {
-                    text_score_deduction_money.setText(orderScore + "");
-                }
+                text_score_deduction_money.setText(orderScore + "");
                 exchangeInfo = (ExchangeInfo) data.getSerializableExtra(ConstantData.USE_INTERRAL);
                 // 使用的卡券
                 // 获取使用卡券信息
                 coupons = (List<CouponInfo>) data.getSerializableExtra(ConstantData.CAN_USED_COUPON);
                 orderCouponOverrage = data.getDoubleExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, 0.0);
                 orderCoupon = ArithDouble.sub(data.getDoubleExtra(ConstantData.GET_ORDER_COUPON_INFO, 0.0), orderCouponOverrage);
-                if (orderCoupon > 0.0) {
-                    text_coupon_deduction_money.setText(orderCoupon + "");
-                }
+                text_coupon_deduction_money.setText(orderCoupon + "");
                 // 设置实付金额和待付金额
                 waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));

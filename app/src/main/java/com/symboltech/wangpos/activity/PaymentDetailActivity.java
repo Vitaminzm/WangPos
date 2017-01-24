@@ -290,7 +290,7 @@ public class PaymentDetailActivity extends BaseActivity {
             // 抵扣的积分
             if(bill.getExchangedpoint()!=null){
                 deductPoint = ArithDouble.parseDouble(bill.getExchangedpoint());
-                text_score_deduction.setText(deductPoint+"");
+                text_deduction_score.setText(deductPoint+"");
             }
             totalPoint = ArithDouble.sub(awardPoint, ArithDouble.add(deductPoint, usedPoint));
             text_now_score.setText(ArithDouble.add(ArithDouble.parseDouble(bill.getMember().getCent_total()), totalPoint) + "");

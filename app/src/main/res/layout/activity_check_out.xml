@@ -127,6 +127,7 @@
             android:src="@mipmap/icon_more" />
 
         <LinearLayout
+            android:id="@+id/ll_member_equity"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toLeftOf="@id/imageview_more"

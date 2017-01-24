@@ -118,8 +118,40 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.ViewHold
 		couponinfos.add(collection);
 		notifyDataSetChanged();
 	}
-	
-	
+
+	public int addAllByshow(Collection<CouponInfo> collection){
+		int now = 0;
+		if(couponinfos != null && couponinfos.size() >0 && collection != null){
+			for(int i=0;i<couponinfos.size();i++){
+				if(isExit(collection, couponinfos.get(i))){
+					if(!isSelect(i)){
+						now = i;
+						addSelect(i);
+					}
+				}
+			}
+			notifyDataSetChanged();
+		}
+		return now;
+	}
+
+	public boolean isExit(Collection<CouponInfo> collection, CouponInfo couponInfo){
+		boolean ret = false;
+		if(collection != null && collection.size() >0 && couponInfo != null){
+			for(CouponInfo info:collection){
+				if(info != null){
+					if(info.getCouponno().equals(couponInfo.getCouponno())){
+						ret = true;
+						break;
+					}
+				}
+			}
+			return ret;
+		}else{
+			return ret;
+		}
+	}
+
 	public class ViewHolder extends RecyclerView.ViewHolder implements  View.OnClickListener{
 		public TextView coupon_value, coupon_name;
 		public ImageView coupon_select;

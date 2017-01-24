@@ -5,7 +5,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -79,8 +78,8 @@ public class MemberEquityActivity extends BaseActivity {
     private double maxScoreValue;
 
     private CouponsAdapter sendAdapter;
-    private double orderScore;
-    private double orderCoupon;
+    private double orderScore = 0;
+    private double orderCoupon = 0;
     private SubmitGoods submitgoods;
     private List<CouponInfo> couponList;
 
@@ -108,8 +107,14 @@ public class MemberEquityActivity extends BaseActivity {
     @Override
     protected void initData() {
         couponList = new ArrayList<>();
-        exchangeInfo.setExchangemoney("0");
-        exchangeInfo.setExchangepoint("0");
+        ExchangeInfo temp = (ExchangeInfo) getIntent().getSerializableExtra(ConstantData.USE_INTERRAL);
+        if(temp!= null){
+            exchangeInfo.setExchangemoney(temp.getExchangemoney());
+            exchangeInfo.setExchangepoint(temp.getExchangepoint());
+        }else{
+            exchangeInfo.setExchangemoney("0");
+            exchangeInfo.setExchangepoint("0");
+        }
         title_text_content.setText(getString(R.string.number_access));
         orderTotleValue = ArithDouble.parseDouble(getIntent().getStringExtra(ConstantData.CART_ALL_MONEY));
         submitgoods = (SubmitGoods) getIntent().getSerializableExtra(ConstantData.MEMBER_EQUITY);
@@ -119,55 +124,53 @@ public class MemberEquityActivity extends BaseActivity {
             //score_rule.setText(member.getPointrule());
             text_hold_score.setText(member.getCent_total());
         }
+        new HorizontalKeyBoard(this, this, edit_used_score, ll_keyboard, new KeyBoardListener() {
+            @Override
+            public void onComfirm() {
+
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onValue(String value) {
+                double score = 0;
+                try {
+                    score = ArithDouble.parseDouble(value);
+                    BigDecimal b = new BigDecimal(score);
+                    score = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    edit_used_score.setText("");
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_format_msg));
+                    return;
+                }
+                if (score > maxScoreValue) {
+                    edit_used_score.setText("");
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg));
+                } else {
+                    if(member != null){
+                        if(getPayTypeId(PaymentTypeEnum.SCORE)!=null){
+                            edit_used_score.setText(String.valueOf(score));
+                            scoreforhttp(member.getMemberno(), String.valueOf(score));
+                        }else{
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+                        }
+
+                    }
+                }
+            }
+        });
         //显示可用的最大积分
         if (submitgoods != null){
-            if (TextUtils.isEmpty(submitgoods.getLimitpoint())) {
-                maxScoreValue = 0;
-                text_max_score.setText(maxScoreValue +"");
-            } else {
-                maxScoreValue = ArithDouble.parseDouble(submitgoods.getLimitpoint());
-                text_max_score.setText(maxScoreValue +"");
-                new HorizontalKeyBoard(this, this, edit_used_score, ll_keyboard, new KeyBoardListener() {
-                    @Override
-                    public void onComfirm() {
-
-                    }
-
-                    @Override
-                    public void onCancel() {
-
-                    }
-
-                    @Override
-                    public void onValue(String value) {
-                        double score = 0;
-                        try {
-                            score = ArithDouble.parseDouble(value);
-                            BigDecimal b = new BigDecimal(score);
-                            score = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            edit_used_score.setText("");
-                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_format_msg));
-                            return;
-                        }
-                        if (score > maxScoreValue) {
-                            edit_used_score.setText("");
-                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg));
-                        } else {
-                            if(member != null){
-                                if(getPayTypeId(PaymentTypeEnum.SCORE)!=null){
-                                    edit_used_score.setText(String.valueOf(score));
-                                    scoreforhttp(member.getMemberno(), String.valueOf(score));
-                                }else{
-                                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
-                                }
-
-                            }
-                        }
-                    }
-                });
-            }
+            maxScoreValue = ArithDouble.parseDouble(submitgoods.getLimitpoint());
+            text_max_score.setText(maxScoreValue +"");
+            edit_used_score.setText(exchangeInfo.getExchangepoint());
+            orderScore = ArithDouble.parseDouble(exchangeInfo.getExchangemoney());
+            text_deduction_money.setText(exchangeInfo.getExchangemoney());
             // 显示会员拥有卡券
             if(submitgoods.getCouponInfos() != null && submitgoods.getCouponInfos().size() > 0){
                 recycleview_hold_coupon.setVisibility(View.VISIBLE);
@@ -200,6 +203,14 @@ public class MemberEquityActivity extends BaseActivity {
                             }
                         });
                 recycleview_hold_coupon.setAdapter(sendAdapter);
+                double orderCardOverrage = getIntent().getDoubleExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, 0.0);
+                double orderCard = ArithDouble.sub(getIntent().getDoubleExtra(ConstantData.GET_ORDER_COUPON_INFO, 0.0), orderCardOverrage);
+                List<CouponInfo> coupons = (List<CouponInfo>) getIntent().getSerializableExtra(ConstantData.CAN_USED_COUPON);
+                if(coupons != null && coupons.size() > 0){
+                    int scoll = sendAdapter.addAllByshow(coupons);
+                    recycleview_hold_coupon.scrollToPosition(scoll);
+                    orderCoupon = ArithDouble.add(orderCoupon, ArithDouble.add(orderCard, orderCardOverrage));
+                }
             }
         }else{
             recycleview_hold_coupon.setVisibility(View.INVISIBLE);
@@ -338,6 +349,7 @@ public class MemberEquityActivity extends BaseActivity {
                                         sendAdapter.add(result.getCouponinfo());
                                         sendAdapter.addSelect(sendAdapter.getItemCount() - 1);
                                         couponList.add(result.getCouponinfo());
+                                        recycleview_hold_coupon.scrollToPosition(sendAdapter.getItemCount() - 1);
                                     }
                                 });
                             }
@@ -375,6 +387,7 @@ public class MemberEquityActivity extends BaseActivity {
     private void scoreforhttp(String id, String point) {
         Map<String, String> map = new HashMap<String, String>();
         map.put("id", id);
+        map.put("membertype", member.getMembertype());
         map.put("point", point);
         HttpRequestUtil.getinstance().calcutePointExchange(HTTP_TASK_KEY, map, ExchangemsgResult.class, new HttpActionHandle<ExchangemsgResult>() {
 

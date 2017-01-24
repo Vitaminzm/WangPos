@@ -134,6 +134,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     protected void initData() {
         und = new UserNameDao(this);
+
         loginrole = getIntent().getIntExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
         switchrole();
         if (getIntent().getBooleanExtra(ConstantData.LOGIN_FIRST, false)) {
@@ -216,6 +217,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if (loginrole == ConstantData.LOGIN_WITH_CASHIER) {
             ll_lock_info.setVisibility(View.GONE);
             edit_username.setVisibility(View.VISIBLE);
+            edit_username.setText(SpSaveUtils.read(getApplicationContext(),ConstantData.LOGINER_ID, ""));
             iscashier = true;
         } else if (loginrole == ConstantData.LOGIN_WITH_LOCKSCREEN) {
             String cashierName = SpSaveUtils.read(this, ConstantData.CASHIER_NAME, "");
@@ -443,6 +445,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
             @Override
             public void handleActionSuccess(String actionName, LoginResult result) {
                 if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK)) {
+                    SpSaveUtils.write(getApplicationContext(), ConstantData.LOGINER_ID, username);
                     SpSaveUtils.writeboolean(MyApplication.context, ConstantData.IS_CONFIG_DOWNLOAD, true);
                     und.add(result.getLogininfo().getPersoncode());
                     savelogininfo(result.getLogininfo());

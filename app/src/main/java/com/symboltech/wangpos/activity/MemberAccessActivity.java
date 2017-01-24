@@ -194,6 +194,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
             @Override
             public void onValue(String value) {
+                //memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_MAGCARD, value);
                 memberverifymethod(ConstantData.MEMBER_VERIFY_BY_PHONE, value);
             }
         });

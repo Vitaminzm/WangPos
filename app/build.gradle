@@ -7,8 +7,8 @@ android {
         applicationId "com.symboltech.wangpos"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 1701231451
-        versionName "1.0.1"
+        versionCode 1701241451
+        versionName "1.0.2"
     }
     buildTypes {
         release {

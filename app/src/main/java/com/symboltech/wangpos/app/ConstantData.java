@@ -210,6 +210,9 @@ public class ConstantData {
 	/** 收银员ID */
 	public static final String CASHIER_ID = "cashier_id";
 
+	/** 登录人员ID */
+	public static final String LOGINER_ID = "loginer_id";
+
 	/** 收银员代码 */
 	public static final String CASHIER_CODE = "cashier_code";
 
