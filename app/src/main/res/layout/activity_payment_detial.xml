@@ -408,23 +408,41 @@
 
 
 
-    <TextView
-        android:id="@+id/text_done"
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:id="@+id/ll_done"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_ez"
         android:layout_alignParentBottom="true"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_marginBottom="@dimen/margin_fz"
-        android:layout_width="match_parent"
-        android:text="@string/done"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:background="@drawable/btn_green_bg"
-        android:layout_height="@dimen/height_ez" />
-
+        android:layout_marginBottom="@dimen/margin_fz">
+        <TextView
+            android:id="@+id/text_print"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/print_bill"
+            android:gravity="center"
+            android:layout_marginRight="@dimen/margin_rz"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_green_bg"
+            android:layout_height="@dimen/height_ez" />
+        <TextView
+            android:id="@+id/text_done"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/done"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:background="@drawable/btn_green_bg"
+            android:layout_height="@dimen/height_ez" />
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/ll_function"
         android:layout_width="match_parent"
-        android:layout_above="@id/text_done"
+        android:layout_above="@id/ll_done"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginBottom="@dimen/margin_rz"
@@ -450,5 +468,4 @@
             android:gravity="center"
             android:layout_height="match_parent" />
     </LinearLayout>
-
 </RelativeLayout>

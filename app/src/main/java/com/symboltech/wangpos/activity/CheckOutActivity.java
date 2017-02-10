@@ -307,14 +307,14 @@ public class CheckOutActivity extends BaseActivity {
             case ALIPAY:
                 if(ConstantData.WECHAT_ID.equals(payid)){
                     intent_qr = new Intent(mContext, CaptureActivity.class);
-                    intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
-                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
-                    paytype = ConstantData.PAYMODE_BY_ALIPAY;
-                }else if(ConstantData.ALPAY_ID.equals(payid)){
-                    intent_qr = new Intent(mContext, CaptureActivity.class);
                     intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
                     startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
                     paytype = ConstantData.PAYMODE_BY_WEIXIN;
+                }else if(ConstantData.ALPAY_ID.equals(payid)){
+                    intent_qr = new Intent(mContext, CaptureActivity.class);
+                    intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
+                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                    paytype = ConstantData.PAYMODE_BY_ALIPAY;
                 }
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
 //                    Intent intent_qr = new Intent(this, CaptureActivity.class);

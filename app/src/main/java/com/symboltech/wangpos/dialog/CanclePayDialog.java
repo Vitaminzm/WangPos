@@ -347,7 +347,8 @@ public class CanclePayDialog extends BaseActivity{
 
 					@Override
 					public void handleActionStart() {
-
+						info.setDes(getString(R.string.cancleing_pay));
+						canclePayAdapter.notifyDataSetChanged();
 					}
 
 					@Override

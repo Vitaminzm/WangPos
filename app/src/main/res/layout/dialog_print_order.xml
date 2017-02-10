@@ -101,7 +101,8 @@
             
             <TextView
                 android:id="@+id/text_cancle"
-                android:layout_width="@dimen/height_ttz"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="@dimen/height_ez"
                 android:text="@string/cancle"
                 android:gravity="center"
@@ -111,7 +112,8 @@
             <TextView
                 android:id="@+id/text_confirm"
                 android:layout_marginLeft="@dimen/margin_rz"
-                android:layout_width="@dimen/height_ttz"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="@dimen/height_ez"
                 android:text="@string/confirm"
                 android:gravity="center"

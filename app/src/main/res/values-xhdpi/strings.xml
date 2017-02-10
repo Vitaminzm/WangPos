@@ -154,6 +154,7 @@
     <string name="selected_plate">选择停车牌</string>
     <string name="done">完成</string>
     <string name="edit">编辑</string>
+    <string name="print_bill">打印小票</string>
     <string name="waring_no_coupon_msg">没有获得优惠券</string>
     <string name="waring_please_selected">请选择一张优惠券</string>
     <string name="waring_cannot_print_msg">当前券不可打印</string>

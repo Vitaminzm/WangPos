@@ -969,7 +969,9 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                         OrderInfoDao dao = new OrderInfoDao(mContext);
                         if(dao.addOrderPaytypeinfo(AppConfigFile.getBillId(), null, null, reasonIds.get(edit_input_reason.getText().toString()), 0, "1", SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""), payments)) {
                             billInfo.setPaymentslist(payments);
-                            printBackByorder(billInfo);
+                            if(billInfo.getMember() == null){
+                                printBackByorder(billInfo);
+                            }
                             AppConfigFile.setLast_billid(AppConfigFile.getBillId());
                             AppConfigFile.setBillId(String.valueOf(Long.parseLong(AppConfigFile.getBillId()) + 1));
                             Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);

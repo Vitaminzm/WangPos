@@ -71,6 +71,9 @@ public class PaymentDetailActivity extends BaseActivity {
     @Bind(R.id.text_order_time)
     TextView text_order_time;
 
+    @Bind(R.id.text_print)
+    TextView text_print;
+
     @Bind(R.id.text_order_money)
     TextView text_order_money;
     @Bind(R.id.text_coupon)
@@ -273,6 +276,7 @@ public class PaymentDetailActivity extends BaseActivity {
         }
         if(isMember == ConstantData.MEMBER_IS_NOT_VERITY){
             ll_score_info.setVisibility(View.GONE);
+            text_print.setVisibility(View.GONE);
         }else{
             // 获取抵扣金额
             double awardPoint = 0, usedPoint = 0, deductPoint = 0, totalPoint = 0;
@@ -328,6 +332,7 @@ public class PaymentDetailActivity extends BaseActivity {
         }else{
             ll_member_park_coupon.setVisibility(View.GONE);
         }
+
         if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             try {
                 // 设备可能没有打印机，open会抛异常
@@ -381,7 +386,7 @@ public class PaymentDetailActivity extends BaseActivity {
     }
 
     private boolean isSended = false;
-    @OnClick({R.id.text_print_coupon, R.id.text_selected_plate, R.id.text_done})
+    @OnClick({R.id.text_print_coupon, R.id.text_selected_plate, R.id.text_done, R.id.text_print})
     public void click(View view){
         if(Utils.isFastClick()){
             return;
@@ -429,10 +434,15 @@ public class PaymentDetailActivity extends BaseActivity {
                 }
                 break;
             case R.id.text_done:
-                printByorder(bill);
+                if(isMember == ConstantData.MEMBER_IS_NOT_VERITY){
+                    printByorder(bill);
+                }
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 this.finish();
+                break;
+            case R.id.text_print:
+                printByorder(bill);
                 break;
         }
     }

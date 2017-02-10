@@ -9,6 +9,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,6 +42,7 @@ public class AlipayAndWeixinPayReturnDialog extends Dialog implements View.OnCli
 	private Context mContext;
 	private LinearLayout serialTable, statusTable, resultTable;
 	private EditText serialNumber;
+	private ImageView imageview_close;
 	private TextView serialTips, confirm, statusTips, resultTips, no, yes, typeTips;
 	private SpinKitView statusIcon;
 	private String type, billid, money;
@@ -124,6 +126,7 @@ public class AlipayAndWeixinPayReturnDialog extends Dialog implements View.OnCli
 		resultTips = (TextView) findViewById(R.id.dialog_alipay_weixin_return_result_tips);
 		no = (TextView) findViewById(R.id.dialog_alipay_weixin_return_result_cancel);
 		yes = (TextView) findViewById(R.id.dialog_alipay_weixin_return_result_confirm);
+		imageview_close = (ImageView) findViewById(R.id.imageview_close);
 		new HorizontalKeyBoard(mContext, this, serialNumber, null);
 		initEvent();
 		if((ConstantData.PAYMODE_BY_ALIPAY+"").equals(type)) {
@@ -164,6 +167,7 @@ public class AlipayAndWeixinPayReturnDialog extends Dialog implements View.OnCli
 		confirm.setOnClickListener(this);
 		no.setOnClickListener(this);
 		yes.setOnClickListener(this);
+		imageview_close.setOnClickListener(this);
 	}
 
 	@Override
@@ -183,7 +187,7 @@ public class AlipayAndWeixinPayReturnDialog extends Dialog implements View.OnCli
 			statusTable.setVisibility(View.VISIBLE);
 			getBackResult(number);
 		}
-		if(v.getId() == no.getId()) {
+		if(v.getId() == no.getId() || v.getId() == imageview_close.getId()) {
 			dismiss();
 		}
 		if(v.getId() == yes.getId()) {

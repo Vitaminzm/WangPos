@@ -1,8 +1,13 @@
 package com.symboltech.wangpos.activity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
+import android.os.RemoteException;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,9 +23,12 @@ import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.CouponInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.SaveOrderResultInfo;
+import com.symboltech.wangpos.print.PrepareReceiptInfo;
+import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
+import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.GridViewForScrollView;
 
@@ -30,11 +38,20 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import cn.koolcloud.engine.service.aidl.IPrintCallback;
+import cn.koolcloud.engine.service.aidl.IPrinterService;
+import cn.koolcloud.engine.service.aidlbean.ApmpRequest;
+import cn.koolcloud.engine.service.aidlbean.IMessage;
+import cn.weipass.pos.sdk.IPrint;
+import cn.weipass.pos.sdk.LatticePrinter;
+import cn.weipass.pos.sdk.impl.WeiposImpl;
 
 public class ReturnGoodSucceedActivity extends BaseActivity {
 
     @Bind(R.id.title_text_content)
     TextView title_text_content;
+    @Bind(R.id.text_print)
+    TextView text_print;
     @Bind(R.id.title_icon_back)
     ImageView title_icon_back;
 
@@ -75,6 +92,10 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
     private float couponMoney;
     private SaveOrderResultInfo resultInfo;
 
+    protected static final int printStart = 0;
+    protected static final int printEnd = 1;
+    protected static final int printError = 2;
+    /** refresh UI By handler */
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
 
@@ -89,11 +110,42 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
                 case ToastUtils.TOAST_WHAT:
                     ToastUtils.showtaostbyhandler(theActivity,msg);
                     break;
+                case printStart:
+                    break;
+                case printEnd:
+                    break;
+                case printError:
+                    // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                    // -999：不支持该功能（可以不支持）
+                    String errorMsg = "";
+                    LogUtil.e("lgs", "printer errorCode is " + msg.arg1);
+                    switch (msg.arg1) {
+                        case -1:
+                            errorMsg = "result=-1：缺纸";
+                            break;
+                        case -2:
+                            errorMsg = "result=-2：未合盖";
+                            break;
+                        case -3:
+                            errorMsg = "result=-3：卡纸";
+                            break;
+                        case -4:
+                            errorMsg = "result=-4 初始化异常";
+                            break;
+                        case -999:
+                            errorMsg = "result=-999：不支持该功能";
+                            break;
+                        default:
+                            errorMsg = "result=-100：其他故障";
+                            break;
+                    }
+                    msg.obj = errorMsg;
+                    ToastUtils.showtaostbyhandler(theActivity,msg);
+                    break;
             }
         }
     }
 
-    MyHandler handler = new MyHandler(this);
     @Override
     protected void initData() {
         title_text_content.setText(getString(R.string.return_succeed));
@@ -105,6 +157,7 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
         text_return_money.setText(MoneyAccuracyUtils.formatMoneyByTwo(bill.getTotalmoney()));
 
         if(bill.getMember() != null){
+            text_print.setVisibility(View.VISIBLE);
             for(PayMentsInfo data :bill.getPaymentslist()){
                 if(data.getType().equals(PaymentTypeEnum.COUPON)){
                     if(ArithDouble.parseDouble(data.getOverage()) > 0){
@@ -143,6 +196,29 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
 
         paymentTypeInfoDetailAdapter = new PaymentTypeInfoDetailAdapter(this, bill.getPaymentslist(), true);
         activity_payment_gridview.setAdapter(paymentTypeInfoDetailAdapter);
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
+            try {
+                // 设备可能没有打印机，open会抛异常
+                latticePrinter = WeiposImpl.as().openLatticePrinter();
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+            if(latticePrinter != null){
+                latticePrinter.setOnEventListener(new IPrint.OnEventListener() {
+
+                    @Override
+                    public void onEvent(final int what, String in) {
+                        if(!StringUtil.isEmpty(PrepareReceiptInfo.getPrintErrorInfo(what, in)))
+                            ToastUtils.sendtoastbyhandler(handler, PrepareReceiptInfo.getPrintErrorInfo(what, in));
+                    }
+                });
+            }
+        }else {
+            Intent printService = new Intent(IPrinterService.class.getName());
+            printService = AndroidUtils.getExplicitIntent(this, printService);
+            if (printService != null)
+                bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
+        }
     }
 
     @Override
@@ -175,7 +251,7 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
         AppConfigFile.delActivity(this);
     }
 
-    @OnClick({R.id.text_confirm})
+    @OnClick({R.id.text_confirm, R.id.text_print})
     public void click(View view){
         int id = view.getId();
         switch (id){
@@ -184,6 +260,79 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
                 startActivity(intent);
                 this.finish();
                 break;
+            case R.id.text_print:
+                printBackByorder(bill);
+                break;
+        }
+    }
+
+    MyHandler handler = new MyHandler(this);
+    private LatticePrinter latticePrinter;// 点阵打印
+    // 打印服务
+    private static IPrinterService iPrinterService;
+    private ServiceConnection printerServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            iPrinterService = IPrinterService.Stub.asInterface(service);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            iPrinterService = null;
+        }
+    };
+
+    IPrintCallback.Stub callback = new IPrintCallback.Stub() {
+        @Override
+        public void handleMessage(IMessage message) throws RemoteException {
+            int ret = message.what;
+            LogUtil.d("lgs", "handleMessage ret:" + ret);
+            try {
+                iPrinterService.unRegisterPrintCallback();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (ret == 0) {
+                Message msg3 = new Message();
+                msg3.what = printEnd;
+                handler.sendMessage(msg3);
+            } else {
+                Message msg3 = new Message();
+                msg3.what = printError;
+                msg3.arg1 = ret;
+                handler.sendMessage(msg3);
+            }
+        }
+    };
+
+    public void printBackByorder(final BillInfo billinfo){
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
+            if(latticePrinter == null){
+                ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                return;
+            }
+            PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
+        }else {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Message msg1 = new Message();
+                    msg1.what = printStart;
+                    handler.sendMessage(msg1);
+                    try {
+                        iPrinterService.registerPrintCallback(callback);
+                        // 0：正常 -1：缺纸 -2：未合盖 -3：卡纸 -4 初始化异常 -100：其他故障
+                        // -999：不支持该功能（可以不支持）
+                        iPrinterService.printPage(new ApmpRequest(PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter)));
+                    } catch (Exception e) {
+                        Message msg2 = new Message();
+                        msg2.what = printError;
+                        msg2.arg1 = -100;
+                        handler.sendMessage(msg2);
+                        e.printStackTrace();
+                    }
+                }
+            }).start();
         }
     }
 }

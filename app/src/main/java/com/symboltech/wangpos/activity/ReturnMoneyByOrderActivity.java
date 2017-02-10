@@ -691,7 +691,9 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 if(ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
                     billInfo.setBillid(AppConfigFile.getBillId());
                     billInfo.setPaymentslist(commitStyles);
-                    printBackByorder(billInfo);
+                    if(billInfo.getMember() == null){
+                        printBackByorder(billInfo);
+                    }
                     AppConfigFile.setLast_billid(AppConfigFile.getBillId());
                     AppConfigFile.setBillId(result.getSaveOrderInfo().getBillid());
                     Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);

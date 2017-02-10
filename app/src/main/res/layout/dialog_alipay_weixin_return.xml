@@ -11,15 +11,31 @@
         android:orientation="vertical"
         android:visibility="visible" >
 
-        <TextView
-            android:id="@+id/dialog_alipay_tip_type"
+        <RelativeLayout
+            android:id="@+id/title_bar"
+            android:layout_alignParentTop="true"
             android:layout_width="match_parent"
-            android:background="#384252"
             android:layout_height="@dimen/height_sz"
-            android:gravity="center"
-            android:text="@string/please_input_trade_no"
-            android:textColor="@color/white"
-            android:textSize="@dimen/big_font_size" />
+            android:background="@drawable/radiud_lt_rt_bg">
+
+            <TextView
+                android:id="@+id/dialog_alipay_tip_type"
+                android:layout_width="match_parent"
+                android:background="#384252"
+                android:layout_height="@dimen/height_sz"
+                android:gravity="center"
+                android:text="@string/please_input_trade_no"
+                android:textColor="@color/white"
+                android:textSize="@dimen/big_font_size"/>
+            <ImageView
+                android:id="@+id/imageview_close"
+                android:layout_marginRight="@dimen/margin_fz"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/icon_close_selector"/>
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
