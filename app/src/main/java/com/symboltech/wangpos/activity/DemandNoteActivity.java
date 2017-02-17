@@ -300,7 +300,7 @@ public class DemandNoteActivity extends BaseActivity {
             } catch (Exception e) {
                 // TODO: handle exception
             }
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             Intent printService = new Intent(IPrinterService.class.getName());
             printService = AndroidUtils.getExplicitIntent(this, printService);
             if (printService != null)
@@ -494,7 +494,7 @@ public class DemandNoteActivity extends BaseActivity {
                             return;
                         }
                         PrepareReceiptInfo.printDemandNote(info, latticePrinter);
-                    }else {
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -575,7 +575,7 @@ public class DemandNoteActivity extends BaseActivity {
                 }
             });
             PrepareReceiptInfo.printDemandNote(info, latticePrinter);
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             new Thread(new Runnable() {
                 @Override
                 public void run() {

@@ -350,7 +350,7 @@ public class PaymentDetailActivity extends BaseActivity {
                     }
                 });
             }
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             Intent printService = new Intent(IPrinterService.class.getName());
             printService = AndroidUtils.getExplicitIntent(this, printService);
             if (printService != null)
@@ -454,7 +454,7 @@ public class PaymentDetailActivity extends BaseActivity {
                 return;
             }
             PrepareReceiptInfo.printOrderList(billinfo, false, latticePrinter);
-        }else{
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -546,14 +546,12 @@ public class PaymentDetailActivity extends BaseActivity {
         }
         if(couponInfos.size() > 0){
             if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
-                if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
-                    if(latticePrinter == null){
-                        ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
-                        return;
-                    }
-            }
+                if(latticePrinter == null){
+                    ToastUtils.sendtoastbyhandler(handler, "尚未初始化点阵打印sdk，请稍后再试");
+                    return;
+                }
                 PrepareReceiptInfo.printCoupon(couponInfos, latticePrinter);
-            }else{
+            }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
                 new Thread(new Runnable() {
                     @Override
                     public void run() {

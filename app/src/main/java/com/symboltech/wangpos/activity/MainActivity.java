@@ -286,7 +286,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 });
             }
-        }else{
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             Intent printService = new Intent(IPrinterService.class.getName());
             printService = AndroidUtils.getExplicitIntent(this, printService);
             if(printService != null)
@@ -359,7 +359,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         unregisterReceiver(receiver);
         if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             unregisterReceiver(broadcastReceiver);
         }
         super.onPause();
@@ -394,7 +394,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void recycleMemery() {
         if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             if (iPrinterService != null) {
                 unbindService(printerServiceConnection);
             }
@@ -413,7 +413,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             ToastUtils.sendtoastbyhandler(handler, "暂不支持");
             return;
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             if(mYunService== null){
                 ToastUtils.sendtoastbyhandler(handler, "打印服务异常");
                 return;
@@ -650,7 +650,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return;
             }
             PrepareReceiptInfo.printBackOrderList(billinfo, true, latticePrinter);
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -681,7 +681,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 return;
             }
             PrepareReceiptInfo.printOrderList(billinfo, true, latticePrinter);
-        }else{
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             new Thread(new Runnable() {
                 @Override
                 public void run() {

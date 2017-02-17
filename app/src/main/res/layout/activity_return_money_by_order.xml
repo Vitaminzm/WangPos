@@ -273,6 +273,10 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height_xv">
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/view_line_colors"/>
                         <TextView
                             android:layout_width="0dp"
                             android:layout_weight="1"
@@ -295,6 +299,10 @@
                             android:gravity="center"
                             android:text="0"
                             android:layout_height="match_parent" />
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/view_line_colors"/>
                     </LinearLayout>
                     <View
                         android:layout_width="match_parent"
@@ -311,6 +319,10 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height_xv">
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/view_line_colors"/>
                         <TextView
                             android:layout_width="0dp"
                             android:layout_weight="1"
@@ -333,6 +345,10 @@
                             android:gravity="center"
                             android:text="0"
                             android:layout_height="match_parent" />
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/view_line_colors"/>
                     </LinearLayout>
                     <View
                         android:layout_width="match_parent"
@@ -349,6 +365,10 @@
                         android:orientation="horizontal"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/height_xv">
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/view_line_colors"/>
                         <TextView
                             android:layout_width="0dp"
                             android:layout_weight="1"
@@ -371,6 +391,10 @@
                             android:text="0"
                             android:gravity="center"
                             android:layout_height="match_parent" />
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:background="@color/view_line_colors"/>
                     </LinearLayout>
                     <View
                         android:layout_width="match_parent"

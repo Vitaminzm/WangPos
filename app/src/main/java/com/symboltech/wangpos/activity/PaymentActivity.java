@@ -327,6 +327,7 @@ public class PaymentActivity extends BaseActivity {
         }
         shopCarList.add(goodsInfo);
         goodsAdapter.notifyDataSetChanged();
+
     }
 
     protected void addcartScoregoods(String value, int position, int tag) {
@@ -594,6 +595,9 @@ public class PaymentActivity extends BaseActivity {
                 }
                 billinfo.setMember(memberBigdate.getMember());
             }
+        }
+        for(int i= 0;i<shopCarList.size();i++){
+            shopCarList.get(i).setInx((i+1)+"");
         }
         billinfo.setGoodslist(shopCarList);
         for (GoodsInfo gi : billinfo.getGoodslist()) {

@@ -96,10 +96,19 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     LinearLayout ll_return_score_info;
     @Bind(R.id.text_add_used_score_total)
     TextView text_add_used_score_total;
+
+    @Bind(R.id.ll_score_good)
+    LinearLayout ll_score_good;
     @Bind(R.id.text_score_good)
     TextView text_score_good;
+
+    @Bind(R.id.ll_return_score)
+    LinearLayout ll_return_score;
     @Bind(R.id.text_return_score)
     TextView text_return_score;
+
+    @Bind(R.id.ll_score_deduction)
+    LinearLayout ll_score_deduction;
     @Bind(R.id.text_score_deduction)
     TextView text_score_deduction;
 
@@ -280,6 +289,8 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             if(billInfo.getExchange()!= null){
                 score_deduction = ArithDouble.parseDouble(billInfo.getExchange().getExchangepoint());
                 text_score_deduction.setText(billInfo.getExchange().getExchangepoint());
+            }else{
+                ll_score_deduction.setVisibility(View.GONE);
             }
             return_score = ArithDouble.parseDouble(billInfo.getAwardpoint());
             if(return_score > 0){
@@ -287,8 +298,15 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             }else{
                 text_return_score.setText(billInfo.getAwardpoint());
             }
+            if(return_score == 0){
+                ll_return_score.setVisibility(View.GONE);
+            }
             score_good = ArithDouble.parseDouble(billInfo.getUsedpoint());
-            text_score_good.setText(billInfo.getUsedpoint());
+            if(score_good != 0){
+                text_score_good.setText(billInfo.getUsedpoint());
+            }else{
+                ll_score_good.setVisibility(View.GONE);
+            }
             text_add_used_score_total.setText(ArithDouble.sub(ArithDouble.add(score_deduction, score_good),return_score)+"");
         }else{
             ll_return_score_info.setVisibility(View.GONE);
@@ -318,7 +336,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                     }
                 });
             }
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             Intent printService = new Intent(IPrinterService.class.getName());
             printService = AndroidUtils.getExplicitIntent(this, printService);
             if (printService != null)
@@ -437,7 +455,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             }else{
                 if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                     requestCashier(entity.getTradeno());
-                }else{
+                }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
                     double money = ArithDouble.parseDouble(entity.getAmount());
                     Intent intentBank = new Intent(mContext, ThirdPayReturnDialog.class);
                     intentBank.putExtra(ConstantData.PAY_MONEY, money);
@@ -714,7 +732,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 return;
             }
             PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             new Thread(new Runnable() {
                 @Override
                 public void run() {

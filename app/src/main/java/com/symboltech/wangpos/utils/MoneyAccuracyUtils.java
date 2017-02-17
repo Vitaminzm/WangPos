@@ -1,7 +1,6 @@
 package com.symboltech.wangpos.utils;
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 
 /**
  * 进度处理工具

@@ -108,7 +108,6 @@ public class GoodsAdapter extends BaseAdapter {
 		}else{
 			holder.ll_bg.setBackgroundColor(context.getResources().getColor(R.color.white));
 		}
-		goods.get(position).setInx((position + 1) + "");
 		holder.imageview_quantity_plus.setTag(position);
 		holder.imageview_quantity_minus.setTag(position);
 		holder.text_good_name.setText(goodsInfo.getGoodsname());

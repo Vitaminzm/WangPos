@@ -105,7 +105,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_MAGCARD, (String) msg.obj);
                     if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 
-                    }else{
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
                         try {
                             if (mCardService != null) {
                                 isSwipVipCard = true;
@@ -150,7 +150,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
             if (mMagneticReader == null) {
                 ToastUtils.sendtoastbyhandler(handler, "磁条卡读取服务不可用！");
             }
-        }else{
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             Intent intent = new Intent(IMemberCardService.class.getName());
             intent = AndroidUtils.getExplicitIntent(this, intent);
             if (intent != null) {
@@ -257,7 +257,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     mReadMagTask.interrupt();
                     mReadMagTask = null;
                 }
-            }else{
+            }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
                 if(isSwipVipCard){
                     try {
                         if (mCardService != null) {
@@ -301,7 +301,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     mReadMagTask = new ReadMagTask();
                     mReadMagTask.start();
                 }
-            }else{
+            }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
                 try {
                     if (mCardService != null) {
                         isSwipVipCard = true;
@@ -343,7 +343,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                 mReadMagTask.interrupt();
                 mReadMagTask = null;
             }
-        }else{
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             try {
                 if (mCardService != null) {
                     if(isSwipVipCard){

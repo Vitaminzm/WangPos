@@ -213,7 +213,7 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
                     }
                 });
             }
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             Intent printService = new Intent(IPrinterService.class.getName());
             printService = AndroidUtils.getExplicitIntent(this, printService);
             if (printService != null)
@@ -312,7 +312,7 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
                 return;
             }
             PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             new Thread(new Runnable() {
                 @Override
                 public void run() {

@@ -192,6 +192,7 @@
     <string name="returns">退货</string>
     <string name="return_reason">退款原因</string>
     <string name="return_info">退款信息</string>
+    <string name="return_coupon_info">退券信息</string>
     <string name="return_total_money">退款总额</string>
     <string name="please_select_return_reason">请选择退款原因</string>
     <string name="warning_no_return_reason">没有退款原因</string>

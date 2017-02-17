@@ -195,7 +195,7 @@ public class SendPackCouponActivity extends BaseActivity {
                     }
                 }else{
                     plate = carPlateNo.getText().toString();
-                    if(plate != null && plate.length() == 6){
+                    if(plate != null && plate.length() == 6 && plate.matches("[a-z|A-Z].*")){
                         if(member == null){
                             manualParkCouponbyhttp(packCouponTime.getText().toString(), emporary_plate.getSelectedItem().toString()+plate, null);
                         }else{

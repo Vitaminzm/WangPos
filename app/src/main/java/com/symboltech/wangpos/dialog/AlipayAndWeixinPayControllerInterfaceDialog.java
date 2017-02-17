@@ -124,6 +124,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends Dialog implemen
 				tv_paying_enter.setVisibility(View.GONE);
 				tv_thirdpay_paying_title.setText(getContext().getString(R.string.thirdpay_wait_pay));
 				tv_thirdpay_paying_msg.setText(getContext().getString(R.string.thirdpay_succeed_enter));
+
 				break;
 			default:
 				break;
@@ -433,27 +434,20 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends Dialog implemen
 							}
 								
 						} else if (ConstantData.HTTP_RESPONSE_THIRDPAY_WAIT.equals(result.getCode())) {
-							ll_thirdpay_money_input.setVisibility(View.GONE);
-							ll_thirdpay_hint.setVisibility(View.VISIBLE);
-							stopPay();
-							ll_thirdpay_paying_result.setVisibility(View.VISIBLE);
-							tv_paying_enter.setVisibility(View.GONE);
-							tv_thirdpay_paying_title.setText(getContext().getString(R.string.thirdpay_wait_pay));
-							tv_thirdpay_paying_msg.setText(result.getMsg());
+							Message message=Message.obtain();
+							message.what = 7;
+							message.obj = result.getThirdpayquery().getTrade_no();
+							handler.sendMessage(message);
 						} else {
 							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
 								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_QUERY_FAILED.getOptLogCode(), context.getString(R.string.alipay_query_failed));
 							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
 								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_QUERY_FAILED.getOptLogCode(), context.getString(R.string.wechat_query_failed));
 							}
-							ll_thirdpay_money_input.setVisibility(View.GONE);
-							ll_thirdpay_hint.setVisibility(View.VISIBLE);
-							ll_thirdpay_paying_result.setVisibility(View.VISIBLE);
-							ll_thirdpay_result_hint.setVisibility(View.GONE);
-							ll_paying_btn.setVisibility(View.GONE);
-							tv_paying_enter.setVisibility(View.VISIBLE);
-							tv_thirdpay_paying_title.setText(getContext().getString(R.string.thirdpay_pay_err));
-							tv_thirdpay_paying_msg.setText(result.getMsg());
+							Message message=Message.obtain();
+							message.what = 5;
+							message.obj = result.getMsg();
+							handler.sendMessage(message);
 						}
 					}
 

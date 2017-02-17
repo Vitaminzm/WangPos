@@ -2,6 +2,7 @@ package com.symboltech.wangpos.msg.entity;
 
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.utils.ArithDouble;
+import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 
 import java.io.Serializable;
@@ -220,7 +221,7 @@ public class GoodsInfo implements Serializable, Cloneable {
 		// TODO Auto-generated method stub
 		try {
 			if (!StringUtil.isEmpty(this.point) && !StringUtil.isEmpty(this.salecount)) {
-				this.usedpointtemp = ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.point) + "";
+				this.usedpointtemp =  MoneyAccuracyUtils.getmoneybytwo(ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.point));
 			}
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
@@ -231,9 +232,9 @@ public class GoodsInfo implements Serializable, Cloneable {
 			if (!StringUtil.isEmpty(sptype) && !StringUtil.isEmpty(this.salecount)
 					&& (!StringUtil.isEmpty(this.price) || !StringUtil.isEmpty(this.addprice))) {
 				if (ConstantData.GOODS_SOURCE_BY_BRAND.equals(sptype) || ConstantData.GOODS_SOURCE_BY_BINTEGRAL.equals(sptype)) {
-					this.saleamt = ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.price) + "";
+					this.saleamt = MoneyAccuracyUtils.getmoneybytwo(ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.price));
 				} else if (ConstantData.GOODS_SOURCE_BY_INTEGRAL.equals(sptype)|| ConstantData.GOODS_SOURCE_BY_SINTEGRAL.equals(sptype)) {
-					this.saleamt = ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.addprice) + "";
+					this.saleamt = MoneyAccuracyUtils.getmoneybytwo(ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.addprice));
 				}
 			}
 		} catch (Exception e) {

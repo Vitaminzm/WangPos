@@ -205,7 +205,7 @@ public class CanclePayDialog extends BaseActivity{
 		if(totalMoney > cash){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				requestCashier();
-			}else{
+			}else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
 				Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
 				yunIntent = AndroidUtils.getExplicitIntent(this, yunIntent);
 				setServiceStateChangeListerner(serviceStateChangeListerner1);
@@ -416,7 +416,7 @@ public class CanclePayDialog extends BaseActivity{
 					isCancleCount++;
 					innerRequestCashier(info.getTxnid());
 				}
-			}else{
+			}else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
 				if(!isLogin){
 					ToastUtils.sendtoastbyhandler(handler, "收银通未登录");
 					return;

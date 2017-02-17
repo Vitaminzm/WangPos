@@ -265,7 +265,7 @@ public class WorkLogActivity extends BaseActivity {
                     }
                 });
             }
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             Intent printService = new Intent(IPrinterService.class.getName());
             printService = AndroidUtils.getExplicitIntent(this, printService);
             if (printService != null)
@@ -381,7 +381,7 @@ public class WorkLogActivity extends BaseActivity {
                 return;
             }
             PrepareReceiptInfo.printReportFrom(flag, reportInfo, latticePrinter);
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             new Thread(new Runnable() {
                 @Override
                 public void run() {

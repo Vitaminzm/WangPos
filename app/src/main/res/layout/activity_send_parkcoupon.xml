@@ -98,9 +98,10 @@
                     android:textSize="@dimen/font_size_tf" />
 
                 <TextView
-                    android:layout_width="70dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/margin_ot"
                     android:gravity="right"
                     android:text="@string/hour"
                     android:textColor="@color/font_color"

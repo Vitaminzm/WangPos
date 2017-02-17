@@ -329,7 +329,7 @@ public class CheckOutActivity extends BaseActivity {
             case BANK:
                 if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                     requestCashier(CurrencyUnit.yuan2fenStr(paymentMoney + ""));
-                }else{
+                }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
                     Intent intent = new Intent(this, ThirdPayDialog.class);
                     intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
                     intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());

@@ -221,7 +221,7 @@ public class SelectCarPlateDialog extends Dialog implements OnClickListener {
 				}
 			}else{
 				plate = et_emporary_plate.getText().toString();
-				if(plate != null && plate.length() == 6){
+				if(plate != null && plate.length() == 6 && plate.matches("[a-z|A-Z].*")){
 					if(member == null){
 						manualParkCouponbyhttp(hour, addhour, sp_emporary_plate.getSelectedItem().toString()+plate, null);
 					}else{

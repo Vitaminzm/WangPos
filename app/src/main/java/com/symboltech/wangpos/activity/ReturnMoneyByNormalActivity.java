@@ -295,7 +295,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                     }
                 });
             }
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             Intent printService = new Intent(IPrinterService.class.getName());
             printService = AndroidUtils.getExplicitIntent(this, printService);
             if (printService != null)
@@ -714,7 +714,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                 public void editinput(String edit) {
                     if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                         requestCashier(edit);
-                    }else{
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
                         double money = getDoubleMoney(entity.getMoney());
                         putPayments(getPayTypeId(PaymentTypeEnum.HANDRECORDED), idNames.get(getPayTypeId(PaymentTypeEnum.HANDRECORDED)), PaymentTypeEnum.HANDRECORDED.getStyletype(), "-" + money);
                         bankFlag += 1;
@@ -991,7 +991,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                 return;
             }
             PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             new Thread(new Runnable() {
                 @Override
                 public void run() {

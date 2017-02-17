@@ -1377,7 +1377,7 @@ public class PrepareReceiptInfo {
 		if (bill.getUsedcouponlist() != null && bill.getUsedcouponlist().size() > 0) {
 			addTextJson(array, latticePrinter, FONT_DEFAULT,  "使用券", KposPrinterManager.CONTENT_ALIGN_LEFT);
 			for (CouponInfo info : bill.getUsedcouponlist()) {
-				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getName()) + "	" + info.getAvailablemoney() + "元" + "	" + ArithDouble.add(ArithDouble.parseDouble(bill.getMember().getCent_total()), totalPoint), KposPrinterManager.CONTENT_ALIGN_LEFT);
+				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getName()) + "	" + info.getAvailablemoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT);
 			}
 		}
 
