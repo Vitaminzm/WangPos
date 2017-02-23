@@ -40,7 +40,7 @@ public class AppConfigFile {
 	public static List<Activity> activityList = new LinkedList<>();
 	//private static  String host_config = "192.168.28.234:82";//239
 	// private static  String host_config = "210.14.129.42:82";  //41
-	// private static  String host_config = "210.14.129.41:85";  //步步高百货
+	// private static  String host_config = "210.14.129.41:85";  //步步高百货后台88
 	//private static  String host_config = "192.168.6.61:81";  //步步高百货
 	private static  String host_config;
 	private static String billId;

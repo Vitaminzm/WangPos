@@ -20,6 +20,7 @@ public class PayMentsCancleInfo implements Serializable {
 	private String overage;
 	private String type;
 	private String txnid;//收银通唯一ID
+	private String traceNo;//凭证号
 	private String des="撤销";//收银通唯一ID
 
 	public String getDes() {
@@ -96,4 +97,11 @@ public class PayMentsCancleInfo implements Serializable {
 		this.name = name;
 	}
 
+	public String getTraceNo() {
+		return traceNo;
+	}
+
+	public void setTraceNo(String traceNo) {
+		this.traceNo = traceNo;
+	}
 }

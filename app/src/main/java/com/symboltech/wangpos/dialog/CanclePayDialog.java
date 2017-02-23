@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.dialog;
 
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -18,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.symboltech.koolcloud.aidl.AidlRequestManager;
 import com.symboltech.koolcloud.interfaces.RemoteServiceStateChangeListerner;
 import com.symboltech.koolcloud.transmodel.OrderBean;
@@ -44,15 +46,19 @@ import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
+import com.ums.AppHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -414,6 +420,7 @@ public class CanclePayDialog extends BaseActivity{
 				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
 						||payments.get(position).getDes().equals(getString(R.string.cancled))){
 					isCancleCount++;
+					this.position = position;
 					innerRequestCashier(info.getTxnid());
 				}
 			}else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
@@ -425,9 +432,10 @@ public class CanclePayDialog extends BaseActivity{
 					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
 					return;
 				}
-				this.position = position;
+
 				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
 						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+					this.position = position;
 					SaleVoidRequest saleVoidRequest = new SaleVoidRequest(info.getTxnid());
 
 					AidlRequestManager.getInstance().aidlSaleVoidRequest(mYunService,
@@ -466,8 +474,76 @@ public class CanclePayDialog extends BaseActivity{
 								}
 							});
 				}
+			}else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+				JSONObject json = new JSONObject();
+				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+				try {
+					json.put("orgTraceNo",info.getTraceNo());
+					json.put("extOrderNo", tradeNo);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				isCancleCount++;
+				AppHelper.callTrans(CanclePayDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
 			}
 		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(Activity.RESULT_OK == resultCode){
+			if(AppHelper.TRANS_REQUEST_CODE == requestCode){
+				PayMentsCancleInfo info = payments.get(position);
+				isCancleCount--;
+				if (null != data) {
+					StringBuilder result = new StringBuilder();
+					Map<String,String> map = AppHelper.filterTransResult(data);
+					if("0".equals(map.get(AppHelper.RESULT_CODE))){
+						Type type =new TypeToken<Map<String, String>>(){}.getType();
+						try {
+							Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+							if("00".equals(transData.get("resCode"))){
+								OrderBean orderBean= new OrderBean();
+								orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(info.getMoney()));
+								orderBean.setTxnId(transData.get("extOrderNo"));
+								orderBean.setAccountNo(transData.get("cardNo"));
+								orderBean.setAcquId(transData.get("cardIssuerCode"));
+								orderBean.setBatchId(transData.get("traceNo"));
+								orderBean.setRefNo(transData.get("refNo"));
+								info.setIsCancle(true);
+								info.setDes(getString(R.string.cancled_pay));
+								canclePayAdapter.notifyDataSetChanged();
+								orderBean.setPaymentId(payments.get(position).getId());
+								orderBean.setTransType(ConstantData.TRANS_REVOKE);
+								orderBean.setTraceId(AppConfigFile.getBillId());
+								Intent serviceintent = new Intent(mContext, RunTimeService.class);
+								serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+								serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+								startService(serviceintent);
+							}else{
+								info.setDes(getString(R.string.cancled_failed));
+								canclePayAdapter.notifyDataSetChanged();
+								ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}else{
+						String msg = "银行卡撤销返回信息异常";
+						if(!StringUtil.isEmpty(map.get(AppHelper.RESULT_MSG))){
+							msg = map.get(AppHelper.RESULT_MSG);
+						}
+						info.setDes(getString(R.string.cancled_failed));
+						canclePayAdapter.notifyDataSetChanged();
+					}
+				}else{
+					info.setDes(getString(R.string.cancled_failed));
+					canclePayAdapter.notifyDataSetChanged();
+					ToastUtils.sendtoastbyhandler(handler,"银行卡撤销异常！");
+				}
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private boolean isWaitSwip = false;

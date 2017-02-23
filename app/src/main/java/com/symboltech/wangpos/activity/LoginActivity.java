@@ -50,6 +50,13 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.DrawableEditText;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.printer.BoldEnum;
+import com.ums.upos.sdk.printer.FontConfig;
+import com.ums.upos.sdk.printer.FontSizeEnum;
+import com.ums.upos.sdk.printer.OnPrintResultListener;
+import com.ums.upos.sdk.printer.PrinterManager;
+import com.ums.upos.sdk.system.BaseSystemManager;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -244,6 +251,32 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
         switch (v.getId()) {
             case R.id.text_login:
+                String printHtmlstr = "银联商务SDK打印测试\n银联商务SDK打印测试\n银联商务SDK打印测试\n银联商务SDK打印测试\n银联商务SDK打印测试";
+                try {
+                    PrinterManager printer = new PrinterManager();
+                    printer.initPrinter();
+                    FontConfig fontConfig = new FontConfig();
+                    fontConfig.setBold(BoldEnum.NOT_BOLD);//不加粗
+                    fontConfig.setSize(FontSizeEnum.SMALL);//小号字体
+                    printer.setPrnText(printHtmlstr, fontConfig);
+                    printer.setPrnText(printHtmlstr, fontConfig);
+                    printer.startPrint(new OnPrintResultListener() {
+
+                        @Override
+                        public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
+                            //登出，以免占用U架构服务
+                            try {
+                                BaseSystemManager.getInstance().deviceServiceLogout();
+                            } catch (SdkException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
                 if (iscashier) {
                     poslogin();// 登录
                 } else {

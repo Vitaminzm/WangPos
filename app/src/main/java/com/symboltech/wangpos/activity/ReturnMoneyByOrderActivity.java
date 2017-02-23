@@ -1,5 +1,6 @@
 package com.symboltech.wangpos.activity;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +20,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.ReturnReasonAdapter;
@@ -54,11 +56,20 @@ import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.ListViewForScrollView;
+import com.ums.AppHelper;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.system.BaseSystemManager;
+import com.ums.upos.sdk.system.OnServiceStatusListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -462,6 +473,18 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                     intentBank.putExtra(ConstantData.PAY_TYPE, getPayTypeById(entity.getSkfsid()));
                     intentBank.putExtra(ConstantData.PAY_ID, entity.getTradeno());
                     startActivityForResult(intentBank, ConstantData.THRID_CANCLE_REQUEST_CODE);
+                }else if (MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                    JSONObject json = new JSONObject();
+                    String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                    try {
+                        json.put("amt",entity.getAmount());
+                        json.put("refNo",entity.getRefno());
+                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                        json.put("extOrderNo",tradeNo);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
                 }
             }
         } else {
@@ -753,6 +776,24 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                     }
                 }
             }).start();
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogin(
+                        ReturnMoneyByOrderActivity.this, null, "99999998",//设备ID，生产找后台配置
+                        new OnServiceStatusListener() {
+                            @Override
+                            public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
+                                }else{
+                                    ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
+                                }
+                            }
+                        });
+            } catch (SdkException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
@@ -944,6 +985,51 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                     returnBank();
                 } else {
                     returnAlipay();
+                }
+            }
+        }
+        if(Activity.RESULT_OK == resultCode){
+            if(AppHelper.TRANS_REQUEST_CODE == requestCode){
+                BankPayInfo entity = bankStyle.get(bankFlag);
+                if (null != data) {
+                    StringBuilder result = new StringBuilder();
+                    Map<String,String> map = AppHelper.filterTransResult(data);
+                    if("0".equals(map.get(AppHelper.RESULT_CODE))){
+                        Type type =new TypeToken<Map<String, String>>(){}.getType();
+                        try {
+                            Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+                            if("00".equals(transData.get("resCode"))){
+                                OrderBean orderBean= new OrderBean();
+                                entity.setDes("true");
+                                putPayments(entity.getSkfsid(), getPayNameById(entity.getSkfsid()), getPayTypeById(entity.getSkfsid()), "-" + entity.getAmount());
+                                orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                orderBean.setTxnId(transData.get("extOrderNo"));
+                                orderBean.setAccountNo(transData.get("cardNo"));
+                                orderBean.setAcquId(transData.get("cardIssuerCode"));
+                                orderBean.setBatchId(transData.get("traceNo"));
+                                orderBean.setRefNo(transData.get("refNo"));
+                                orderBean.setPaymentId(entity.getSkfsid());
+                                orderBean.setTransType(ConstantData.TRANS_RETURN);
+                                orderBean.setTraceId(AppConfigFile.getBillId());
+                                Intent serviceintent = new Intent(mContext, RunTimeService.class);
+                                serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+                                serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+                                startService(serviceintent);
+                                bankFlag += 1;
+                                if (bankFlag < bankStyle.size()) {
+                                    returnBank();
+                                } else {
+                                    returnAlipay();
+                                }
+                            }else{
+                                ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, "银行卡撤销异常！");
                 }
             }
         }

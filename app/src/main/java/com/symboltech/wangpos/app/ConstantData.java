@@ -14,6 +14,7 @@ public class ConstantData {
 
 	public static final String POS_TYPE_W = "WPOS";
 	public static final String POS_TYPE_K = "KPOS";
+	public static final String POS_TYPE_Y = "YPOS";
 	public static final String POS_TYPE_NONE = "NONE";
 	/** 基数,用于配置常量参数 */
 	public static final int BASE_CODE = 0x200;
@@ -475,4 +476,15 @@ public class ConstantData {
 
 	/** 网络请求Tag */
 	public static final String NET_TAG = "net_tag";
+
+	/** 银行卡收款' */
+	public static final String YHK_SK = "银行卡收款'";
+	/** 消费' */
+	public static final String YHK_XF = "消费'";
+	/** 撤销' */
+	public static final String YHK_CX = "撤销'";
+	/** 余额查询' */
+	public static final String YHK_CXYE = "余额查询'";
+	/** 退货' */
+	public static final String YHK_TH = "退货'";
 }

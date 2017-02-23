@@ -61,6 +61,9 @@ import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.MyscollView;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.system.BaseSystemManager;
+import com.ums.upos.sdk.system.OnServiceStatusListener;
 
 import org.json.JSONObject;
 
@@ -671,6 +674,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
             }).start();
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogin(
+                        MainActivity.this, null, "99999998",//设备ID，生产找后台配置
+                        new OnServiceStatusListener() {
+                            @Override
+                            public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    PrepareReceiptInfo.printBackOrderList(billinfo, true, latticePrinter);
+                                }else{
+                                    ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
+                                }
+                            }
+                        });
+            } catch (SdkException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
@@ -702,6 +723,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 }
             }).start();
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogin(
+                        MainActivity.this, null, "99999998",//设备ID，生产找后台配置
+                        new OnServiceStatusListener() {
+                            @Override
+                            public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    PrepareReceiptInfo.printOrderList(billinfo, true, latticePrinter);
+                                }else{
+                                    ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
+                                }
+                            }
+                        });
+            } catch (SdkException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
     private void printByorderforHttp(final String edit) {

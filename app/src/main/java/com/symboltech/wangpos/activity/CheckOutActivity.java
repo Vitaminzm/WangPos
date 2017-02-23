@@ -1,5 +1,6 @@
 package com.symboltech.wangpos.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.PaymentTypeAdapter;
@@ -54,9 +56,14 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
+import com.ums.AppHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -152,6 +159,7 @@ public class CheckOutActivity extends BaseActivity {
                     infobank.setType(paymentTypeAdapter.getPayType().getType());
                     infobank.setIsCancle(false);
                     infobank.setTxnid(orderBean.getTxnId());
+                    infobank.setTraceNo(orderBean.getBatchId());
                     infobank.setMoney(MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
                     infobank.setOverage("0");
                     addPayTypeInfo(PaymentTypeEnum.BANK, 0, 0, null, infobank);
@@ -334,6 +342,17 @@ public class CheckOutActivity extends BaseActivity {
                     intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
                     intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
                     startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
+                }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+
+                    JSONObject json = new JSONObject();
+                    String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                    try {
+                        json.put("amt",paymentMoney);//TODO 金额格式
+                        json.put("extOrderNo",tradeNo);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
                 }
                 break;
         }
@@ -823,6 +842,38 @@ public class CheckOutActivity extends BaseActivity {
         }else if(resultCode == ConstantData.THRID_CANCLE_RESULT_CODE){
             if(requestCode == ConstantData.THRID_CANCLE_REQUEST_CODE){
                 deletepayMentsInfo((List<PayMentsCancleInfo>) data.getSerializableExtra(ConstantData.CANCLE_LIST));
+            }
+        }else if(Activity.RESULT_OK == resultCode){
+            if(AppHelper.TRANS_REQUEST_CODE == requestCode){
+                if (null != data) {
+                    StringBuilder result = new StringBuilder();
+                    Map<String,String> map = AppHelper.filterTransResult(data);
+                    if("0".equals(map.get(AppHelper.RESULT_CODE))){
+                        Type type =new TypeToken<Map<String, String>>(){}.getType();
+                        try {
+                            Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+                            if("00".equals(transData.get("resCode"))){
+                                OrderBean orderBean= new OrderBean();
+                                orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(edit_input_money.getText().toString()));
+                                orderBean.setTxnId(transData.get("extOrderNo"));
+                                orderBean.setAccountNo(transData.get("cardNo"));
+                                orderBean.setAcquId(transData.get("cardIssuerCode"));
+                                orderBean.setBatchId(transData.get("traceNo"));
+                                orderBean.setRefNo(transData.get("refNo"));
+                                Message msg = Message.obtain();
+                                msg.what = THIRD_PAY_INFO;
+                                msg.obj = orderBean;
+                                handler.sendMessage(msg);
+                            }else{
+                                ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler,"银行卡支付异常！");
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

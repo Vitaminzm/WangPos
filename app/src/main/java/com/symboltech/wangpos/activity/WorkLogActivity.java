@@ -41,6 +41,9 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.DecoratorViewPager;
 import com.symboltech.wangpos.view.ScllorTabView;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.system.BaseSystemManager;
+import com.ums.upos.sdk.system.OnServiceStatusListener;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -402,6 +405,24 @@ public class WorkLogActivity extends BaseActivity {
                     }
                 }
             }).start();
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogin(
+                        WorkLogActivity.this, null, "99999998",//设备ID，生产找后台配置
+                        new OnServiceStatusListener() {
+                            @Override
+                            public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    PrepareReceiptInfo.printReportFrom(flag, reportInfo, latticePrinter);
+                                }else{
+                                    ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
+                                }
+                            }
+                        });
+            } catch (SdkException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
     class MyPagerAdapter extends PagerAdapter {

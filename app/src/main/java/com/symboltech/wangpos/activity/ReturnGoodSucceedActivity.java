@@ -31,6 +31,9 @@ import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.GridViewForScrollView;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.system.BaseSystemManager;
+import com.ums.upos.sdk.system.OnServiceStatusListener;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -333,6 +336,24 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
                     }
                 }
             }).start();
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogin(
+                        ReturnGoodSucceedActivity.this, null, "99999998",//设备ID，生产找后台配置
+                        new OnServiceStatusListener() {
+                            @Override
+                            public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
+                                }else{
+                                    ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
+                                }
+                            }
+                        });
+            } catch (SdkException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 }

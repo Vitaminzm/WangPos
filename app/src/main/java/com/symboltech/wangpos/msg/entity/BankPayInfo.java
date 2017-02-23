@@ -18,6 +18,15 @@ public class BankPayInfo implements Serializable, Cloneable {
 	private String skfsid;
 	private String des;
 	private String tradeno;
+	private String refno;
+
+	public String getRefno() {
+		return refno;
+	}
+
+	public void setRefno(String refno) {
+		this.refno = refno;
+	}
 
 	public String getTradeno() {
 		return tradeno;

@@ -102,4 +102,14 @@ public class GsonUtil {
             throw new Exception(e.getMessage());
         }
     }
+
+    public static <T> T jsonToObect(String json, Type cls) throws Exception {
+        try {
+            Gson gson = getGsonInstance(false);
+            T vo = gson.fromJson(json, cls);
+            return vo;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
 }
