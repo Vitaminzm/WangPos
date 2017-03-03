@@ -1,17 +1,5 @@
 package com.symboltech.zxing.app;
 
-import java.io.IOException;
-import java.util.Vector;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.Result;
-import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.zxing.camera.CameraManager;
-import com.symboltech.zxing.decoding.CaptureActivityHandler;
-import com.symboltech.zxing.decoding.InactivityTimer;
-import com.symboltech.zxing.view.ViewfinderView;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -29,6 +17,18 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.Result;
+import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.zxing.camera.CameraManager;
+import com.symboltech.zxing.decoding.CaptureActivityHandler;
+import com.symboltech.zxing.decoding.InactivityTimer;
+import com.symboltech.zxing.view.ViewfinderView;
+
+import java.io.IOException;
+import java.util.Vector;
 
 public class CaptureActivity extends Activity implements Callback, OnClickListener {
 

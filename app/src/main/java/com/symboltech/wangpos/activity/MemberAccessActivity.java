@@ -40,11 +40,23 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
+import com.ums.upos.sdk.cardslot.CardInfoEntity;
+import com.ums.upos.sdk.cardslot.CardSlotManager;
+import com.ums.upos.sdk.cardslot.CardSlotTypeEnum;
+import com.ums.upos.sdk.cardslot.CardTypeEnum;
+import com.ums.upos.sdk.cardslot.OnCardInfoListener;
+import com.ums.upos.sdk.cardslot.SwipeSlotOptions;
+import com.ums.upos.sdk.exception.CallServiceException;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.system.BaseSystemManager;
+import com.ums.upos.sdk.system.OnServiceStatusListener;
 
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -91,6 +103,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     }
 
     public static final int Qrcode = 1;
+    public static final int SEARCHCARDERROR = -1;
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -100,6 +113,21 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     break;
                 case Qrcode:
                     memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_QR, (String) msg.obj);
+                    break;
+                case SEARCHCARDERROR:
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        if(cardSlotManager == null){
+                            return;
+                        }
+                        try {
+                            cardSlotManager.stopRead();
+                        } catch (SdkException e) {
+                            e.printStackTrace();
+                        } catch (CallServiceException e) {
+                            e.printStackTrace();
+                        }
+                        searchCardInfo();
+                    }
                     break;
                 case Vipcard:
                     memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_MAGCARD, (String) msg.obj);
@@ -116,6 +144,18 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        if(cardSlotManager == null){
+                            return;
+                        }
+                        try {
+                            cardSlotManager.stopRead();
+                        } catch (SdkException e) {
+                            e.printStackTrace();
+                        } catch (CallServiceException e) {
+                            e.printStackTrace();
+                        }
+                        searchCardInfo();
                     }
                     break;
             }
@@ -140,6 +180,8 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     };
     private MsrBroadcastReceiver msrReceiver = new MsrBroadcastReceiver();
     MagneticReader mMagneticReader;
+
+    private CardSlotManager cardSlotManager = null;
     @Override
     protected void initData() {
         title_text_content.setText(getString(R.string.number_access));
@@ -159,6 +201,23 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                 ToastUtils.sendtoastbyhandler(handler, "Check engine application version");
             }
             registerReceiver(msrReceiver, new IntentFilter("cn.koolcloud.engine.memberCard"));
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogin(
+                        this, null, "99999998",//设备ID，生产找后台配置
+                        new OnServiceStatusListener() {
+                            @Override
+                            public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    cardSlotManager = new CardSlotManager();
+                                }else{
+                                    ToastUtils.sendtoastbyhandler(handler, "刷卡登录失败");
+                                }
+                            }
+                        });
+            } catch (SdkException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -229,6 +288,13 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
             unregisterReceiver(msrReceiver);
         }
         isRun = false;
+       if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+           try {
+               BaseSystemManager.getInstance().deviceServiceLogout();
+           } catch (SdkException e) {
+               e.printStackTrace();
+           }
+       }
         handler.removeCallbacksAndMessages(null);
         AppConfigFile.delActivity(this);
     }
@@ -269,6 +335,17 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
+                }
+            }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                if(cardSlotManager == null){
+                    return;
+                }
+                try {
+                    cardSlotManager.stopRead();
+                } catch (SdkException e) {
+                    e.printStackTrace();
+                } catch (CallServiceException e) {
+                    e.printStackTrace();
                 }
             }
             verify_type = ConstantData.MEMBER_VERIFY_BY_PHONE;
@@ -312,6 +389,8 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+            }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                searchCardInfo();
             }
 
             verify_type = ConstantData.MEMBER_VERIFY_BY_MEMBERCARD;
@@ -356,9 +435,74 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            if(cardSlotManager == null){
+                return;
+            }
+            try {
+                cardSlotManager.stopRead();
+            } catch (SdkException e) {
+                e.printStackTrace();
+            } catch (CallServiceException e) {
+                e.printStackTrace();
+            }
         }
         Intent intent_qr = new Intent(this, CaptureActivity.class);
         startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
+    }
+
+    private void searchCardInfo() {
+        if(cardSlotManager == null){
+            return;
+        }
+        Set<CardSlotTypeEnum> slotTypes = new HashSet<CardSlotTypeEnum>();
+        slotTypes.add(CardSlotTypeEnum.SWIPE);
+        Set<CardTypeEnum> cardTypes = new HashSet<CardTypeEnum>();
+        cardTypes.add(CardTypeEnum.MAG_CARD);
+        int timeout = 0;
+        try {
+            Map<CardSlotTypeEnum, Bundle> options = new HashMap<CardSlotTypeEnum, Bundle>();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(SwipeSlotOptions.LRC_CHECK, false);
+            options.put(CardSlotTypeEnum.SWIPE, bundle);
+            cardSlotManager.setConfig(options);
+            cardSlotManager.readCard(slotTypes, cardTypes, timeout,
+                    new OnCardInfoListener() {
+
+                        @Override
+                        public void onCardInfo(int arg0, CardInfoEntity arg1) {
+                            if (0 != arg0) {
+                                handler.sendEmptyMessage(SEARCHCARDERROR);
+                            } else {
+                                switch (arg1.getActuralEnterType()) {
+                                    case MAG_CARD:
+                                        LogUtil.i("lgs", "磁道1：" + arg1.getTk1()
+                                                + "\n" + "磁道2：" + arg1.getTk2()
+                                                + "\n" + "磁道3：" + arg1.getTk3());
+                                        Message msg = Message.obtain();
+                                        msg.obj = arg1.getTk1();
+                                        msg.what = Vipcard;
+                                        handler.sendMessage(msg);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                try {
+                                    cardSlotManager.stopRead();
+                                } catch (SdkException e) {
+                                    e.printStackTrace();
+                                } catch (CallServiceException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }, null);
+        } catch (SdkException e) {
+            e.printStackTrace();
+        } catch (CallServiceException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override

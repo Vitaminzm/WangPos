@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.symboltech.wangpos"
-    android:versionCode="1701241451"
-    android:versionName="1.0.2" >
+    android:versionCode="1701271051"
+    android:versionName="1.0.3" >
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -56,6 +56,8 @@
         <activity android:name=".activity.DemandNoteActivity"/>
         <activity android:name=".activity.MemberActivateActivity"/>
         <activity android:name=".activity.SendPackCouponActivity"/>
+        <activity android:name=".dialog.VerifyAuthDialog"
+            android:theme="@style/dialog_login_bg"/>
         <activity android:name=".dialog.ThirdPayDialog"
                 android:theme="@style/dialog_login_bg"/>
         <activity android:name=".dialog.CanclePayDialog"

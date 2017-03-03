@@ -88,11 +88,20 @@ public class BillInfo implements Serializable {
 	private String parkcouponhour;//赠送的停车券时长
 	private String parkcouponaddhour;//赠送的停车券有效日期
 	private String carno;
+	private String randomcode;
 	private List<GoodsInfo> goodslist;
 	private List<PayMentsInfo> paymentslist;
 	private List<CouponInfo> usedcouponlist;// 交易用卷信息
 	private List<CouponInfo> allcouponlist;// 用户持有用卷信息
-	
+
+	public String getRandomcode() {
+		return randomcode;
+	}
+
+	public void setRandomcode(String randomcode) {
+		this.randomcode = randomcode;
+	}
+
 	public String getCarno() {
 		return carno;
 	}

@@ -499,5 +499,10 @@ public class HttpRequestUtil {
 		HttpServiceStringClient.getinstance().getForObject(tag, getUrl("xbapi/monitorskt"), param, clz,
 				httpactionhandler);
 	}
-	
+
+	public <T> void RefundRight(String tag, Map<String, String> param, final Class<T> clz,
+									 final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/RefundRight"), param, clz,
+				httpactionhandler);
+	}
 }

@@ -477,7 +477,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                     JSONObject json = new JSONObject();
                     String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
                     try {
-                        json.put("amt",entity.getAmount());
+                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
                         json.put("refNo",entity.getRefno());
                         json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
                         json.put("extOrderNo",tradeNo);

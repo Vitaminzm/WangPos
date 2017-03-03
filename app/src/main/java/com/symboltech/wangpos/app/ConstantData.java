@@ -113,6 +113,11 @@ public class ConstantData {
 	/**三方撤销结果*/
 	public static final int THRID_CANCLE_RESULT_CODE = BASE_CODE + 34;
 
+	/**授权请求码*/
+	public static final int VERIFY_AUTH_REQUEST_CODE = BASE_CODE + 35;
+	/**授权返回码*/
+	public static final int VERIFY_AUTH_RESULT_CODE = BASE_CODE + 36;
+
 	/**支付宝id*/
 	public static final String ALPAY_ID = "68";
 

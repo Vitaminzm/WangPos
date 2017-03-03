@@ -347,7 +347,7 @@ public class CheckOutActivity extends BaseActivity {
                     JSONObject json = new JSONObject();
                     String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
                     try {
-                        json.put("amt",paymentMoney);//TODO 金额格式
+                        json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
                         json.put("extOrderNo",tradeNo);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -854,7 +854,7 @@ public class CheckOutActivity extends BaseActivity {
                             Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
                             if("00".equals(transData.get("resCode"))){
                                 OrderBean orderBean= new OrderBean();
-                                orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(edit_input_money.getText().toString()));
+                                orderBean.setTransAmount(transData.get("amt"));
                                 orderBean.setTxnId(transData.get("extOrderNo"));
                                 orderBean.setAccountNo(transData.get("cardNo"));
                                 orderBean.setAcquId(transData.get("cardIssuerCode"));

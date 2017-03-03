@@ -146,6 +146,9 @@ public class PrepareReceiptInfo {
 	/**
 	 * 加空行
 	 * @param array
+	 * @param latticePrinter
+	 * @param printer
+	 * @param fontConfig
 	 */
 	private static void addBlankLine(JSONArray array, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
 		if(latticePrinter != null){
@@ -1124,6 +1127,7 @@ public class PrepareReceiptInfo {
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
 									.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
 									.replace(TicketFormatEnum.TICKET_BILL_NO.getLable(), bill.getBillid())
+									.replace(TicketFormatEnum.TICKET_AUTH_CODE.getLable(), bill.getRandomcode())
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
 									.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), bill.getCashiername())
@@ -1626,6 +1630,7 @@ public class PrepareReceiptInfo {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getName()) + "	" + info.getAvailablemoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
 		}
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "验证码:"+bill.getRandomcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		if (mend) {
 			addDashLine(array, latticePrinter, printer, fontConfig);
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打收款员：" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);

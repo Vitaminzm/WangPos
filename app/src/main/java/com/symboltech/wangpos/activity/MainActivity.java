@@ -34,6 +34,7 @@ import com.symboltech.wangpos.dialog.OfflineUploadDialog;
 import com.symboltech.wangpos.dialog.PrintOrderDialog;
 import com.symboltech.wangpos.dialog.ReturnDialog;
 import com.symboltech.wangpos.dialog.ThirdPayControllerDialog;
+import com.symboltech.wangpos.dialog.VerifyAuthDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -512,7 +513,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
                     return;
                 }
-                new ReturnDialog(this).show();
+                startActivityForResult(new Intent(this, VerifyAuthDialog.class), ConstantData.VERIFY_AUTH_REQUEST_CODE);
                 break;
             case R.id.rl_change:
                 new ChangeManagerDialog(this, new DialogFinishCallBack() {
@@ -600,6 +601,20 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 startActivity(intent);
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == ConstantData.VERIFY_AUTH_RESULT_CODE) {
+            switch (requestCode) {
+                case ConstantData.VERIFY_AUTH_REQUEST_CODE:
+                    new ReturnDialog(this).show();
+                    break;
+                default:
+                    break;
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**

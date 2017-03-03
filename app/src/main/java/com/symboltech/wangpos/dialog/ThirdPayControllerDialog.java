@@ -603,7 +603,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					JSONObject json = new JSONObject();
 					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
 					try {
-						json.put("amt",edit_money.getText().toString());
+						json.put("amt",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
 						json.put("refNo",trade_no);
 						json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
 						json.put("extOrderNo",tradeNo);
@@ -743,7 +743,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				JSONObject json = new JSONObject();
 				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
 				try {
-					json.put("orgTraceNo",edit_money.getText().toString());
+					json.put("orgTraceNo",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
 					json.put("extOrderNo", tradeNo);
 				} catch (JSONException e) {
 					e.printStackTrace();

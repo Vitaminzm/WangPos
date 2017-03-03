@@ -484,6 +484,8 @@ public class CanclePayDialog extends BaseActivity{
 					e.printStackTrace();
 				}
 				isCancleCount++;
+				info.setDes(getString(R.string.cancleing_pay));
+				canclePayAdapter.notifyDataSetChanged();
 				AppHelper.callTrans(CanclePayDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
 			}
 		}
@@ -504,7 +506,7 @@ public class CanclePayDialog extends BaseActivity{
 							Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
 							if("00".equals(transData.get("resCode"))){
 								OrderBean orderBean= new OrderBean();
-								orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(info.getMoney()));
+								orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(info.getMoney()));
 								orderBean.setTxnId(transData.get("extOrderNo"));
 								orderBean.setAccountNo(transData.get("cardNo"));
 								orderBean.setAcquId(transData.get("cardIssuerCode"));

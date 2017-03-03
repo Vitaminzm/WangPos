@@ -86,6 +86,7 @@
     <string name="submit_order">提交订单</string>
     <string name="submit">提交</string>
     <string name="waring_format_msg">输入格式异常</string>
+    <string name="waring_null_msg">输入不能为空</string>
     <string name="waring_money_over">输入金额过大</string>
     <string name="waring_money_not_zero">输入金额不能为零</string>
     <string name="waring_msg_pay_success">支付已经完成</string>
@@ -319,11 +320,13 @@
 
 
     <string name="print_order">打票</string>
+    <string name="verify_auth">授权(请刷卡或输入)</string>
     <string name="pay_bu_print_bill">补打小票</string>
     <string name="pay_bu_print_slip">补打签购单</string>
     <string name="waring_no_found_bill">没有该订单</string>
     <string name="please_input_order_no">请输入订单号</string>
     <string name="pleae_order_number">请输入正确订单号</string>
+    <string name="pleae_verify_auth">请输入授权号</string>
 
     <string name="change_job">交班</string>
     <string name="change_job_report">班报</string>

@@ -1,7 +1,5 @@
 package com.symboltech.wangpos.http;
 
-import android.content.Intent;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -10,7 +8,6 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
-import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.utils.SpSaveUtils;

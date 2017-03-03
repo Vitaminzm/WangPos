@@ -11,6 +11,8 @@ public enum TicketFormatEnum {
 
 	//--小票头 尾
 	/** 店铺代码*/
+	TICKET_AUTH_CODE("\\[验证码\\]"),
+	/** 店铺代码*/
 	TICKET_SHOP_CODE("\\[店铺代码\\]"),
 	/** 店铺名称*/
 	TICKET_SHOP_NAME("\\[店铺名称\\]"),
