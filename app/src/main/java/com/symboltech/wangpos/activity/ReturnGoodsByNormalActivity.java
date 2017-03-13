@@ -96,7 +96,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
                 }
             }else if(id == R.id.edit_return_handperson){
                 if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
-                    new InputDialog(this, "请输入销售员编码", new GeneralEditListener(){
+                    new InputDialog(this, "请输入销售员编码", "请输入销售员编码", new GeneralEditListener(){
 
                         @Override
                         public void editinput(final String edit) {

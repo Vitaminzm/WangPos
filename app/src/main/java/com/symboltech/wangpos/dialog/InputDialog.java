@@ -62,6 +62,13 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 		this.gel = gel;
 	}
 
+	public InputDialog(Context context, String title, String hit,GeneralEditListener gel) {
+		super(context, R.style.dialog_login_bg);
+		this.context = context;
+		this.title = title;
+		this.gel = gel;
+		this.hit = hit;
+	}
 	public InputDialog(Context context, String title, String hit,GeneralEditListener gel, boolean flag) {
 		super(context, R.style.dialog_login_bg);
 		this.context = context;
@@ -137,7 +144,9 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 						gel.editinput(edit_input_order_no.getText().toString().trim());
 						this.dismiss();
 					}else{
-						boolean result=edit_input_order_no.getText().toString().trim().matches("[0-9]{1,10}");
+						gel.editinput(edit_input_order_no.getText().toString().trim());
+						this.dismiss();
+						boolean result=edit_input_order_no.getText().toString().trim().matches("^[0-9]*$");
 						if(result){
 							gel.editinput(edit_input_order_no.getText().toString().trim());
 							this.dismiss();

@@ -115,6 +115,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content">
                         <TextView
+                            android:visibility="invisible"
                             android:id="@+id/text_edit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

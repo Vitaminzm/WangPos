@@ -29,10 +29,12 @@ import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.AlipayAndWeixinPayReturnDialog;
+import com.symboltech.wangpos.dialog.BankreturnDialog;
 import com.symboltech.wangpos.dialog.ThirdPayReturnDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.OnReturnFinishListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BankPayInfo;
@@ -460,9 +462,14 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
      */
     private void returnBank() {
         if (bankFlag < bankStyle.size()) {
-            BankPayInfo entity = bankStyle.get(bankFlag);
+            final BankPayInfo entity = bankStyle.get(bankFlag);
             if("true".equals(entity.getDes())){
                 bankFlag += 1;
+                if (bankFlag < bankStyle.size()) {
+                    returnBank();
+                } else {
+                    returnAlipay();
+                }
             }else{
                 if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                     requestCashier(entity.getTradeno());
@@ -474,7 +481,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                     intentBank.putExtra(ConstantData.PAY_ID, entity.getTradeno());
                     startActivityForResult(intentBank, ConstantData.THRID_CANCLE_REQUEST_CODE);
                 }else if (MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-                    JSONObject json = new JSONObject();
+                    final JSONObject json = new JSONObject();
                     String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
                     try {
                         json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
@@ -484,7 +491,12 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
+                    new BankreturnDialog(this, entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
+                        @Override
+                        public void finish(int position) {
+                            AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
+                        }
+                    }).show();
                 }
             }
         } else {

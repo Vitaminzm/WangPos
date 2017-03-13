@@ -359,6 +359,10 @@ public class PaymentDetailActivity extends BaseActivity {
             if (printService != null)
                 bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
         }
+
+        if(isMember == ConstantData.MEMBER_IS_NOT_VERITY){
+            printByorder(bill);
+        }
     }
 
     private void addPayTypeInfo(String name, double changeMoney) {
@@ -437,9 +441,6 @@ public class PaymentDetailActivity extends BaseActivity {
                 }
                 break;
             case R.id.text_done:
-                if(isMember == ConstantData.MEMBER_IS_NOT_VERITY){
-                    printByorder(bill);
-                }
                 Intent intent = new Intent(this, MainActivity.class);
                 startActivity(intent);
                 this.finish();

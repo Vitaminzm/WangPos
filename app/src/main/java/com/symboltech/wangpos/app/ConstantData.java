@@ -482,14 +482,20 @@ public class ConstantData {
 	/** 网络请求Tag */
 	public static final String NET_TAG = "net_tag";
 
-	/** 银行卡收款' */
-	public static final String YHK_SK = "银行卡收款'";
-	/** 消费' */
-	public static final String YHK_XF = "消费'";
-	/** 撤销' */
-	public static final String YHK_CX = "撤销'";
-	/** 余额查询' */
-	public static final String YHK_CXYE = "余额查询'";
-	/** 退货' */
-	public static final String YHK_TH = "退货'";
+	/** 银行卡收款*/
+	public static final String YHK_SK = "银行卡收款";
+	/** 消费 */
+	public static final String YHK_XF = "消费";
+	/** 撤销*/
+	public static final String YHK_CX = "撤销";
+	/** 余额查询*/
+	public static final String YHK_CXYE = "余额查询";
+	/** 退货'*/
+	public static final String YHK_TH = "退货";
+	/** 补打上一笔*/
+	public static final String YHK_JYMX = "交易明细";
+	/** 结算*/
+	public static final String YHK_JS = "结算";
+	/** 签到*/
+	public static final String YHK_SIGN = "签到";
 }

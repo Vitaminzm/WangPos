@@ -938,6 +938,7 @@ public class CheckOutActivity extends BaseActivity {
                     bill.setSaleman(getSalemanCode(salesman));
                     bill.setRealmoney("" + ArithDouble.sub(orderTotleValue, ArithDouble.add(orderCoupon, orderScore)));
 
+                    bill.setRandomcode(result.getSaveOrderInfo().getRandomcode());
                     bill.setAwardpoint(result.getSaveOrderInfo().getGainpoint());
                     bill.setTotalmoney(String.valueOf(orderTotleValue));
                     bill.setGoodslist(cartgoods);

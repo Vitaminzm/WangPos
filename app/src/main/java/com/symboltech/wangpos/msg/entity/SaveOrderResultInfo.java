@@ -17,10 +17,18 @@ public class SaveOrderResultInfo implements Serializable {
 	private String totalpoint; // 本卡总积分
 	private String parkcouponhour; // 赠送的停车券时长
 	private String parkcouponaddhour; //赠送的停车券有效日期
+	private String randomcode; //小票随机校验码
 	private List<CouponInfo> grantcouponlist; // 返券列表
 	private List<CouponInfo> allcouponlist;//会员总积分
-	
-	
+
+	public String getRandomcode() {
+		return randomcode;
+	}
+
+	public void setRandomcode(String randomcode) {
+		this.randomcode = randomcode;
+	}
+
 	public String getParkcouponhour() {
 		return parkcouponhour;
 	}

@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -62,10 +63,12 @@ import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.MyscollView;
+import com.ums.AppHelper;
 import com.ums.upos.sdk.exception.SdkException;
 import com.ums.upos.sdk.system.BaseSystemManager;
 import com.ums.upos.sdk.system.OnServiceStatusListener;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
@@ -473,6 +476,15 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 });
             }
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            JSONObject json = new JSONObject();
+            try {
+                json.put("traceNo","000000");
+                json.put("isNeedPrintReceipt", false);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            AppHelper.callTrans(MainActivity.this, ConstantData.YHK_SK, ConstantData.YHK_JYMX, json);
         }
 
     }
@@ -612,6 +624,24 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     break;
                 default:
                     break;
+            }
+        }else if(Activity.RESULT_OK == resultCode) {
+            if (AppHelper.TRANS_REQUEST_CODE == requestCode) {
+                if (null != data) {
+                    StringBuilder result = new StringBuilder();
+                    Map<String, String> map = AppHelper.filterTransResult(data);
+                    if ("0".equals(map.get(AppHelper.RESULT_CODE))) {
+
+                    } else {
+                        String msg = "银行卡返回信息异常";
+                        if (!StringUtil.isEmpty(map.get(AppHelper.RESULT_MSG))) {
+                            msg = map.get(AppHelper.RESULT_MSG);
+                        }
+                        ToastUtils.sendtoastbyhandler(handler, "msg");
+                    }
+                } else {
+                    ToastUtils.sendtoastbyhandler(handler, "银行卡打印异常！");
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

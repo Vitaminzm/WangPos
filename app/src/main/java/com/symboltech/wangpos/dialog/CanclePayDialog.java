@@ -316,7 +316,7 @@ public class CanclePayDialog extends BaseActivity{
 					return;
 				}
 				for(int i=0;i<payments.size();i++){
-					if(payments.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype()) || payments.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
+					if( payments.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
 							payments.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()) ||payments.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype()) ||
 							payments.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) ||payments.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
 						payments.get(i).setIsCancle(true);
@@ -475,18 +475,26 @@ public class CanclePayDialog extends BaseActivity{
 							});
 				}
 			}else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-				JSONObject json = new JSONObject();
-				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-				try {
-					json.put("orgTraceNo",info.getTraceNo());
-					json.put("extOrderNo", tradeNo);
-				} catch (JSONException e) {
-					e.printStackTrace();
+				if(isCancleCount > 0){
+					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+					return;
 				}
-				isCancleCount++;
-				info.setDes(getString(R.string.cancleing_pay));
-				canclePayAdapter.notifyDataSetChanged();
-				AppHelper.callTrans(CanclePayDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
+				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
+						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+					this.position = position;
+					JSONObject json = new JSONObject();
+					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+					try {
+						json.put("orgTraceNo",info.getTraceNo());
+						json.put("extOrderNo", tradeNo);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					isCancleCount++;
+					info.setDes(getString(R.string.cancleing_pay));
+					canclePayAdapter.notifyDataSetChanged();
+					AppHelper.callTrans(CanclePayDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
+				}
 			}
 		}
 	}

@@ -393,7 +393,7 @@ public class PaymentActivity extends BaseActivity {
                 break;
             case R.id.radio_add_salesman:
                 if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
-                    new InputDialog(this, "请输入销售员编码", new GeneralEditListener(){
+                    new InputDialog(this, "请输入销售员编码", "请输入销售员编码", new GeneralEditListener(){
 
                         @Override
                         public void editinput(final String edit) {

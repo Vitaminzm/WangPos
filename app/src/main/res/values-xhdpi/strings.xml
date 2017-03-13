@@ -69,6 +69,7 @@
     <string name="repeat">重试</string>
     <string name="confirm">确认</string>
     <string name="query">查询</string>
+    <string name="clear">结算</string>
     <string name="cancle">取消</string>
     <string name="checkout">结账</string>
     <string name="order_manjian_money">满减金额</string>
@@ -105,6 +106,7 @@
     <string name="waring_no_equity">本次交易没有可用的权益</string>
 
 
+    <string name="bank_return">银行卡退款</string>
     <string name="weichat">微信</string>
     <string name="alipay">支付宝</string>
     <string name="bank">银行卡</string>
@@ -362,6 +364,7 @@
     <string name="offline">脱机</string>
     <string name="sale">销售</string>
     <string name="trans">交易</string>
+    <string name="signin">签到</string>
 
     <!-- 微信支付宝支付相关 -->
     <string name="thirdpay_deal_time">"交易金额： "</string>

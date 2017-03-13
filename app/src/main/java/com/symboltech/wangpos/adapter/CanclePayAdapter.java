@@ -1,8 +1,6 @@
 package com.symboltech.wangpos.adapter;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,22 +9,13 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.CanclePayDialog;
-import com.symboltech.wangpos.http.HttpActionHandle;
-import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
-import com.symboltech.wangpos.result.ThirdPayCancelResult;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
-import com.symboltech.wangpos.utils.ToastUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 撤销adapter
@@ -64,7 +53,7 @@ public class CanclePayAdapter extends BaseAdapter {
 		paymentsInfoAdapter = new ArrayList<>();
 		if(paymentsInfo!= null){
 			for(int i=0;i<paymentsInfo.size();i++){
-				if(paymentsInfo.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype()) || paymentsInfo.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
+				if(paymentsInfo.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())|| paymentsInfo.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype()) ||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) ||paymentsInfo.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
 					//paymentsInfo.get(i).setIsCancle(true);

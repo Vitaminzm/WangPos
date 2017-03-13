@@ -1,5 +1,6 @@
 package com.symboltech.wangpos.activity;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.gson.reflect.TypeToken;
 import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.PaymentAdapter;
@@ -57,18 +59,24 @@ import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
+import com.ums.AppHelper;
 import com.ums.upos.sdk.exception.SdkException;
 import com.ums.upos.sdk.system.BaseSystemManager;
 import com.ums.upos.sdk.system.OnServiceStatusListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -450,7 +458,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
      */
     private void showStyle(View v) {
         if (null == PopupWindowStyle) {
-            PopupWindowStyle = new PopupWindow(stylePop, (int)getResources().getDimension(R.dimen.height_ofz), (int)getResources().getDimension(R.dimen.height_osz), true);
+            PopupWindowStyle = new PopupWindow(stylePop, (int)getResources().getDimension(R.dimen.height_ovz), (int)getResources().getDimension(R.dimen.height_osz), true);
             PopupWindowStyle.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
             PopupWindowStyle.setAnimationStyle(R.style.PopupAnimation);
         }
@@ -712,7 +720,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     private void returnBank() {
         if (bankFlag < bankStyle.size()) {
             final ReturnEntity entity = bankStyle.get(bankFlag);
-            new InputDialog(this, "银行卡退款", new GeneralEditListener(){
+            new InputDialog(this, "银行卡退款", "请输入参考号", new GeneralEditListener(){
                 @Override
                 public void editinput(String edit) {
                     if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
@@ -726,12 +734,74 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                         } else {
                             returnAlipay();
                         }
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        final JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt",CurrencyUnit.yuan2fenStr(getDoubleMoney(entity.getMoney())+""));
+                            json.put("refNo",edit);
+                            json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                            json.put("extOrderNo",tradeNo);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        LogUtil.i("lgs", json.toString());
+                        AppHelper.callTrans(ReturnMoneyByNormalActivity.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
                     }
                 }
             }).show();
         } else {
             returnAlipay();
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(Activity.RESULT_OK == resultCode){
+            if(AppHelper.TRANS_REQUEST_CODE == requestCode){
+                ReturnEntity entity = bankStyle.get(bankFlag);
+                if (null != data) {
+                    StringBuilder result = new StringBuilder();
+                    Map<String,String> map = AppHelper.filterTransResult(data);
+                    if("0".equals(map.get(AppHelper.RESULT_CODE))){
+                        Type type =new TypeToken<Map<String, String>>(){}.getType();
+                        try {
+                            Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+                            if("00".equals(transData.get("resCode"))){
+                                OrderBean orderBean= new OrderBean();
+                                putPayments(entity.getId(), idNames.get(entity.getId()), idTypes.get(entity.getId()), "-" + getDoubleMoney(entity.getMoney()));
+                                orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(getDoubleMoney(entity.getMoney())+""));
+                                orderBean.setTxnId(transData.get("extOrderNo"));
+                                orderBean.setAccountNo(transData.get("cardNo"));
+                                orderBean.setAcquId(transData.get("cardIssuerCode"));
+                                orderBean.setBatchId(transData.get("traceNo"));
+                                orderBean.setRefNo(transData.get("refNo"));
+                                orderBean.setPaymentId(entity.getId());
+                                orderBean.setTransType(ConstantData.TRANS_RETURN);
+                                orderBean.setTraceId(AppConfigFile.getBillId());
+                                Intent serviceintent = new Intent(mContext, RunTimeService.class);
+                                serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+                                serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+                                startService(serviceintent);
+                                bankFlag += 1;
+                                if (bankFlag < bankStyle.size()) {
+                                    returnBank();
+                                } else {
+                                    returnAlipay();
+                                }
+                            }else{
+                                ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, "银行卡撤销异常！");
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void putPayments(String id, String name, String type, String money) {
