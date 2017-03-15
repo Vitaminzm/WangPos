@@ -100,7 +100,7 @@ public class HttpStringClient {
 	 * @param httpactionhandler
 	 * @param <T>
 	 */
-	public <T> void getForObject(final String actionname, String url, Map<String, String> map, final Class<T> clz,
+	public <T> void getForObject(final String actionname, final String url, Map<String, String> map, final Class<T> clz,
 			final HttpActionHandle<T> httpactionhandler) {
 		final Gson gson = getGson();
 		httpactionhandler.handleActionStart();
@@ -166,7 +166,7 @@ public class HttpStringClient {
 					}
 					try {
 						String re =  response.body().string();
-						LogUtil.i("lgs", "response==========" +re);
+						LogUtil.i("lgs", "response======"+url+"====" +re);
 						result = gson.fromJson(re, clz);
 						if(result != null){
 							if(((BaseResult) result).getCode()!= null)

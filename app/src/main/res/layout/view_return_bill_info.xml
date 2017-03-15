@@ -84,6 +84,6 @@
         android:textSize="@dimen/font_size_rx"
         android:textColor="@color/white"
         android:gravity="center"
-        android:background="@drawable/login_bt_selector"
+        android:background="@drawable/btn_green_bg"
         android:layout_alignParentRight="true"/>
 </RelativeLayout>

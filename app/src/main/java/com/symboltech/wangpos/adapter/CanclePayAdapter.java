@@ -53,7 +53,7 @@ public class CanclePayAdapter extends BaseAdapter {
 		paymentsInfoAdapter = new ArrayList<>();
 		if(paymentsInfo!= null){
 			for(int i=0;i<paymentsInfo.size();i++){
-				if(paymentsInfo.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
+				if(paymentsInfo.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||paymentsInfo.get(i).getType().equals(PaymentTypeEnum.YUXF.getStyletype())||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())|| paymentsInfo.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype()) ||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) ||paymentsInfo.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
 					//paymentsInfo.get(i).setIsCancle(true);

@@ -52,7 +52,7 @@
         android:focusable="true"
         android:layout_alignParentBottom="true"
         android:text="@string/confirm"
-        android:background="@drawable/login_bt_selector"
+        android:background="@drawable/btn_green_bg"
         android:textColor="@android:color/white"
         />
 </RelativeLayout>

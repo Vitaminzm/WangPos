@@ -169,11 +169,14 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private PayMentsInfo coupon;
     /**deduction-积分抵扣*/
     private PayMentsInfo deduction;
+    /**deduction-信用付*/
+    private PayMentsInfo yuxf;
 
     private List<PayMentsInfo> payMentsInfos;
     private double realMoney;
     private double couponMoney;
     private double scoreMoney;
+    private double yuxfMoney;
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -450,10 +453,74 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
      * @return 退款完成返回true
      */
     private void returnMoney() {
-        if (bankStyle != null) {
-            returnBank();
-        } else {
-            returnAlipay();
+        if(yuxf != null){
+            returnYuxf();
+        }else{
+            if (bankStyle != null) {
+                returnBank();
+            } else {
+                returnAlipay();
+            }
+        }
+    }
+
+    private void returnYuxf(){
+        if("true".equals(yuxf.getType())){
+            if (bankStyle != null) {
+                returnBank();
+            } else {
+                returnAlipay();
+            }
+        }else {
+            yuxf.setDes("true");
+            putPayments(getPayTypeId(PaymentTypeEnum.YUXF), idNames.get(getPayTypeId(PaymentTypeEnum.YUXF)), PaymentTypeEnum.YUXF.getStyletype(), "-" + yuxfMoney);
+            if (bankStyle != null) {
+                returnBank();
+            } else {
+                returnAlipay();
+            }
+//            String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+//            Map<String, String> map = new HashMap<String, String>();
+//            map.put("reason", edit_input_reason.getText().toString());
+//            map.put("refundSign", tradeNo);
+//            map.put("refundAmount", yuxf.getMoney());
+//            map.put("sktNo", billInfo.getOldposno());
+//            map.put("Jlbh", billInfo.getOldbillid());
+//            map.put("njlbh", AppConfigFile.getBillId());
+//            map.put("nsktNo", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+//            HttpRequestUtil.getinstance().msxfRefund(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+//
+//                @Override
+//                public void handleActionStart() {
+//                    startwaitdialog();
+//                }
+//
+//                @Override
+//                public void handleActionFinish() {
+//                    closewaitdialog();
+//                }
+//
+//                @Override
+//                public void handleActionError(String actionName, String errmsg) {
+//                    ToastUtils.sendtoastbyhandler(handler, errmsg);
+//                }
+//
+//                @Override
+//                public void handleActionSuccess(String actionName,
+//                                                BaseResult result) {
+//                    if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+//                        yuxf.setDes("true");
+//                        putPayments(getPayTypeId(PaymentTypeEnum.YUXF), idNames.get(getPayTypeId(PaymentTypeEnum.YUXF)), PaymentTypeEnum.YUXF.getStyletype(), "-" + yuxfMoney);
+//                        if (bankStyle != null) {
+//                            returnBank();
+//                        } else {
+//                            returnAlipay();
+//                        }
+//                    }else{
+//                        ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+//                    }
+//                }
+//            });
         }
     }
     /**
@@ -882,6 +949,10 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 }else if (PaymentTypeEnum.SCORE.getStyletype().equals(type)) {
                     scoreMoney = ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage()));
                    deduction = info;
+                }else if (PaymentTypeEnum.YUXF.getStyletype().equals(type)) {
+                    yuxfMoney = ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage()));
+                    yuxf = info;
+                    yuxf.setDes("false");
                 }
             }
         }

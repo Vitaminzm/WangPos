@@ -138,7 +138,7 @@
             android:layout_marginRight="@dimen/margin_fz"
             android:gravity="center"
             android:focusable="true"
-            android:background="@drawable/login_bt_selector"
+            android:background="@drawable/btn_green_bg"
             android:textColor="@android:color/white"
             android:textSize="@dimen/big_font_size"
             android:text="@string/login"/>

@@ -144,8 +144,6 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 						gel.editinput(edit_input_order_no.getText().toString().trim());
 						this.dismiss();
 					}else{
-						gel.editinput(edit_input_order_no.getText().toString().trim());
-						this.dismiss();
 						boolean result=edit_input_order_no.getText().toString().trim().matches("^[0-9]*$");
 						if(result){
 							gel.editinput(edit_input_order_no.getText().toString().trim());

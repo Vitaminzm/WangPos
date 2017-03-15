@@ -290,6 +290,9 @@ public class ConstantData {
 	/** 微信支付渠道 */
 	public static final int PAYMODE_BY_WEIXIN = 3;
 
+	/** 马上消费支付渠道 */
+	public static final int PAYMODE_BY_MSXF = 4;
+
 	/** 0品种商品 */
 	public static final String GOODS_SOURCE_BY_BRAND = "0";
 

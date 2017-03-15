@@ -301,6 +301,24 @@ public class CheckOutActivity extends BaseActivity {
                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
+            case YUXF:
+                if(isContentPaytype(PaymentTypeEnum.YUXF)){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, "每笔交易只能使用一次信用付");
+                    return;
+                }
+                if(money > waitPayValue){
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    return;
+                }
+                intent_qr = new Intent(mContext, CaptureActivity.class);
+                intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_MSXF);
+                startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                paytype = ConstantData.PAYMODE_BY_MSXF;
+                break;
             case WECHAT:
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_WEIXIN_IS_INPUT, "0"))){
 //                    Intent intent_qr = new Intent(this, CaptureActivity.class);
@@ -313,6 +331,12 @@ public class CheckOutActivity extends BaseActivity {
 //                }
            //     break;
             case ALIPAY:
+                if(money > waitPayValue){
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    return;
+                }
                 if(ConstantData.WECHAT_ID.equals(payid)){
                     intent_qr = new Intent(mContext, CaptureActivity.class);
                     intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
@@ -335,6 +359,12 @@ public class CheckOutActivity extends BaseActivity {
 //                }
                 break;
             case BANK:
+                if(money > waitPayValue){
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    return;
+                }
                 if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
                     requestCashier(CurrencyUnit.yuan2fenStr(paymentMoney + ""));
                 }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
@@ -358,6 +388,16 @@ public class CheckOutActivity extends BaseActivity {
         }
     }
 
+    boolean isContentPaytype(PaymentTypeEnum paymentTypeEnum){
+        boolean ret = false;
+        for(PayMentsCancleInfo info:payMentsCancle){
+            if(info.getType().equals(paymentTypeEnum.getStyletype())){
+                ret = true;
+                break;
+            }
+        }
+        return ret;
+    }
     // 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
     //
     // 2.调用收银支付成功后，收银支付结果页面完成后，BizServiceInvoker.OnResponseListener后收到响应的结果
@@ -790,42 +830,46 @@ public class CheckOutActivity extends BaseActivity {
             }
         }else if(resultCode == ConstantData.QRCODE_RESULT_MEMBER_VERIFY){
             if(requestCode == ConstantData.QRCODE_REQURST_QR_PAY){
-                AlipayAndWeixinPayControllerInterfaceDialog paydialog = new AlipayAndWeixinPayControllerInterfaceDialog(this, paymentTypeAdapter.getPayType().getId(), paytype, ConstantData.THIRD_OPERATION_PAY, data.getExtras().getString("QRcode"), paymentMoney, true,
-                        new AlipayAndWeixinPayControllerInterfaceDialog.GetPayValue() {
+                if(paytype == ConstantData.PAYMODE_BY_MSXF){
+                    httpforMsxfpay(data.getExtras().getString("QRcode"), paymentMoney);
+                }else{
+                    AlipayAndWeixinPayControllerInterfaceDialog paydialog = new AlipayAndWeixinPayControllerInterfaceDialog(this, paymentTypeAdapter.getPayType().getId(), paytype, ConstantData.THIRD_OPERATION_PAY, data.getExtras().getString("QRcode"), paymentMoney, true,
+                            new AlipayAndWeixinPayControllerInterfaceDialog.GetPayValue() {
 
-                            @Override
-                            public void getPayValue(ThirdPay value) {
-                                if (paytype == ConstantData.PAYMODE_BY_ALIPAY) {
-                                    PayMentsCancleInfo info = new PayMentsCancleInfo();
-                                    info.setId(paymentTypeAdapter.getPayType().getId());
-                                    info.setName(paymentTypeAdapter.getPayType().getName());
-                                    info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
-                                    info.setIsCancle(false);
-                                    info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
-                                    info.setThridPay(value);
-                                    info.setOverage("0");
-                                    addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
-                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                @Override
+                                public void getPayValue(ThirdPay value) {
+                                    if (paytype == ConstantData.PAYMODE_BY_ALIPAY) {
+                                        PayMentsCancleInfo info = new PayMentsCancleInfo();
+                                        info.setId(paymentTypeAdapter.getPayType().getId());
+                                        info.setName(paymentTypeAdapter.getPayType().getName());
+                                        info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
+                                        info.setIsCancle(false);
+                                        info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                                        info.setThridPay(value);
+                                        info.setOverage("0");
+                                        addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
+                                        waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                        text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
 
-                                } else if (paytype == ConstantData.PAYMODE_BY_WEIXIN) {
-                                    PayMentsCancleInfo info = new PayMentsCancleInfo();
-                                    info.setId(paymentTypeAdapter.getPayType().getId());
-                                    info.setName(paymentTypeAdapter.getPayType().getName());
-                                    info.setType(PaymentTypeEnum.WECHAT.getStyletype());
-                                    info.setIsCancle(false);
-                                    info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
-                                    info.setThridPay(value);
-                                    info.setOverage("0");
-                                    addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
-                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                    } else if (paytype == ConstantData.PAYMODE_BY_WEIXIN) {
+                                        PayMentsCancleInfo info = new PayMentsCancleInfo();
+                                        info.setId(paymentTypeAdapter.getPayType().getId());
+                                        info.setName(paymentTypeAdapter.getPayType().getName());
+                                        info.setType(PaymentTypeEnum.WECHAT.getStyletype());
+                                        info.setIsCancle(false);
+                                        info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                                        info.setThridPay(value);
+                                        info.setOverage("0");
+                                        addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
+                                        waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                        text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                    }
                                 }
-                            }
-                        });
-                paydialog.show();
+                            });
+                    paydialog.show();
+                }
 //                Intent intent = new Intent(this, ThirdPayDialog.class);
 //                intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
 //                intent.putExtra(ConstantData.BSC, data.getExtras().getString("QRcode"));
@@ -877,6 +921,72 @@ public class CheckOutActivity extends BaseActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void httpforMsxfpay(String Qrcode, final double money){
+        PayMentsCancleInfo info = new PayMentsCancleInfo();
+        info.setId(paymentTypeAdapter.getPayType().getId());
+        info.setName(paymentTypeAdapter.getPayType().getName());
+        info.setType(PaymentTypeEnum.YUXF.getStyletype());
+        info.setIsCancle(false);
+        // info.setRefundcode(tradeNo);
+        info.setMoney(String.valueOf(money));
+        info.setOverage("0");
+        addPayTypeInfo(PaymentTypeEnum.YUXF, 0, 0, null, info);
+        waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+        text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+//        final String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+//        Map<String, String> map = new HashMap<String, String>();
+//        map.put("qrcode", Qrcode);
+//        map.put("amount", money+"");
+//        map.put("sktNo", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+//        map.put("jlbh", AppConfigFile.getBillId());
+//        map.put("goodsDescription", SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_NAME, "")+SpSaveUtils.read(getApplicationContext(), ConstantData.SHOP_NAME, ""));
+//        map.put("industryCode", "5311");
+//        map.put("goodsName", cartgoods.get(0).getGoodsname());
+//        map.put("orderId", tradeNo);
+//        map.put("goodsInfo", cartgoods.get(0).getGoodsname());
+//        map.put("partnerName", "佳惠");
+//        map.put("partnerId","佳惠");
+//        map.put("xsje",ArithDouble.sub(orderTotleValue, orderManjianValue)+"");
+//        HttpRequestUtil.getinstance().msxfPay(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+//
+//            @Override
+//            public void handleActionStart() {
+//                startwaitdialog();
+//            }
+//
+//            @Override
+//            public void handleActionFinish() {
+//                closewaitdialog();
+//            }
+//
+//            @Override
+//            public void handleActionError(String actionName, String errmsg) {
+//                ToastUtils.sendtoastbyhandler(handler, errmsg);
+//            }
+//
+//            @Override
+//            public void handleActionSuccess(String actionName, BaseResult result) {
+//                if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+//                    PayMentsCancleInfo info = new PayMentsCancleInfo();
+//                    info.setId(paymentTypeAdapter.getPayType().getId());
+//                    info.setName(paymentTypeAdapter.getPayType().getName());
+//                    info.setType(PaymentTypeEnum.YUXF.getStyletype());
+//                    info.setIsCancle(false);
+//                   // info.setRefundcode(tradeNo);
+//                    info.setMoney(String.valueOf(money));
+//                    info.setOverage("0");
+//                    addPayTypeInfo(PaymentTypeEnum.YUXF, 0, 0, null, info);
+//                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+//                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+//                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+//                }else{
+//                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+//                }
+//            }
+//        });
     }
 
     private void commitOrder() {
@@ -1011,7 +1121,8 @@ public class CheckOutActivity extends BaseActivity {
             for (int i = 0; i < paymentslist.size(); i++) {
                 if (paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHAT.getStyletype())
-                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())) {
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.YUXF.getStyletype())) {
                     if(!AppConfigFile.isOffLineMode()){
                         paymentTypeAdapter.add(paymentslist.get(i));
                     }

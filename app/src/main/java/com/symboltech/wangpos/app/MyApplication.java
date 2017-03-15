@@ -31,7 +31,7 @@ public class MyApplication extends Application {
      */
     private static String cashierId = "-1";
 
-    public static String posType= ConstantData.POS_TYPE_Y;
+    public static String posType= ConstantData.POS_TYPE_Y ;
     @Override
     public void onCreate() {
         super.onCreate();

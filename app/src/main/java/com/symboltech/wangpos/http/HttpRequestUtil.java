@@ -41,8 +41,32 @@ public class HttpRequestUtil {
 	public static HttpRequestUtil getinstance() {
 		return new HttpRequestUtil();
 	}
-	
 
+
+	/**
+	 * @Description 马上消费支付
+	 * @author zmm
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void msxfPay(Map<String, String> param, final Class<T> clz,
+							final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/msxfpay"), param, clz,
+				httpactionhandler);
+	}
+	/**
+	 * @Description 马上消费撤销
+	 * @author zmm
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void msxfRefund(Map<String, String> param, final Class<T> clz,
+							   final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/msxfrefund"), param, clz,
+				httpactionhandler);
+	}
 
 	/**
 	 * 补打交易订单

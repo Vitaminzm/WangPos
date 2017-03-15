@@ -140,6 +140,15 @@ public class PaymentTypeAdapter extends BaseAdapter {
 				}
 				holder.name_key.setText(paymentsInfo.get(position).getName());
 				break;
+			case YUXF:
+				if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.CASH && paymentsInfo.get(position).getId().equals(payType.getId())) {
+					holder.image_key.setImageResource(R.mipmap.xianjin_icon_select);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
+				} else {
+					holder.image_key.setImageResource(R.mipmap.xianjin_icon);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
+				}
+				holder.name_key.setText(paymentsInfo.get(position).getName());
 			default:
 				break;
 		}

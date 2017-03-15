@@ -414,7 +414,6 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				finish();
 				break;
 			case R.id.text_confirm:
-				keyboard.dismiss();
 				switch (type_function){
 					case ConstantData.TRANS_SALE:
 						doTrans();
@@ -622,11 +621,10 @@ public class ThirdPayControllerDialog extends BaseActivity{
 	}
 	public void doReturn(){
 		if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
-			if(!MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+			if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				doRevoke();
 				return;
 			}
-
 		}
 		if(trade_no == null){
 			if(edit_money.getText() == null || "".equals(edit_money.getText().toString())){
@@ -647,22 +645,27 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				ToastUtils.sendtoastbyhandler(handler, "请先输入金额");
 				return;
 			}else{
-				if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-					JSONObject json = new JSONObject();
-					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-					try {
-						json.put("amt",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
-						json.put("refNo",trade_no);
-						json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
-						json.put("extOrderNo",tradeNo);
-					} catch (JSONException e) {
-						e.printStackTrace();
+				keyboard.dismiss();
+				if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
+					if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+						JSONObject json = new JSONObject();
+						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+						try {
+							json.put("amt",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
+							json.put("refNo",trade_no);
+							json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+							json.put("extOrderNo",tradeNo);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						ll_input_money.setVisibility(View.GONE);
+						ll_paying_status.setVisibility(View.VISIBLE);
+						spin_kit.setVisibility(View.VISIBLE);
+						text_status.setText(R.string.thirdpay_requesting);
+						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
+					}else{
+						ToastUtils.sendtoastbyhandler(handler, "暂不支持");
 					}
-					ll_input_money.setVisibility(View.GONE);
-					ll_paying_status.setVisibility(View.VISIBLE);
-					spin_kit.setVisibility(View.VISIBLE);
-					text_status.setText(R.string.thirdpay_requesting);
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
 				}else{
 					Map<String, String> map = new HashMap<String, String>();
 					map.put("operater", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_CODE, ""));
@@ -786,6 +789,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 			ToastUtils.sendtoastbyhandler(handler, "输入不能为空");
 			return;
 		}
+		keyboard.dismiss();
 		if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				JSONObject json = new JSONObject();
@@ -797,8 +801,10 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					e.printStackTrace();
 				}
 				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
-			}else{
+			}else if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				requestRefundCashier(edit_money.getText().toString());
+			}else{
+				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
 			}
 		}else {
 			Map<String, String> map = new HashMap<String, String>();
@@ -900,6 +906,8 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				spin_kit.setVisibility(View.VISIBLE);
 				text_status.setText(R.string.thirdpay_requesting);
 				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
+			}else{
+				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
 			}
 		}else{
 			Intent intent_qr = new Intent(this, CaptureActivity.class);
