@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-     android:id="@+id/popup_list"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:divider="@color/divider_color"
-        android:dividerHeight="1dp"
-        android:listSelector="#f3f3f3"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
-        android:background="#ffffff" 
-        android:scrollbars="none">
-</ListView>
+    android:id="@+id/popup_list"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="2dp"
+    android:layout_marginRight="2dp"
+    android:background="#ffffff"
+    android:divider="@color/divider_color"
+    android:dividerHeight="1dp"
+    android:listSelector="#f3f3f3"
+    android:overScrollMode="never"
+    android:scrollbars="none"></ListView>

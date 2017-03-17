@@ -101,29 +101,36 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     static public boolean isPrinting = false;
     /** used by receiver */
     private IntentFilter filter = new IntentFilter();
-
+    private ChangeModeDialog changeModeDialog;
     public BroadcastReceiver receiver =new BroadcastReceiver(){
         @Override
         public void onReceive(Context context, Intent intent) {
             if (ConstantData.OFFLINE_MODE.equals(intent.getAction())) {
                 int mode = intent.getIntExtra(ConstantData.OFFLINE_MODE_INFO, -1);
                 if(mode == ConstantData.CHANGE_MODE_STATE){
-                    new ChangeModeDialog(MainActivity.this, new HttpActionHandle() {
-                        @Override
-                        public void handleActionError(String actionName, String errmsg) {
+                    if(changeModeDialog == null){
+                        changeModeDialog = new ChangeModeDialog(MainActivity.this, new HttpActionHandle() {
+                            @Override
+                            public void handleActionError(String actionName, String errmsg) {
 
+                            }
+
+                            @Override
+                            public void handleActionSuccess(String actionName, Object result) {
+
+                            }
+
+                            @Override
+                            public void handleActionChangeToOffLine() {
+                                ChangeUI(0);
+                            }
+                        });
+                        changeModeDialog.show();
+                    }else{
+                        if(!changeModeDialog.isShowing()){
+                            changeModeDialog.show();
                         }
-
-                        @Override
-                        public void handleActionSuccess(String actionName, Object result) {
-
-                        }
-
-                        @Override
-                        public void handleActionChangeToOffLine() {
-                            ChangeUI(0);
-                        }
-                    }).show();
+                    }
                 }
             }
         }

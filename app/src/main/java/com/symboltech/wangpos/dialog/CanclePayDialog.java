@@ -36,6 +36,7 @@ import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.msg.entity.WposBankRefundInfo;
+import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.ThirdPayCancelResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
@@ -336,6 +337,10 @@ public class CanclePayDialog extends BaseActivity{
 	 * @Description:
 	 */
 	private void thirdcancle(final int position) {
+		if(isCancleCount > 0){
+			ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+			return;
+		}
 		//LogUtil.i("lgs", "-----"+position);
 		isCancleCount++;
 		final PayMentsCancleInfo info = payments.get(position);
@@ -411,6 +416,63 @@ public class CanclePayDialog extends BaseActivity{
 		final PayMentsCancleInfo info = payments.get(position);
 		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype()) || info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
 			thirdcancle(position);
+		}else if(info.getType().equals(PaymentTypeEnum.YUXF.getStyletype())){
+			if(isCancleCount > 0){
+				ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+				return;
+			}
+			String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("reason", "交易撤销");
+			map.put("refundSign", tradeNo);
+			map.put("refundAmount", info.getMoney());
+			map.put("sktNo", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+			map.put("jlbh", AppConfigFile.getBillId());
+			map.put("njlbh", AppConfigFile.getBillId());
+			map.put("nsktNo", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+			HttpRequestUtil.getinstance().msxfRefund(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+
+				@Override
+				public void handleActionStart() {
+					isCancleCount++;
+					info.setDes(getString(R.string.cancleing_pay));
+					canclePayAdapter.notifyDataSetChanged();
+				}
+
+				@Override
+				public void handleActionFinish() {
+					isCancleCount--;
+				}
+
+				@Override
+				public void handleActionError(String actionName, String errmsg) {
+					CanclePayDialog.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							info.setDes(getString(R.string.cancled_failed));
+							canclePayAdapter.notifyDataSetChanged();
+						}
+					});
+				}
+
+				@Override
+				public void handleActionSuccess(String actionName,
+												final BaseResult result) {
+					CanclePayDialog.this.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+								info.setIsCancle(true);
+								info.setDes(getString(R.string.cancled_pay));
+								canclePayAdapter.notifyDataSetChanged();
+							}else{
+								info.setDes(getString(R.string.cancled_failed));
+								canclePayAdapter.notifyDataSetChanged();
+							}
+						}
+					});
+				}
+			});
 		}else {
 			if (MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				if(isCancleCount > 0){

@@ -34,6 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_trz"
         android:gravity="center"
+        android:overScrollMode="never"
         android:layout_marginTop="@dimen/margin_rz"
         android:layout_marginRight="@dimen/margin_xz"
         android:layout_marginLeft="@dimen/margin_xz"

@@ -66,6 +66,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_trz"
         android:gravity="center"
+        android:overScrollMode="never"
         android:layout_marginRight="@dimen/margin_nv"
         android:layout_marginLeft="@dimen/margin_nv"
         android:dividerHeight="@dimen/margin_ov"

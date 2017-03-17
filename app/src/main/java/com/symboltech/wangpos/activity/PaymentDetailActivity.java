@@ -432,6 +432,7 @@ public class PaymentDetailActivity extends BaseActivity {
                                 // TODO Auto-generated method stub
                                 isSended = true;
                                 bill.setCarno(carNo);
+                                ToastUtils.sendtoastbyhandler(handler, "停车券赠送成功");
                             }
                         });
                         selectcarplateDialog.show();

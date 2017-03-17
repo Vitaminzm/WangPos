@@ -237,6 +237,7 @@
                     android:id="@+id/activity_payment_gridview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:overScrollMode="never"
                     android:cacheColorHint="@color/transparent"
                     android:horizontalSpacing = "@dimen/margin_rz"
                     android:verticalSpacing = "@dimen/margin_tz"

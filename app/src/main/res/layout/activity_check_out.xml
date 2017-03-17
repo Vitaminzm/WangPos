@@ -347,6 +347,7 @@
             android:cacheColorHint="@color/transparent"
             android:listSelector="@drawable/gridview_selector"
             android:numColumns="4"
+            android:overScrollMode="never"
             android:paddingTop="@dimen/margin_oz"
             android:scrollbars="none" />
     </LinearLayout>
@@ -410,6 +411,7 @@
             android:cacheColorHint="@color/transparent"
             android:divider="@color/transparent"
             android:dividerHeight="@dimen/margin_ov"
+            android:overScrollMode="never"
             android:listSelector="@drawable/gridview_selector"
             android:scrollbars="none" />
     </LinearLayout>

@@ -112,6 +112,7 @@
     <string name="bank">银行卡</string>
     <string name="cash">现  金</string>
     <string name="recorded">补  录</string>
+    <string name="xinyongfu">信用付</string>
     <string name="payment_type_change">找零</string>
     <string name="weichat_pay">微钱宝支付：</string>
     <string name="alipay_pay">支付宝支付：</string>

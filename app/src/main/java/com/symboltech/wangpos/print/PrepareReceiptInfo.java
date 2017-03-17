@@ -1516,9 +1516,9 @@ public class PrepareReceiptInfo {
 			addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, "合计：") + "	" + goodNumber, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		}
 		if (mend) {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "------补打小票--------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "----------补打小票----------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		} else {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "------------------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addDashLine(array, latticePrinter, printer, fontConfig);
 		}
 
 		if (!TextUtils.isEmpty(bill.getTotalmoney())) {
@@ -2248,9 +2248,9 @@ public class PrepareReceiptInfo {
 			total = ArithDouble.add(total, ArithDouble.sub(grantPoint, usedPoint));
 		}
 		if (flag) {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "-------补打小票--------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "-----------补打小票------------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		} else {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "------------------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addDashLine(array, latticePrinter, printer, fontConfig);
 		}
 		addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(8, "合计") + formatLString(4, "-" + count)
 				+ formatLString(10, "-" + bill.getTotalmoney().replaceAll("-", ""))

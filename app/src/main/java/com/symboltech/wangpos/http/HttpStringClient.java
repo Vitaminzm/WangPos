@@ -1,5 +1,9 @@
 package com.symboltech.wangpos.http;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
@@ -14,6 +18,7 @@ import com.symboltech.wangpos.utils.SpSaveUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.ref.WeakReference;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +50,56 @@ public class HttpStringClient {
 	private static final int MAX_RETRIES = 0;
 	private static final int BACKOFF_MULT = 0;
 
+	private static final int HTTP_START = 1;
+	private static final int HTTP_FAILED = 2;
+	private static final int HTTP_SUCCESS = 3;
+	private static final int HTTP_FINISH = 4;
+	static class UIHandler<T> extends Handler {
+		private WeakReference mWeakReference;
+		public UIHandler(HttpActionHandle<T> httpactionhandler){
+			super(Looper.getMainLooper());
+			mWeakReference=new WeakReference(httpactionhandler);
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what){
+				case HTTP_SUCCESS: {
+					T t = (T) msg.obj;
+					HttpActionHandle<T> callback = (HttpActionHandle<T>) mWeakReference.get();
+					if (callback != null) {
+						callback.handleActionSuccess("",t);
+					}
+					break;
+				}
+				case HTTP_FAILED: {
+					String e = (String) msg.obj;
+					HttpActionHandle<T> callback = (HttpActionHandle<T>) mWeakReference.get();
+					if (callback != null) {
+						callback.handleActionError("", e);
+					}
+					break;
+				}
+				case HTTP_FINISH:{
+					HttpActionHandle<T> callback = (HttpActionHandle<T>) mWeakReference.get();
+					if (callback != null) {
+						callback.handleActionFinish();
+					}
+					break;
+				}
+				case HTTP_START:{
+					HttpActionHandle<T> callback = (HttpActionHandle<T>) mWeakReference.get();
+					if (callback != null) {
+						callback.handleActionStart();
+					}
+					break;
+				}
+				default:
+					super.handleMessage(msg);
+					break;
+			}
+		}
+	}
 	private HttpStringClient() {
 		initHttpConfig();
 	}
@@ -116,7 +171,7 @@ public class HttpStringClient {
 		}
 		param.put("token", SpSaveUtils.read(MyApplication.context, ConstantData.LOGIN_TOKEN, ""));
 		FormBody.Builder builder = new FormBody.Builder();
-
+		final Handler mHandler=new UIHandler(httpactionhandler);
 
 		Set<Map.Entry<String, String>> set = param.entrySet();
 		for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
@@ -138,14 +193,29 @@ public class HttpStringClient {
 				if(e.getMessage() != null){
 					if (e.getMessage().contains("Failed to connect to") || e.getMessage().contains("failed to connect to")){
 						ret = true;
-						httpactionhandler.handleActionError(actionname, "网络连接超时");
+						Message message=Message.obtain();
+						message.what= HTTP_FAILED;
+						message.obj= "网络连接超时";
+						mHandler.sendMessage(message);
+					//	httpactionhandler.handleActionError(actionname, "网络连接超时");
 					}else{
-						httpactionhandler.handleActionError(actionname, e.getMessage());
+						Message message=Message.obtain();
+						message.what= HTTP_FAILED;
+						message.obj= e.getMessage();
+						mHandler.sendMessage(message);
+					//	httpactionhandler.handleActionError(actionname, e.getMessage());
 					}
 				}else{
-					httpactionhandler.handleActionError(actionname, "网络连接异常！");
+					Message message=Message.obtain();
+					message.what= HTTP_FAILED;
+					message.obj= "网络连接异常！";
+					mHandler.sendMessage(message);
+					//httpactionhandler.handleActionError(actionname, "网络连接异常！");
 				}
-				httpactionhandler.handleActionFinish();
+				Message message=Message.obtain();
+				message.what= HTTP_FINISH;
+				mHandler.sendMessage(message);
+			//	httpactionhandler.handleActionFinish();
 				if(ret){
 					if (AppConfigFile.isNetConnect()) {
 						AppConfigFile.setNetConnect(false);
@@ -169,30 +239,65 @@ public class HttpStringClient {
 						LogUtil.i("lgs", "response======"+url+"====" +re);
 						result = gson.fromJson(re, clz);
 						if(result != null){
-							if(((BaseResult) result).getCode()!= null)
-								httpactionhandler.handleActionSuccess(actionname, result);
+							if(((BaseResult) result).getCode()!= null){
+								Message message=Message.obtain();
+								message.what= HTTP_SUCCESS;
+								message.obj= result;
+								mHandler.sendMessage(message);
+							//	httpactionhandler.handleActionSuccess(actionname, result);
+							}
 							else{
-								httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
+								Message message=Message.obtain();
+								message.what= HTTP_FAILED;
+								message.obj= MyApplication.context.getString(R.string.exception_opt);
+								mHandler.sendMessage(message);
+								//httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
 							}
 						}else{
-							httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
+							Message message=Message.obtain();
+							message.what= HTTP_FAILED;
+							message.obj= MyApplication.context.getString(R.string.exception_opt);
+							mHandler.sendMessage(message);
+							//httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
 						}
 
 				} catch (JsonSyntaxException e) {
-					httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
+						Message message=Message.obtain();
+						message.what= HTTP_FAILED;
+						message.obj= MyApplication.context.getString(R.string.exception_opt);
+						mHandler.sendMessage(message);
+					//httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
 					e.printStackTrace();
 				} catch (JsonParseException e) {
-					httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
+						Message message=Message.obtain();
+						message.what= HTTP_FAILED;
+						message.obj= MyApplication.context.getString(R.string.exception_opt);
+						mHandler.sendMessage(message);
+						//httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
 					e.printStackTrace();
 				} catch (IOException e) {
-					httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
+						Message message=Message.obtain();
+						message.what= HTTP_FAILED;
+						message.obj= MyApplication.context.getString(R.string.exception_opt);
+						mHandler.sendMessage(message);
+					//httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
 					e.printStackTrace();
 				}
-					httpactionhandler.handleActionFinish();
+					Message message=Message.obtain();
+					message.what= HTTP_FINISH;
+					mHandler.sendMessage(message);
+				//	httpactionhandler.handleActionFinish();
 				}else{
 					LogUtil.i("lgs", "response====fffff======");
-					httpactionhandler.handleActionError(actionname, response.message());
-					httpactionhandler.handleActionFinish();
+					Message message=Message.obtain();
+					message.what= HTTP_FAILED;
+					message.obj= MyApplication.context.getString(R.string.exception_opt);
+					mHandler.sendMessage(message);
+					//httpactionhandler.handleActionError(actionname, response.message());
+					Message message1=Message.obtain();
+					message.what= HTTP_FINISH;
+					mHandler.sendMessage(message1);
+					//httpactionhandler.handleActionFinish();
 				}
 
 			}

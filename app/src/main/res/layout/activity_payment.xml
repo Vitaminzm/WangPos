@@ -151,6 +151,7 @@
             android:background="@drawable/icon_bg_scroll"
             android:layout_marginRight="@dimen/margin_tz"
             android:layout_marginLeft="@dimen/margin_tz"
+            android:overScrollMode="never"
             android:scrollbars="none"/>
     </FrameLayout>
 

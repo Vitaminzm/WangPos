@@ -291,6 +291,7 @@
                     android:cacheColorHint="@color/transparent"
                     android:listSelector="@drawable/gridview_selector"
                     android:divider="@color/transparent"
+                    android:overScrollMode="never"
                     android:dividerHeight = "@dimen/margin_x"
                     android:numColumns="2"
                     android:scrollbars="none"/>

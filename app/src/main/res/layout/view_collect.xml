@@ -409,6 +409,7 @@
                 android:layout_alignTop="@id/tab1"
                 android:layout_alignBottom="@id/tab6"
                 android:scrollbars="none"
+                android:overScrollMode="never"
                 android:listSelector="@drawable/gridview_selector"
                 android:cacheColorHint="@color/transparent" />
         </RelativeLayout>

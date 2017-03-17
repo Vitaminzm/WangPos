@@ -117,6 +117,9 @@ public class CanclePayAdapter extends BaseAdapter {
 		case HANDRECORDED:
 			holder.name_key.setText(R.string.recorded);
 			break;
+		case YUXF:
+			holder.name_key.setText(R.string.xinyongfu);
+			break;
 		default:
 			break;
 		}
@@ -133,8 +136,8 @@ public class CanclePayAdapter extends BaseAdapter {
 			holder.name_opt.setBackgroundColor(context.getResources().getColor(R.color.white));
 			holder.name_opt.setClickable(false);
 		}else if(paymentsInfoAdapter.get(position).getDes().equals(context.getString(R.string.cancled_pay))){
-			holder.name_opt.setTextColor(context.getResources().getColor(R.color.green));
-			holder.name_opt.setBackgroundColor(context.getResources().getColor(R.color.white));
+			holder.name_opt.setTextColor(context.getResources().getColor(R.color.white));
+			holder.name_opt.setBackgroundColor(context.getResources().getColor(R.color.green));
 			holder.name_opt.setClickable(false);
 		}
 		holder.name_opt.setTag(position);
