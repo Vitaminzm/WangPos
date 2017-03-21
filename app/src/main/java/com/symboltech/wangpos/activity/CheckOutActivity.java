@@ -44,6 +44,7 @@ import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.SubmitGoods;
 import com.symboltech.wangpos.msg.entity.ThirdPay;
 import com.symboltech.wangpos.msg.entity.WposPayInfo;
+import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.SaveOrderResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.ArithDouble;
@@ -924,69 +925,69 @@ public class CheckOutActivity extends BaseActivity {
     }
 
     private void httpforMsxfpay(String Qrcode, final double money){
-        PayMentsCancleInfo info = new PayMentsCancleInfo();
-        info.setId(paymentTypeAdapter.getPayType().getId());
-        info.setName(paymentTypeAdapter.getPayType().getName());
-        info.setType(PaymentTypeEnum.YUXF.getStyletype());
-        info.setIsCancle(false);
-        // info.setRefundcode(tradeNo);
-        info.setMoney(String.valueOf(money));
-        info.setOverage("0");
-        addPayTypeInfo(PaymentTypeEnum.YUXF, 0, 0, null, info);
-        waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-        text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-//        final String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-//        Map<String, String> map = new HashMap<String, String>();
-//        map.put("qrcode", Qrcode);
-//        map.put("amount", money+"");
-//        map.put("sktNo", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
-//        map.put("jlbh", AppConfigFile.getBillId());
-//        map.put("goodsDescription", SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_NAME, "")+SpSaveUtils.read(getApplicationContext(), ConstantData.SHOP_NAME, ""));
-//        map.put("industryCode", "5311");
-//        map.put("goodsName", cartgoods.get(0).getGoodsname());
-//        map.put("orderId", tradeNo);
-//        map.put("goodsInfo", cartgoods.get(0).getGoodsname());
-//        map.put("partnerName", "佳惠");
-//        map.put("partnerId","佳惠");
-//        map.put("xsje",ArithDouble.sub(orderTotleValue, orderManjianValue)+"");
-//        HttpRequestUtil.getinstance().msxfPay(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
-//
-//            @Override
-//            public void handleActionStart() {
-//                startwaitdialog();
-//            }
-//
-//            @Override
-//            public void handleActionFinish() {
-//                closewaitdialog();
-//            }
-//
-//            @Override
-//            public void handleActionError(String actionName, String errmsg) {
-//                ToastUtils.sendtoastbyhandler(handler, errmsg);
-//            }
-//
-//            @Override
-//            public void handleActionSuccess(String actionName, BaseResult result) {
-//                if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-//                    PayMentsCancleInfo info = new PayMentsCancleInfo();
-//                    info.setId(paymentTypeAdapter.getPayType().getId());
-//                    info.setName(paymentTypeAdapter.getPayType().getName());
-//                    info.setType(PaymentTypeEnum.YUXF.getStyletype());
-//                    info.setIsCancle(false);
-//                   // info.setRefundcode(tradeNo);
-//                    info.setMoney(String.valueOf(money));
-//                    info.setOverage("0");
-//                    addPayTypeInfo(PaymentTypeEnum.YUXF, 0, 0, null, info);
-//                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-//                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-//                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-//                }else{
-//                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
-//                }
-//            }
-//        });
+//        PayMentsCancleInfo info = new PayMentsCancleInfo();
+//        info.setId(paymentTypeAdapter.getPayType().getId());
+//        info.setName(paymentTypeAdapter.getPayType().getName());
+//        info.setType(PaymentTypeEnum.YUXF.getStyletype());
+//        info.setIsCancle(false);
+//        // info.setRefundcode(tradeNo);
+//        info.setMoney(String.valueOf(money));
+//        info.setOverage("0");
+//        addPayTypeInfo(PaymentTypeEnum.YUXF, 0, 0, null, info);
+//        waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+//        text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+//        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+        final String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("qrcode", Qrcode);
+        map.put("amount", money+"");
+        map.put("sktNo", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+        map.put("jlbh", AppConfigFile.getBillId());
+        map.put("goodsDescription", SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_NAME, "")+SpSaveUtils.read(getApplicationContext(), ConstantData.SHOP_NAME, ""));
+        map.put("industryCode", "5311");
+        map.put("goodsName", cartgoods.get(0).getGoodsname());
+        map.put("orderId", tradeNo);
+        map.put("goodsInfo", cartgoods.get(0).getGoodsname());
+        map.put("partnerName", "佳惠");
+        map.put("partnerId","佳惠");
+        map.put("xsje",ArithDouble.sub(orderTotleValue, orderManjianValue)+"");
+        HttpRequestUtil.getinstance().msxfPay(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+
+            @Override
+            public void handleActionStart() {
+                startwaitdialog();
+            }
+
+            @Override
+            public void handleActionFinish() {
+                closewaitdialog();
+            }
+
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName, BaseResult result) {
+                if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+                    PayMentsCancleInfo info = new PayMentsCancleInfo();
+                    info.setId(paymentTypeAdapter.getPayType().getId());
+                    info.setName(paymentTypeAdapter.getPayType().getName());
+                    info.setType(PaymentTypeEnum.YUXF.getStyletype());
+                    info.setIsCancle(false);
+                   // info.setRefundcode(tradeNo);
+                    info.setMoney(String.valueOf(money));
+                    info.setOverage("0");
+                    addPayTypeInfo(PaymentTypeEnum.YUXF, 0, 0, null, info);
+                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                }
+            }
+        });
     }
 
     private void commitOrder() {

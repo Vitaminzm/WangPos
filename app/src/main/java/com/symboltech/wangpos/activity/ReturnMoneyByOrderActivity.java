@@ -31,9 +31,11 @@ import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.AlipayAndWeixinPayReturnDialog;
 import com.symboltech.wangpos.dialog.BankreturnDialog;
 import com.symboltech.wangpos.dialog.ThirdPayReturnDialog;
+import com.symboltech.wangpos.dialog.YuxfReturnDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.CancleAndConfirmback;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.OnReturnFinishListener;
 import com.symboltech.wangpos.log.LogUtil;
@@ -46,6 +48,7 @@ import com.symboltech.wangpos.msg.entity.RefundReasonInfo;
 import com.symboltech.wangpos.msg.entity.ThirdPay;
 import com.symboltech.wangpos.msg.entity.WposBankRefundInfo;
 import com.symboltech.wangpos.print.PrepareReceiptInfo;
+import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.SaveOrderResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.AndroidUtils;
@@ -472,56 +475,73 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 returnAlipay();
             }
         }else {
-            yuxf.setDes("true");
-            putPayments(getPayTypeId(PaymentTypeEnum.YUXF), idNames.get(getPayTypeId(PaymentTypeEnum.YUXF)), PaymentTypeEnum.YUXF.getStyletype(), "-" + yuxfMoney);
-            if (bankStyle != null) {
-                returnBank();
-            } else {
-                returnAlipay();
-            }
-//            String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-//            Map<String, String> map = new HashMap<String, String>();
-//            map.put("reason", edit_input_reason.getText().toString());
-//            map.put("refundSign", tradeNo);
-//            map.put("refundAmount", yuxf.getMoney());
-//            map.put("sktNo", billInfo.getOldposno());
-//            map.put("Jlbh", billInfo.getOldbillid());
-//            map.put("njlbh", AppConfigFile.getBillId());
-//            map.put("nsktNo", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
-//            HttpRequestUtil.getinstance().msxfRefund(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
-//
-//                @Override
-//                public void handleActionStart() {
-//                    startwaitdialog();
-//                }
-//
-//                @Override
-//                public void handleActionFinish() {
-//                    closewaitdialog();
-//                }
-//
-//                @Override
-//                public void handleActionError(String actionName, String errmsg) {
-//                    ToastUtils.sendtoastbyhandler(handler, errmsg);
-//                }
-//
-//                @Override
-//                public void handleActionSuccess(String actionName,
-//                                                BaseResult result) {
-//                    if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-//                        yuxf.setDes("true");
-//                        putPayments(getPayTypeId(PaymentTypeEnum.YUXF), idNames.get(getPayTypeId(PaymentTypeEnum.YUXF)), PaymentTypeEnum.YUXF.getStyletype(), "-" + yuxfMoney);
-//                        if (bankStyle != null) {
-//                            returnBank();
-//                        } else {
-//                            returnAlipay();
-//                        }
-//                    }else{
-//                        ToastUtils.sendtoastbyhandler(handler, result.getMsg());
-//                    }
-//                }
-//            });
+//            yuxf.setDes("true");
+//            putPayments(getPayTypeId(PaymentTypeEnum.YUXF), idNames.get(getPayTypeId(PaymentTypeEnum.YUXF)), PaymentTypeEnum.YUXF.getStyletype(), "-" + yuxfMoney);
+//            if (bankStyle != null) {
+//                returnBank();
+//            } else {
+//                returnAlipay();
+//            }
+            new YuxfReturnDialog(ReturnMoneyByOrderActivity.this, new CancleAndConfirmback() {
+                @Override
+                public void doCancle() {
+                    doYuxfreturn(false);
+                }
+
+                @Override
+                public void doConfirm(String num) {
+                    doYuxfreturn(true);
+                }
+            }).show();
         }
+    }
+
+    private void doYuxfreturn(boolean flag){
+        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("reason", edit_input_reason.getText().toString());
+        map.put("refundSign", tradeNo);
+        map.put("refundAmount", yuxf.getMoney());
+        map.put("sktNo", billInfo.getOldposno());
+        if(flag){
+            map.put("type", "C");
+        }
+        map.put("Jlbh", billInfo.getOldbillid());
+        map.put("njlbh", AppConfigFile.getBillId());
+        map.put("nsktNo", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
+        HttpRequestUtil.getinstance().msxfRefund(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+
+            @Override
+            public void handleActionStart() {
+                startwaitdialog();
+            }
+
+            @Override
+            public void handleActionFinish() {
+                closewaitdialog();
+            }
+
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName,
+                                            BaseResult result) {
+                if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+                    yuxf.setDes("true");
+                    putPayments(getPayTypeId(PaymentTypeEnum.YUXF), idNames.get(getPayTypeId(PaymentTypeEnum.YUXF)), PaymentTypeEnum.YUXF.getStyletype(), "-" + yuxfMoney);
+                    if (bankStyle != null) {
+                        returnBank();
+                    } else {
+                        returnAlipay();
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                }
+            }
+        });
     }
     /**
      * 退银行卡
