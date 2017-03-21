@@ -276,30 +276,40 @@ public class CheckOutActivity extends BaseActivity {
         Intent intent_qr;
         switch (PaymentTypeEnum.getpaymentstyle(type.trim())){
             case CASH:
-                double cash = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(paymentTypeAdapter.getPayType().getId()));
-                double ling = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(PaymentTypeEnum.LING.getStyletype()));
-                if("1".equals(paymentTypeAdapter.getPayType().getId())){
-                    if(money > (ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling))){
-                        addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
-                        addPayTypeInfo(PaymentTypeEnum.LING, ArithDouble.sub(money, ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling)), 0, paymentTypeAdapter.getPayType(), null);
-                    }else{
-                        addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
-                        paymentTypeInfoadapter.removeLing();
+                if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())){
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
                         paymentTypeAdapter.setPayTpyeNull();
+                        ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+                    }else{
+                        paymentTypeAdapter.setPayTpyeNull();
+                        ToastUtils.sendtoastbyhandler(handler, "暂不支持");
                     }
                 }else{
-                    if(money > ArithDouble.add(waitPayValue, cash)){
-                        edit_input_money.setText("");
-                        paymentTypeAdapter.setPayTpyeNull();
-                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
-                        return;
+                    double cash = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(paymentTypeAdapter.getPayType().getId()));
+                    double ling = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(PaymentTypeEnum.LING.getStyletype()));
+                    if("1".equals(paymentTypeAdapter.getPayType().getId())){
+                        if(money > (ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling))){
+                            addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                            addPayTypeInfo(PaymentTypeEnum.LING, ArithDouble.sub(money, ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling)), 0, paymentTypeAdapter.getPayType(), null);
+                        }else{
+                            addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                            paymentTypeInfoadapter.removeLing();
+                            paymentTypeAdapter.setPayTpyeNull();
+                        }
                     }else{
-                        addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                        if(money > ArithDouble.add(waitPayValue, cash)){
+                            edit_input_money.setText("");
+                            paymentTypeAdapter.setPayTpyeNull();
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                            return;
+                        }else{
+                            addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                        }
                     }
+                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 }
-                waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
             case WECHAT:
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_WEIXIN_IS_INPUT, "0"))){
