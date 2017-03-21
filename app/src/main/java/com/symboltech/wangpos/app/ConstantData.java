@@ -482,6 +482,14 @@ public class ConstantData {
 	/** 网络请求Tag */
 	public static final String NET_TAG = "net_tag";
 
+
+
+	/** POS 通*/
+	public static final String POS_TONG = "POS 通";
+	/** 消费撤销*/
+	public static final String POS_XFCX = "消费撤销";
+
+
 	/** 银行卡收款*/
 	public static final String YHK_SK = "银行卡收款";
 	/** 消费 */

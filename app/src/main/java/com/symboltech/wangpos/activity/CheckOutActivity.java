@@ -313,17 +313,31 @@ public class CheckOutActivity extends BaseActivity {
 //                }
            //     break;
             case ALIPAY:
-                if(ConstantData.WECHAT_ID.equals(payid)){
-                    intent_qr = new Intent(mContext, CaptureActivity.class);
-                    intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
-                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
-                    paytype = ConstantData.PAYMODE_BY_WEIXIN;
-                }else if(ConstantData.ALPAY_ID.equals(payid)){
-                    intent_qr = new Intent(mContext, CaptureActivity.class);
-                    intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
-                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
-                    paytype = ConstantData.PAYMODE_BY_ALIPAY;
+                if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                    JSONObject json = new JSONObject();
+                    String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                    try {
+                        json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                        json.put("extOrderNo",tradeNo);
+                        json.put("tradeType", "useScan");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    AppHelper.callTrans(CheckOutActivity.this, ConstantData.POS_TONG, ConstantData.POS_TONG, json);
+                }else{
+                    if(ConstantData.WECHAT_ID.equals(payid)){
+                        intent_qr = new Intent(mContext, CaptureActivity.class);
+                        intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
+                        startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                        paytype = ConstantData.PAYMODE_BY_WEIXIN;
+                    }else if(ConstantData.ALPAY_ID.equals(payid)){
+                        intent_qr = new Intent(mContext, CaptureActivity.class);
+                        intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
+                        startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                        paytype = ConstantData.PAYMODE_BY_ALIPAY;
+                    }
                 }
+
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
 //                    Intent intent_qr = new Intent(this, CaptureActivity.class);
 //                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);

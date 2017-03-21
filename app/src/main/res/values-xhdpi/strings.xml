@@ -113,7 +113,7 @@
     <string name="cash">现  金</string>
     <string name="recorded">补  录</string>
     <string name="payment_type_change">找零</string>
-    <string name="weichat_pay">微钱宝支付：</string>
+    <string name="weichat_pay">微信支付：</string>
     <string name="alipay_pay">支付宝支付：</string>
     <string name="bank_pay">银行卡支付：</string>
     <string name="cash_pay">现金  支付：</string>
@@ -199,6 +199,7 @@
     <string name="return_total_money">退款总额</string>
     <string name="please_select_return_reason">请选择退款原因</string>
     <string name="warning_no_return_reason">没有退款原因</string>
+    <string name="warning_cannot_return">不支持的退款</string>
     <string name="warning_no">无</string>
 
     <!--退款成功-->
@@ -390,22 +391,22 @@
     <string name="alipay_return_success">支付宝退货成功</string>
     <string name="alipay_return_failed">支付宝退货失败</string>
     <string name="alipay_return_cancle">支付宝退货取消</string>
-    <string name="wechat_trade">微钱宝交易</string>
-    <string name="wechat_trade_success">微钱宝交易成功</string>
-    <string name="wechat_trade_failed">微钱宝交易失败</string>
-    <string name="wechat_trade_cancle">微钱宝交易取消</string>
-    <string name="wechat_query">微钱宝查询</string>
-    <string name="wechat_query_success">微钱宝查询成功</string>
-    <string name="wechat_query_failed">微钱宝查询失败</string>
-    <string name="wechat_query_cancle">微钱宝查询取消</string>
-    <string name="wechat_repeal">微钱宝撤销</string>
-    <string name="wechat_repeal_success">微钱宝撤销成功</string>
-    <string name="wechat_repeal_failed">微钱宝撤销失败</string>
-    <string name="wechat_repeal_cancle">微钱宝撤销取消</string>
-    <string name="wechat_return">微钱宝退货</string>
-    <string name="wechat_return_success">微钱宝退货成功</string>
-    <string name="wechat_return_failed">微钱宝退货失败</string>
-    <string name="wechat_return_cancle">微钱宝退货取消</string>
+    <string name="wechat_trade">微信交易</string>
+    <string name="wechat_trade_success">微信交易成功</string>
+    <string name="wechat_trade_failed">微信交易失败</string>
+    <string name="wechat_trade_cancle">微信交易取消</string>
+    <string name="wechat_query">微信查询</string>
+    <string name="wechat_query_success">微信查询成功</string>
+    <string name="wechat_query_failed">微信查询失败</string>
+    <string name="wechat_query_cancle">微信查询取消</string>
+    <string name="wechat_repeal">微信撤销</string>
+    <string name="wechat_repeal_success">微信撤销成功</string>
+    <string name="wechat_repeal_failed">微信撤销失败</string>
+    <string name="wechat_repeal_cancle">微信撤销取消</string>
+    <string name="wechat_return">微信退货</string>
+    <string name="wechat_return_success">微信退货成功</string>
+    <string name="wechat_return_failed">微信退货失败</string>
+    <string name="wechat_return_cancle">微信退货取消</string>
 
     <string name="add_member">添加会员</string>
     <string name="send_parkcoupon">发送停车券</string>

@@ -626,7 +626,6 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				doRevoke();
 				return;
 			}
-
 		}
 		if(trade_no == null){
 			if(edit_money.getText() == null || "".equals(edit_money.getText().toString())){
@@ -648,21 +647,39 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				return;
 			}else{
 				if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-					JSONObject json = new JSONObject();
-					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-					try {
-						json.put("amt",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
-						json.put("refNo",trade_no);
-						json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
-						json.put("extOrderNo",tradeNo);
-					} catch (JSONException e) {
-						e.printStackTrace();
+					if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
+						JSONObject json = new JSONObject();
+						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+						try {
+							json.put("amt",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
+							json.put("refNo",trade_no);
+							json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+							json.put("extOrderNo",tradeNo);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						ll_input_money.setVisibility(View.GONE);
+						ll_paying_status.setVisibility(View.VISIBLE);
+						spin_kit.setVisibility(View.VISIBLE);
+						text_status.setText(R.string.thirdpay_requesting);
+						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
+					}else {
+						JSONObject json = new JSONObject();
+						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+						try {
+							json.put("amt",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
+							json.put("refNo",trade_no);
+							json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+							json.put("extOrderNo",tradeNo);
+						} catch (JSONException e) {
+							e.printStackTrace();
+						}
+						ll_input_money.setVisibility(View.GONE);
+						ll_paying_status.setVisibility(View.VISIBLE);
+						spin_kit.setVisibility(View.VISIBLE);
+						text_status.setText(R.string.thirdpay_requesting);
+						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
 					}
-					ll_input_money.setVisibility(View.GONE);
-					ll_paying_status.setVisibility(View.VISIBLE);
-					spin_kit.setVisibility(View.VISIBLE);
-					text_status.setText(R.string.thirdpay_requesting);
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
 				}else{
 					Map<String, String> map = new HashMap<String, String>();
 					map.put("operater", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_CODE, ""));
@@ -801,75 +818,87 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				requestRefundCashier(edit_money.getText().toString());
 			}
 		}else {
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("operater", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_CODE, ""));
-			map.put("pay_type", payMode);
-			map.put("old_trade_no", edit_money.getText().toString());
-			map.put("billid", "-" + AppConfigFile.getBillId());
-			LogUtil.i("lgs", "old_trade_no===" + map.get("old_trade_no") + "==billid==" + map.get("billid") + "===" + "=="
-					+ map.get("pay_type"));
-			HttpRequestUtil.getinstance().thirdpaycancel(map, ThirdPayCancelResult.class,
-					new HttpActionHandle<ThirdPayCancelResult>() {
+			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+				JSONObject json = new JSONObject();
+				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+				try {
+					json.put("oldTraceNo",edit_money.getText().toString());
+					json.put("extOrderNo", tradeNo);
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
+			}else{
+				Map<String, String> map = new HashMap<String, String>();
+				map.put("operater", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_CODE, ""));
+				map.put("pay_type", payMode);
+				map.put("old_trade_no", edit_money.getText().toString());
+				map.put("billid", "-" + AppConfigFile.getBillId());
+				LogUtil.i("lgs", "old_trade_no===" + map.get("old_trade_no") + "==billid==" + map.get("billid") + "===" + "=="
+						+ map.get("pay_type"));
+				HttpRequestUtil.getinstance().thirdpaycancel(map, ThirdPayCancelResult.class,
+						new HttpActionHandle<ThirdPayCancelResult>() {
 
-						@Override
-						public void handleActionStart() {
-							ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
-								@Override
-								public void run() {
-									ll_input_money.setVisibility(View.GONE);
-									ll_paying_status.setVisibility(View.VISIBLE);
-									spin_kit.setVisibility(View.VISIBLE);
-									text_status.setText(R.string.thirdpay_requesting);
-								}
-							});
-						}
-
-						@Override
-						public void handleActionError(String actionName, String errmsg) {
-							ToastUtils.sendtoastbyhandler(handler, errmsg);
-							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
-						}
-
-						@Override
-						public void handleActionSuccess(String actionName, final ThirdPayCancelResult result) {
-							// TODO Auto-generated method stub
-							if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+							@Override
+							public void handleActionStart() {
 								ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
 									@Override
 									public void run() {
-										imageview_close.setVisibility(View.GONE);
-										ll_paying_by_code.setVisibility(View.GONE);
-										ll_paying_msg.setVisibility(View.VISIBLE);
-										ll_input_money.setVisibility(View.GONE);
-										ll_paying_status.setVisibility(View.GONE);
-										text_confirm_query.setVisibility(View.GONE);
-										text_paying_msg.setText("撤销成功");
-									}
-								});
-								handler.postDelayed(new Runnable() {
-									@Override
-									public void run() {
-										ThirdPayControllerDialog.this.finish();
-									}
-								}, 1000);
-							} else {
-								ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
-									@Override
-									public void run() {
-										imageview_close.setVisibility(View.GONE);
-										ll_paying_by_code.setVisibility(View.GONE);
-										ll_paying_msg.setVisibility(View.GONE);
 										ll_input_money.setVisibility(View.GONE);
 										ll_paying_status.setVisibility(View.VISIBLE);
-										spin_kit.setVisibility(View.GONE);
-										// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
-										text_status.setText(result.getMsg());
-										handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+										spin_kit.setVisibility(View.VISIBLE);
+										text_status.setText(R.string.thirdpay_requesting);
 									}
 								});
 							}
-						}
-					});
+
+							@Override
+							public void handleActionError(String actionName, String errmsg) {
+								ToastUtils.sendtoastbyhandler(handler, errmsg);
+								handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+							}
+
+							@Override
+							public void handleActionSuccess(String actionName, final ThirdPayCancelResult result) {
+								// TODO Auto-generated method stub
+								if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+									ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+										@Override
+										public void run() {
+											imageview_close.setVisibility(View.GONE);
+											ll_paying_by_code.setVisibility(View.GONE);
+											ll_paying_msg.setVisibility(View.VISIBLE);
+											ll_input_money.setVisibility(View.GONE);
+											ll_paying_status.setVisibility(View.GONE);
+											text_confirm_query.setVisibility(View.GONE);
+											text_paying_msg.setText("撤销成功");
+										}
+									});
+									handler.postDelayed(new Runnable() {
+										@Override
+										public void run() {
+											ThirdPayControllerDialog.this.finish();
+										}
+									}, 1000);
+								} else {
+									ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
+										@Override
+										public void run() {
+											imageview_close.setVisibility(View.GONE);
+											ll_paying_by_code.setVisibility(View.GONE);
+											ll_paying_msg.setVisibility(View.GONE);
+											ll_input_money.setVisibility(View.GONE);
+											ll_paying_status.setVisibility(View.VISIBLE);
+											spin_kit.setVisibility(View.GONE);
+											// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+											text_status.setText(result.getMsg());
+											handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+										}
+									});
+								}
+							}
+						});
+			}
 		}
 	}
 
@@ -902,8 +931,25 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
 			}
 		}else{
-			Intent intent_qr = new Intent(this, CaptureActivity.class);
-			startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+				JSONObject json = new JSONObject();
+				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+				try {
+					json.put("amt",CurrencyUnit.yuan2fenStr(money + ""));//TODO 金额格式
+					json.put("extOrderNo",tradeNo);
+					json.put("tradeType", "useScan");
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+				ll_input_money.setVisibility(View.GONE);
+				ll_paying_status.setVisibility(View.VISIBLE);
+				spin_kit.setVisibility(View.VISIBLE);
+				text_status.setText(R.string.thirdpay_requesting);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.POS_TONG, json);
+			}else{
+				Intent intent_qr = new Intent(this, CaptureActivity.class);
+				startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+			}
 		}
 //		if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
 //			Intent intent_qr = new Intent(this, CaptureActivity.class);
@@ -958,6 +1004,10 @@ public class ThirdPayControllerDialog extends BaseActivity{
 									text_paying_msg.setText("签到成功");
 								}else if(transId.equals(ConstantData.YHK_JS)){
 									text_paying_msg.setText("结算成功");
+								}else if(transId.equals(ConstantData.POS_TONG)){
+									text_paying_msg.setText("消费："+transData.get("amt")+"元成功");
+								}else if(transId.equals(ConstantData.POS_XFCX)){
+									text_paying_msg.setText("撤销："+transData.get("amt")+"元成功");
 								}
 								setFinishOnTouchOutside(true);
 								handler.postDelayed(new Runnable() {

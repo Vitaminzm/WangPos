@@ -24,10 +24,10 @@ import com.symboltech.wangpos.utils.Utils;
  */
 public class BankreturnDialog extends Dialog implements View.OnClickListener {
 	public Context context;
-	private TextView  text_cardno, text_money, text_cancle, text_confirm;
+	private TextView  text_cardno, text_money, text_cancle, text_confirm, text_title;
 	private ImageView imageview_close;
 	private DialogFinishCallBack callback;
-	private String cardNo,  money;
+	private String cardNo,  money, title;
 	public Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -43,12 +43,13 @@ public class BankreturnDialog extends Dialog implements View.OnClickListener {
 		};
 	};
 
-	public BankreturnDialog(Context context, String cardNo, String money, DialogFinishCallBack gel) {
+	public BankreturnDialog(Context context,String title, String cardNo, String money, DialogFinishCallBack gel) {
 		super(context, R.style.dialog_login_bg);
 		this.context = context;
 		this.callback = gel;
 		this.cardNo = cardNo;
 		this.money = money;
+		this.title = title;
 	}
 
 	@Override
@@ -61,8 +62,17 @@ public class BankreturnDialog extends Dialog implements View.OnClickListener {
 	}
 
 	private void initData() {
-		text_cardno.setText("卡号："+cardNo);
+		String name="";
+		if(context.getString(R.string.wechat_return).equals(title)){
+			name = "微信：";
+		}else if(context.getString(R.string.alipay_return).equals(title)){
+			name = "支付宝：";
+		}else{
+			name = "卡号：";
+		}
+		text_cardno.setText(name + cardNo);
 		text_money.setText("金额："+money+"元");
+		text_title.setText(title);
 	}
 
 	private void initUI() {
@@ -71,6 +81,7 @@ public class BankreturnDialog extends Dialog implements View.OnClickListener {
 		text_cardno = (TextView) findViewById(R.id.text_cardno);
 		text_cancle = (TextView) findViewById(R.id.text_cancle);
 		text_confirm = (TextView) findViewById(R.id.text_confirm);
+		text_title = (TextView) findViewById(R.id.text_title);
 		text_cancle.setOnClickListener(this);
 		text_confirm.setOnClickListener(this);
 		imageview_close.setOnClickListener(this);

@@ -410,7 +410,30 @@ public class CanclePayDialog extends BaseActivity{
 	public void saleVoid(int position){
 		final PayMentsCancleInfo info = payments.get(position);
 		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype()) || info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
-			thirdcancle(position);
+			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+				if(isCancleCount > 0){
+					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+					return;
+				}
+				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
+						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+					this.position = position;
+					JSONObject json = new JSONObject();
+					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+					try {
+						json.put("oldTraceNo",info.getTraceNo());
+						json.put("extOrderNo", tradeNo);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					isCancleCount++;
+					info.setDes(getString(R.string.cancleing_pay));
+					canclePayAdapter.notifyDataSetChanged();
+					AppHelper.callTrans(CanclePayDialog.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
+				}
+			}else{
+				thirdcancle(position);
+			}
 		}else {
 			if (MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				if(isCancleCount > 0){
@@ -508,7 +531,8 @@ public class CanclePayDialog extends BaseActivity{
 				if (null != data) {
 					StringBuilder result = new StringBuilder();
 					Map<String,String> map = AppHelper.filterTransResult(data);
-					if("0".equals(map.get(AppHelper.RESULT_CODE))){
+					String appName  = map.get("appName");
+					if(appName.equals(ConstantData.YHK_SK) || appName.equals(ConstantData.POS_TONG)){
 						Type type =new TypeToken<Map<String, String>>(){}.getType();
 						try {
 							Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
@@ -539,7 +563,7 @@ public class CanclePayDialog extends BaseActivity{
 							e.printStackTrace();
 						}
 					}else{
-						String msg = "银行卡撤销返回信息异常";
+						String msg = "撤销返回信息异常";
 						if(!StringUtil.isEmpty(map.get(AppHelper.RESULT_MSG))){
 							msg = map.get(AppHelper.RESULT_MSG);
 						}
@@ -549,7 +573,7 @@ public class CanclePayDialog extends BaseActivity{
 				}else{
 					info.setDes(getString(R.string.cancled_failed));
 					canclePayAdapter.notifyDataSetChanged();
-					ToastUtils.sendtoastbyhandler(handler,"银行卡撤销异常！");
+					ToastUtils.sendtoastbyhandler(handler,"撤销异常！");
 				}
 			}
 		}
