@@ -485,12 +485,12 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             new YuxfReturnDialog(ReturnMoneyByOrderActivity.this, new CancleAndConfirmback() {
                 @Override
                 public void doCancle() {
-                    doYuxfreturn(false);
+                    doYuxfreturn(true);
                 }
 
                 @Override
                 public void doConfirm(String num) {
-                    doYuxfreturn(true);
+                    doYuxfreturn(false);
                 }
             }).show();
         }
