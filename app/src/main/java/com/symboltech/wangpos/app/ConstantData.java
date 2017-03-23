@@ -124,6 +124,8 @@ public class ConstantData {
 	/**微信id*/
 	public static final String WECHAT_ID = "63";
 
+	/**微信id*/
+	public static final String YXLM_ID = "69";
 	/**在线状态*/
 	public static final int ONLINE_STATE = 0;
 
@@ -489,6 +491,8 @@ public class ConstantData {
 	/** 消费撤销*/
 	public static final String POS_XFCX = "消费撤销";
 
+	/** 全民惠*/
+	public static final String QMH = "全民惠";
 
 	/** 银行卡收款*/
 	public static final String YHK_SK = "银行卡收款";

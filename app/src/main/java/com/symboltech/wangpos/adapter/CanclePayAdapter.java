@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.dialog.CanclePayDialog;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
@@ -56,6 +57,9 @@ public class CanclePayAdapter extends BaseAdapter {
 				if(paymentsInfo.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())|| paymentsInfo.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype()) ||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) ||paymentsInfo.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
+					if(ConstantData.YXLM_ID.equals(paymentsInfo.get(i).getId())){
+						paymentsInfoAdapter.add(paymentsInfo.get(i));
+					}
 					//paymentsInfo.get(i).setIsCancle(true);
 				}else{
 						paymentsInfoAdapter.add(paymentsInfo.get(i));

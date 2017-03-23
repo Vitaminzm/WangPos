@@ -516,6 +516,13 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                 AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
                             }
                         }).show();
+                    }else if(ConstantData.YXLM_ID.equals(entity.getSkfsid())){
+                        new BankreturnDialog(this, getString(R.string.qmh_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
+                            @Override
+                            public void finish(int position) {
+                                AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YHK_TH, json);
+                            }
+                        }).show();
                     }
                 }
             }
@@ -880,7 +887,9 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                     if(cashStyle == null) {
                         cashStyle = new ArrayList<>();
                     }
-                    cashStyle.add(info);
+                    if(!ConstantData.YXLM_ID.equals(info.getId())){
+                        cashStyle.add(info);
+                    }
                 } else if (PaymentTypeEnum.HANDRECORDED.getStyletype().equals(type)) {
                     if (allowanceBankStyle == null) {
                         allowanceBankStyle = new ArrayList<>();

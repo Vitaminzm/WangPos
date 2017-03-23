@@ -276,30 +276,53 @@ public class CheckOutActivity extends BaseActivity {
         Intent intent_qr;
         switch (PaymentTypeEnum.getpaymentstyle(type.trim())){
             case CASH:
-                double cash = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(paymentTypeAdapter.getPayType().getId()));
-                double ling = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(PaymentTypeEnum.LING.getStyletype()));
-                if("1".equals(paymentTypeAdapter.getPayType().getId())){
-                    if(money > (ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling))){
-                        addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
-                        addPayTypeInfo(PaymentTypeEnum.LING, ArithDouble.sub(money, ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling)), 0, paymentTypeAdapter.getPayType(), null);
-                    }else{
-                        addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
-                        paymentTypeInfoadapter.removeLing();
-                        paymentTypeAdapter.setPayTpyeNull();
-                    }
-                }else{
-                    if(money > ArithDouble.add(waitPayValue, cash)){
+                if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())){
+                    if(paymentMoney >waitPayValue){
                         edit_input_money.setText("");
                         paymentTypeAdapter.setPayTpyeNull();
                         ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
-                        return;
                     }else{
-                        addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                            JSONObject json = new JSONObject();
+                            String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                            try {
+                                json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                                json.put("extOrderNo",tradeNo);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json);
+                        }else{
+                            paymentTypeAdapter.setPayTpyeNull();
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_not_support));
+                        }
                     }
+                }else{
+                    double cash = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(paymentTypeAdapter.getPayType().getId()));
+                    double ling = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(PaymentTypeEnum.LING.getStyletype()));
+                    if("1".equals(paymentTypeAdapter.getPayType().getId())){
+                        if(money > (ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling))){
+                            addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                            addPayTypeInfo(PaymentTypeEnum.LING, ArithDouble.sub(money, ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling)), 0, paymentTypeAdapter.getPayType(), null);
+                        }else{
+                            addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                            paymentTypeInfoadapter.removeLing();
+                            paymentTypeAdapter.setPayTpyeNull();
+                        }
+                    }else{
+                        if(money > ArithDouble.add(waitPayValue, cash)){
+                            edit_input_money.setText("");
+                            paymentTypeAdapter.setPayTpyeNull();
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                            return;
+                        }else{
+                            addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                        }
+                    }
+                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 }
-                waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 break;
             case WECHAT:
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_WEIXIN_IS_INPUT, "0"))){
@@ -313,30 +336,35 @@ public class CheckOutActivity extends BaseActivity {
 //                }
            //     break;
             case ALIPAY:
-                if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-                    JSONObject json = new JSONObject();
-                    String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-                    try {
-                        json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
-                        json.put("extOrderNo",tradeNo);
-                        json.put("tradeType", "useScan");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    AppHelper.callTrans(CheckOutActivity.this, ConstantData.POS_TONG, ConstantData.POS_TONG, json);
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
                 }else{
-                    if(ConstantData.WECHAT_ID.equals(payid)){
-                        intent_qr = new Intent(mContext, CaptureActivity.class);
-                        intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
-                        startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
-                        paytype = ConstantData.PAYMODE_BY_WEIXIN;
-                    }else if(ConstantData.ALPAY_ID.equals(payid)){
-                        intent_qr = new Intent(mContext, CaptureActivity.class);
-                        intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
-                        startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
-                        paytype = ConstantData.PAYMODE_BY_ALIPAY;
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                            json.put("extOrderNo",tradeNo);
+                            json.put("tradeType", "useScan");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        AppHelper.callTrans(CheckOutActivity.this, ConstantData.POS_TONG, ConstantData.POS_TONG, json);
+                    }else{
+                        if(ConstantData.WECHAT_ID.equals(payid)){
+                            intent_qr = new Intent(mContext, CaptureActivity.class);
+                            intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
+                            startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                            paytype = ConstantData.PAYMODE_BY_WEIXIN;
+                        }else if(ConstantData.ALPAY_ID.equals(payid)){
+                            intent_qr = new Intent(mContext, CaptureActivity.class);
+                            intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
+                            startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                            paytype = ConstantData.PAYMODE_BY_ALIPAY;
+                        }
                     }
-                }
 
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
 //                    Intent intent_qr = new Intent(this, CaptureActivity.class);
@@ -347,26 +375,33 @@ public class CheckOutActivity extends BaseActivity {
 //                    intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
 //                    startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
 //                }
+                }
                 break;
             case BANK:
-                if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
-                    requestCashier(CurrencyUnit.yuan2fenStr(paymentMoney + ""));
-                }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
-                    Intent intent = new Intent(this, ThirdPayDialog.class);
-                    intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
-                    intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
-                    startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
-                }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else{
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
+                        requestCashier(CurrencyUnit.yuan2fenStr(paymentMoney + ""));
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
+                        Intent intent = new Intent(this, ThirdPayDialog.class);
+                        intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
+                        intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
+                        startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 
-                    JSONObject json = new JSONObject();
-                    String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-                    try {
-                        json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
-                        json.put("extOrderNo",tradeNo);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                            json.put("extOrderNo",tradeNo);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
                     }
-                    AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
                 }
                 break;
         }
@@ -886,7 +921,7 @@ public class CheckOutActivity extends BaseActivity {
                         }
                     }
                 }else{
-                    ToastUtils.sendtoastbyhandler(handler,"银行卡支付异常！");
+                    ToastUtils.sendtoastbyhandler(handler,"支付异常！");
                 }
             }
         }

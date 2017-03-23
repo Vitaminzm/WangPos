@@ -90,6 +90,7 @@
     <string name="waring_null_msg">输入不能为空</string>
     <string name="waring_money_over">输入金额过大</string>
     <string name="waring_money_not_zero">输入金额不能为零</string>
+    <string name="waring_not_support">暂不支持</string>
     <string name="waring_msg_pay_success">支付已经完成</string>
     <string name="waring_msg_large">支付金额超出订单总额</string>
     <string name="waring_msg_pay_failed">支付尚未完成！</string>
@@ -388,6 +389,7 @@
     <string name="alipay_repeal_failed">支付宝撤销失败</string>
     <string name="alipay_repeal_cancle">支付宝撤销取消</string>
     <string name="alipay_return">支付宝退货</string>
+    <string name="qmh_return">全民惠退货</string>
     <string name="alipay_return_success">支付宝退货成功</string>
     <string name="alipay_return_failed">支付宝退货失败</string>
     <string name="alipay_return_cancle">支付宝退货取消</string>

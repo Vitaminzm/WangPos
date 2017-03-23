@@ -67,6 +67,8 @@ public class BankreturnDialog extends Dialog implements View.OnClickListener {
 			name = "微信：";
 		}else if(context.getString(R.string.alipay_return).equals(title)){
 			name = "支付宝：";
+		}else if(context.getString(R.string.qmh_return).equals(title)){
+			name = "全名惠：";
 		}else{
 			name = "卡号：";
 		}
