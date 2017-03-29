@@ -114,6 +114,15 @@ public class ThirdPayControllerDialog extends BaseActivity{
 	TextView text_confirm_query;
 
 
+	@Bind(R.id.ll_allpay_clear)
+	LinearLayout ll_allpay_clear;
+	@Bind(R.id.ll_function1)
+	LinearLayout ll_function1;
+	@Bind(R.id.ll_function2)
+	LinearLayout ll_function2;
+	@Bind(R.id.ll_functions_clear)
+	LinearLayout ll_functions_clear;
+
 	@Bind(R.id.ll_paying_status)
 	LinearLayout ll_paying_status;
 	@Bind(R.id.text_status)
@@ -329,8 +338,11 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
 			initPosCore();
 			tv_query.setText("查余");
-			ll_pay_clear.setVisibility(View.VISIBLE);
-			ll_pay_signin.setVisibility(View.VISIBLE);
+			ll_function1.setVisibility(View.VISIBLE);
+			ll_function2.setVisibility(View.GONE);
+		}else{
+			ll_function2.setVisibility(View.VISIBLE);
+			ll_function1.setVisibility(View.GONE);
 		}
 
 //		Intent yunIntent = new Intent(IKuYunThirdPartyService.class.getName());
@@ -398,7 +410,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		}
 	}
 
-	@OnClick({R.id.text_confirm_query, R.id.text_cancle, R.id.text_confirm, R.id.imageview_close, R.id.ll_pay_jiaoyi, R.id.ll_pay_search, R.id.ll_pay_repealdeal, R.id.ll_pay_returngoods, R.id.ll_pay_clear, R.id.ll_pay_signin})
+	@OnClick({R.id.text_confirm_query, R.id.text_cancle, R.id.text_confirm, R.id.imageview_close, R.id.ll_pay_jiaoyi, R.id.ll_pay_search, R.id.ll_pay_repealdeal, R.id.ll_pay_returngoods, R.id.ll_pay_clear, R.id.ll_pay_signin, R.id.ll_allpay_clear, R.id.text_postong, R.id.text_yxlm})
 	public void onClick(View v) {
 		if(Utils.isFastClick()){
 			return;
@@ -494,6 +506,38 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					edit_money.setHint("请输入退货交易号");
 				}
 				break;
+			case R.id.ll_allpay_clear:
+				ll_function.setVisibility(View.GONE);
+				ll_functions_clear.setVisibility(View.VISIBLE);
+				break;
+			case R.id.text_postong:
+				if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+					ll_function.setVisibility(View.GONE);
+					ll_functions_clear.setVisibility(View.GONE);
+					ll_input_money.setVisibility(View.GONE);
+					ll_paying_status.setVisibility(View.VISIBLE);
+					spin_kit.setVisibility(View.VISIBLE);
+					text_status.setText(R.string.thirdpay_requesting);
+					JSONObject json = new JSONObject();
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.YHK_JS, json);
+				}else{
+					ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+				}
+				break;
+			case R.id.text_yxlm:
+				if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+					ll_function.setVisibility(View.GONE);
+					ll_functions_clear.setVisibility(View.GONE);
+					ll_input_money.setVisibility(View.GONE);
+					ll_paying_status.setVisibility(View.VISIBLE);
+					spin_kit.setVisibility(View.VISIBLE);
+					text_status.setText(R.string.thirdpay_requesting);
+					JSONObject json = new JSONObject();
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_JS, json);
+				}else{
+					ToastUtils.sendtoastbyhandler(handler,"暂不支持");
+				}
+				break;
 		}
 	}
 
@@ -518,7 +562,6 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				ll_function.setVisibility(View.GONE);
-				ll_input_money.setVisibility(View.VISIBLE);
 				ll_input_money.setVisibility(View.GONE);
 				ll_paying_status.setVisibility(View.VISIBLE);
 				spin_kit.setVisibility(View.VISIBLE);
@@ -945,7 +988,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				ll_paying_status.setVisibility(View.VISIBLE);
 				spin_kit.setVisibility(View.VISIBLE);
 				text_status.setText(R.string.thirdpay_requesting);
-				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.POS_TONG, json);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.POS_TONG_XF, json);
 			}else{
 				Intent intent_qr = new Intent(this, CaptureActivity.class);
 				startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
@@ -986,6 +1029,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 						try {
 							Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
 							if ("00".equals(transData.get("resCode"))) {
+								ll_functions_clear.setVisibility(View.GONE);
 								imageview_close.setVisibility(View.GONE);
 								ll_paying_by_code.setVisibility(View.GONE);
 								ll_paying_msg.setVisibility(View.VISIBLE);

@@ -348,10 +348,10 @@ public class CheckOutActivity extends BaseActivity {
                             json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
                             json.put("extOrderNo",tradeNo);
                             json.put("tradeType", "useScan");
-                        } catch (JSONException e) {
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.POS_TONG, ConstantData.POS_TONG_XF, json);
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        AppHelper.callTrans(CheckOutActivity.this, ConstantData.POS_TONG, ConstantData.POS_TONG, json);
                     }else{
                         if(ConstantData.WECHAT_ID.equals(payid)){
                             intent_qr = new Intent(mContext, CaptureActivity.class);
@@ -397,10 +397,10 @@ public class CheckOutActivity extends BaseActivity {
                         try {
                             json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
                             json.put("extOrderNo",tradeNo);
-                        } catch (JSONException e) {
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
                     }
                 }
                 break;
@@ -1065,9 +1065,13 @@ public class CheckOutActivity extends BaseActivity {
                         paymentTypeAdapter.add(paymentslist.get(i));
                     }
                 }else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype())){
-                    paymentTypeAdapter.add(paymentslist.get(i));
-                    paymentTypeAdapter.setPayTpye(paymentslist.get(i));
-                    paymentTypeAdapter.notifyDataSetChanged();
+                    if(ConstantData.YXLM_ID.equals(paymentslist.get(i).getId())){
+                        paymentTypeAdapter.add(paymentslist.get(i));
+                    }else{
+                        paymentTypeAdapter.setPayTpye(paymentslist.get(i));
+                        paymentTypeAdapter.notifyDataSetChanged();
+                        paymentTypeAdapter.add(paymentslist.get(i));
+                    }
                 }
 //                else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
 //                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())

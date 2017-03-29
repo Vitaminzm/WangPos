@@ -407,6 +407,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -549,6 +550,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -832,6 +834,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -970,6 +973,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -1460,6 +1464,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -1659,6 +1664,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -2187,6 +2193,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -2204,7 +2211,7 @@ public class PrepareReceiptInfo {
 		return jsonObject;
 	}
 
-	public static JSONObject printBackOrderListDefault(BillInfo bill, boolean flag, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
+	public static JSONObject printBackOrderListDefault(BillInfo bill, final boolean flag, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
 		JSONArray array = new JSONArray();
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
@@ -2412,6 +2419,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block

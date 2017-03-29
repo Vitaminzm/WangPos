@@ -68,7 +68,6 @@ import com.ums.upos.sdk.exception.SdkException;
 import com.ums.upos.sdk.system.BaseSystemManager;
 import com.ums.upos.sdk.system.OnServiceStatusListener;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
@@ -425,7 +424,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 ToastUtils.sendtoastbyhandler(handler, "打印服务异常");
                 return;
             }
-            if(id == null || "".equals(id)){
+            if(StringUtil.isEmpty(id)){
                 AidlRequestManager.getInstance().aidlLastTransPrintRequest(mYunService, new AidlRequestManager.AidlRequestCallBack() {
 
                     @Override
@@ -478,13 +477,33 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             }
         }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
             JSONObject json = new JSONObject();
-            try {
-                json.put("traceNo","000000");
-                json.put("isNeedPrintReceipt", false);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if(id.equals("1")){
+                try {
+                    json.put("traceNo","000000");
+                    json.put("isNeedPrintReceipt", false);
+                    AppHelper.callTrans(MainActivity.this, ConstantData.YHK_SK, ConstantData.YHK_JYMX, json);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else if(id.equals("2")){
+                try {
+                    json.put("traceNo","000000");
+                    json.put("isNeedPrintReceipt", false);
+                    AppHelper.callTrans(MainActivity.this, ConstantData.QMH, ConstantData.YHK_JYMX, json);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else if(id.equals("3")){
+                try {
+                    json.put("traceNo","000000");
+                    json.put("isNeedPrintReceipt", false);
+                    AppHelper.callTrans(MainActivity.this, ConstantData.POS_TONG, ConstantData.YHK_JYMX, json);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-            AppHelper.callTrans(MainActivity.this, ConstantData.YHK_SK, ConstantData.YHK_JYMX, json);
+
+
         }
 
     }
@@ -727,6 +746,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             @Override
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    MyApplication.isPrint = true;
                                     PrepareReceiptInfo.printBackOrderList(billinfo, true, latticePrinter);
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
@@ -776,6 +796,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                             @Override
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    MyApplication.isPrint = true;
                                     PrepareReceiptInfo.printOrderList(billinfo, true, latticePrinter);
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "打印登录失败");

@@ -46,6 +46,7 @@
     <dimen name="margin_fz">26dp</dimen>
     <dimen name="margin_rv">23dp</dimen>
     <dimen name="margin_rz">20dp</dimen>
+    <dimen name="margin_tf">16dp</dimen>
     <dimen name="margin_tz">13dp</dimen>
     <dimen name="margin_ov">10dp</dimen>
     <dimen name="margin_ot">8dp</dimen>

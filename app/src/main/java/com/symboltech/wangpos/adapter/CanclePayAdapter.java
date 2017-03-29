@@ -116,7 +116,12 @@ public class CanclePayAdapter extends BaseAdapter {
 			holder.name_key.setText(R.string.bank);
 			break;
 		case CASH:
-			holder.name_key.setText(R.string.cash);
+			if(ConstantData.YXLM_ID.equals(paymentsInfoAdapter.get(position).getId())){
+				holder.name_key.setText(R.string.yxlm);
+			}else{
+				holder.name_key.setText(R.string.cash);
+			}
+
 			break;
 		case HANDRECORDED:
 			holder.name_key.setText(R.string.recorded);

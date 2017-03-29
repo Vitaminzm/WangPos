@@ -488,6 +488,9 @@ public class ConstantData {
 
 	/** POS 通*/
 	public static final String POS_TONG = "POS 通";
+
+	/** POS通*/
+	public static final String POS_TONG_XF = "POS通";
 	/** 消费撤销*/
 	public static final String POS_XFCX = "消费撤销";
 

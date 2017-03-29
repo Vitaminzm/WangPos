@@ -502,14 +502,14 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                 AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
                             }
                         }).show();
-                    }else if(PaymentTypeEnum.WECHAT.getStyletype().equals(type)){
+                    }else if(ConstantData.WECHAT_ID.equals(entity.getSkfsid())){
                         new BankreturnDialog(this, getString(R.string.wechat_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
                             @Override
                             public void finish(int position) {
                                 AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
                             }
                         }).show();
-                    }else if(PaymentTypeEnum.ALIPAY.getStyletype().equals(type)){
+                    }else if(ConstantData.ALPAY_ID.equals(entity.getSkfsid())){
                         new BankreturnDialog(this, getString(R.string.alipay_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
                             @Override
                             public void finish(int position) {
@@ -771,9 +771,9 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 if(ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
                     billInfo.setBillid(AppConfigFile.getBillId());
                     billInfo.setPaymentslist(commitStyles);
-                    if(billInfo.getMember() == null){
-                        printBackByorder(billInfo);
-                    }
+//                    if(billInfo.getMember() == null){
+//                        printBackByorder(billInfo);
+//                    }
                     AppConfigFile.setLast_billid(AppConfigFile.getBillId());
                     AppConfigFile.setBillId(result.getSaveOrderInfo().getBillid());
                     Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);
@@ -823,6 +823,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                             @Override
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    MyApplication.isPrint = true;
                                     PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "打印登录失败");

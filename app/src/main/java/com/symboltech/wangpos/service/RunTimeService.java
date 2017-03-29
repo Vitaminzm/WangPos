@@ -26,6 +26,7 @@ import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -441,14 +442,25 @@ public class RunTimeService extends IntentService {
 		map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
 		map.put("billid", orderBean.getTraceId());
 		map.put("transtype", orderBean.getTransType());
-		map.put("tradeno", orderBean.getTxnId());
+		if(!StringUtil.isEmpty(orderBean.getTxnId())){
+			map.put("tradeno", orderBean.getTxnId());
+		}
 		map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
 		map.put("decmoney", "0");
-		map.put("cardno", orderBean.getAccountNo()== null? "null":orderBean.getAccountNo());
-		map.put("bankcode",orderBean.getAcquId()== null? "null":orderBean.getAcquId());
-		map.put("batchno", orderBean.getBatchId()== null? "null":orderBean.getBatchId());
-		map.put("refno", orderBean.getRefNo()== null? "null":orderBean.getRefNo());
-		HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>(){
+		if(!StringUtil.isEmpty(orderBean.getAccountNo())){
+			map.put("cardno", orderBean.getAccountNo());
+		}
+		if(!StringUtil.isEmpty(orderBean.getAcquId())){
+			map.put("bankcode", orderBean.getAcquId());
+		}
+		if(!StringUtil.isEmpty(orderBean.getBatchId())){
+			map.put("batchno",  orderBean.getBatchId());
+		}
+		if(!StringUtil.isEmpty(orderBean.getRefNo())){
+			map.put("refno", orderBean.getRefNo());
+		}
+		LogUtil.i("lgs", map.toString());
+		HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
 			@Override
 			public void handleActionError(String actionName, String errmsg) {
 				OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
@@ -460,7 +472,7 @@ public class RunTimeService extends IntentService {
 
 			@Override
 			public void handleActionSuccess(String actionName, BaseResult result) {
-				if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())){
+				if (!ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
 					OrderInfoDao dao = new OrderInfoDao(getApplicationContext());
 					dao.addBankinfo(SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), orderBean.getTraceId(), orderBean.getTransType(), orderBean.getAccountNo() == null ? "null" : orderBean.getAccountNo(),
 							orderBean.getAcquId() == null ? "null" : orderBean.getAcquId(), orderBean.getBatchId() == null ? "null" : orderBean.getBatchId(),

@@ -46,7 +46,6 @@ import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
-import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.ums.AppHelper;
@@ -562,44 +561,37 @@ public class CanclePayDialog extends BaseActivity{
 					StringBuilder result = new StringBuilder();
 					Map<String,String> map = AppHelper.filterTransResult(data);
 					String appName  = map.get("appName");
-					if(appName.equals(ConstantData.YHK_SK) || appName.equals(ConstantData.POS_TONG)){
-						Type type =new TypeToken<Map<String, String>>(){}.getType();
-						try {
-							Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
-							if("00".equals(transData.get("resCode"))){
-								OrderBean orderBean= new OrderBean();
-								orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(info.getMoney()));
-								orderBean.setTxnId(transData.get("extOrderNo"));
-								orderBean.setAccountNo(transData.get("cardNo"));
-								orderBean.setAcquId(transData.get("cardIssuerCode"));
-								orderBean.setBatchId(transData.get("traceNo"));
-								orderBean.setRefNo(transData.get("refNo"));
-								info.setIsCancle(true);
-								info.setDes(getString(R.string.cancled_pay));
-								canclePayAdapter.notifyDataSetChanged();
-								orderBean.setPaymentId(payments.get(position).getId());
-								orderBean.setTransType(ConstantData.TRANS_REVOKE);
-								orderBean.setTraceId(AppConfigFile.getBillId());
-								Intent serviceintent = new Intent(mContext, RunTimeService.class);
-								serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
-								serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
-								startService(serviceintent);
-							}else{
-								info.setDes(getString(R.string.cancled_failed));
-								canclePayAdapter.notifyDataSetChanged();
-								ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
+					Type type =new TypeToken<Map<String, String>>(){}.getType();
+					try {
+						Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+						LogUtil.i("lgs",transData.toString());
+						if("00".equals(transData.get("resCode"))){
+							OrderBean orderBean= new OrderBean();
+							orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(info.getMoney()));
+							orderBean.setTxnId(transData.get("extOrderNo"));
+							orderBean.setAccountNo(transData.get("cardNo"));
+							orderBean.setAcquId(transData.get("cardIssuerCode"));
+							orderBean.setBatchId(transData.get("traceNo"));
+							orderBean.setRefNo(transData.get("refNo"));
+							info.setIsCancle(true);
+							info.setDes(getString(R.string.cancled_pay));
+							canclePayAdapter.notifyDataSetChanged();
+							orderBean.setPaymentId(payments.get(position).getId());
+							orderBean.setTransType(ConstantData.TRANS_REVOKE);
+							orderBean.setTraceId(AppConfigFile.getBillId());
+							Intent serviceintent = new Intent(mContext, RunTimeService.class);
+							serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+							serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+							startService(serviceintent);
+						}else{
+							info.setDes(getString(R.string.cancled_failed));
+							canclePayAdapter.notifyDataSetChanged();
+							ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
 						}
-					}else{
-						String msg = "撤销返回信息异常";
-						if(!StringUtil.isEmpty(map.get(AppHelper.RESULT_MSG))){
-							msg = map.get(AppHelper.RESULT_MSG);
-						}
-						info.setDes(getString(R.string.cancled_failed));
-						canclePayAdapter.notifyDataSetChanged();
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
+
 				}else{
 					info.setDes(getString(R.string.cancled_failed));
 					canclePayAdapter.notifyDataSetChanged();

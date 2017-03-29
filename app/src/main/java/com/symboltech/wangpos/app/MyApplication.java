@@ -31,6 +31,7 @@ public class MyApplication extends Application {
      */
     private static String cashierId = "-1";
 
+    public static boolean isPrint = false;
     public static String posType= ConstantData.POS_TYPE_Y;
     @Override
     public void onCreate() {

@@ -1007,7 +1007,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                             billInfo.setBillid(AppConfigFile.getBillId());
                             billInfo.setPaymentslist(payments);
                             billInfo.setAwardpoint(result.getSaveOrderInfo().getGainpoint());
-                            printBackByorder(billInfo);
+                            //printBackByorder(billInfo);
                             AppConfigFile.setLast_billid(AppConfigFile.getBillId());
                             AppConfigFile.setBillId(result.getSaveOrderInfo().getBillid());
                             Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);
@@ -1042,9 +1042,9 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                         OrderInfoDao dao = new OrderInfoDao(mContext);
                         if(dao.addOrderPaytypeinfo(AppConfigFile.getBillId(), null, null, reasonIds.get(edit_input_reason.getText().toString()), 0, "1", SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""), payments)) {
                             billInfo.setPaymentslist(payments);
-                            if(billInfo.getMember() == null){
-                                printBackByorder(billInfo);
-                            }
+//                            if(billInfo.getMember() == null){
+//                                printBackByorder(billInfo);
+//                            }
                             AppConfigFile.setLast_billid(AppConfigFile.getBillId());
                             AppConfigFile.setBillId(String.valueOf(Long.parseLong(AppConfigFile.getBillId()) + 1));
                             Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);
@@ -1093,6 +1093,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                             @Override
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    MyApplication.isPrint = true;
                                     PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "打印登录失败");

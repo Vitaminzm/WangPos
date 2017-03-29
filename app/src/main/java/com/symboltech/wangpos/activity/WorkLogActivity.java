@@ -413,6 +413,7 @@ public class WorkLogActivity extends BaseActivity {
                             @Override
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    MyApplication.isPrint = true;
                                     PrepareReceiptInfo.printReportFrom(flag, reportInfo, latticePrinter);
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
