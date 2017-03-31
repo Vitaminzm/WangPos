@@ -218,4 +218,59 @@
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/ll_third_print_order"
+        android:layout_below="@id/title_bar"
+        android:layout_width="fill_parent"
+        android:layout_marginLeft="@dimen/margin_sz"
+        android:layout_marginRight="@dimen/margin_sz"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/edit_third_input_order_no"
+            android:gravity="center"
+            android:hint="请输入凭证号,默认补打上一笔"
+            android:background="@drawable/edittext_2_bg_selector"
+            android:textColorHint="@color/hint_color"
+            android:textColor="@color/font_color"
+            android:layout_width="match_parent"
+            android:textSize="@dimen/font_size_tf"
+            android:layout_height="@dimen/height_sz" />
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/margin_sz"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_ez">
+
+            <TextView
+                android:id="@+id/text_third_cancle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="@dimen/height_ez"
+                android:text="@string/cancle"
+                android:gravity="center"
+                android:textSize="@dimen/font_size_rz"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_red_bg"/>
+            <TextView
+                android:id="@+id/text_third_confirm"
+                android:layout_marginLeft="@dimen/margin_rz"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="@dimen/height_ez"
+                android:text="@string/confirm"
+                android:gravity="center"
+                android:textSize="@dimen/font_size_rz"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_green_bg"/>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

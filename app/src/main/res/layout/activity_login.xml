@@ -19,12 +19,17 @@
             android:layout_gravity="center"
             android:textSize="@dimen/font_size_ez"
             android:text="@string/intelligentPOS"/>
-
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_tz"
+            android:layout_gravity="center"
+            android:background="@mipmap/bbg_logo"/>
         <LinearLayout
             android:id="@+id/ll_desk_code"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_nv"
+            android:layout_marginTop="@dimen/margin_tz"
             android:gravity="center"
             android:visibility="invisible"
             android:orientation="horizontal">

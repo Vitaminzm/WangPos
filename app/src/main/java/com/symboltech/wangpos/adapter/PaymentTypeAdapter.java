@@ -121,6 +121,7 @@ public class PaymentTypeAdapter extends BaseAdapter {
 					break;
 				}
 			case BANK:
+			case STORE:
 				if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.BANK && paymentsInfo.get(position).getId().equals(payType.getId())) {
 					holder.image_key.setImageResource(R.mipmap.card_icon_selcet);
 					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));

@@ -25,7 +25,7 @@
     </RelativeLayout>
 
     <LinearLayout
-        android:id="@+id/ll_functions_clear"
+        android:id="@+id/ll_functions_type"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/title_bar"
@@ -34,24 +34,23 @@
         android:visibility="gone">
 
         <TextView
-            android:id="@+id/text_postong"
+            android:id="@+id/text_bank"
             android:layout_width="@dimen/height_ttz"
             android:layout_height="@dimen/height_ez"
-            android:layout_marginLeft="@dimen/margin_ov"
+            android:layout_marginRight="@dimen/margin_tz"
             android:background="@drawable/btn_blue_bg"
             android:gravity="center"
-            android:text="@string/posclear"
+            android:text="@string/bank"
             android:textColor="@color/white"
             android:textSize="@dimen/font_size_rz" />
 
         <TextView
-            android:id="@+id/text_yxlm"
+            android:id="@+id/text_store"
             android:layout_width="@dimen/height_ttz"
             android:layout_height="@dimen/height_ez"
-            android:layout_marginLeft="@dimen/margin_ov"
             android:background="@drawable/btn_green_bg"
             android:gravity="center"
-            android:text="@string/yxlmclear"
+            android:text="@string/store"
             android:textColor="@color/white"
             android:textSize="@dimen/font_size_rz" />
     </LinearLayout>
@@ -67,7 +66,6 @@
 
         <LinearLayout
             android:id="@+id/ll_function1"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -228,56 +226,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/ll_function2"
-            android:layout_width="fill_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:id="@+id/ll_allpay_clear"
-                android:layout_width="@dimen/height_ttz"
-                android:layout_height="@dimen/height_ez"
-                android:layout_marginRight="@dimen/margin_fz"
-                android:background="@drawable/btn_blue_bg"
-                android:gravity="center" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/pay_clear_icon" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/clear"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/font_size_rz" />
-            </LinearLayout>
-            <LinearLayout
-                android:visibility="invisible"
-                android:layout_width="@dimen/height_ttz"
-                android:layout_height="@dimen/height_ez"
-                android:background="@drawable/btn_blue_bg"
-                android:gravity="center" >
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/pay_clear_icon" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-                    android:text="@string/clear"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/font_size_rz" />
-            </LinearLayout>
-        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout

@@ -108,9 +108,11 @@
 
 
     <string name="bank_return">银行卡退款</string>
+    <string name="store_return">预付卡退款</string>
     <string name="weichat">微信</string>
     <string name="alipay">支付宝</string>
     <string name="bank">银行卡</string>
+    <string name="store">预付卡</string>
     <string name="cash">现  金</string>
     <string name="yxlm">营销联盟</string>
     <string name="recorded">补  录</string>
@@ -369,10 +371,12 @@
     <string name="trans">交易</string>
     <string name="signin">签到</string>
     <string name="bankprint">银行卡补打</string>
-    <string name="posprint">扫码付补打</string>
+    <string name="posprint">条码付补打</string>
     <string name="yxlmprint">营销联盟补打</string>
-    <string name="posclear">扫码付结算</string>
+    <string name="posclear">条码付结算</string>
     <string name="yxlmclear">营销联盟结算</string>
+    <string name="now_cancle">当日撤销</string>
+    <string name="tom_return">隔日退货</string>
 
     <!-- 微信支付宝支付相关 -->
     <string name="thirdpay_deal_time">"交易金额： "</string>

@@ -497,6 +497,9 @@ public class ConstantData {
 	/** 全民惠*/
 	public static final String QMH = "全民惠";
 
+	/** 预付卡*/
+	public static final String STORE = "预付卡";
+
 	/** 银行卡收款*/
 	public static final String YHK_SK = "银行卡收款";
 	/** 消费 */

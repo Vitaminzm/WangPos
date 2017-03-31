@@ -48,6 +48,7 @@ import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
+import com.symboltech.wangpos.view.TextScrollView;
 import com.ums.AppHelper;
 
 import org.json.JSONException;
@@ -91,7 +92,7 @@ public class CanclePayDialog extends BaseActivity{
 	@Bind(R.id.text_money)
 	TextView text_money;
 	@Bind(R.id.text_info)
-	TextView text_info;
+	TextScrollView text_info;
 	@Bind(R.id.listview_canclepay)
 	ListView listview_canclepay;
 
@@ -437,6 +438,31 @@ public class CanclePayDialog extends BaseActivity{
 				}
 			}else{
 				thirdcancle(position);
+			}
+		}else if(info.getType().equals(PaymentTypeEnum.STORE.getStyletype())){
+			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+				if(isCancleCount > 0){
+					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+					return;
+				}
+				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
+						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+					this.position = position;
+					JSONObject json = new JSONObject();
+					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+					try {
+						json.put("orgTraceNo",info.getTraceNo());
+						json.put("extOrderNo", tradeNo);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					isCancleCount++;
+					info.setDes(getString(R.string.cancleing_pay));
+					canclePayAdapter.notifyDataSetChanged();
+					AppHelper.callTrans(CanclePayDialog.this, ConstantData.STORE, ConstantData.YHK_CX, json);
+				}
+			}else{
+				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
 			}
 		}else if(ConstantData.YXLM_ID.equals(info.getId())){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){

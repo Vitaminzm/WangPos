@@ -19,6 +19,15 @@ public class BankPayInfo implements Serializable, Cloneable {
 	private String des;
 	private String tradeno;
 	private String refno;
+	private String batchno;
+
+	public String getBatchno() {
+		return batchno;
+	}
+
+	public void setBatchno(String batchno) {
+		this.batchno = batchno;
+	}
 
 	public String getRefno() {
 		return refno;

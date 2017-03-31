@@ -72,7 +72,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/btn_weichat_icon" />
+                android:src="@mipmap/btn_codepay_icon" />
 
         </RelativeLayout>
     </LinearLayout>
@@ -101,14 +101,13 @@
             android:id="@+id/rl_add"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:visibility="invisible"
             android:gravity="center"
             android:layout_weight="1"
             android:background="@drawable/btn_blue_bg" >
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/btn_weichat_icon" />
+                android:src="@mipmap/btn_market_icon" />
 
         </RelativeLayout>
     </LinearLayout>

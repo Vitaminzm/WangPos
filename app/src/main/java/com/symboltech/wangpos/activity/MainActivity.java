@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.symboltech.koolcloud.aidl.AidlRequestManager;
 import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
@@ -415,7 +416,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         handler.removeCallbacksAndMessages(null);
         AppConfigFile.delActivity(this);
     }
-    public void print_last(String id){
+    public void print_last(String id, String no){
         if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             ToastUtils.sendtoastbyhandler(handler, "暂不支持");
             return;
@@ -424,7 +425,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 ToastUtils.sendtoastbyhandler(handler, "打印服务异常");
                 return;
             }
-            if(StringUtil.isEmpty(id)){
+            if(StringUtil.isEmpty(no)){
                 AidlRequestManager.getInstance().aidlLastTransPrintRequest(mYunService, new AidlRequestManager.AidlRequestCallBack() {
 
                     @Override
@@ -449,7 +450,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                 });
             }else{
-                TransPrintRequest request = new TransPrintRequest(id);
+                TransPrintRequest request = new TransPrintRequest(no);
                 AidlRequestManager aidlManager = AidlRequestManager.getInstance();
                 aidlManager.aidlTransPrintRequest(mYunService, request, new AidlRequestManager.AidlRequestCallBack() {
                     @Override
@@ -479,7 +480,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             JSONObject json = new JSONObject();
             if(id.equals("1")){
                 try {
-                    json.put("traceNo","000000");
+                    if(StringUtil.isEmpty(no)){
+                        json.put("traceNo","000000");
+                    }else{
+                        json.put("traceNo",no);
+                    }
                     json.put("isNeedPrintReceipt", false);
                     AppHelper.callTrans(MainActivity.this, ConstantData.YHK_SK, ConstantData.YHK_JYMX, json);
                 } catch (Exception e) {
@@ -487,7 +492,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             }else if(id.equals("2")){
                 try {
-                    json.put("traceNo","000000");
+                    if(StringUtil.isEmpty(no)){
+                        json.put("traceNo","000000");
+                    }else{
+                        json.put("traceNo",no);
+                    }
                     json.put("isNeedPrintReceipt", false);
                     AppHelper.callTrans(MainActivity.this, ConstantData.QMH, ConstantData.YHK_JYMX, json);
                 } catch (Exception e) {
@@ -495,7 +504,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
             }else if(id.equals("3")){
                 try {
-                    json.put("traceNo","000000");
+                    if(StringUtil.isEmpty(no)){
+                        json.put("traceNo","000000");
+                    }else{
+                        json.put("traceNo",no);
+                    }
                     json.put("isNeedPrintReceipt", false);
                     AppHelper.callTrans(MainActivity.this, ConstantData.POS_TONG, ConstantData.YHK_JYMX, json);
                 } catch (Exception e) {
@@ -631,6 +644,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 intent.putExtra(ConstantData.PAY_MODE, ConstantData.PAYMODE_BY_WEIXIN+"");
                 startActivity(intent);
                 break;
+            case R.id.rl_add:
+                Type = ConstantData.YXLM_ID;//PaymentTypeEnum.WECHAT.getStyletype();
+                Intent intentDialog = new Intent(this,ThirdPayControllerDialog.class);
+                intentDialog.putExtra(ConstantData.PAY_TYPE, ConstantData.YXLM_ID);
+                intentDialog.putExtra(ConstantData.PAY_MODE, ConstantData.PAYMODE_BY_WEIXIN+"");
+                startActivity(intentDialog);
+                break;
         }
     }
 
@@ -649,17 +669,27 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 if (null != data) {
                     StringBuilder result = new StringBuilder();
                     Map<String, String> map = AppHelper.filterTransResult(data);
+                    LogUtil.i("lgs",map.toString());
                     if ("0".equals(map.get(AppHelper.RESULT_CODE))) {
-
+                        java.lang.reflect.Type type =new TypeToken<Map<String, String>>(){}.getType();
+                        Map<String, String> transData = null;
+                        try {
+                            transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+                            if(!"00".equals(transData.get("resCode"))){
+                                ToastUtils.sendtoastbyhandler(handler,transData.get("resDesc"));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     } else {
-                        String msg = "银行卡返回信息异常";
+                        String msg = "返回信息异常";
                         if (!StringUtil.isEmpty(map.get(AppHelper.RESULT_MSG))) {
                             msg = map.get(AppHelper.RESULT_MSG);
                         }
                         ToastUtils.sendtoastbyhandler(handler, "msg");
                     }
                 } else {
-                    ToastUtils.sendtoastbyhandler(handler, "银行卡打印异常！");
+                    ToastUtils.sendtoastbyhandler(handler, "打印异常！");
                 }
             }
         }
@@ -989,6 +1019,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             ButterKnife.findById(v2, R.id.rl_offline).setOnClickListener(onClickListener);
             ButterKnife.findById(v2, R.id.rl_weichat).setOnClickListener(onClickListener);
             ButterKnife.findById(v2, R.id.rl_bank).setOnClickListener(onClickListener);
+            ButterKnife.findById(v2, R.id.rl_add).setOnClickListener(onClickListener);
             views.add(v2);
         }
 

@@ -404,6 +404,29 @@ public class CheckOutActivity extends BaseActivity {
                     }
                 }
                 break;
+            case STORE:
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else{
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
+                        ToastUtils.sendtoastbyhandler(handler,"暂不支持！");
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
+                        ToastUtils.sendtoastbyhandler(handler,"暂不支持！");
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                            json.put("extOrderNo",tradeNo);
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.STORE, ConstantData.YHK_XF, json);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                break;
         }
     }
 
@@ -1060,7 +1083,8 @@ public class CheckOutActivity extends BaseActivity {
             for (int i = 0; i < paymentslist.size(); i++) {
                 if (paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHAT.getStyletype())
-                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())) {
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.STORE.getStyletype())) {
                     if(!AppConfigFile.isOffLineMode()){
                         paymentTypeAdapter.add(paymentslist.get(i));
                     }

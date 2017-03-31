@@ -159,6 +159,10 @@ public class PaymentActivity extends BaseActivity {
                         ToastUtils.sendtoastbyhandler(handler,getString(R.string.warning_no_input_format));
                         return;
                     }
+                    if(ArithDouble.parseDouble(value) > 1000000){
+                        ToastUtils.sendtoastbyhandler(handler, "价格太大");
+                        return;
+                    }
                     if(goodinfos != null && goodinfos.size() > 0){
                         addcartgoods(value, position, ConstantData.GOOD_PRICE_CAN_CHANGE);
                         edit_input_money.setText("");

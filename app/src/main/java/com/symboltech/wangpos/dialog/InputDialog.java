@@ -166,7 +166,7 @@ public class InputDialog extends Dialog implements View.OnClickListener {
 			case R.id.text_print_slip:
 //				String bankId = SpSaveUtils.read(context, ConstantData.LAST_BANK_TRANS, "");
 //				if (!bankId.equals("")){
-					((MainActivity)context).print_last(null);
+					((MainActivity)context).print_last(null,null);
 					dismiss();
 //				}else{
 //					ToastUtils.sendtoastbyhandler(handler,"没有银行交易记录");

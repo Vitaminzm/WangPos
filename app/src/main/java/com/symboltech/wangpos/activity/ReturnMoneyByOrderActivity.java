@@ -483,44 +483,134 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 }else if (MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
                     String type = getPayTypeById(entity.getSkfsid());
                     final JSONObject json = new JSONObject();
-                    String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-                    try {
-                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
-                        json.put("refNo",entity.getRefno());
-                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
-                        json.put("extOrderNo",tradeNo);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    final String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+
                     if(StringUtil.isEmpty(type)){
                         ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_cannot_return));
                         return;
+                    }else if(PaymentTypeEnum.STORE.getStyletype().equals(type)){
+                        new BankreturnDialog(this, getString(R.string.store_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
+                            @Override
+                            public void finish(int position) {
+                               if(position == 1){
+                                   try {
+                                       json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                       json.put("refNo",entity.getRefno());
+                                       json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                                       json.put("extOrderNo",tradeNo);
+                                   } catch (JSONException e) {
+                                       e.printStackTrace();
+                                   }
+                                   AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.STORE, ConstantData.YHK_TH, json);
+                               }else if(position == 2){
+                                   try {
+                                       json.put("orgTraceNo",entity.getBatchno());
+                                       json.put("extOrderNo", tradeNo);
+                                   } catch (JSONException e) {
+                                       e.printStackTrace();
+                                   }
+                                   AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.STORE, ConstantData.YHK_CX, json);
+                               }
+                            }
+                        }).show();
                     }else if(PaymentTypeEnum.BANK.getStyletype().equals(type)){
                         new BankreturnDialog(this, getString(R.string.bank_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
                             @Override
                             public void finish(int position) {
-                                AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
+                                if(position == 1){
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                        json.put("refNo",entity.getRefno());
+                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                                        json.put("extOrderNo",tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
+                                }else if(position == 2){
+                                    try {
+                                        json.put("orgTraceNo",entity.getBatchno());
+                                        json.put("extOrderNo", tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
+                                }
                             }
                         }).show();
                     }else if(ConstantData.WECHAT_ID.equals(entity.getSkfsid())){
                         new BankreturnDialog(this, getString(R.string.wechat_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
                             @Override
                             public void finish(int position) {
-                                AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
+                                if(position == 1){
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                        json.put("refNo",entity.getRefno());
+                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                                        json.put("extOrderNo",tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
+                                }else if(position == 2){
+                                    try {
+                                        json.put("oldTraceNo",entity.getBatchno());
+                                        json.put("extOrderNo", tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
+                                }
                             }
                         }).show();
                     }else if(ConstantData.ALPAY_ID.equals(entity.getSkfsid())){
                         new BankreturnDialog(this, getString(R.string.alipay_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
                             @Override
                             public void finish(int position) {
-                                AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
+                                if(position == 1){
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                        json.put("refNo",entity.getRefno());
+                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                                        json.put("extOrderNo",tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
+                                }else if(position == 2){
+                                    try {
+                                        json.put("oldTraceNo",entity.getBatchno());
+                                        json.put("extOrderNo", tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
+                                }
                             }
                         }).show();
                     }else if(ConstantData.YXLM_ID.equals(entity.getSkfsid())){
                         new BankreturnDialog(this, getString(R.string.qmh_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
                             @Override
                             public void finish(int position) {
-                                AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YHK_TH, json);
+                                if(position == 1){
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                        json.put("refNo",entity.getRefno());
+                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                                        json.put("extOrderNo",tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YHK_TH, json);
+                                }else if(position == 2){
+                                    try {
+                                        json.put("orgTraceNo",entity.getBatchno());
+                                        json.put("extOrderNo", tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YHK_CX, json);
+                                }
                             }
                         }).show();
                     }

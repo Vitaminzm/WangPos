@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.print;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -11,6 +12,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.msg.entity.BillInfo;
@@ -211,15 +213,28 @@ public class PrepareReceiptInfo {
 	 * @param bitmap
 	 * @param align
 	 */
-	private static void addBitmapJson(JSONArray array, Bitmap bitmap, int align) {
-		try {
-			JSONObject json = new JSONObject();
-			json.put("type", 1);
-			json.put("bitmap", bitmapToBase64(bitmap));
-			json.put("align", align);
-			array.put(json);
-		} catch (Exception e) {
-			e.printStackTrace();
+	private static void addBitmapJson(JSONArray array, Bitmap bitmap, int align, LatticePrinter latticePrinter, PrinterManager printer) {
+		if(latticePrinter != null){
+		}else {
+			if(printer == null){
+				try {
+					JSONObject json = new JSONObject();
+					json.put("type", 1);
+					json.put("bitmap", bitmapToBase64(bitmap));
+					json.put("align", align);
+					array.put(json);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else{
+				try {
+					printer.setBitmap(bitmap);
+				} catch (CallServiceException e) {
+					e.printStackTrace();
+				} catch (SdkException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -368,7 +383,7 @@ public class PrepareReceiptInfo {
 
 			if(latticePrinter == null){
 				if(printer == null){
-					addBitmapJson(array, createQrcode(couponInfo.getCouponno(), 300, 300), KposPrinterManager.CONTENT_ALIGN_CENTER);
+					addBitmapJson(array, createQrcode(couponInfo.getCouponno(), 300, 300), KposPrinterManager.CONTENT_ALIGN_CENTER, latticePrinter, printer);
 				}else{
 					try {
 						printer.setBitmap(createQrcode(couponInfo.getCouponno(), 300, 300));
@@ -484,6 +499,8 @@ public class PrepareReceiptInfo {
 		JSONArray array = new JSONArray();
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
+		Bitmap bitmap = BitmapFactory.decodeResource(MyApplication.context.getResources(), R.mipmap.bbg_logo);
+		addBitmapJson(array, bitmap, KposPrinterManager.CONTENT_ALIGN_CENTER, latticePrinter, printer);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
@@ -856,6 +873,8 @@ public class PrepareReceiptInfo {
 		JSONArray array = new JSONArray();
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
+		Bitmap bitmap = BitmapFactory.decodeResource(MyApplication.context.getResources(), R.mipmap.bbg_logo);
+		addBitmapJson(array, bitmap, KposPrinterManager.CONTENT_ALIGN_CENTER, latticePrinter, printer);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 
 		if (isJob) {
@@ -1491,6 +1510,8 @@ public class PrepareReceiptInfo {
 		double totalPoint = 0;// 积分累计
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
+		Bitmap bitmap = BitmapFactory.decodeResource(MyApplication.context.getResources(), R.mipmap.bbg_logo);
+		addBitmapJson(array, bitmap, KposPrinterManager.CONTENT_ALIGN_CENTER, latticePrinter, printer);
 		addTextJson(array, latticePrinter, FONT_BIG, "欢迎光临" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""), KposPrinterManager.CONTENT_ALIGN_CENTER, printer, fontConfig);
 		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
 			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))){
@@ -2215,6 +2236,8 @@ public class PrepareReceiptInfo {
 		JSONArray array = new JSONArray();
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
+		Bitmap bitmap = BitmapFactory.decodeResource(MyApplication.context.getResources(), R.mipmap.bbg_logo);
+		addBitmapJson(array, bitmap, KposPrinterManager.CONTENT_ALIGN_CENTER, latticePrinter, printer);
 		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
 			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))){
 				addTextJson(array, latticePrinter, FONT_DEFAULT, "门店:" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
