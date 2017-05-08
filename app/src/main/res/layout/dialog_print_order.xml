@@ -191,17 +191,16 @@
                 android:gravity="center" >
 
                 <TextView
-                    android:id="@+id/text_wf"
+                    android:id="@+id/text_store"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_ov"
-                    android:text="@string/posprint"
+                    android:text="@string/storeprint"
                     android:textColor="@color/white"
                     android:textSize="@dimen/font_size_rz" />
             </LinearLayout>
 
             <LinearLayout
-                android:visibility="invisible"
                 android:layout_width="@dimen/height_ttz"
                 android:layout_height="@dimen/height_ez"
                 android:layout_marginTop="@dimen/margin_ov"
@@ -209,10 +208,11 @@
                 android:gravity="center" >
 
                 <TextView
+                    android:id="@+id/text_wf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/margin_ov"
-                    android:text="@string/returns"
+                    android:text="@string/posprint"
                     android:textColor="@color/white"
                     android:textSize="@dimen/font_size_rz" />
             </LinearLayout>

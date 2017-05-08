@@ -1090,7 +1090,9 @@ public class CheckOutActivity extends BaseActivity {
                     }
                 }else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype())){
                     if(ConstantData.YXLM_ID.equals(paymentslist.get(i).getId())){
-                        paymentTypeAdapter.add(paymentslist.get(i));
+                        if(!AppConfigFile.isOffLineMode()){
+                            paymentTypeAdapter.add(paymentslist.get(i));
+                        }
                     }else{
                         paymentTypeAdapter.setPayTpye(paymentslist.get(i));
                         paymentTypeAdapter.notifyDataSetChanged();

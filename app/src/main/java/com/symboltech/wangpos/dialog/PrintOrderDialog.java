@@ -32,7 +32,7 @@ import com.symboltech.wangpos.view.HorizontalKeyBoard;
 public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 	public Context context;
 	private EditText edit_input_order_no, edit_third_input_order_no;
-	private TextView text_title, text_print_order, text_print_slip, text_cancle, text_confirm, text_bank, text_yxlm, text_wf, text_third_cancle, text_third_confirm;
+	private TextView text_title, text_print_order, text_print_slip, text_cancle, text_confirm, text_bank, text_yxlm, text_wf, text_store, text_third_cancle, text_third_confirm;
 	private LinearLayout ll_function_print_order, ll_function, ll_thirdprint, ll_third_print_order;
 	private ImageView imageview_close;
 	private GeneralEditListener gel;
@@ -87,6 +87,7 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 		text_bank = (TextView) findViewById(R.id.text_bank);
 		text_yxlm = (TextView) findViewById(R.id.text_yxlm);
 		text_wf = (TextView) findViewById(R.id.text_wf);
+		text_store = (TextView) findViewById(R.id.text_store);
 		ll_function_print_order = (LinearLayout) findViewById(R.id.ll_function_print_order);
 		ll_function = (LinearLayout) findViewById(R.id.ll_function);
 		ll_thirdprint = (LinearLayout) findViewById(R.id.ll_thirdprint);
@@ -105,6 +106,7 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 		text_bank.setOnClickListener(this);
 		text_yxlm.setOnClickListener(this);
 		text_wf.setOnClickListener(this);
+		text_store.setOnClickListener(this);
 	}
 
 	@Override
@@ -178,6 +180,11 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 				break;
 			case R.id.text_wf:
 				type = "3";
+				ll_thirdprint.setVisibility(View.GONE);
+				ll_third_print_order.setVisibility(View.VISIBLE);
+				break;
+			case R.id.text_store:
+				type = "4";
 				ll_thirdprint.setVisibility(View.GONE);
 				ll_third_print_order.setVisibility(View.VISIBLE);
 				break;

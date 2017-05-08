@@ -9,10 +9,16 @@
     <RelativeLayout
         android:id="@+id/title_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_vz"
+        android:layout_height="@dimen/height_sz"
         android:layout_alignParentTop="true"
         android:background="@drawable/radiud_lt_rt_bg">
-
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_font_size"
+            android:layout_centerInParent="true"/>
         <ImageView
             android:id="@+id/imageview_close"
             android:layout_width="wrap_content"

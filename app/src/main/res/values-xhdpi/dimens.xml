@@ -15,6 +15,7 @@
     <dimen name="keyboard_height">400dp</dimen>
     <dimen name="key_margin">6dp</dimen>
     <dimen name="big_font_size">15sp</dimen>
+    <dimen name="big_font_size_login">17sp</dimen>
 
     <!-- 登录界面-->
     <dimen name="font_size_ez">40sp</dimen>

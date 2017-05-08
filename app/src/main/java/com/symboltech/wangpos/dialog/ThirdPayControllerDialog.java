@@ -112,6 +112,8 @@ public class ThirdPayControllerDialog extends BaseActivity{
 	TextView text_paying_msg;
 	@Bind(R.id.text_confirm_query)
 	TextView text_confirm_query;
+	@Bind(R.id.text_title)
+	TextView text_title;
 
 
 
@@ -343,6 +345,9 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		}else if(Type.equals(ConstantData.YXLM_ID) || Type.equals(PaymentTypeEnum.WECHAT.getStyletype())){
 			if(Type.equals(ConstantData.YXLM_ID)){
 				tv_query.setText("查余");
+				text_title.setText(R.string.yxlm);
+			}else{
+				text_title.setText(R.string.codepay);
 			}
 			ll_functions_type.setVisibility(View.GONE);
 		}
@@ -516,6 +521,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				bankType = "bank";
 				ll_function.setVisibility(View.VISIBLE);
 				ll_functions_type.setVisibility(View.GONE);
+				text_title.setText(R.string.bank);
 //				if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 //					ll_function.setVisibility(View.GONE);
 //					ll_functions_clear.setVisibility(View.GONE);
@@ -533,6 +539,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				bankType = "store";
 				ll_function.setVisibility(View.VISIBLE);
 				ll_functions_type.setVisibility(View.GONE);
+				text_title.setText(R.string.store);
 //				if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 //					ll_function.setVisibility(View.GONE);
 //					ll_functions_clear.setVisibility(View.GONE);

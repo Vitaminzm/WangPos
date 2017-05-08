@@ -1,6 +1,8 @@
 package com.symboltech.wangpos.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -154,6 +156,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     }
                 }
             }, false).show();
+        }
+        if(Utils.isRoot()){
+            new AlertDialog.Builder(this).setTitle("系统提示").setMessage("检测到系统拥有ROOT权限，为了保障安全，请点击确认退出").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    MyApplication.stopTask();
+                    OperateLog.getInstance().stopUpload();
+                    InitializeConfig.clearCash(LoginActivity.this);
+                    finish();
+                    AppConfigFile.exit();
+                    HttpServiceStringClient.getinstance().cancleRequest();
+                    System.exit(0);
+                }
+            }).show();
         }
     }
 

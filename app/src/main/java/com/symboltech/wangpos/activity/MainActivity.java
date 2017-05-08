@@ -353,7 +353,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         registerReceiver(receiver, filter);
         if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 
-        }else {
+        }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             registerReceiver(broadcastReceiver, new IntentFilter(
                     "cn.koolcloud.engine.ThirdPartyTrans"));
         }
@@ -511,6 +511,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                     }
                     json.put("isNeedPrintReceipt", false);
                     AppHelper.callTrans(MainActivity.this, ConstantData.POS_TONG, ConstantData.YHK_JYMX, json);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }else if(id.equals("4")){
+                try {
+                    if(StringUtil.isEmpty(no)){
+                        json.put("traceNo","000000");
+                    }else{
+                        json.put("traceNo",no);
+                    }
+                    json.put("isNeedPrintReceipt", false);
+                    AppHelper.callTrans(MainActivity.this, ConstantData.STORE, ConstantData.YHK_JYMX, json);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

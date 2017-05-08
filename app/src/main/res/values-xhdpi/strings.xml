@@ -115,6 +115,7 @@
     <string name="store">预付卡</string>
     <string name="cash">现  金</string>
     <string name="yxlm">营销联盟</string>
+    <string name="codepay">条码付</string>
     <string name="recorded">补  录</string>
     <string name="payment_type_change">找零</string>
     <string name="weichat_pay">微信支付：</string>
@@ -373,6 +374,7 @@
     <string name="bankprint">银行卡补打</string>
     <string name="posprint">条码付补打</string>
     <string name="yxlmprint">营销联盟补打</string>
+    <string name="storeprint">预付卡补打</string>
     <string name="posclear">条码付结算</string>
     <string name="yxlmclear">营销联盟结算</string>
     <string name="now_cancle">当日撤销</string>

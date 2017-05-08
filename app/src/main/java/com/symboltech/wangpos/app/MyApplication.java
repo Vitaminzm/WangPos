@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 
+import com.symboltech.wangpos.exception.CrashHandler;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.service.RunTimeService;
 
@@ -38,7 +39,7 @@ public class MyApplication extends Application {
         super.onCreate();
         context = getApplicationContext();
         //初始化成功自身捕获异常
-        //CrashHandler.getInstance().init(context);
+        CrashHandler.getInstance().init(context);
         LogUtil.i("lgs", "Myapplication--------");
         checkNettimertask();
         if(posType.equals(ConstantData.POS_TYPE_W)){
@@ -99,19 +100,26 @@ public class MyApplication extends Application {
     }
 
     public static void startTask(){
-        mTimer.schedule(mTask, 0, AppConfigFile.NETWORK_STATUS_INTERVAL);
+        try {
+            mTimer.schedule(mTask, 0, AppConfigFile.NETWORK_STATUS_INTERVAL);
+        }catch (Exception e) {
+        }
+
     }
 
     public static void stopTask(){
-        if (mTask != null) {
-            mTask.cancel();
-            mTask = null;
-        }
+        try {
+            if (mTask != null) {
+                mTask.cancel();
+                mTask = null;
+            }
 
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
-            mTimer = null;
+            if (mTimer != null) {
+                mTimer.cancel();
+                mTimer.purge();
+                mTimer = null;
+            }
+        }catch (Exception e) {
         }
     }
 
