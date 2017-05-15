@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -52,7 +51,7 @@ public class MemberActivateActivity extends BaseActivity {
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override
@@ -140,7 +139,7 @@ public class MemberActivateActivity extends BaseActivity {
     }
 
     private void actiateMember(String phone_no, String shenfen_no, final String name, String card_no){
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("phone", phone_no);
         map.put("certnum", shenfen_no);
         map.put("name", name);

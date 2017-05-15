@@ -93,7 +93,7 @@ public class DemandNoteActivity extends BaseActivity {
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override
@@ -184,7 +184,7 @@ public class DemandNoteActivity extends BaseActivity {
     };
     @Override
     protected void initData() {
-        infos = new ArrayList<>();
+        infos = new ArrayList<ReportDetailInfo>();
         initDataByPaymentId(infos);
         myAdapter = new DemandNoteTableAdapter(getApplicationContext(), infos, new View.OnTouchListener() {
             @Override
@@ -209,7 +209,7 @@ public class DemandNoteActivity extends BaseActivity {
         }
         text_desk_code.setText(SpSaveUtils.read(this, ConstantData.CASHIER_DESK_CODE, ""));
         text_shop.setText(SpSaveUtils.read(this, ConstantData.SHOP_NAME, ""));
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<String, String>();
         title_text_content.setText(getString(R.string.desk_demand));
         map.put("person_id", SpSaveUtils.read(DemandNoteActivity.this, ConstantData.CASHIER_ID, ""));
         HttpRequestUtil.getinstance().getReportInfo(HTTP_TASK_KEY, map, ReportResult.class, new HttpActionHandle<ReportResult>() {
@@ -437,7 +437,7 @@ public class DemandNoteActivity extends BaseActivity {
 
     public void submitJkd(){
         final TotalReportInfo info = new TotalReportInfo();
-        ArrayList<ReportDetailInfo> infoList = new ArrayList<>();
+        ArrayList<ReportDetailInfo> infoList = new ArrayList<ReportDetailInfo>();
         for(ReportDetailInfo data:infos){
             infoList.add(data.clone());
         }
@@ -540,7 +540,7 @@ public class DemandNoteActivity extends BaseActivity {
 
     public void printReport(){
         final TotalReportInfo info = new TotalReportInfo();
-        ArrayList<ReportDetailInfo> infoList = new ArrayList<>();
+        ArrayList<ReportDetailInfo> infoList = new ArrayList<ReportDetailInfo>();
         for(ReportDetailInfo data:infos){
             infoList.add(data.clone());
         }
@@ -607,6 +607,7 @@ public class DemandNoteActivity extends BaseActivity {
                             @Override
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    MyApplication.isPrint = true;
                                     PrepareReceiptInfo.printDemandNote(info, latticePrinter);
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
@@ -651,7 +652,7 @@ public class DemandNoteActivity extends BaseActivity {
             }
         }
         public void initView() {
-            views = new ArrayList<>();
+            views = new ArrayList<View>();
             View v1 = mLayoutInflater.inflate(R.layout.view_collect, null);
             listview_collection = ButterKnife.findById(v1, R.id.listview);
             collection = new ReportTableAdapter(getApplicationContext(),new ArrayList<ReportDetailInfo>());

@@ -26,6 +26,7 @@ import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -254,8 +255,8 @@ public class RunTimeService extends IntentService {
 		List<OfflineBillInfo> billinfos = dao.getOfflineOrderInfo(beginBillID, count);
 		if (billinfos != null && billinfos.size() > 0) {
 			// 存放billID
-			List<String> bills = new ArrayList<>();
-			List<OptLogInfo> list = new ArrayList<>();
+			List<String> bills = new ArrayList<String>();
+			List<OptLogInfo> list = new ArrayList<OptLogInfo>();
 			for (int i = 0; i < billinfos.size(); i++) {
 				bills.add(billinfos.get(i).getConfirmbillinfos().getBillid());
 				OptLogInfo opt = dealData(billinfos, i);
@@ -441,14 +442,25 @@ public class RunTimeService extends IntentService {
 		map.put("posno", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_DESK_CODE, ""));
 		map.put("billid", orderBean.getTraceId());
 		map.put("transtype", orderBean.getTransType());
-		map.put("tradeno", orderBean.getTxnId());
+		if(!StringUtil.isEmpty(orderBean.getTxnId())){
+			map.put("tradeno", orderBean.getTxnId());
+		}
 		map.put("amount", MoneyAccuracyUtils.makeRealAmount(orderBean.getTransAmount()));
 		map.put("decmoney", "0");
-		map.put("cardno", orderBean.getAccountNo()== null? "null":orderBean.getAccountNo());
-		map.put("bankcode",orderBean.getAcquId()== null? "null":orderBean.getAcquId());
-		map.put("batchno", orderBean.getBatchId()== null? "null":orderBean.getBatchId());
-		map.put("refno", orderBean.getRefNo()== null? "null":orderBean.getRefNo());
-		HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>(){
+		if(!StringUtil.isEmpty(orderBean.getAccountNo())){
+			map.put("cardno", orderBean.getAccountNo());
+		}
+		if(!StringUtil.isEmpty(orderBean.getAcquId())){
+			map.put("bankcode", orderBean.getAcquId());
+		}
+		if(!StringUtil.isEmpty(orderBean.getBatchId())){
+			map.put("batchno",  orderBean.getBatchId());
+		}
+		if(!StringUtil.isEmpty(orderBean.getRefNo())){
+			map.put("refno", orderBean.getRefNo());
+		}
+		LogUtil.i("lgs", map.toString());
+		HttpRequestUtil.getinstance().saveBankInfo(map, BaseResult.class, new HttpActionHandle<BaseResult>() {
 			@Override
 			public void handleActionError(String actionName, String errmsg) {
 				OrderInfoDao dao = new OrderInfoDao(getApplicationContext());

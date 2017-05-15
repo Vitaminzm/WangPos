@@ -104,7 +104,7 @@ public class PaymentActivity extends BaseActivity {
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override
@@ -133,7 +133,7 @@ public class PaymentActivity extends BaseActivity {
 
     //购物车相关的商品
     private GoodsAdapter goodsAdapter;
-    ArrayList<GoodsInfo> shopCarList = new ArrayList<>();
+    ArrayList<GoodsInfo> shopCarList = new ArrayList<GoodsInfo>();
     //销售员列表
     private List<CashierInfo> sales;
 
@@ -157,6 +157,10 @@ public class PaymentActivity extends BaseActivity {
                 public void onValue(String value) {
                     if(ArithDouble.parseDouble(value) == 0){
                         ToastUtils.sendtoastbyhandler(handler,getString(R.string.warning_no_input_format));
+                        return;
+                    }
+                    if(ArithDouble.parseDouble(value) > 1000000){
+                        ToastUtils.sendtoastbyhandler(handler, "价格太大");
                         return;
                     }
                     if(goodinfos != null && goodinfos.size() > 0){
@@ -263,12 +267,31 @@ public class PaymentActivity extends BaseActivity {
         text_bill_id.setText(AppConfigFile.getBillId());
         text_cashier_name.setText(SpSaveUtils.read(getApplication(), ConstantData.CASHIER_NAME, ""));
         if (sales != null && sales.size() > 0) {
-            text_saleman_name.setText(sales.get(0).getCashiername());
-            text_saleman_name.setTag(sales.get(0).getCashierid());
+            CashierInfo  info = getCashierInfo(SpSaveUtils.read(getApplication(), ConstantData.CASHIER_NAME, ""));
+            if(info!= null){
+                text_saleman_name.setText(info.getCashiername());
+                text_saleman_name.setTag(info.getCashierid());
+            }else{
+                text_saleman_name.setText(sales.get(0).getCashiername());
+                text_saleman_name.setTag(sales.get(0).getCashierid());
+            }
         }
 
     }
 
+    private CashierInfo getCashierInfo(String name){
+        CashierInfo  info = null;
+        if(sales == null || sales.size()==0){
+            return  info;
+        }
+        for(CashierInfo  infoTmp:sales){
+            if(name.equals(infoTmp.getCashiername())){
+                info = infoTmp;
+                break;
+            }
+        }
+        return info;
+    }
     /**
      * 是否存在可以改价格的商品
      * @return

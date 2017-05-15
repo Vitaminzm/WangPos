@@ -103,7 +103,7 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override
@@ -222,6 +222,10 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
             if (printService != null)
                 bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
         }
+
+        if(bill.getMember() == null){
+            printBackByorder(bill);
+        }
     }
 
     @Override
@@ -259,9 +263,19 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
         int id = view.getId();
         switch (id){
             case R.id.text_confirm:
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                this.finish();
+                if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                    if(MyApplication.isPrint){
+                        ToastUtils.sendtoastbyhandler(handler, "打印中，请稍后");
+                    }else{
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
+                        this.finish();
+                    }
+                }else{
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                    this.finish();
+                }
                 break;
             case R.id.text_print:
                 printBackByorder(bill);
@@ -344,6 +358,7 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
                             @Override
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    MyApplication.isPrint = true;
                                     PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "打印登录失败");

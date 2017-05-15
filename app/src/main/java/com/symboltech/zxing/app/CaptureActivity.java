@@ -310,6 +310,16 @@ public class CaptureActivity extends Activity implements Callback, OnClickListen
 
     }
 	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+			case KeyEvent.KEYCODE_HOME:
+				return true;
+			case KeyEvent.KEYCODE_MENU:
+				return true;
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+	@Override
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		// TODO Auto-generated method stub
 		

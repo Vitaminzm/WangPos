@@ -9,6 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.dialog.CanclePayDialog;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
@@ -50,12 +51,15 @@ public class CanclePayAdapter extends BaseAdapter {
 	 */
 	
 	public void initSourceData(){
-		paymentsInfoAdapter = new ArrayList<>();
+		paymentsInfoAdapter = new ArrayList<PayMentsCancleInfo>();
 		if(paymentsInfo!= null){
 			for(int i=0;i<paymentsInfo.size();i++){
 				if(paymentsInfo.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())|| paymentsInfo.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype()) ||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) ||paymentsInfo.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
+					if(ConstantData.YXLM_ID.equals(paymentsInfo.get(i).getId())){
+						paymentsInfoAdapter.add(paymentsInfo.get(i));
+					}
 					//paymentsInfo.get(i).setIsCancle(true);
 				}else{
 						paymentsInfoAdapter.add(paymentsInfo.get(i));
@@ -103,7 +107,15 @@ public class CanclePayAdapter extends BaseAdapter {
 	private void switchUI(int position, ViewHolder holder) {
 		switch (PaymentTypeEnum.getpaymentstyle(paymentsInfoAdapter.get(position).getType().trim())) {
 		case WECHAT:
-			holder.name_key.setText(R.string.weichat);
+			if(paymentsInfoAdapter.get(position).getId().equals(ConstantData.YIPAY_ID)){
+				holder.name_key.setText("翼支付");
+			}else if(paymentsInfoAdapter.get(position).getId().equals(ConstantData.WECHAT_ID)){
+				holder.name_key.setText(R.string.weichat);
+			}else if(paymentsInfoAdapter.get(position).getId().equals(ConstantData.ALPAY_ID)){
+				holder.name_key.setText(R.string.alipay);
+			}else if(paymentsInfoAdapter.get(position).getId().equals(ConstantData.BANKCODE_ID)){
+				holder.name_key.setText("银联扫码");
+			}
 			break;
 		case ALIPAY:
 			holder.name_key.setText(R.string.alipay);
@@ -111,8 +123,16 @@ public class CanclePayAdapter extends BaseAdapter {
 		case BANK:
 			holder.name_key.setText(R.string.bank);
 			break;
+		case STORE:
+			holder.name_key.setText(R.string.store);
+			break;
 		case CASH:
-			holder.name_key.setText(R.string.cash);
+			if(ConstantData.YXLM_ID.equals(paymentsInfoAdapter.get(position).getId())){
+				holder.name_key.setText(R.string.yxlm);
+			}else{
+				holder.name_key.setText(R.string.cash);
+			}
+
 			break;
 		case HANDRECORDED:
 			holder.name_key.setText(R.string.recorded);

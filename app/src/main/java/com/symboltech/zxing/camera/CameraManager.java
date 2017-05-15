@@ -25,7 +25,9 @@ import android.os.Build;
 import android.os.Handler;
 import android.view.SurfaceHolder;
 
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.utils.SpSaveUtils;
 
 import java.io.IOException;
 
@@ -123,6 +125,38 @@ public final class CameraManager {
 	}
 
 	/**
+	 * 打开相机
+	 *
+	 * @return null 没有符合条件的或没有相机
+	 */
+	private int FindFrontCamera(){
+		int cameraCount = 0;
+		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+		cameraCount = Camera.getNumberOfCameras(); // get cameras number
+		for ( int camIdx = 0; camIdx < cameraCount;camIdx++ ) {
+			Camera.getCameraInfo( camIdx, cameraInfo ); // get camerainfo
+			if ( cameraInfo.facing ==Camera.CameraInfo.CAMERA_FACING_FRONT ) {
+				// 代表摄像头的方位，目前有定义值两个分别为CAMERA_FACING_FRONT前置和CAMERA_FACING_BACK后置
+				return camIdx;
+			}
+		}
+		return -1;
+	}
+	private int FindBackCamera(){
+		int cameraCount = 0;
+		Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+		cameraCount = Camera.getNumberOfCameras(); // get cameras number
+
+		for ( int camIdx = 0; camIdx < cameraCount;camIdx++ ) {
+			Camera.getCameraInfo( camIdx, cameraInfo ); // get camerainfo
+			if ( cameraInfo.facing ==Camera.CameraInfo.CAMERA_FACING_BACK ) {
+				// 代表摄像头的方位，目前有定义值两个分别为CAMERA_FACING_FRONT前置和CAMERA_FACING_BACK后置
+				return camIdx;
+			}
+		}
+		return -1;
+	}
+	/**
 	 * Opens the camera driver and initializes the hardware parameters.
 	 * 
 	 * @param holder
@@ -133,7 +167,17 @@ public final class CameraManager {
 	 */
 	public void openDriver(SurfaceHolder holder) throws IOException {
 		if (camera == null) {
-			camera = Camera.open();
+			int cameraType = SpSaveUtils.readInt(context, ConstantData.CAMERATYPE, 1);
+			if(cameraType == 0){
+				int CammeraIndex = FindFrontCamera();
+				if(CammeraIndex==-1){
+					CammeraIndex = FindBackCamera();
+				}
+				camera  = Camera.open(CammeraIndex);
+			}else{
+				int CammeraIndex = FindBackCamera();
+				camera = Camera.open(CammeraIndex);
+			}
 			if (camera == null) {
 				throw new IOException();
 			}

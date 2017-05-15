@@ -222,11 +222,12 @@ public class AidlRequestManager {
 			if (isCancelled()) {
 				return rspJson;
 			}
-			switch ((int) params[0]) {
+			int pa = (Integer) params[0];
+			switch (pa) {
 			case AIDL_REQUEST_IS_LOGIN:
 				try {
 					rspJson = new JSONObject(mYunService.isLogin());
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}
@@ -237,7 +238,7 @@ public class AidlRequestManager {
 				try {
 					rspJson = new JSONObject(
 							mYunService.login((LoginRequest) params[1]));
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}
@@ -246,7 +247,7 @@ public class AidlRequestManager {
 			case AIDL_REQUEST_LOGOUT:
 				try {
 					rspJson = new JSONObject(mYunService.logout());
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}
@@ -255,7 +256,7 @@ public class AidlRequestManager {
 			case AIDL_REQUEST_GET_PAYMENT_LIST:
 				try {
 					rspJson = new JSONObject(mYunService.getPaymentList());
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}
@@ -265,7 +266,7 @@ public class AidlRequestManager {
 				try {
 					rspJson = new JSONObject(
 							mYunService.sale((SaleRequest) params[1]));
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}
@@ -275,7 +276,7 @@ public class AidlRequestManager {
 				try {
 					rspJson = new JSONObject(
 							mYunService.saleVoid((SaleVoidRequest) params[1]));
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}
@@ -284,7 +285,7 @@ public class AidlRequestManager {
 			case AIDL_REQUEST_LAST_TRANS_QUERY:
 				try {
 					rspJson = new JSONObject(mYunService.lastTransQuery());
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}
@@ -295,7 +296,7 @@ public class AidlRequestManager {
 					rspJson = new JSONObject(
 							mYunService
 									.transQuery((TransQueryRequest) params[1]));
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}
@@ -304,7 +305,7 @@ public class AidlRequestManager {
 			case AIDL_REQUEST_LAST_TRANS_PRINT:
 				try {
 					rspJson = new JSONObject(mYunService.lastTransPrint());
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}
@@ -315,7 +316,7 @@ public class AidlRequestManager {
 					rspJson = new JSONObject(
 							mYunService
 									.transPrint((TransPrintRequest) params[1]));
-				} catch (RemoteException | JSONException e) {
+				} catch (Exception e) {
 					if (mCallBack != null) {
 						mCallBack.onException(e);
 					}

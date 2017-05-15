@@ -124,6 +124,12 @@ public class ConstantData {
 	/**微信id*/
 	public static final String WECHAT_ID = "63";
 
+	/**银联扫码id*/
+	public static final String BANKCODE_ID = "76";
+
+	/**翼支付id*/
+	public static final String YIPAY_ID = "53";
+
 	/**营销联盟id*/
 	public static final String YXLM_ID = "69";
 
@@ -150,6 +156,9 @@ public class ConstantData {
 
 	/** 日报标记 */
 	public static final String DAY = "day";
+
+	/** 摄像头类型 */
+	public static final String CAMERATYPE = "cameratype";
 
 	/** http 请求成功 */
 	public static final String HTTP_RESPONSE_OK = "00";
@@ -292,6 +301,12 @@ public class ConstantData {
 
 	/** 微信支付渠道 */
 	public static final int PAYMODE_BY_WEIXIN = 3;
+
+	/** 银联扫码渠道 */
+	public static final int PAYMODE_BY_BANKCODE = 4;
+
+	/** 翼支付渠道 */
+	public static final int PAYMODE_BY_YIPAY = 5;
 
 	/** 0品种商品 */
 	public static final String GOODS_SOURCE_BY_BRAND = "0";
@@ -470,6 +485,9 @@ public class ConstantData {
 	public static final String LAST_BANK_TRANS = "last_bank_trans";
 	public static final String BSC = "bsc";
 
+	//前置摄像 0 后置摄像1
+	public static int scanner_type = 0;
+
 	/** 消费*/
 	public static final String TRANS_SALE = "1";
 
@@ -484,6 +502,22 @@ public class ConstantData {
 
 	/** 网络请求Tag */
 	public static final String NET_TAG = "net_tag";
+
+
+
+	/** POS 通*/
+	public static final String POS_TONG = "POS 通";
+
+	/** POS通*/
+	public static final String POS_TONG_XF = "POS通";
+	/** 消费撤销*/
+	public static final String POS_XFCX = "消费撤销";
+
+	/** 全民惠*/
+	public static final String QMH = "全民惠";
+
+	/** 预付卡*/
+	public static final String STORE = "预付卡";
 
 	/** 银行卡收款*/
 	public static final String YHK_SK = "银行卡收款";

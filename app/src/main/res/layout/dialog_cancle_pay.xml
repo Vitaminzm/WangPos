@@ -31,7 +31,6 @@
     <LinearLayout
         android:id="@+id/ll_already_pay"
         android:layout_marginTop="@dimen/margin_fz"
-        android:layout_marginRight="@dimen/margin_nv"
         android:layout_marginLeft="@dimen/margin_nv"
         android:layout_below="@id/title_bar"
         android:orientation="horizontal"
@@ -51,9 +50,9 @@
             android:layout_marginLeft="@dimen/margin_rz"
             android:text="0"
             android:textColor="@color/red"/>
-        <TextView
+        <com.symboltech.wangpos.view.TextScrollView
             android:id="@+id/text_info"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_size_tf"
             android:layout_marginLeft="5dp"

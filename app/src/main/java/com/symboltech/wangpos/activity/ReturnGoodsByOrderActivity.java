@@ -69,7 +69,7 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
     @Bind(R.id.goods_listview)
     ListView goods_listview;
     private GoodsAdapter goodsAdapter;
-    ArrayList<GoodsInfo> shopCarList = new ArrayList<>();
+    ArrayList<GoodsInfo> shopCarList = new ArrayList<GoodsInfo>();
 
     private MemberInfo member;
     private BillInfo billInfo;
@@ -80,7 +80,7 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override

@@ -125,7 +125,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
     /** paymentInfos-系统支付方式类型
      *  payments-用于提交的付款类型
      */
-    private List<PayMentsInfo> paymentInfos, payments = new ArrayList<>();
+    private List<PayMentsInfo> paymentInfos, payments = new ArrayList<PayMentsInfo>();
     private PaymentAdapter paymentAdapter;
     private boolean isEdit = false;
 
@@ -147,15 +147,15 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             allowanceBankFlag = 0, allowanceAlipayFlag = 0, allowanceWeixinFlag = 0;
 
     /** 支付名称-支付id */
-    private Map<String, String> nameIds = new HashMap<>();
+    private Map<String, String> nameIds = new HashMap<String, String>();
     /** 支付id-支付类型 */
-    private Map<String, String> idTypes = new HashMap<>();
+    private Map<String, String> idTypes = new HashMap<String, String>();
     /** 支付id - 支付名称*/
-    private Map<String, String> idNames = new HashMap<>();
+    private Map<String, String> idNames = new HashMap<String, String>();
     /** 支付名称-支付类型 */
-    private Map<String, String> nameTypes = new HashMap<>();
+    private Map<String, String> nameTypes = new HashMap<String, String>();
     /** 退货原因-原因id */
-    private Map<String, String> reasonIds = new HashMap<>();
+    private Map<String, String> reasonIds = new HashMap<String, String>();
     private double totalReturnMoney;
 
     @Override
@@ -189,7 +189,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override
@@ -430,7 +430,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             }
 
         });
-        List<PayMentsInfo> visiblePayments = new ArrayList<>();
+        List<PayMentsInfo> visiblePayments = new ArrayList<PayMentsInfo>();
         if(paymentInfos != null && paymentInfos.size() != 0) {
             for (PayMentsInfo pay : paymentInfos) {
                 if(PaymentTypeEnum.isPaymentstyle(pay.getType())){
@@ -441,10 +441,16 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                     if(AppConfigFile.isOffLineMode()) {
                         /**保证现金类收款方式 */
                         if(PaymentTypeEnum.CASH.getStyletype().equals(pay.getType())) {
-                            visiblePayments.add(pay);
+                            if(!ConstantData.YXLM_ID.equals(pay.getId())){
+                                visiblePayments.add(pay);
+                            }
                         }
                     }else {
-                        visiblePayments.add(pay);
+                        if(PaymentTypeEnum.CASH.getStyletype().equals(pay.getType())) {
+                            if(!ConstantData.YXLM_ID.equals(pay.getId())){
+                                visiblePayments.add(pay);
+                            }
+                        }
                     }
                 }
             }
@@ -582,37 +588,37 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
             if (type != null) {
                 if (PaymentTypeEnum.BANK.getStyletype().equals(type)) {
                     if (bankStyle == null) {
-                        bankStyle = new ArrayList<>();
+                        bankStyle = new ArrayList<ReturnEntity>();
                     }
                     bankStyle.add(new ReturnEntity(nameIds.get(payName), decimal));
                 } else if (PaymentTypeEnum.ALIPAY.getStyletype().equals(type)) {
                     if (alipayStyle == null) {
-                        alipayStyle = new ArrayList<>();
+                        alipayStyle = new ArrayList<ReturnEntity>();
                     }
                     alipayStyle.add(new ReturnEntity(nameIds.get(payName), decimal));
                 } else if (PaymentTypeEnum.WECHAT.getStyletype().equals(type)) {
                     if (weixinStyle == null) {
-                        weixinStyle = new ArrayList<>();
+                        weixinStyle = new ArrayList<ReturnEntity>();
                     }
                     weixinStyle.add(new ReturnEntity(nameIds.get(payName), decimal));
                 } else if (PaymentTypeEnum.CASH.getStyletype().equals(type)) {
                     if(cashStyle == null) {
-                        cashStyle = new ArrayList<>();
+                        cashStyle = new ArrayList<ReturnEntity>();
                     }
                     cashStyle.add(new ReturnEntity(nameIds.get(payName), decimal));
                 } else if (PaymentTypeEnum.HANDRECORDED.getStyletype().equals(type)) {
                     if (allowanceBankStyle == null) {
-                        allowanceBankStyle = new ArrayList<>();
+                        allowanceBankStyle = new ArrayList<BigDecimal>();
                     }
                     allowanceBankStyle.add(decimal);
                 } else if (PaymentTypeEnum.ALIPAYRECORDED.getStyletype().equals(type)) {
                     if (allowanceAlipayStyle == null) {
-                        allowanceAlipayStyle = new ArrayList<>();
+                        allowanceAlipayStyle = new ArrayList<BigDecimal>();
                     }
                     allowanceAlipayStyle.add(decimal);
                 } else if (PaymentTypeEnum.WECHATRECORDED.getStyletype().equals(type)) {
                     if (allowanceWeixinStyle == null) {
-                        allowanceWeixinStyle = new ArrayList<>();
+                        allowanceWeixinStyle = new ArrayList<BigDecimal>();
                     }
                     allowanceWeixinStyle.add(decimal);
                 } else {
@@ -975,7 +981,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
         billInfo.setRealmoney(totalReturnMoney+"");
         billInfo.setCashiername(SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_NAME, ""));
         billInfo.setBackreason(reasonIds.get(edit_input_reason.getText().toString()));
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<String, String>();
         try {
             map.put("billInfo", GsonUtil.beanToJson(bill));
             LogUtil.v("lgs", GsonUtil.beanToJson(bill));
@@ -1007,7 +1013,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                             billInfo.setBillid(AppConfigFile.getBillId());
                             billInfo.setPaymentslist(payments);
                             billInfo.setAwardpoint(result.getSaveOrderInfo().getGainpoint());
-                            printBackByorder(billInfo);
+                            //printBackByorder(billInfo);
                             AppConfigFile.setLast_billid(AppConfigFile.getBillId());
                             AppConfigFile.setBillId(result.getSaveOrderInfo().getBillid());
                             Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);
@@ -1042,9 +1048,9 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                         OrderInfoDao dao = new OrderInfoDao(mContext);
                         if(dao.addOrderPaytypeinfo(AppConfigFile.getBillId(), null, null, reasonIds.get(edit_input_reason.getText().toString()), 0, "1", SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""), payments)) {
                             billInfo.setPaymentslist(payments);
-                            if(billInfo.getMember() == null){
-                                printBackByorder(billInfo);
-                            }
+//                            if(billInfo.getMember() == null){
+//                                printBackByorder(billInfo);
+//                            }
                             AppConfigFile.setLast_billid(AppConfigFile.getBillId());
                             AppConfigFile.setBillId(String.valueOf(Long.parseLong(AppConfigFile.getBillId()) + 1));
                             Intent intent = new Intent(mContext, ReturnGoodSucceedActivity.class);
@@ -1093,6 +1099,7 @@ public class ReturnMoneyByNormalActivity extends BaseActivity implements Adapter
                             @Override
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    MyApplication.isPrint = true;
                                     PrepareReceiptInfo.printBackOrderList(billinfo, false, latticePrinter);
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "打印登录失败");

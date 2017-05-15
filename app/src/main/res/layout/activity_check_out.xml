@@ -325,29 +325,46 @@
     <LinearLayout
         android:id="@+id/ll_pay_type_ditch"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/height_rnz"
         android:layout_below="@id/rl_payment"
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginTop="@dimen/margin_rz"
         android:orientation="vertical">
 
-        <TextView
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/pay_type_ditch"
-            android:textColor="@color/font_color"
-            android:textSize="@dimen/font_size_rz" />
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/pay_type_ditch"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
+            <TextView
+                android:id="@+id/tv_pay_search"
+                android:paddingLeft="@dimen/margin_oz"
+                android:paddingRight="@dimen/margin_oz"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/height_xz"
+                android:gravity="center"
+                android:background="@drawable/btn_green_bg"
+                android:text="@string/pay_search"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size_rz" />
+        </RelativeLayout>
 
-        <GridView
+
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/activity_payment_gridview"
+            android:overScrollMode="never"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:cacheColorHint="@color/transparent"
             android:listSelector="@drawable/gridview_selector"
-            android:numColumns="4"
-            android:paddingTop="@dimen/margin_oz"
             android:scrollbars="none" />
     </LinearLayout>
 

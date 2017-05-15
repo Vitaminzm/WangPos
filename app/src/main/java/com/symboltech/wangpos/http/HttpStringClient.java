@@ -112,7 +112,7 @@ public class HttpStringClient {
 		}
 		Map<String, String> param = map;
 		if (param == null) {
-			param = new HashMap<>();
+			param = new HashMap<String, String>();
 		}
 		param.put("token", SpSaveUtils.read(MyApplication.context, ConstantData.LOGIN_TOKEN, ""));
 		FormBody.Builder builder = new FormBody.Builder();

@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.VerifyMemberDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -32,6 +34,13 @@ import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.wangpos.view.MyRadioGroup;
 import com.symboltech.zxing.app.CaptureActivity;
+import com.ums.upos.sdk.exception.CallServiceException;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.scanner.OnScanListener;
+import com.ums.upos.sdk.scanner.ScannerConfig;
+import com.ums.upos.sdk.scanner.ScannerManager;
+import com.ums.upos.sdk.system.BaseSystemManager;
+import com.ums.upos.sdk.system.OnServiceStatusListener;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -64,13 +73,14 @@ public class SendPackCouponActivity extends BaseActivity {
     @Bind(R.id.pack_coupon_time)EditText packCouponTime;
     @Bind(R.id.et_emporary_plate)EditText carPlateNo;
     private HorizontalKeyBoard keyboard;
+    private ScannerManager scannerManager;
 
     /** refresh UI By handler */
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override
@@ -125,6 +135,23 @@ public class SendPackCouponActivity extends BaseActivity {
                 }
             }
         });
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogin(
+                        this, null, "99999998",//设备ID，生产找后台配置
+                        new OnServiceStatusListener() {
+                            @Override
+                            public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                }else{
+                                    ToastUtils.sendtoastbyhandler(handler, "扫码登录失败");
+                                }
+                            }
+                        });
+            } catch (SdkException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void setDropDownHeight(Spinner mSpinner, int pHeight){
@@ -148,6 +175,22 @@ public class SendPackCouponActivity extends BaseActivity {
 
     @Override
     protected void recycleMemery() {
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            if(scannerManager != null){
+                try {
+                    scannerManager.stopScan();
+                } catch (SdkException e) {
+                    e.printStackTrace();
+                } catch (CallServiceException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogout();
+            } catch (SdkException e) {
+                e.printStackTrace();
+            }
+        }
         handler.removeCallbacksAndMessages(null);
         AppConfigFile.delActivity(this);
     }
@@ -166,8 +209,38 @@ public class SendPackCouponActivity extends BaseActivity {
                 new VerifyMemberDialog(this, new CancleAndConfirmback(){
                     @Override
                     public void doCancle() {
-                        Intent intent_qr = new Intent(mContext, CaptureActivity.class);
-                        startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
+                        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                            int type = SpSaveUtils.readInt(getApplicationContext(), ConstantData.CAMERATYPE, 1);
+                            if(type == 0){
+                                scannerManager = new ScannerManager();
+                                Bundle bundle = new Bundle();
+                                bundle.putInt(ScannerConfig.COMM_SCANNER_TYPE, ConstantData.scanner_type);
+                                bundle.putBoolean(ScannerConfig.COMM_ISCONTINUOUS_SCAN, true);
+                                try {
+                                    scannerManager.stopScan();
+                                    scannerManager.initScanner(bundle);
+                                    scannerManager.startScan(30000, new OnScanListener() {
+                                        @Override
+                                        public void onScanResult(int i, byte[] bytes) {
+                                            //防止用户未扫描直接返回，导致bytes为空
+                                            if (bytes != null && !bytes.equals("")) {
+                                                memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_QR, new String(bytes));
+                                            }
+                                        }
+                                    });
+                                } catch (SdkException e) {
+                                    e.printStackTrace();
+                                } catch (CallServiceException e) {
+                                    e.printStackTrace();
+                                }
+                            }else{
+                                Intent intent_qr = new Intent(SendPackCouponActivity.this, CaptureActivity.class);
+                                startActivityForResult(intent_qr, ConstantData.SCAN_CASH_COUPON);
+                            }
+                        }else{
+                            Intent intent_qr = new Intent(SendPackCouponActivity.this, CaptureActivity.class);
+                            startActivityForResult(intent_qr, ConstantData.SCAN_CASH_COUPON);
+                        }
                     }
 
                     @Override
@@ -254,9 +327,10 @@ public class SendPackCouponActivity extends BaseActivity {
     private boolean isVerify = false;
     private  void memberverifymethodbyhttp(final String verifyType, String verifyValue) {
         if(isVerify){
+            ToastUtils.sendtoastbyhandler(handler, "验证中请稍后");
             return;
         }
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("condType", verifyType);
         map.put("condValue", verifyValue);
         HttpRequestUtil.getinstance().getmemberinfo(HTTP_TASK_KEY, map, MemberInfoResult.class,

@@ -211,15 +211,28 @@ public class PrepareReceiptInfo {
 	 * @param bitmap
 	 * @param align
 	 */
-	private static void addBitmapJson(JSONArray array, Bitmap bitmap, int align) {
-		try {
-			JSONObject json = new JSONObject();
-			json.put("type", 1);
-			json.put("bitmap", bitmapToBase64(bitmap));
-			json.put("align", align);
-			array.put(json);
-		} catch (Exception e) {
-			e.printStackTrace();
+	private static void addBitmapJson(JSONArray array, Bitmap bitmap, int align, LatticePrinter latticePrinter, PrinterManager printer) {
+		if(latticePrinter != null){
+		}else {
+			if(printer == null){
+				try {
+					JSONObject json = new JSONObject();
+					json.put("type", 1);
+					json.put("bitmap", bitmapToBase64(bitmap));
+					json.put("align", align);
+					array.put(json);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else{
+				try {
+					printer.setBitmap(bitmap);
+				} catch (CallServiceException e) {
+					e.printStackTrace();
+				} catch (SdkException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -256,7 +269,7 @@ public class PrepareReceiptInfo {
 					fontConfig.setSize(FontSizeEnum.SMALL);
 				}
 				try {
-					printer.setPrnText(text + "\n", fontConfig);
+					printer.setPrnText(text, fontConfig);
 				} catch (CallServiceException e) {
 					e.printStackTrace();
 				} catch (SdkException e) {
@@ -295,7 +308,7 @@ public class PrepareReceiptInfo {
 					fontConfig.setSize(FontSizeEnum.SMALL);
 				}
 				try {
-					printer.setPrnText(StringUtil.formatLString(16, textLeftAlign)+StringUtil.formatLString(10, textRightAlign.replace("	", ""))+"\n", fontConfig);
+					printer.setPrnText(StringUtil.formatLString(16, textLeftAlign)+StringUtil.formatLString(10, textRightAlign.replace("	", "")), fontConfig);
 				} catch (CallServiceException e) {
 					e.printStackTrace();
 				} catch (SdkException e) {
@@ -368,7 +381,7 @@ public class PrepareReceiptInfo {
 
 			if(latticePrinter == null){
 				if(printer == null){
-					addBitmapJson(array, createQrcode(couponInfo.getCouponno(), 300, 300), KposPrinterManager.CONTENT_ALIGN_CENTER);
+					addBitmapJson(array, createQrcode(couponInfo.getCouponno(), 300, 300), KposPrinterManager.CONTENT_ALIGN_CENTER, latticePrinter, printer);
 				}else{
 					try {
 						printer.setBitmap(createQrcode(couponInfo.getCouponno(), 300, 300));
@@ -407,6 +420,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -435,7 +449,7 @@ public class PrepareReceiptInfo {
 		Bitmap bitmap = null;
 		QRCodeWriter writer = new QRCodeWriter();
 		try {
-			HashMap<EncodeHintType, Object> hints = new HashMap<>();
+			HashMap<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
 			//提高容错等级
 			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
 			BitMatrix encode = writer.encode(text, BarcodeFormat.QR_CODE, width, height, hints);
@@ -549,6 +563,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -832,6 +847,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -970,6 +986,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -999,13 +1016,6 @@ public class PrepareReceiptInfo {
 		FontConfig fontConfig = null;
 		if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 			printer = new PrinterManager();
-			try {
-				printer.initPrinter();
-			} catch (SdkException e) {
-				e.printStackTrace();
-			} catch (CallServiceException e) {
-				e.printStackTrace();
-			}
 			try {
 				printer.initPrinter();
 			} catch (SdkException e) {
@@ -1043,8 +1053,8 @@ public class PrepareReceiptInfo {
 		}
 	}
 
-	private static JSONObject getOrder(BillInfo bill, Boolean mend, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
-		JSONArray array = new JSONArray();
+	private static void getOrderByCount(JSONArray array, BillInfo bill, Boolean mend, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
+
 		int goodNumber = 0;
 		double scoreUsed = 0;//积分抵扣
 		double scoreValue = 0;//积分抵扣
@@ -1081,12 +1091,11 @@ public class PrepareReceiptInfo {
 		if(bill.getChangemoney() != null){
 			changeMoney = ArithDouble.parseDouble(bill.getChangemoney());
 		}
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		for(ConditionindexEntity info:ticketFormat.getTickbasic().getConditionindex()){
 			if(info.getConditionid() != null && !"0".equals(info.getYxj())){
-				switch (info.getConditionid()) {
-					case "1":
+				int id = Integer.parseInt(info.getConditionid());
+				switch (id) {
+					case 1:
 						if(ticketFormat.getTickbegin()!= null){
 							PrintString tickbegin = new PrintString(ticketFormat.getTickbegin());
 							tickbegin.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
@@ -1120,7 +1129,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "2":
+					case 2:
 						if(ticketFormat.getTickend()!= null){
 							PrintString tickend = new PrintString(ticketFormat.getTickend());
 							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
@@ -1155,7 +1164,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "3":
+					case 3:
 						if(ticketFormat.getGoods() != null){
 							PrintString goods = new PrintString(ticketFormat.getGoods());
 							TickbasicEntity basic = ticketFormat.getTickbasic();
@@ -1191,7 +1200,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "4":
+					case 4:
 						if(ticketFormat.getMoneys() != null){
 							PrintString moneys = new PrintString(ticketFormat.getMoneys()).replace("\\s*", "")
 									.replace(TicketFormatEnum.TICKET_EXCHANGE.getLable(), "\t\t" + formatRString(8, bill.getChangemoney()))
@@ -1262,7 +1271,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "5":
+					case 5:
 						if(ticketFormat.getVip() != null){
 							PrintString vip = new PrintString(ticketFormat.getVip());
 							if(bill.getMember() != null){
@@ -1310,10 +1319,10 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "6":
+					case 6:
 
 						break;
-					case "7":
+					case 7:
 						if(ticketFormat.getSendcoupon() != null){
 							PrintString sendcoupon = new PrintString(ticketFormat.getSendcoupon());
 							Pattern pattern = Pattern.compile(TicketFormatEnum.TICKET_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_COUPON_END.getLable());
@@ -1348,7 +1357,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "8":
+					case 8:
 						if(ticketFormat.getUsecoupon() != null){
 							PrintString usedcoupon = new PrintString(ticketFormat.getUsecoupon());
 							Pattern pattern = Pattern.compile(TicketFormatEnum.TICKET_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_COUPON_END.getLable());
@@ -1382,7 +1391,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "9":
+					case 9:
 						if(ticketFormat.getOwncoupon() != null){
 							PrintString owncoupon = new PrintString(ticketFormat.getOwncoupon());
 							Pattern pattern = Pattern.compile(TicketFormatEnum.TICKET_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_COUPON_END.getLable());
@@ -1417,7 +1426,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "11":
+					case 11:
 //						if(ticketFormat.getPark() != null && bill.getCarno() != null){
 //							PrintString park = new PrintString(ticketFormat.getPark()).replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 //							park.replace(TicketFormatEnum.TICKET_PARK_COUPON_HOUR.getLable(), bill.getParkcouponhour())
@@ -1439,10 +1448,25 @@ public class PrepareReceiptInfo {
 		}
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
+	}
+	private static JSONObject getOrder(BillInfo bill, Boolean mend, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
+		JSONArray array = new JSONArray();
 		JSONObject jsonObject = new JSONObject();
+		if(ArithDouble.parseInt(ticketFormat.getPrintcount()) > 1){
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "[顾客联]"+"\n\n", KposPrinterManager.CONTENT_ALIGN_RIGHT, printer, fontConfig);
+			getOrderByCount(array, bill, mend, ticketFormat, latticePrinter, printer, fontConfig);
+			for(int i=1;i<ArithDouble.parseInt(ticketFormat.getPrintcount());i++){
+				if(i == 1){
+					addTextJson(array, latticePrinter, FONT_DEFAULT, "[专柜联]"+"\n\n", KposPrinterManager.CONTENT_ALIGN_RIGHT, printer, fontConfig);
+					getOrderByCount(array, bill, mend, ticketFormat, latticePrinter, printer, fontConfig);
+				}else if(i == 2){
+					addTextJson(array, latticePrinter, FONT_DEFAULT, "[商场联]"+"\n\n", KposPrinterManager.CONTENT_ALIGN_RIGHT, printer, fontConfig);
+					getOrderByCount(array, bill, mend, ticketFormat, latticePrinter, printer, fontConfig);
+				}
+			}
+		}else{
+			getOrderByCount(array, bill, mend, ticketFormat, latticePrinter, printer, fontConfig);
+		}
 		if(latticePrinter!= null){
 			// 真正提交打印事件
 			latticePrinter.submitPrint();
@@ -1460,6 +1484,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -1484,8 +1509,6 @@ public class PrepareReceiptInfo {
 		double changeMoney = 0;// 找零
 		double cardValue = 0;// 代金券
 		double totalPoint = 0;// 积分累计
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_BIG, "欢迎光临" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""), KposPrinterManager.CONTENT_ALIGN_CENTER, printer, fontConfig);
 		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
 			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))){
@@ -1513,7 +1536,7 @@ public class PrepareReceiptInfo {
 			}
 		}
 		if (bill.getGoodslist() != null) {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, "合计：") + "	" + goodNumber, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, "合计：") + goodNumber, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		}
 		if (mend) {
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "------补打小票--------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
@@ -1618,7 +1641,7 @@ public class PrepareReceiptInfo {
 			addDashLine(array, latticePrinter, printer, fontConfig);
 		}
 		if (bill.getUsedcouponlist() != null && bill.getUsedcouponlist().size() > 0) {
-			addTextJson(array, latticePrinter, FONT_DEFAULT,  "使用券", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "使用券", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			for (CouponInfo info : bill.getUsedcouponlist()) {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getName()) + "	" + info.getAvailablemoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
@@ -1630,15 +1653,12 @@ public class PrepareReceiptInfo {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getName()) + "	" + info.getAvailablemoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
 		}
-		addTextJson(array, latticePrinter, FONT_DEFAULT, "验证码:"+bill.getRandomcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "验证码:" + bill.getRandomcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		if (mend) {
 			addDashLine(array, latticePrinter, printer, fontConfig);
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打收款员：" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打时间：" + Utils.formatDate(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		}
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		JSONObject jsonObject = new JSONObject();
@@ -1659,6 +1679,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -1695,13 +1716,6 @@ public class PrepareReceiptInfo {
 			} catch (CallServiceException e) {
 				e.printStackTrace();
 			}
-			try {
-				printer.initPrinter();
-			} catch (SdkException e) {
-				e.printStackTrace();
-			} catch (CallServiceException e) {
-				e.printStackTrace();
-			}
 			fontConfig = new FontConfig();
 			fontConfig.setBold(BoldEnum.NOT_BOLD);//不加粗
 			fontConfig.setSize(FontSizeEnum.SMALL);//小号字体
@@ -1731,9 +1745,8 @@ public class PrepareReceiptInfo {
 			return printBackOrderListDefault(bill, flag, latticePrinter, printer, fontConfig);
 		}
 	}
-	public static JSONObject getBackOrder(BillInfo bill, boolean flag, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig){
-		JSONArray array = new JSONArray();
 
+	public static void getBackOrderByCount(JSONArray array, BillInfo bill, boolean flag, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig){
 		double couponValue = 0;//优惠券
 		double couponOverrage = 0;//优惠券溢余
 		double deductionValue = 0;//积分抵扣
@@ -1798,12 +1811,11 @@ public class PrepareReceiptInfo {
 			} catch (Exception e) {
 			}
 		}
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		for(ConditionindexEntity info:ticketFormat.getTickbasic().getConditionindex()){
 			if(info.getConditionid() != null && !"0".equals(info.getYxj())){
-				switch (info.getConditionid()) {
-					case "1":
+				int id  = Integer.parseInt(info.getConditionid());
+				switch (id) {
+					case 1:
 						if(ticketFormat.getTickbegin()!= null){
 							PrintString tickbegin = new PrintString(ticketFormat.getTickbegin());
 							tickbegin.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
@@ -1843,7 +1855,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "2":
+					case 2:
 						if(ticketFormat.getTickend()!= null){
 							PrintString tickend = new PrintString(ticketFormat.getTickend());
 							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
@@ -1884,7 +1896,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "3":
+					case 3:
 						if(ticketFormat.getGoods() != null){
 							PrintString goods = new PrintString(ticketFormat.getGoods());
 							TickbasicEntity basic = ticketFormat.getTickbasic();
@@ -1924,7 +1936,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "4":
+					case 4:
 						if(ticketFormat.getMoneys() != null){
 							double exchange = 0.0;
 							if(bill.getChangemoney() != null){
@@ -2002,7 +2014,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "5":
+					case 5:
 						if(ticketFormat.getVip() != null){
 
 							PrintString vip = new PrintString(ticketFormat.getVip());
@@ -2052,10 +2064,10 @@ public class PrepareReceiptInfo {
 
 						}
 						break;
-					case "6":
+					case 6:
 
 						break;
-					case "8":
+					case 8:
 						if(ticketFormat.getSendcoupon() != null){
 							PrintString sendcoupon = new PrintString(ticketFormat.getSendcoupon());
 							Pattern pattern = Pattern.compile(TicketFormatEnum.TICKET_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_COUPON_END.getLable());
@@ -2089,7 +2101,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "7":
+					case 7:
 						if(ticketFormat.getUsecoupon() != null){
 							PrintString usedcoupon = new PrintString(ticketFormat.getUsecoupon());
 							Pattern pattern = Pattern.compile(TicketFormatEnum.TICKET_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_COUPON_END.getLable());
@@ -2124,7 +2136,7 @@ public class PrepareReceiptInfo {
 							}
 						}
 						break;
-					case "9":
+					case 9:
 						if(ticketFormat.getOwncoupon() != null){
 							PrintString owncoupon = new PrintString(ticketFormat.getOwncoupon());
 							Pattern pattern = Pattern.compile(TicketFormatEnum.TICKET_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_COUPON_END.getLable());
@@ -2166,9 +2178,25 @@ public class PrepareReceiptInfo {
 		}
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
+	}
+	public static JSONObject getBackOrder(BillInfo bill, boolean mend, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig){
+		JSONArray array = new JSONArray();
+		if(ArithDouble.parseInt(ticketFormat.getPrintcount()) > 1){
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "[顾客联]"+"\n\n", KposPrinterManager.CONTENT_ALIGN_RIGHT, printer, fontConfig);
+			getBackOrderByCount(array, bill, mend, ticketFormat, latticePrinter, printer, fontConfig);
+			for(int i=1;i<ArithDouble.parseInt(ticketFormat.getPrintcount());i++){
+				if(i == 1){
+					addTextJson(array, latticePrinter, FONT_DEFAULT, "[专柜联]"+"\n\n", KposPrinterManager.CONTENT_ALIGN_RIGHT, printer, fontConfig);
+					getBackOrderByCount(array, bill, mend, ticketFormat, latticePrinter, printer, fontConfig);
+				}else if(i == 2){
+					addTextJson(array, latticePrinter, FONT_DEFAULT, "[商场联]"+"\n\n", KposPrinterManager.CONTENT_ALIGN_RIGHT, printer, fontConfig);
+					getBackOrderByCount(array, bill, mend, ticketFormat, latticePrinter, printer, fontConfig);
+				}
+			}
+		}else{
+			getBackOrderByCount(array, bill, mend, ticketFormat, latticePrinter, printer, fontConfig);
+		}
+
 		JSONObject jsonObject = new JSONObject();
 		if(latticePrinter!= null){
 			// 真正提交打印事件
@@ -2187,6 +2215,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block
@@ -2204,10 +2233,8 @@ public class PrepareReceiptInfo {
 		return jsonObject;
 	}
 
-	public static JSONObject printBackOrderListDefault(BillInfo bill, boolean flag, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
+	public static JSONObject printBackOrderListDefault(BillInfo bill, final boolean flag, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
 		JSONArray array = new JSONArray();
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
 			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))){
 				addTextJson(array, latticePrinter, FONT_DEFAULT, "门店:" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
@@ -2368,7 +2395,7 @@ public class PrepareReceiptInfo {
 			for (CouponInfo info : grantCoupon) {
 				if ("0".equals(info.getIsused())) {
 					if (printCoupon == null) {
-						printCoupon = new ArrayList<>();
+						printCoupon = new ArrayList<CouponInfo>();
 					}
 					printCoupon.add(info);
 				}
@@ -2391,9 +2418,6 @@ public class PrepareReceiptInfo {
 		}
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		JSONObject jsonObject = new JSONObject();
 		if(latticePrinter!= null){
 			// 真正提交打印事件
@@ -2412,6 +2436,7 @@ public class PrepareReceiptInfo {
 						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
 							//登出，以免占用U架构服务
 							try {
+								MyApplication.isPrint = false;
 								BaseSystemManager.getInstance().deviceServiceLogout();
 							} catch (SdkException e) {
 								// TODO Auto-generated catch block

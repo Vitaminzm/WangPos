@@ -15,6 +15,7 @@
     <dimen name="keyboard_height">400dp</dimen>
     <dimen name="key_margin">6dp</dimen>
     <dimen name="big_font_size">15sp</dimen>
+    <dimen name="big_font_size_login">17sp</dimen>
 
     <!-- 登录界面-->
     <dimen name="font_size_ez">40sp</dimen>
@@ -46,6 +47,7 @@
     <dimen name="margin_fz">20dp</dimen>
     <dimen name="margin_rv">17dp</dimen>
     <dimen name="margin_rz">15dp</dimen>
+    <dimen name="margin_tf">12dp</dimen>
     <dimen name="margin_tz">10dp</dimen>
     <dimen name="margin_ov">7dp</dimen>
     <dimen name="margin_ot">6dp</dimen>
@@ -59,7 +61,10 @@
     <dimen name="height_vzz">250dp</dimen>
     <dimen name="height_fnz">245dp</dimen>
     <dimen name="height_fez">240dp</dimen>
+    <dimen name="height_fvz">225dp</dimen>
+    <dimen name="height_ftz">210dp</dimen>
     <dimen name="height_fzz">200dp</dimen>
+    <dimen name="height_rnz">195dp</dimen>
     <dimen name="height_rsz">185dp</dimen>
     <dimen name="height_rxs">183dp</dimen>
     <dimen name="height_rxz">180dp</dimen>

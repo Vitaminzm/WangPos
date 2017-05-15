@@ -79,7 +79,7 @@ public class VerifyAuthDialog extends BaseActivity{
 		WeakReference<BaseActivity> mActivity;
 
 		MyHandler(BaseActivity activity) {
-			mActivity = new WeakReference<>(activity);
+			mActivity = new WeakReference<BaseActivity>(activity);
 		}
 
 		@Override
@@ -192,8 +192,6 @@ public class VerifyAuthDialog extends BaseActivity{
 								if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
 									cardSlotManager = new CardSlotManager();
 									searchCardInfo();
-								} else {
-									ToastUtils.sendtoastbyhandler(handler, "刷卡登录失败");
 								}
 							}
 						});
@@ -280,7 +278,7 @@ public class VerifyAuthDialog extends BaseActivity{
 		if(isVerify){
 			return;
 		}
-		Map<String, String> map = new HashMap<>();
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("rightcardno", rightcardno);
 		HttpRequestUtil.getinstance().RefundRight(HTTP_TASK_KEY, map, VerifyAuthResult.class,
 				new HttpActionHandle<VerifyAuthResult>() {
@@ -437,7 +435,7 @@ public class VerifyAuthDialog extends BaseActivity{
 												+ "\n" + "磁道2：" + arg1.getTk2()
 												+ "\n" + "磁道3：" + arg1.getTk3());
 										Message msg = Message.obtain();
-										msg.obj = arg1.getTk1();
+										msg.obj = arg1.getTk2();
 										msg.what = Vipcard;
 										handler.sendMessage(msg);
 										break;

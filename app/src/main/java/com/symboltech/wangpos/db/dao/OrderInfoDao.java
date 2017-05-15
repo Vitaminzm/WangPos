@@ -1,12 +1,5 @@
 package com.symboltech.wangpos.db.dao;
 
-import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -31,6 +24,13 @@ import com.symboltech.wangpos.msg.entity.SaleReportInfo;
 import com.symboltech.wangpos.msg.entity.TotalReportInfo;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.StringUtil;
+
+import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -489,7 +489,7 @@ public class OrderInfoDao {
 						field.setAccessible(true);
 						field.set(info, cursor.getString(i));
 					}
-				} catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -526,7 +526,7 @@ public class OrderInfoDao {
 	 * @return 离线支付信息
 	 */
 	private List<OfflinePayTypeInfo> findPaytype(SQLiteDatabase db, String orderid) {
-		List<OfflinePayTypeInfo> result = new ArrayList<>();
+		List<OfflinePayTypeInfo> result = new ArrayList<OfflinePayTypeInfo>();
 		Cursor cursor = db.query("pay_type", new String[]{"id", "money", "type", "overage", "name"}, "billid = ?", new String[] { orderid }, null, null, null);
 		while(cursor.moveToNext()) {
 			OfflinePayTypeInfo info = new OfflinePayTypeInfo();
@@ -537,7 +537,7 @@ public class OrderInfoDao {
 						field.setAccessible(true);
 						field.set(info, cursor.getString(i));
 					}
-				} catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -867,7 +867,7 @@ public class OrderInfoDao {
 	public int getOffLineDataCount() {
 		int ret = -1;
 		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor cursor = db.query("user_order", new String[]{"count(*) AS count"}, "offline = ?", new String[]{"0"}, null, null, null);
+		Cursor cursor = db.query("user_order", new String[]{"count(*) AS count"}, "offline = ? and status = ?", new String[]{"0", "1"}, null, null, null);
 		if (cursor.moveToFirst()) {
 			ret = cursor.getInt(0);
 		}
@@ -1000,7 +1000,7 @@ public class OrderInfoDao {
 						field.setAccessible(true);
 						field.set(info, cursor.getString(i));
 					}
-				} catch (NoSuchFieldException | IllegalAccessException | IllegalArgumentException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

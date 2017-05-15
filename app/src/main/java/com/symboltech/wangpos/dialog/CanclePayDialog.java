@@ -46,9 +46,9 @@ import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
-import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
+import com.symboltech.wangpos.view.TextScrollView;
 import com.ums.AppHelper;
 
 import org.json.JSONException;
@@ -92,7 +92,7 @@ public class CanclePayDialog extends BaseActivity{
 	@Bind(R.id.text_money)
 	TextView text_money;
 	@Bind(R.id.text_info)
-	TextView text_info;
+	TextScrollView text_info;
 	@Bind(R.id.listview_canclepay)
 	ListView listview_canclepay;
 
@@ -119,7 +119,7 @@ public class CanclePayDialog extends BaseActivity{
 				} else {
 					login();
 				}
-			} catch (JSONException | RemoteException e1) {
+			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -196,7 +196,9 @@ public class CanclePayDialog extends BaseActivity{
 							|| payments.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
 							||payments.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
 							||payments.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())){
-						cash = ArithDouble.add(cash, ArithDouble.parseDouble(payments.get(i).getMoney()));
+						if(!ConstantData.YXLM_ID.equals(payments.get(i).getId())){
+							cash = ArithDouble.add(cash, ArithDouble.parseDouble(payments.get(i).getMoney()));
+						}
 					}
 					totalMoney = ArithDouble.add(totalMoney, ArithDouble.parseDouble(payments.get(i).getMoney()));
 				}else{
@@ -319,7 +321,10 @@ public class CanclePayDialog extends BaseActivity{
 					if( payments.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
 							payments.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()) ||payments.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype()) ||
 							payments.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) ||payments.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
-						payments.get(i).setIsCancle(true);
+						if(!ConstantData.YXLM_ID.equals(payments.get(i).getId())){
+							payments.get(i).setIsCancle(true);
+						}
+
 					}
 				}
 				intent.putExtra(ConstantData.CANCLE_LIST, (Serializable)payments);
@@ -344,6 +349,10 @@ public class CanclePayDialog extends BaseActivity{
 			map.put("pay_type", ConstantData.PAYMODE_BY_ALIPAY+"");
 		}else if(info.getId().equals(ConstantData.WECHAT_ID)){
 			map.put("pay_type", ConstantData.PAYMODE_BY_WEIXIN+"");
+		}else if(info.getId().equals(ConstantData.BANKCODE_ID)){
+			map.put("pay_type", ConstantData.PAYMODE_BY_BANKCODE+"");
+		}else if(info.getId().equals(ConstantData.YIPAY_ID)){
+			map.put("pay_type", ConstantData.PAYMODE_BY_YIPAY+"");
 		}
 		map.put("total_fee", MoneyAccuracyUtils.thirdpaymoneydealbyinput(info.getMoney()));
 		map.put("old_trade_no", info.getThridPay().getTrade_no());
@@ -410,7 +419,81 @@ public class CanclePayDialog extends BaseActivity{
 	public void saleVoid(int position){
 		final PayMentsCancleInfo info = payments.get(position);
 		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype()) || info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
+//			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+//				if(isCancleCount > 0){
+//					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+//					return;
+//				}
+//				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
+//						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+//					this.position = position;
+//					JSONObject json = new JSONObject();
+//					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+//					try {
+//						json.put("oldTraceNo",info.getTraceNo());
+//						json.put("extOrderNo", tradeNo);
+//					} catch (JSONException e) {
+//						e.printStackTrace();
+//					}
+//					isCancleCount++;
+//					info.setDes(getString(R.string.cancleing_pay));
+//					canclePayAdapter.notifyDataSetChanged();
+//					AppHelper.callTrans(CanclePayDialog.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
+//				}
+//			}else{
+//				thirdcancle(position);
+//			}
 			thirdcancle(position);
+		}else if(info.getType().equals(PaymentTypeEnum.STORE.getStyletype())){
+			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+				if(isCancleCount > 0){
+					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+					return;
+				}
+				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
+						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+					this.position = position;
+					JSONObject json = new JSONObject();
+					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+					try {
+						json.put("orgTraceNo",info.getTraceNo());
+						json.put("extOrderNo", tradeNo);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					isCancleCount++;
+					info.setDes(getString(R.string.cancleing_pay));
+					canclePayAdapter.notifyDataSetChanged();
+					AppHelper.callTrans(CanclePayDialog.this, ConstantData.STORE, ConstantData.YHK_CX, json);
+				}
+			}else{
+				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+			}
+		}else if(ConstantData.YXLM_ID.equals(info.getId())){
+			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+				if(isCancleCount > 0){
+					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+					return;
+				}
+				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
+						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+					this.position = position;
+					JSONObject json = new JSONObject();
+					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+					try {
+						json.put("orgTraceNo",info.getTraceNo());
+						json.put("extOrderNo", tradeNo);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					isCancleCount++;
+					info.setDes(getString(R.string.cancleing_pay));
+					canclePayAdapter.notifyDataSetChanged();
+					AppHelper.callTrans(CanclePayDialog.this, ConstantData.QMH, ConstantData.YHK_CX, json);
+				}
+			}else{
+				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+			}
 		}else {
 			if (MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				if(isCancleCount > 0){
@@ -508,48 +591,42 @@ public class CanclePayDialog extends BaseActivity{
 				if (null != data) {
 					StringBuilder result = new StringBuilder();
 					Map<String,String> map = AppHelper.filterTransResult(data);
-					if("0".equals(map.get(AppHelper.RESULT_CODE))){
-						Type type =new TypeToken<Map<String, String>>(){}.getType();
-						try {
-							Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
-							if("00".equals(transData.get("resCode"))){
-								OrderBean orderBean= new OrderBean();
-								orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(info.getMoney()));
-								orderBean.setTxnId(transData.get("extOrderNo"));
-								orderBean.setAccountNo(transData.get("cardNo"));
-								orderBean.setAcquId(transData.get("cardIssuerCode"));
-								orderBean.setBatchId(transData.get("traceNo"));
-								orderBean.setRefNo(transData.get("refNo"));
-								info.setIsCancle(true);
-								info.setDes(getString(R.string.cancled_pay));
-								canclePayAdapter.notifyDataSetChanged();
-								orderBean.setPaymentId(payments.get(position).getId());
-								orderBean.setTransType(ConstantData.TRANS_REVOKE);
-								orderBean.setTraceId(AppConfigFile.getBillId());
-								Intent serviceintent = new Intent(mContext, RunTimeService.class);
-								serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
-								serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
-								startService(serviceintent);
-							}else{
-								info.setDes(getString(R.string.cancled_failed));
-								canclePayAdapter.notifyDataSetChanged();
-								ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
+					String appName  = map.get("appName");
+					Type type =new TypeToken<Map<String, String>>(){}.getType();
+					try {
+						Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+						LogUtil.i("lgs",transData.toString());
+						if("00".equals(transData.get("resCode"))){
+							OrderBean orderBean= new OrderBean();
+							orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(info.getMoney()));
+							orderBean.setTxnId(transData.get("extOrderNo"));
+							orderBean.setAccountNo(transData.get("cardNo"));
+							orderBean.setAcquId(transData.get("cardIssuerCode"));
+							orderBean.setBatchId(transData.get("traceNo"));
+							orderBean.setRefNo(transData.get("refNo"));
+							info.setIsCancle(true);
+							info.setDes(getString(R.string.cancled_pay));
+							canclePayAdapter.notifyDataSetChanged();
+							orderBean.setPaymentId(payments.get(position).getId());
+							orderBean.setTransType(ConstantData.TRANS_REVOKE);
+							orderBean.setTraceId(AppConfigFile.getBillId());
+							Intent serviceintent = new Intent(mContext, RunTimeService.class);
+							serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+							serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+							startService(serviceintent);
+						}else{
+							info.setDes(getString(R.string.cancled_failed));
+							canclePayAdapter.notifyDataSetChanged();
+							ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
 						}
-					}else{
-						String msg = "银行卡撤销返回信息异常";
-						if(!StringUtil.isEmpty(map.get(AppHelper.RESULT_MSG))){
-							msg = map.get(AppHelper.RESULT_MSG);
-						}
-						info.setDes(getString(R.string.cancled_failed));
-						canclePayAdapter.notifyDataSetChanged();
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
+
 				}else{
 					info.setDes(getString(R.string.cancled_failed));
 					canclePayAdapter.notifyDataSetChanged();
-					ToastUtils.sendtoastbyhandler(handler,"银行卡撤销异常！");
+					ToastUtils.sendtoastbyhandler(handler,"撤销异常！");
 				}
 			}
 		}

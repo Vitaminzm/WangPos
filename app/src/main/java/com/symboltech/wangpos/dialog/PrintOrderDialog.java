@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -15,11 +16,7 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.MainActivity;
 import com.symboltech.wangpos.app.AppConfigFile;
-import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
-import com.symboltech.wangpos.interfaces.KeyBoardListener;
-import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
@@ -34,9 +31,9 @@ import com.symboltech.wangpos.view.HorizontalKeyBoard;
  */
 public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 	public Context context;
-	private EditText edit_input_order_no;
-	private TextView text_title, text_print_order, text_print_slip, text_cancle, text_confirm;
-	private LinearLayout ll_function_print_order, ll_function;
+	private EditText edit_input_order_no, edit_third_input_order_no;
+	private TextView text_title, text_print_order, text_print_slip, text_cancle, text_confirm, text_bank, text_yxlm, text_wf, text_store, text_third_cancle, text_third_confirm;
+	private LinearLayout ll_function_print_order, ll_function, ll_thirdprint, ll_third_print_order;
 	private ImageView imageview_close;
 	private GeneralEditListener gel;
 
@@ -56,6 +53,7 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 	};
 	private HorizontalKeyBoard keyboard;
 
+	private String type;
 	public PrintOrderDialog(Context context, GeneralEditListener gel) {
 		super(context, R.style.dialog_login_bg);
 		this.context = context;
@@ -86,14 +84,29 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 		text_print_slip = (TextView) findViewById(R.id.text_print_slip);
 		text_cancle = (TextView) findViewById(R.id.text_cancle);
 		text_confirm = (TextView) findViewById(R.id.text_confirm);
+		text_bank = (TextView) findViewById(R.id.text_bank);
+		text_yxlm = (TextView) findViewById(R.id.text_yxlm);
+		text_wf = (TextView) findViewById(R.id.text_wf);
+		text_store = (TextView) findViewById(R.id.text_store);
 		ll_function_print_order = (LinearLayout) findViewById(R.id.ll_function_print_order);
 		ll_function = (LinearLayout) findViewById(R.id.ll_function);
+		ll_thirdprint = (LinearLayout) findViewById(R.id.ll_thirdprint);
+
+		edit_third_input_order_no = (EditText) findViewById(R.id.edit_third_input_order_no);
+		ll_third_print_order = (LinearLayout) findViewById(R.id.ll_third_print_order);
+		text_third_cancle = (TextView) findViewById(R.id.text_third_cancle);
+		text_third_confirm = (TextView) findViewById(R.id.text_third_confirm);
+		text_third_cancle.setOnClickListener(this);
+		text_third_confirm.setOnClickListener(this);
 		text_print_order.setOnClickListener(this);
 		text_print_slip.setOnClickListener(this);
 		text_cancle.setOnClickListener(this);
 		text_confirm.setOnClickListener(this);
 		imageview_close.setOnClickListener(this);
-
+		text_bank.setOnClickListener(this);
+		text_yxlm.setOnClickListener(this);
+		text_wf.setOnClickListener(this);
+		text_store.setOnClickListener(this);
 	}
 
 	@Override
@@ -142,10 +155,12 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 				ll_function_print_order.setVisibility(View.VISIBLE);
 				break;
 			case R.id.text_print_slip:
+				ll_function.setVisibility(View.GONE);
+				ll_thirdprint.setVisibility(View.VISIBLE);
 //				String bankId = SpSaveUtils.read(context, ConstantData.LAST_BANK_TRANS, "");
 //				if (!bankId.equals("")){
-					((MainActivity)context).print_last(null);
-					dismiss();
+//					((MainActivity)context).print_last("1");
+//					dismiss();
 //				}else{
 //					ToastUtils.sendtoastbyhandler(handler,"没有银行交易记录");
 //				}
@@ -153,6 +168,44 @@ public class PrintOrderDialog extends Dialog implements View.OnClickListener {
 			case R.id.imageview_close:
 				dismiss();
 				break;
+			case R.id.text_bank:
+				type = "1";
+				ll_thirdprint.setVisibility(View.GONE);
+				ll_third_print_order.setVisibility(View.VISIBLE);
+				break;
+			case R.id.text_yxlm:
+				type = "2";
+				ll_thirdprint.setVisibility(View.GONE);
+				ll_third_print_order.setVisibility(View.VISIBLE);
+				break;
+			case R.id.text_wf:
+				type = "3";
+				ll_thirdprint.setVisibility(View.GONE);
+				ll_third_print_order.setVisibility(View.VISIBLE);
+				break;
+			case R.id.text_store:
+				type = "4";
+				ll_thirdprint.setVisibility(View.GONE);
+				ll_third_print_order.setVisibility(View.VISIBLE);
+				break;
+			case R.id.text_third_cancle:
+				ll_thirdprint.setVisibility(View.VISIBLE);
+				ll_third_print_order.setVisibility(View.GONE);
+				break;
+			case R.id.text_third_confirm:
+				String no = edit_third_input_order_no.getText().toString();
+				closeKeyboard();
+				((MainActivity)context).print_last(type, no);
+				dismiss();
+				break;
+		}
+	}
+
+	private void closeKeyboard() {
+		View view = getWindow().peekDecorView();
+		if (view != null) {
+			InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+			inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
 		}
 	}
 }

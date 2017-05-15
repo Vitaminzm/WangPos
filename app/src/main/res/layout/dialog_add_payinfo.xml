@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/height_xzz"
+    android:layout_height="@dimen/height_vzz"
+    android:background="@drawable/radiud_bg" >
+
+    <RelativeLayout
+        android:id="@+id/title_bar"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_sz"
+        android:background="@drawable/radiud_lt_rt_bg">
+
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_score_good"
+            android:textColor="@color/white"
+            android:textSize="@dimen/big_font_size"
+            android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/imageview_close"
+            android:layout_marginRight="@dimen/margin_fz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/icon_close_selector"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/ll_confirm"
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_marginRight="@dimen/margin_xv"
+        android:layout_marginLeft="@dimen/margin_xv"
+        android:layout_marginBottom="@dimen/margin_rv"
+        android:orientation="horizontal"
+        android:layout_height="@dimen/height_ez">
+        <TextView
+            android:id="@+id/text_cancle_pay"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/cancle"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:layout_marginRight="@dimen/margin_rz"
+            android:background="@drawable/btn_red_bg"
+            android:layout_height="match_parent" />
+        <TextView
+            android:id="@+id/text_submit_order"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:text="@string/confirm"
+            android:background="@drawable/btn_green_bg"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <ListView
+        android:layout_below="@id/title_bar"
+        android:layout_above="@id/ll_confirm"
+        android:id="@+id/listview_pay_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:horizontalSpacing="@dimen/margin_tz"
+        android:verticalSpacing="@dimen/margin_tz"
+        android:layout_marginTop="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginBottom="@dimen/margin_rz"
+        android:cacheColorHint="@color/transparent"
+        android:listSelector="@drawable/gridview_selector"
+        android:scrollbars="none"/>
+
+
+</RelativeLayout>

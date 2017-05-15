@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.activity;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,6 +17,7 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.CouponsAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.dialog.CouponWaringDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
@@ -40,6 +42,13 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
+import com.ums.upos.sdk.exception.CallServiceException;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.scanner.OnScanListener;
+import com.ums.upos.sdk.scanner.ScannerConfig;
+import com.ums.upos.sdk.scanner.ScannerManager;
+import com.ums.upos.sdk.system.BaseSystemManager;
+import com.ums.upos.sdk.system.OnServiceStatusListener;
 
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
@@ -84,12 +93,14 @@ public class MemberEquityActivity extends BaseActivity {
     private List<CouponInfo> couponList;
 
     private ExchangeInfo exchangeInfo = new ExchangeInfo();
+    private ScannerManager scannerManager;
+    private boolean isLoading = false;
 
     static class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override
@@ -106,7 +117,7 @@ public class MemberEquityActivity extends BaseActivity {
     MyHandler handler = new MyHandler(this);
     @Override
     protected void initData() {
-        couponList = new ArrayList<>();
+        couponList = new ArrayList<CouponInfo>();
         ExchangeInfo temp = (ExchangeInfo) getIntent().getSerializableExtra(ConstantData.USE_INTERRAL);
         if(temp!= null){
             exchangeInfo.setExchangemoney(temp.getExchangemoney());
@@ -215,6 +226,24 @@ public class MemberEquityActivity extends BaseActivity {
         }else{
             recycleview_hold_coupon.setVisibility(View.INVISIBLE);
         }
+
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogin(
+                        this, null, "99999998",//设备ID，生产找后台配置
+                        new OnServiceStatusListener() {
+                            @Override
+                            public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                }else{
+                                    ToastUtils.sendtoastbyhandler(handler, "扫码登录失败");
+                                }
+                            }
+                        });
+            } catch (SdkException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -229,8 +258,25 @@ public class MemberEquityActivity extends BaseActivity {
 
     @Override
     protected void recycleMemery() {
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            if(scannerManager != null){
+                try {
+                    scannerManager.stopScan();
+                } catch (SdkException e) {
+                    e.printStackTrace();
+                } catch (CallServiceException e) {
+                    e.printStackTrace();
+                }
+            }
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogout();
+            } catch (SdkException e) {
+                e.printStackTrace();
+            }
+        }
         handler.removeCallbacksAndMessages(null);
         AppConfigFile.delActivity(this);
+
     }
 
     @OnClick({R.id.title_icon_back, R.id.imageview_qr, R.id.text_confirm})
@@ -250,8 +296,42 @@ public class MemberEquityActivity extends BaseActivity {
                 }
                 break;
             case R.id.imageview_qr:
-                Intent intent_qr = new Intent(this, CaptureActivity.class);
-                startActivityForResult(intent_qr, ConstantData.SCAN_CASH_COUPON);
+                if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                    int type = SpSaveUtils.readInt(getApplicationContext(), ConstantData.CAMERATYPE, 1);
+                    if(type == 0){
+                        scannerManager = new ScannerManager();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(ScannerConfig.COMM_SCANNER_TYPE, ConstantData.scanner_type);
+                        bundle.putBoolean(ScannerConfig.COMM_ISCONTINUOUS_SCAN, true);
+                        try {
+                            scannerManager.stopScan();
+                            scannerManager.initScanner(bundle);
+                            scannerManager.startScan(30000, new OnScanListener() {
+                                @Override
+                                public void onScanResult(int i, byte[] bytes) {
+                                    //防止用户未扫描直接返回，导致bytes为空
+                                    if (bytes != null && !bytes.equals("")) {
+                                        if(getPayTypeId(PaymentTypeEnum.COUPON)!=null){
+                                            couponforhttp(AppConfigFile.getBillId(), new String(bytes));
+                                        }else{
+                                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+                                        }
+                                    }
+                                }
+                            });
+                        } catch (SdkException e) {
+                            e.printStackTrace();
+                        } catch (CallServiceException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        Intent intent_qr = new Intent(this, CaptureActivity.class);
+                        startActivityForResult(intent_qr, ConstantData.SCAN_CASH_COUPON);
+                    }
+                }else{
+                    Intent intent_qr = new Intent(this, CaptureActivity.class);
+                    startActivityForResult(intent_qr, ConstantData.SCAN_CASH_COUPON);
+                }
                 break;
         }
     }
@@ -304,6 +384,9 @@ public class MemberEquityActivity extends BaseActivity {
      * @param couponcode
      */
     private void couponforhttp(String billId, String couponcode) {
+        if(isLoading){
+            ToastUtils.sendtoastbyhandler(handler, "验证中请稍后");
+        }
         Map<String, String> map = new HashMap<String, String>();
         map.put("billId", billId);
         map.put("couponcode", couponcode);
@@ -312,11 +395,13 @@ public class MemberEquityActivity extends BaseActivity {
 
                     @Override
                     public void handleActionStart() {
+                        isLoading = true;
                         startwaitdialog();
                     }
 
                     @Override
                     public void handleActionFinish() {
+                        isLoading = false;
                         closewaitdialog();
                     }
 

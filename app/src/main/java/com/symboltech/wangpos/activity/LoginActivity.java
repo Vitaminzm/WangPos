@@ -1,6 +1,8 @@
 package com.symboltech.wangpos.activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
@@ -25,7 +27,9 @@ import com.symboltech.wangpos.db.dao.LoginDao;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
 import com.symboltech.wangpos.db.dao.UserNameDao;
 import com.symboltech.wangpos.dialog.AppAboutDialog;
+import com.symboltech.wangpos.dialog.CameraSetDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
+import com.symboltech.wangpos.dialog.InputAuthDialog;
 import com.symboltech.wangpos.dialog.InputDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -50,13 +54,6 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.DrawableEditText;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
-import com.ums.upos.sdk.exception.SdkException;
-import com.ums.upos.sdk.printer.BoldEnum;
-import com.ums.upos.sdk.printer.FontConfig;
-import com.ums.upos.sdk.printer.FontSizeEnum;
-import com.ums.upos.sdk.printer.OnPrintResultListener;
-import com.ums.upos.sdk.printer.PrinterManager;
-import com.ums.upos.sdk.system.BaseSystemManager;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -80,6 +77,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Bind(R.id.text_login)TextView text_login;
     @Bind(R.id.imageview_about)ImageView imageview_about;
     @Bind(R.id.imageview_loginout)ImageView imageview_loginout;
+    @Bind(R.id.imageview_set)ImageView imageview_set;
 
     /** login db dao */
     private UserNameDao und;
@@ -99,7 +97,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     @Override
     public boolean onLongClick(View v) {
         switch (v.getId()){
-            case R.id.imageview_about:
+            case R.id.imageview_set:
                 new InputDialog(LoginActivity.this, "请输入服务器IP", "请输入服务器IP", new GeneralEditListener() {
                     @Override
                     public void editinput(String edit) {
@@ -119,7 +117,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override
@@ -161,6 +159,20 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     }
                 }
             }, false).show();
+        }
+        if(Utils.isRoot()){
+            new AlertDialog.Builder(this).setTitle("系统提示").setMessage("检测到系统拥有ROOT权限，为了保障安全，请点击确认退出").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    MyApplication.stopTask();
+                    OperateLog.getInstance().stopUpload();
+                    InitializeConfig.clearCash(LoginActivity.this);
+                    finish();
+                    AppConfigFile.exit();
+                    HttpServiceStringClient.getinstance().cancleRequest();
+                    System.exit(0);
+                }
+            }).setCancelable(false).show();
         }
     }
 
@@ -205,11 +217,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         text_login.setOnClickListener(this);
         imageview_about.setOnClickListener(this);
         imageview_loginout.setOnClickListener(this);
+        imageview_set.setOnClickListener(this);
 
         listview = (ListView) LayoutInflater.from(this).inflate(R.layout.popup_list, null);
         listview.setOnItemClickListener(this);
         listview.setOnItemLongClickListener(this);
-        imageview_about.setOnLongClickListener(this);
+        imageview_set.setOnLongClickListener(this);
     }
 
     /**
@@ -251,32 +264,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         }
         switch (v.getId()) {
             case R.id.text_login:
-                String printHtmlstr = "银联商务SDK打印测试\n银联商务SDK打印测试\n银联商务SDK打印测试\n银联商务SDK打印测试\n银联商务SDK打印测试";
-                try {
-                    PrinterManager printer = new PrinterManager();
-                    printer.initPrinter();
-                    FontConfig fontConfig = new FontConfig();
-                    fontConfig.setBold(BoldEnum.NOT_BOLD);//不加粗
-                    fontConfig.setSize(FontSizeEnum.SMALL);//小号字体
-                    printer.setPrnText(printHtmlstr, fontConfig);
-                    printer.setPrnText(printHtmlstr, fontConfig);
-                    printer.startPrint(new OnPrintResultListener() {
-
-                        @Override
-                        public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
-                            //登出，以免占用U架构服务
-                            try {
-                                BaseSystemManager.getInstance().deviceServiceLogout();
-                            } catch (SdkException e) {
-                                // TODO Auto-generated catch block
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
                 if (iscashier) {
                     poslogin();// 登录
                 } else {
@@ -284,16 +271,29 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 }
                 break;
             case R.id.imageview_loginout:
-                MyApplication.stopTask();
-                OperateLog.getInstance().stopUpload();
-                InitializeConfig.clearCash(LoginActivity.this);
-                this.finish();
-                AppConfigFile.exit();
-                HttpServiceStringClient.getinstance().cancleRequest();
-                System.exit(0);
+                new InputAuthDialog(LoginActivity.this, "请输入授权码", "请输入授权码",new GeneralEditListener() {
+                    @Override
+                    public void editinput(String edit) {
+                        if(edit.equals(AppConfigFile.AUTH_CODE)){
+                            MyApplication.stopTask();
+                            OperateLog.getInstance().stopUpload();
+                            InitializeConfig.clearCash(LoginActivity.this);
+                            LoginActivity.this.finish();
+                            AppConfigFile.exit();
+                            HttpServiceStringClient.getinstance().cancleRequest();
+                            System.exit(0);
+                        }else{
+                            ToastUtils.sendtoastbyhandler(handler, "授权码错误");
+                        }
+
+                    }
+                }).show();
                 break;
             case R.id.imageview_about:
                 new AppAboutDialog(LoginActivity.this).show();
+                break;
+            case R.id.imageview_set:
+                new CameraSetDialog(LoginActivity.this).show();
                 break;
         }
     }
@@ -308,7 +308,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     }
 
     ArrayAdapter<String> adapter;
-    ArrayList<String> datas = new ArrayList<>();
+    ArrayList<String> datas = new ArrayList<String>();
     /**
      * popup show
      */
@@ -325,7 +325,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         datas.addAll(DButils.getUserNames(und));
         if(datas.size()  > 0) {
             if (null == mPopupWindow) {
-                 adapter = new ArrayAdapter<>(LoginActivity.this, R.layout.popup_item, datas);
+                 adapter = new ArrayAdapter<String>(LoginActivity.this, R.layout.popup_item, datas);
                 listview.setAdapter(adapter);
                 mPopupWindow = new PopupWindow(listview, (int)getResources().getDimension(R.dimen.height_txz), (int)getResources().getDimension(R.dimen.height_ttz), true);
                 mPopupWindow.setBackgroundDrawable(getResources().getDrawable(R.drawable.transparent));
@@ -348,7 +348,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * @param password 密码
      */
     private void unlockforhttp(final String password) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("password", MD5Utils.md5(password));
         HttpRequestUtil.getinstance().unlock(HTTP_TASK_KEY, map, UnLockResult.class, new HttpActionHandle<UnLockResult>() {
 
@@ -453,7 +453,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * login for http verification
      */
     private void loginforhttp(final String username, final String password) {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("machinecode", MachineUtils.getUid(MyApplication.context));
         map.put("personcode", username);
         map.put("password", MD5Utils.md5(password));

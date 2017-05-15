@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
@@ -111,18 +110,19 @@ public class GoodsAdapter extends BaseAdapter {
 		holder.imageview_quantity_plus.setTag(position);
 		holder.imageview_quantity_minus.setTag(position);
 		holder.text_good_name.setText(goodsInfo.getGoodsname());
-		switch (goodsInfo.getSptype().trim()) {
-			case ConstantData.GOODS_SOURCE_BY_INTEGRAL:
+		int type = Integer.parseInt(goodsInfo.getSptype().trim());
+		switch (type) {
+			case 1://ConstantData.GOODS_SOURCE_BY_INTEGRAL:
 				holder.text_good_code.setText(goodsInfo.getBarcode() + "/" + context.getString(R.string.score_good));
 				break;
-			case ConstantData.GOODS_SOURCE_BY_BRAND:
+			case 0://ConstantData.GOODS_SOURCE_BY_BRAND:
 				holder.text_good_code.setText(goodsInfo.getBarcode()+"/"+context.getString(R.string.brand_good));
 				holder.ll_score_info.setVisibility(View.GONE);
 				break;
-			case ConstantData.GOODS_SOURCE_BY_SINTEGRAL:
+			case 2://ConstantData.GOODS_SOURCE_BY_SINTEGRAL:
 				holder.text_good_code.setText(goodsInfo.getBarcode() + "/" + context.getString(R.string.sscore_good));
 				break;
-			case ConstantData.GOODS_SOURCE_BY_BINTEGRAL:
+			case 3://ConstantData.GOODS_SOURCE_BY_BINTEGRAL:
 				holder.text_good_code.setText(goodsInfo.getBarcode()+"/"+context.getString(R.string.brandbig_good));
 				holder.ll_score_info.setVisibility(View.GONE);
 				break;
@@ -151,7 +151,7 @@ public class GoodsAdapter extends BaseAdapter {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			position = (int) v.getTag();
+			position = (Integer) v.getTag();
 			switch (v.getId()) {
 				//这是btnMius下的一个层，为了增强易点击性
 				case R.id.imageview_quantity_plus:

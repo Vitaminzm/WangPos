@@ -252,7 +252,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
+            mActivity = new WeakReference<BaseActivity>(activity);
         }
 
         @Override

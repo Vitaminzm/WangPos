@@ -90,7 +90,7 @@ public class ThirdPayReturnDialog extends BaseActivity{
 				}else{
 					login();
 				}
-			} catch (JSONException | RemoteException e1) {
+			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
 		}
@@ -179,7 +179,7 @@ public class ThirdPayReturnDialog extends BaseActivity{
 		WeakReference<BaseActivity> mActivity;
 
 		MyHandler(BaseActivity activity) {
-			mActivity = new WeakReference<>(activity);
+			mActivity = new WeakReference<BaseActivity>(activity);
 		}
 
 		@Override

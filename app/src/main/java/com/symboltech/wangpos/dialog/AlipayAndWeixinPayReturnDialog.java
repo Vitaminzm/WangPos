@@ -159,6 +159,32 @@ public class AlipayAndWeixinPayReturnDialog extends Dialog implements View.OnCli
 					typeTips.setText(mContext.getResources().getString(R.string.please_input_weixin_trade_no));
 				}
 			}
+		}else if((ConstantData.PAYMODE_BY_BANKCODE+"").equals(type)) {
+			if(tradeNo == null) {
+				typeTips.setText("请输入银联扫码流水号");
+			}else {
+				if(ConstantData.THIRD_NEED_INPUT.equals(SpSaveUtils.read(mContext, ConstantData.MALL_WEIXIN_IS_INPUT, "0"))) {
+					serialTable.setVisibility(View.GONE);
+					statusTips.setText("银联扫码"+mContext.getResources().getString(R.string.thirdpay_salesreturn_succee_ing));
+					statusTable.setVisibility(View.VISIBLE);
+					getBackResult(tradeNo);
+				}else {
+					typeTips.setText("请输入银联扫码流水号");
+				}
+			}
+		}else if((ConstantData.PAYMODE_BY_YIPAY+"").equals(type)) {
+			if(tradeNo == null) {
+				typeTips.setText("请输入翼支付流水号");
+			}else {
+				if(ConstantData.THIRD_NEED_INPUT.equals(SpSaveUtils.read(mContext, ConstantData.MALL_WEIXIN_IS_INPUT, "0"))) {
+					serialTable.setVisibility(View.GONE);
+					statusTips.setText("翼支付"+mContext.getResources().getString(R.string.thirdpay_salesreturn_succee_ing));
+					statusTable.setVisibility(View.VISIBLE);
+					getBackResult(tradeNo);
+				}else {
+					typeTips.setText("请输入翼支付流水号");
+				}
+			}
 		}
 		serialTips.setText(mContext.getResources().getString(R.string.thirdpay_deal_time) + money + mContext.getResources().getString(R.string.yuan));
 	}
@@ -183,6 +209,10 @@ public class AlipayAndWeixinPayReturnDialog extends Dialog implements View.OnCli
 				statusTips.setText("支付宝"+mContext.getResources().getString(R.string.thirdpay_salesreturn_succee_ing));
 			}else if("3".equals(type)) {
 				statusTips.setText("微信"+mContext.getResources().getString(R.string.thirdpay_salesreturn_succee_ing));
+			}else if("4".equals(type)) {
+				statusTips.setText("银联扫码"+mContext.getResources().getString(R.string.thirdpay_salesreturn_succee_ing));
+			}else if("5".equals(type)) {
+				statusTips.setText("翼支付"+mContext.getResources().getString(R.string.thirdpay_salesreturn_succee_ing));
 			}
 			statusTable.setVisibility(View.VISIBLE);
 			getBackResult(number);

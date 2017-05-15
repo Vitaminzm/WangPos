@@ -10,7 +10,6 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
-import com.symboltech.wangpos.utils.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public class PaymentTypeInfoDetailAdapter extends BaseAdapter {
 		mLayoutInflater = LayoutInflater.from(context);
 		this.context = context;
 		if(flag){
-			this.paymentsInfo = new ArrayList<>();
+			this.paymentsInfo = new ArrayList<PayMentsInfo>();
 			for(PayMentsInfo data :datas){
 				if(!data.getType().equals(PaymentTypeEnum.COUPON) || !data.getType().equals(PaymentTypeEnum.SCORE)){
 					paymentsInfo.add(data);

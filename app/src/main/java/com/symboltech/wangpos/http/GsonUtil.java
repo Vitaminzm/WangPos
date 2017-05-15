@@ -77,7 +77,7 @@ public class GsonUtil {
         {}.getType();
         List<JsonObject> jsonObjects = new Gson().fromJson(json, type);
 
-        List<T> arrayList = new ArrayList<>();
+        List<T> arrayList = new ArrayList<T>();
         for (JsonObject jsonObject : jsonObjects)
         {
             arrayList.add(new Gson().fromJson(jsonObject, clazz));

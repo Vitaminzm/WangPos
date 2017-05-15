@@ -36,8 +36,10 @@ public class AppConfigFile {
 	/**单个操作日志文件保存条数*/
 	public static final int OPERATE_LOG_SIZE = 50;
 
+	/**授权码*/
+	public static final String AUTH_CODE = "123654";
 	/** activity manange list */
-	public static List<Activity> activityList = new LinkedList<>();
+	public static List<Activity> activityList = new LinkedList<Activity>();
 	//private static  String host_config = "192.168.28.234:82";//239
 	// private static  String host_config = "210.14.129.42:82";  //41
 	// private static  String host_config = "210.14.129.41:85";  //步步高百货后台88

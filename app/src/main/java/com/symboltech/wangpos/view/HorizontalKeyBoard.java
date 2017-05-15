@@ -267,7 +267,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 
 							 @Override
 							 public void onAnimationUpdate(ValueAnimator animation) {
-								 int currentValue = (int) animation.getAnimatedValue();
+								 int currentValue = (Integer) animation.getAnimatedValue();
 								 float fraction = animation.getAnimatedFraction();
 								 ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) ll_keyboard.getLayoutParams();
 								 lp1.topMargin = -intEvaluator.evaluate(fraction,0,length);
@@ -283,7 +283,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 
 							 @Override
 							 public void onAnimationUpdate(ValueAnimator animation) {
-								 int currentValue = (int) animation.getAnimatedValue();
+								 int currentValue = (Integer) animation.getAnimatedValue();
 								 float fraction = animation.getAnimatedFraction();
 								 mManager.updateViewLayout(mWindow.getDecorView(), getParams(-intEvaluator.evaluate(fraction, 0, length-100)));
 							 }
@@ -300,7 +300,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 
 						 @Override
 						 public void onAnimationUpdate(ValueAnimator animation) {
-							 int currentValue = (int) animation.getAnimatedValue();
+							 int currentValue = (Integer) animation.getAnimatedValue();
 							 float fraction = animation.getAnimatedFraction();
 							 mManager.updateViewLayout(mWindow.getDecorView(), getParams(-intEvaluator.evaluate(fraction, 0, length)));
 						 }
@@ -334,7 +334,7 @@ public class HorizontalKeyBoard extends Dialog implements OnClickListener, OnTou
 
 							@Override
 							public void onAnimationUpdate(ValueAnimator animation) {
-								int currentValue = (int) animation.getAnimatedValue();
+								int currentValue = (Integer) animation.getAnimatedValue();
 								float fraction = animation.getAnimatedFraction();
 								ViewGroup.MarginLayoutParams lp1 = (ViewGroup.MarginLayoutParams) ll_keyboard.getLayoutParams();
 								lp1.topMargin = -intEvaluator.evaluate(fraction,length,0);

@@ -100,7 +100,7 @@ public class PaymentTypeAdapter extends BaseAdapter {
 			case WECHAT:
 			case ALIPAY:
 				if(ConstantData.WECHAT_ID.equals(paymentsInfo.get(position).getId())){
-					if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.WECHAT && paymentsInfo.get(position).getId().equals(payType.getId())) {
+					if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
 						holder.image_key.setImageResource(R.mipmap.weixin_icon_select);
 						holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
 					} else {
@@ -108,9 +108,8 @@ public class PaymentTypeAdapter extends BaseAdapter {
 						holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
 					}
 					holder.name_key.setText(paymentsInfo.get(position).getName());
-					break;
 				}else if(ConstantData.ALPAY_ID.equals(paymentsInfo.get(position).getId())){
-					if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.ALIPAY && paymentsInfo.get(position).getId().equals(payType.getId())) {
+					if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
 						holder.image_key.setImageResource(R.mipmap.zhifubao_icon_select);
 						holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
 					} else {
@@ -118,10 +117,20 @@ public class PaymentTypeAdapter extends BaseAdapter {
 						holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
 					}
 					holder.name_key.setText(paymentsInfo.get(position).getName());
-					break;
+				}else{
+					if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
+						holder.image_key.setImageResource(R.mipmap.xianjin_icon_select);
+						holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
+					} else {
+						holder.image_key.setImageResource(R.mipmap.xianjin_icon);
+						holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
+					}
+					holder.name_key.setText(paymentsInfo.get(position).getName());
 				}
+				break;
 			case BANK:
-				if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.BANK && paymentsInfo.get(position).getId().equals(payType.getId())) {
+			case STORE:
+				if (payType != null  && paymentsInfo.get(position).getId().equals(payType.getId())) {
 					holder.image_key.setImageResource(R.mipmap.card_icon_selcet);
 					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
 				} else {
@@ -131,7 +140,7 @@ public class PaymentTypeAdapter extends BaseAdapter {
 				holder.name_key.setText(paymentsInfo.get(position).getName());
 				break;
 			case CASH:
-				if (payType != null && PaymentTypeEnum.getpaymentstyle(payType.getType()) == PaymentTypeEnum.CASH && paymentsInfo.get(position).getId().equals(payType.getId())) {
+				if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
 					holder.image_key.setImageResource(R.mipmap.xianjin_icon_select);
 					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
 				} else {
@@ -141,6 +150,14 @@ public class PaymentTypeAdapter extends BaseAdapter {
 				holder.name_key.setText(paymentsInfo.get(position).getName());
 				break;
 			default:
+				if (payType != null  && paymentsInfo.get(position).getId().equals(payType.getId())) {
+					holder.image_key.setImageResource(R.mipmap.xianjin_icon_select);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
+				} else {
+					holder.image_key.setImageResource(R.mipmap.xianjin_icon);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
+				}
+				holder.name_key.setText(paymentsInfo.get(position).getName());
 				break;
 		}
 	}

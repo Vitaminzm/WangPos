@@ -293,6 +293,18 @@ public class HttpRequestUtil {
 	}
 
 	/**
+	 * @Description 查询支付信息
+	 * @author so
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void searchPayinfo(String tag, Map<String, String> param, final Class<T> clz,
+									final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/getxykjl"), param, clz,
+				httpactionhandler);
+	}
+	/**
 	 * @Description 验证短息发送
 	 * @author so
 	 * @param param

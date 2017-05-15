@@ -661,7 +661,11 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends Dialog implemen
 		startPay();
 		isrunning = false;
 		Map<String, String> map = new HashMap<String, String>();
-		map.put("posip", Utils.getLocalIpAddress());
+		String ip = "";
+		if(!StringUtil.isEmpty(Utils.getLocalIpAddress())){
+			ip = Utils.getLocalIpAddress();
+		}
+		map.put("posip", ip);
 		map.put("pay_type", paymode + "");
 		map.put("total_fee", MoneyAccuracyUtils.thirdpaymoneydealbyinput(et_thirdpay_input.getText().toString()));
 		if(isPay) {

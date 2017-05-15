@@ -1,5 +1,22 @@
 package com.symboltech.wangpos.utils;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Bundle;
+import android.telephony.TelephonyManager;
+
+import com.symboltech.wangpos.log.LogUtil;
+
+import org.apache.http.conn.util.InetAddressUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,24 +41,6 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.http.conn.util.InetAddressUtils;
-
-
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.wifi.WifiInfo;
-import android.net.wifi.WifiManager;
-import android.os.Bundle;
-import android.telephony.TelephonyManager;
-
-import com.symboltech.wangpos.log.LogUtil;
-
 /**
  * Created by symbol on 2016/9/14.
  */
@@ -61,6 +60,28 @@ public class Utils {
         lastClickTime = time;
         return false;
     }
+
+    public static  boolean isRoot(){
+        Process process = null;
+        try
+        {
+            process  = Runtime.getRuntime().exec("su");
+            process.getOutputStream().write("exit\n".getBytes());
+            process.getOutputStream().flush();
+            int i = process.waitFor();
+            if(0 == i){
+                process = Runtime.getRuntime().exec("su");
+                return true;
+            }
+
+        } catch (Exception e)
+        {
+            return false;
+        }
+        return false;
+
+    }
+
     /**
      * 获取随机的UUID
      *
@@ -668,7 +689,7 @@ public class Utils {
         } catch (SocketException ex) {
             LogUtil.i("lgs", "----ip:"+ex.toString());
         }
-        return null;
+        return "";
 
     }
 }

@@ -31,6 +31,7 @@ public class MyApplication extends Application {
      */
     private static String cashierId = "-1";
 
+    public static boolean isPrint = false;
     public static String posType= ConstantData.POS_TYPE_Y;
     @Override
     public void onCreate() {
@@ -98,19 +99,26 @@ public class MyApplication extends Application {
     }
 
     public static void startTask(){
-        mTimer.schedule(mTask, 0, AppConfigFile.NETWORK_STATUS_INTERVAL);
+        try {
+            mTimer.schedule(mTask, 0, AppConfigFile.NETWORK_STATUS_INTERVAL);
+        }catch (Exception e) {
+        }
+
     }
 
     public static void stopTask(){
-        if (mTask != null) {
-            mTask.cancel();
-            mTask = null;
-        }
+        try {
+            if (mTask != null) {
+                mTask.cancel();
+                mTask = null;
+            }
 
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
-            mTimer = null;
+            if (mTimer != null) {
+                mTimer.cancel();
+                mTimer.purge();
+                mTimer = null;
+            }
+        }catch (Exception e) {
         }
     }
 

@@ -35,6 +35,7 @@ import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.AllMemeberInfoResult;
 import com.symboltech.wangpos.utils.AndroidUtils;
+import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
@@ -48,6 +49,9 @@ import com.ums.upos.sdk.cardslot.OnCardInfoListener;
 import com.ums.upos.sdk.cardslot.SwipeSlotOptions;
 import com.ums.upos.sdk.exception.CallServiceException;
 import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.scanner.OnScanListener;
+import com.ums.upos.sdk.scanner.ScannerConfig;
+import com.ums.upos.sdk.scanner.ScannerManager;
 import com.ums.upos.sdk.system.BaseSystemManager;
 import com.ums.upos.sdk.system.OnServiceStatusListener;
 
@@ -86,6 +90,8 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     private String verify_type = ConstantData.MEMBER_VERIFY_BY_PHONE;
     private boolean isSwipVipCard =false;
+
+    private ScannerManager scannerManager;
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -148,13 +154,13 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                         if(cardSlotManager == null){
                             return;
                         }
-                        try {
-                            cardSlotManager.stopRead();
-                        } catch (SdkException e) {
-                            e.printStackTrace();
-                        } catch (CallServiceException e) {
-                            e.printStackTrace();
-                        }
+//                        try {
+//                            cardSlotManager.stopRead();
+//                        } catch (SdkException e) {
+//                            e.printStackTrace();
+//                        } catch (CallServiceException e) {
+//                            e.printStackTrace();
+//                        }
                         searchCardInfo();
                     }
                     break;
@@ -184,6 +190,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     private CardSlotManager cardSlotManager = null;
     @Override
     protected void initData() {
+        LogUtil.i("lgs", "initData----");
         title_text_content.setText(getString(R.string.number_access));
         right_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.right_in);
         left_In_Animation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.left_in);
@@ -210,9 +217,10 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
                                     cardSlotManager = new CardSlotManager();
-                                }else{
-                                    ToastUtils.sendtoastbyhandler(handler, "刷卡登录失败");
                                 }
+//                                else{
+//                                    ToastUtils.sendtoastbyhandler(handler, "刷卡登录失败");
+//                                }
                             }
                         });
             } catch (SdkException e) {
@@ -262,6 +270,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     @Override
     protected void onResume() {
+        LogUtil.i("lgs","onResume----");
         super.onResume();
         text_phone_number.setChecked(true);
         ll_swaip_card.setVisibility(View.GONE);
@@ -277,8 +286,6 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     isSwipVipCard = false;
                     mCardService.stopReadCard();
                 }
-            } else {
-                LogUtil.e("lgs", "mCardService==null");
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -289,7 +296,17 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
         }
         isRun = false;
        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+           if(scannerManager != null){
+               try {
+                   scannerManager.stopScan();
+               } catch (SdkException e) {
+                   e.printStackTrace();
+               } catch (CallServiceException e) {
+                   e.printStackTrace();
+               }
+           }
            try {
+               LogUtil.i("lgs","out-------------");
                BaseSystemManager.getInstance().deviceServiceLogout();
            } catch (SdkException e) {
                e.printStackTrace();
@@ -337,6 +354,15 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     }
                 }
             }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                if(scannerManager != null){
+                    try {
+                        scannerManager.stopScan();
+                    } catch (SdkException e) {
+                        e.printStackTrace();
+                    } catch (CallServiceException e) {
+                        e.printStackTrace();
+                    }
+                }
                 if(cardSlotManager == null){
                     return;
                 }
@@ -390,6 +416,15 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     e.printStackTrace();
                 }
             }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                if(scannerManager != null){
+                    try {
+                        scannerManager.stopScan();
+                    } catch (SdkException e) {
+                        e.printStackTrace();
+                    } catch (CallServiceException e) {
+                        e.printStackTrace();
+                    }
+                }
                 searchCardInfo();
             }
 
@@ -422,6 +457,8 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                 mReadMagTask.interrupt();
                 mReadMagTask = null;
             }
+            Intent intent_qr = new Intent(this, CaptureActivity.class);
+            startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
         }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
             try {
                 if (mCardService != null) {
@@ -435,6 +472,8 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+            Intent intent_qr = new Intent(this, CaptureActivity.class);
+            startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
         }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
             if(cardSlotManager == null){
                 return;
@@ -446,9 +485,46 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
             } catch (CallServiceException e) {
                 e.printStackTrace();
             }
+//            JSONObject object = new JSONObject();
+//            try {
+//                object.put("scanType", ConstantData.scanner_type+"");
+//                AppHelper.callTrans(MemberAccessActivity.this, "扫码",
+//                        "开启扫码", object);
+//            } catch (Exception e) {
+//            }
+            int type = SpSaveUtils.readInt(getApplicationContext(), ConstantData.CAMERATYPE, 1);
+            if(type == 0){
+                ToastUtils.sendtoastbyhandler(handler, "请将二维码放置在摄像头前");
+                scannerManager = new ScannerManager();
+                Bundle bundle = new Bundle();
+                bundle.putInt(ScannerConfig.COMM_SCANNER_TYPE, ConstantData.scanner_type);
+                bundle.putBoolean(ScannerConfig.COMM_ISCONTINUOUS_SCAN, true);
+                try {
+                    scannerManager.stopScan();
+                    scannerManager.initScanner(bundle);
+                    scannerManager.startScan(0, new OnScanListener() {
+                        @Override
+                        public void onScanResult(int i, byte[] bytes) {
+                            //防止用户未扫描直接返回，导致bytes为空
+                            if (bytes != null && !bytes.equals("")) {
+                                Message msg = Message.obtain();
+                                msg.obj = new String(bytes);
+                                msg.what = Qrcode;
+                                handler.sendMessage(msg);
+                            }
+                        }
+                    });
+                } catch (SdkException e) {
+                    e.printStackTrace();
+                } catch (CallServiceException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                Intent intent_qr = new Intent(this, CaptureActivity.class);
+                startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
+            }
+
         }
-        Intent intent_qr = new Intent(this, CaptureActivity.class);
-        startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
     }
 
     private void searchCardInfo() {
@@ -480,20 +556,20 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                                                 + "\n" + "磁道2：" + arg1.getTk2()
                                                 + "\n" + "磁道3：" + arg1.getTk3());
                                         Message msg = Message.obtain();
-                                        msg.obj = arg1.getTk1();
+                                        msg.obj = arg1.getTk2();
                                         msg.what = Vipcard;
                                         handler.sendMessage(msg);
                                         break;
                                     default:
                                         break;
                                 }
-                                try {
-                                    cardSlotManager.stopRead();
-                                } catch (SdkException e) {
-                                    e.printStackTrace();
-                                } catch (CallServiceException e) {
-                                    e.printStackTrace();
-                                }
+//                                try {
+//                                    cardSlotManager.stopRead();
+//                                } catch (SdkException e) {
+//                                    e.printStackTrace();
+//                                } catch (CallServiceException e) {
+//                                    e.printStackTrace();
+//                                }
                             }
                         }
                     }, null);
@@ -559,9 +635,10 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
     private boolean isVerify = false;
     private  void memberverifymethodbyhttp(final String verifyType, String verifyValue) {
         if(isVerify){
+            ToastUtils.sendtoastbyhandler(handler, "验证中请稍后");
             return;
         }
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("condType", verifyType);
         map.put("condValue", verifyValue);
         HttpRequestUtil.getinstance().getAllMemberInfo(HTTP_TASK_KEY, map, AllMemeberInfoResult.class,

@@ -5,12 +5,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,12 +20,13 @@ import android.widget.TextView;
 import com.google.gson.reflect.TypeToken;
 import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.adapter.PaymentTypeAdapter;
+import com.symboltech.wangpos.adapter.PaymentTypeHolderAdapter;
 import com.symboltech.wangpos.adapter.PaymentTypeInfoAdapter;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
+import com.symboltech.wangpos.dialog.AddPayinfoDialog;
 import com.symboltech.wangpos.dialog.AlipayAndWeixinPayControllerInterfaceDialog;
 import com.symboltech.wangpos.dialog.CanclePayDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
@@ -31,6 +34,7 @@ import com.symboltech.wangpos.dialog.ThirdPayDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.CancleAndConfirmback;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
@@ -43,8 +47,10 @@ import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.SubmitGoods;
 import com.symboltech.wangpos.msg.entity.ThirdPay;
+import com.symboltech.wangpos.msg.entity.ThirdPayInfo;
 import com.symboltech.wangpos.msg.entity.WposPayInfo;
 import com.symboltech.wangpos.result.SaveOrderResult;
+import com.symboltech.wangpos.result.ThirdPayInfoResult;
 import com.symboltech.wangpos.service.RunTimeService;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.CashierSign;
@@ -52,11 +58,19 @@ import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
 import com.ums.AppHelper;
+import com.ums.upos.sdk.exception.CallServiceException;
+import com.ums.upos.sdk.exception.SdkException;
+import com.ums.upos.sdk.scanner.OnScanListener;
+import com.ums.upos.sdk.scanner.ScannerConfig;
+import com.ums.upos.sdk.scanner.ScannerManager;
+import com.ums.upos.sdk.system.BaseSystemManager;
+import com.ums.upos.sdk.system.OnServiceStatusListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -112,7 +126,7 @@ public class CheckOutActivity extends BaseActivity {
     View view_line;
 
     @Bind(R.id.activity_payment_gridview)
-    GridView activity_payment_gridview;
+    RecyclerView activity_payment_gridview;
     @Bind(R.id.listview_pay_info)
     ListView listview_pay_info;
     @Bind(R.id.ll_keyboard)
@@ -125,7 +139,7 @@ public class CheckOutActivity extends BaseActivity {
     private double waitPayValue;
     private HorizontalKeyBoard keyboard;
     //支付方式适配器
-    private PaymentTypeAdapter paymentTypeAdapter;
+    private PaymentTypeHolderAdapter paymentTypeAdapter;
     private ArrayList<PayMentsInfo> paymentTypes;
 
     // 支付方式标识
@@ -137,12 +151,45 @@ public class CheckOutActivity extends BaseActivity {
     private double paymentMoney;
 
     public static final int THIRD_PAY_INFO = 1;
+    public static final int ALREADY_THIRD_PAY_INFO = 2;
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case ToastUtils.TOAST_WHAT:
                     ToastUtils.showtaostbyhandler(CheckOutActivity.this, msg);
+                    break;
+                case ALREADY_THIRD_PAY_INFO:
+                    final List<ThirdPayInfo> thirdPayInfoList = (List<ThirdPayInfo>) msg.obj;
+                    new AddPayinfoDialog(CheckOutActivity.this, thirdPayInfoList, new CancleAndConfirmback() {
+                        @Override
+                        public void doCancle() {
+
+                        }
+
+                        @Override
+                        public void doConfirm(String num) {
+                            for (ThirdPayInfo thirdPayInfo : thirdPayInfoList) {
+                                if (!isContain(thirdPayInfo.getAuth_code(), payMentsCancle)) {
+                                    PayMentsCancleInfo info = new PayMentsCancleInfo();
+                                    info.setId(thirdPayInfo.getSkfsid());
+                                    info.setName(getPayNameById(thirdPayInfo.getSkfsid()));
+                                    info.setType(getPayTypeById(thirdPayInfo.getSkfsid()));
+                                    info.setIsCancle(false);
+                                    info.setMoney(thirdPayInfo.getJe());
+
+                                    ThirdPay value = new ThirdPay();
+                                    value.setTrade_no(thirdPayInfo.getAuth_code());
+                                    info.setThridPay(value);
+                                    info.setOverage("0");
+                                    addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
+                                }
+                            }
+                            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                        }
+                    }).show();
                     break;
                 case THIRD_PAY_INFO:
                     OrderBean orderBean = (OrderBean)msg.obj;
@@ -199,6 +246,8 @@ public class CheckOutActivity extends BaseActivity {
     private List<PayMentsInfo> payments = new ArrayList<PayMentsInfo>();
 
     private BizServiceInvoker mBizServiceInvoker;
+    private ScannerManager scannerManager;
+
     @Override
     protected void initData() {
         exchangeInfo = new ExchangeInfo();
@@ -233,12 +282,14 @@ public class CheckOutActivity extends BaseActivity {
         edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
         text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
 
-        paymentTypes = new ArrayList<>();
-        paymentTypeAdapter = new PaymentTypeAdapter(getApplicationContext(), paymentTypes);
-        activity_payment_gridview.setAdapter(paymentTypeAdapter);
-        activity_payment_gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        paymentTypes = new ArrayList<PayMentsInfo>();
+        paymentTypeAdapter = new PaymentTypeHolderAdapter(paymentTypes, getApplicationContext());
+        GridLayoutManager mgr=new GridLayoutManager(this, 4);
+        mgr.setOrientation(LinearLayoutManager.VERTICAL);
+        activity_payment_gridview.setLayoutManager(mgr);
+        paymentTypeAdapter.setOnItemClickListener(new PaymentTypeHolderAdapter.MyItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(View view, int position) {
                 if(Utils.isFastClick()){
                     return;
                 }
@@ -257,9 +308,26 @@ public class CheckOutActivity extends BaseActivity {
                 doPay(money);
             }
         });
+        activity_payment_gridview.setAdapter(paymentTypeAdapter);
+
         getPayType();
         paymentTypeInfoadapter = new PaymentTypeInfoAdapter(getApplicationContext(), payMentsCancle);
         listview_pay_info.setAdapter(paymentTypeInfoadapter);
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+            try {
+                BaseSystemManager.getInstance().deviceServiceLogin(
+                        this, null, "99999998",//设备ID，生产找后台配置
+                        new OnServiceStatusListener() {
+                            @Override
+                            public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                }
+                            }
+                        });
+            } catch (SdkException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void doPay(double money) {
@@ -277,12 +345,25 @@ public class CheckOutActivity extends BaseActivity {
         switch (PaymentTypeEnum.getpaymentstyle(type.trim())){
             case CASH:
                 if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())){
-                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                    if(paymentMoney >waitPayValue){
+                        edit_input_money.setText("");
                         paymentTypeAdapter.setPayTpyeNull();
-                        ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
                     }else{
-                        paymentTypeAdapter.setPayTpyeNull();
-                        ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+                        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                            JSONObject json = new JSONObject();
+                            String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                            try {
+                                json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                                json.put("extOrderNo",tradeNo);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json);
+                        }else{
+                            paymentTypeAdapter.setPayTpyeNull();
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_not_support));
+                        }
                     }
                 }else{
                     double cash = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(paymentTypeAdapter.getPayType().getId()));
@@ -324,15 +405,46 @@ public class CheckOutActivity extends BaseActivity {
            //     break;
             case ALIPAY:
                 if(ConstantData.WECHAT_ID.equals(payid)){
-                    intent_qr = new Intent(mContext, CaptureActivity.class);
-                    intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_WEIXIN);
-                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
                     paytype = ConstantData.PAYMODE_BY_WEIXIN;
                 }else if(ConstantData.ALPAY_ID.equals(payid)){
-                    intent_qr = new Intent(mContext, CaptureActivity.class);
-                    intent_qr.putExtra("paymode", ConstantData.PAYMODE_BY_ALIPAY);
-                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
                     paytype = ConstantData.PAYMODE_BY_ALIPAY;
+                }else if(ConstantData.BANKCODE_ID.equals(payid)){
+                    paytype = ConstantData.PAYMODE_BY_BANKCODE;
+                }else if(ConstantData.YIPAY_ID.equals(payid)){
+                    paytype = ConstantData.PAYMODE_BY_YIPAY;
+                }
+                if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                    int cameraType = SpSaveUtils.readInt(getApplicationContext(), ConstantData.CAMERATYPE, 1);
+                    if(cameraType == 0){
+                        ToastUtils.sendtoastbyhandler(handler, "请将二维码放置在摄像头前");
+                        scannerManager = new ScannerManager();
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(ScannerConfig.COMM_SCANNER_TYPE, ConstantData.scanner_type);
+                        bundle.putBoolean(ScannerConfig.COMM_ISCONTINUOUS_SCAN, false);
+                        try {
+                            scannerManager.stopScan();
+                            scannerManager.initScanner(bundle);
+                            scannerManager.startScan(30000, new OnScanListener() {
+                                @Override
+                                public void onScanResult(int i, byte[] bytes) {
+                                    //防止用户未扫描直接返回，导致bytes为空
+                                    if (bytes != null && !bytes.equals("")) {
+                                        doThirdPay(new String(bytes));
+                                    }
+                                }
+                            });
+                        } catch (SdkException e) {
+                            e.printStackTrace();
+                        } catch (CallServiceException e) {
+                            e.printStackTrace();
+                        }
+                    }else{
+                        intent_qr = new Intent(mContext, CaptureActivity.class);
+                        startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
+                    }
+                }else{
+                    intent_qr = new Intent(mContext, CaptureActivity.class);
+                    startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
                 }
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_ALIPAY_IS_INPUT, "0"))){
 //                    Intent intent_qr = new Intent(this, CaptureActivity.class);
@@ -345,24 +457,53 @@ public class CheckOutActivity extends BaseActivity {
 //                }
                 break;
             case BANK:
-                if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
-                    requestCashier(CurrencyUnit.yuan2fenStr(paymentMoney + ""));
-                }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
-                    Intent intent = new Intent(this, ThirdPayDialog.class);
-                    intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
-                    intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
-                    startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
-                }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else{
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
+                        requestCashier(CurrencyUnit.yuan2fenStr(paymentMoney + ""));
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
+                        Intent intent = new Intent(this, ThirdPayDialog.class);
+                        intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
+                        intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
+                        startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 
-                    JSONObject json = new JSONObject();
-                    String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-                    try {
-                        json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
-                        json.put("extOrderNo",tradeNo);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                            json.put("extOrderNo",tradeNo);
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                    AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
+                }
+                break;
+            case STORE:
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else{
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
+                        ToastUtils.sendtoastbyhandler(handler,"暂不支持！");
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
+                        ToastUtils.sendtoastbyhandler(handler,"暂不支持！");
+                    }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                            json.put("extOrderNo",tradeNo);
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.STORE, ConstantData.YHK_XF, json);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 break;
         }
@@ -626,11 +767,27 @@ public class CheckOutActivity extends BaseActivity {
 
     @Override
     protected void recycleMemery() {
+        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+        if(scannerManager != null){
+            try {
+                scannerManager.stopScan();
+            } catch (SdkException e) {
+                e.printStackTrace();
+            } catch (CallServiceException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            BaseSystemManager.getInstance().deviceServiceLogout();
+        } catch (SdkException e) {
+            e.printStackTrace();
+        }
+    }
         handler.removeCallbacksAndMessages(null);
         AppConfigFile.delActivity(this);
     }
 
-    @OnClick({R.id.text_cancle_pay, R.id.title_icon_back, R.id.imageview_more, R.id.text_submit_order})
+    @OnClick({R.id.tv_pay_search, R.id.text_cancle_pay, R.id.title_icon_back, R.id.imageview_more, R.id.text_submit_order})
     public void click(View view){
         if(Utils.isFastClick()){
             return;
@@ -740,9 +897,63 @@ public class CheckOutActivity extends BaseActivity {
                 }
                 this.finish();
                 break;
+            case R.id.tv_pay_search:
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("billid", AppConfigFile.getBillId());
+                HttpRequestUtil.getinstance().searchPayinfo(HTTP_TASK_KEY, map, ThirdPayInfoResult.class, new HttpActionHandle<ThirdPayInfoResult>() {
+                    @Override
+                    public void handleActionError(String actionName, String errmsg) {
+                        ToastUtils.sendtoastbyhandler(handler, errmsg);
+                    }
+
+                    @Override
+                    public void handleActionSuccess(String actionName, ThirdPayInfoResult result) {
+
+                        if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+                            if (result != null && result.getThirdPayInfo() != null && result.getThirdPayInfo().size() > 0) {
+                                Message msg = Message.obtain();
+                                msg.what = ALREADY_THIRD_PAY_INFO;
+                                msg.obj = result.getThirdPayInfo();
+                                handler.sendMessage(msg);
+                            } else {
+                                ToastUtils.sendtoastbyhandler(handler, "没有交易记录");
+                            }
+                        } else {
+                            ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                        }
+                    }
+
+                    @Override
+                    public void handleActionStart() {
+                        super.handleActionStart();
+                        startwaitdialog();
+                    }
+
+                    @Override
+                    public void handleActionFinish() {
+                        super.handleActionFinish();
+                        closewaitdialog();
+                    }
+                });
+                break;
         }
     }
 
+    private boolean isContain(String code, List<PayMentsCancleInfo> payMentsCancle){
+        boolean ret = false;
+        if(StringUtil.isEmpty(code) || payMentsCancle.size() == 0){
+            return ret;
+        }
+        for (PayMentsCancleInfo info : payMentsCancle) {
+            if (info.getThridPay() != null && !StringUtil.isEmpty(info.getThridPay().getTrade_no())) {
+                if(code.equals(info.getThridPay().getTrade_no())){
+                    ret = true;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
     // 清空左面的显示支付方式（已经撤销的）
     public void deletepayMentsInfo(List<PayMentsCancleInfo> cancleInfoList) {
         payMentsCancle.clear();
@@ -800,47 +1011,12 @@ public class CheckOutActivity extends BaseActivity {
             }
         }else if(resultCode == ConstantData.QRCODE_RESULT_MEMBER_VERIFY){
             if(requestCode == ConstantData.QRCODE_REQURST_QR_PAY){
-                AlipayAndWeixinPayControllerInterfaceDialog paydialog = new AlipayAndWeixinPayControllerInterfaceDialog(this, paymentTypeAdapter.getPayType().getId(), paytype, ConstantData.THIRD_OPERATION_PAY, data.getExtras().getString("QRcode"), paymentMoney, true,
-                        new AlipayAndWeixinPayControllerInterfaceDialog.GetPayValue() {
-
-                            @Override
-                            public void getPayValue(ThirdPay value) {
-                                if (paytype == ConstantData.PAYMODE_BY_ALIPAY) {
-                                    PayMentsCancleInfo info = new PayMentsCancleInfo();
-                                    info.setId(paymentTypeAdapter.getPayType().getId());
-                                    info.setName(paymentTypeAdapter.getPayType().getName());
-                                    info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
-                                    info.setIsCancle(false);
-                                    info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
-                                    info.setThridPay(value);
-                                    info.setOverage("0");
-                                    addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
-                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-
-                                } else if (paytype == ConstantData.PAYMODE_BY_WEIXIN) {
-                                    PayMentsCancleInfo info = new PayMentsCancleInfo();
-                                    info.setId(paymentTypeAdapter.getPayType().getId());
-                                    info.setName(paymentTypeAdapter.getPayType().getName());
-                                    info.setType(PaymentTypeEnum.WECHAT.getStyletype());
-                                    info.setIsCancle(false);
-                                    info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
-                                    info.setThridPay(value);
-                                    info.setOverage("0");
-                                    addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
-                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                                }
-                            }
-                        });
-                paydialog.show();
-//                Intent intent = new Intent(this, ThirdPayDialog.class);
-//                intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
-//                intent.putExtra(ConstantData.BSC, data.getExtras().getString("QRcode"));
-//                intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
-//                startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
+                String qrCode = data.getExtras().getString("QRcode");
+                if(StringUtil.isEmpty(qrCode)){
+                    ToastUtils.sendtoastbyhandler(handler, "扫描失败");
+                }else{
+                    doThirdPay(qrCode);
+                }
             }
         }else if(resultCode == ConstantData.THRID_PAY_RESULT_CODE){
             if(requestCode == ConstantData.THRID_PAY_REQUEST_CODE){
@@ -882,13 +1058,82 @@ public class CheckOutActivity extends BaseActivity {
                         }
                     }
                 }else{
-                    ToastUtils.sendtoastbyhandler(handler,"银行卡支付异常！");
+                    ToastUtils.sendtoastbyhandler(handler,"支付异常！");
                 }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    private void doThirdPay(String qrCode){
+        AlipayAndWeixinPayControllerInterfaceDialog paydialog = new AlipayAndWeixinPayControllerInterfaceDialog(this, paymentTypeAdapter.getPayType().getId(), paytype, ConstantData.THIRD_OPERATION_PAY, qrCode, paymentMoney, true,
+                new AlipayAndWeixinPayControllerInterfaceDialog.GetPayValue() {
+
+                    @Override
+                    public void getPayValue(ThirdPay value) {
+                        if (paytype == ConstantData.PAYMODE_BY_ALIPAY) {
+                            PayMentsCancleInfo info = new PayMentsCancleInfo();
+                            info.setId(paymentTypeAdapter.getPayType().getId());
+                            info.setName(paymentTypeAdapter.getPayType().getName());
+                            info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
+                            info.setIsCancle(false);
+                            info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                            info.setThridPay(value);
+                            info.setOverage("0");
+                            addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
+                            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+
+                        } else if (paytype == ConstantData.PAYMODE_BY_BANKCODE) {
+                            PayMentsCancleInfo info = new PayMentsCancleInfo();
+                            info.setId(paymentTypeAdapter.getPayType().getId());
+                            info.setName(paymentTypeAdapter.getPayType().getName());
+                            info.setType(PaymentTypeEnum.WECHAT.getStyletype());
+                            info.setIsCancle(false);
+                            info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                            info.setThridPay(value);
+                            info.setOverage("0");
+                            addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
+                            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                        }else if (paytype == ConstantData.PAYMODE_BY_YIPAY) {
+                            PayMentsCancleInfo info = new PayMentsCancleInfo();
+                            info.setId(paymentTypeAdapter.getPayType().getId());
+                            info.setName(paymentTypeAdapter.getPayType().getName());
+                            info.setType(PaymentTypeEnum.WECHAT.getStyletype());
+                            info.setIsCancle(false);
+                            info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                            info.setThridPay(value);
+                            info.setOverage("0");
+                            addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
+                            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                        }else if (paytype == ConstantData.PAYMODE_BY_WEIXIN) {
+                            PayMentsCancleInfo info = new PayMentsCancleInfo();
+                            info.setId(paymentTypeAdapter.getPayType().getId());
+                            info.setName(paymentTypeAdapter.getPayType().getName());
+                            info.setType(PaymentTypeEnum.WECHAT.getStyletype());
+                            info.setIsCancle(false);
+                            info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                            info.setThridPay(value);
+                            info.setOverage("0");
+                            addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
+                            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                        }
+                    }
+                });
+        paydialog.show();
+//                Intent intent = new Intent(this, ThirdPayDialog.class);
+//                intent.putExtra(ConstantData.PAY_MONEY, paymentMoney);
+//                intent.putExtra(ConstantData.BSC, data.getExtras().getString("QRcode"));
+//                intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
+//                startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
+    }
     private void commitOrder() {
         bill = new BillInfo();
         bill.setBillid(AppConfigFile.getBillId());
@@ -1021,14 +1266,21 @@ public class CheckOutActivity extends BaseActivity {
             for (int i = 0; i < paymentslist.size(); i++) {
                 if (paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHAT.getStyletype())
-                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())) {
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.STORE.getStyletype())) {
                     if(!AppConfigFile.isOffLineMode()){
                         paymentTypeAdapter.add(paymentslist.get(i));
                     }
                 }else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype())){
-                    paymentTypeAdapter.add(paymentslist.get(i));
-                    paymentTypeAdapter.setPayTpye(paymentslist.get(i));
-                    paymentTypeAdapter.notifyDataSetChanged();
+                    if(ConstantData.YXLM_ID.equals(paymentslist.get(i).getId())){
+                        if(!AppConfigFile.isOffLineMode()){
+                            paymentTypeAdapter.add(paymentslist.get(i));
+                        }
+                    }else{
+                        paymentTypeAdapter.setPayTpye(paymentslist.get(i));
+                        paymentTypeAdapter.notifyDataSetChanged();
+                        paymentTypeAdapter.add(paymentslist.get(i));
+                    }
                 }
 //                else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
 //                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
@@ -1060,6 +1312,30 @@ public class CheckOutActivity extends BaseActivity {
         return null;
     }
 
+
+    private String getPayTypeById(String id){
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getId().equals(id)) {
+                return paymentslist.get(i).getType();
+            }
+        }
+        return null;
+    }
+
+    private String getPayNameById(String id){
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getId().equals(id)) {
+                return paymentslist.get(i).getName();
+            }
+        }
+        return null;
+    }
     /**
      * 计算总积分
      */
