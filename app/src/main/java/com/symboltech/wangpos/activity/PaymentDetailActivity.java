@@ -360,9 +360,9 @@ public class PaymentDetailActivity extends BaseActivity {
                 bindService(printService, printerServiceConnection, Context.BIND_AUTO_CREATE);
         }
 
-        if(isMember == ConstantData.MEMBER_IS_NOT_VERITY){
+        //if(isMember == ConstantData.MEMBER_IS_NOT_VERITY){
             printByorder(bill);
-        }
+       // }
     }
 
     private void addPayTypeInfo(String name, double changeMoney) {

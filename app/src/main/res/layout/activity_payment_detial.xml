@@ -420,6 +420,7 @@
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginBottom="@dimen/margin_fz">
         <TextView
+            android:visibility="gone"
             android:id="@+id/text_print"
             android:layout_width="0dp"
             android:layout_weight="1"
