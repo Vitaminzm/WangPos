@@ -50,7 +50,7 @@
             android:layout_marginLeft="@dimen/margin_rz"
             android:text="0"
             android:textColor="@color/red"/>
-        <com.symboltech.wangpos.view.TextScrollView
+        <com.symboltechshop.wangpos.view.TextScrollView
             android:id="@+id/text_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

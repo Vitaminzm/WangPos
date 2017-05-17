@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/view_bg_color"
-    tools:context="com.symboltech.wangpos.activity.MemberAccessActivity">
+    tools:context="com.symboltechshop.wangpos.activity.MemberAccessActivity">
 
     <include layout="@layout/common_title_bar" />
 

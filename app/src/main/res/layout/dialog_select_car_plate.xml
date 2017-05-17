@@ -36,7 +36,7 @@
         android:layout_height="match_parent"
         android:layout_below="@id/title_bar">
 
-        <com.symboltech.wangpos.view.MyRadioGroup
+        <com.symboltechshop.wangpos.view.MyRadioGroup
             android:id="@+id/select_mode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
                             android:textColor="@color/font_color"
                             android:textSize="@dimen/font_size_tf" />
             </LinearLayout>
-        </com.symboltech.wangpos.view.MyRadioGroup>
+        </com.symboltechshop.wangpos.view.MyRadioGroup>
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/view_bg_color"
     android:id="@+id/ll_keyboard"
-    tools:context="com.symboltech.wangpos.activity.MemberEquityActivity">
+    tools:context="com.symboltechshop.wangpos.activity.MemberEquityActivity">
 
     <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
 

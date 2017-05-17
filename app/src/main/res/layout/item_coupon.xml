@@ -36,7 +36,7 @@
             android:textSize="@dimen/font_size_rx"
             android:textStyle="bold"
             android:textColor="@color/orange" />
-        <com.symboltech.wangpos.view.TextScrollView
+        <com.symboltechshop.wangpos.view.TextScrollView
             android:id="@+id/item_coupon_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

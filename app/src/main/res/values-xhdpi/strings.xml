@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">步步高专柜收银</string>
+    <string name="app_name">步步高商户收银</string>
     <string name="exception_opt">服务器数据异常</string>
     <string name="intelligentPOS">智能POS系统</string>
     <string name="desk_code">收款台：</string>

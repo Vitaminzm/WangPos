@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/view_bg_color"
-    tools:context="com.symboltech.wangpos.activity.CheckOutActivity">
+    tools:context="com.symboltechshop.wangpos.activity.CheckOutActivity">
 
     <include
         android:id="@+id/common_title_bar"

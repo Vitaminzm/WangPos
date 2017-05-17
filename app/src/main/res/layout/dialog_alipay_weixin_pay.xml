@@ -141,7 +141,7 @@
                     android:textColor="#e85a43"
                     android:textSize="@dimen/font_size_fz" />
 
-                <com.symboltech.wangpos.view.TextScrollView
+                <com.symboltechshop.wangpos.view.TextScrollView
                     android:id="@+id/tv_thirdpay_paying_msg"
                     android:layout_width="match_parent"
                     android:padding="5dp"

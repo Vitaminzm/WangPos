@@ -4,11 +4,11 @@ android {
     compileSdkVersion 21
     buildToolsVersion '21.1.1'
     defaultConfig {
-        applicationId "com.symboltech.wangpos"
+        applicationId "com.symboltechshop.wangpos"
         minSdkVersion 14
         targetSdkVersion 21
         versionCode 1705161104
-        versionName "1.0.7"
+        versionName "1.0.0"
     }
     buildTypes {
         release {

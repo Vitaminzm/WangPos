@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/view_bg_color"
-    tools:context="com.symboltech.wangpos.activity.PaymentDetailActivity">
+    tools:context="com.symboltechshop.wangpos.activity.PaymentDetailActivity">
     <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
 
     <ScrollView
@@ -233,7 +233,7 @@
                     android:layout_marginBottom="@dimen/margin_ov"
                     android:text="@string/pay_info"
                     android:textColor="@color/red"/>
-                <com.symboltech.wangpos.view.GridViewForScrollView
+                <com.symboltechshop.wangpos.view.GridViewForScrollView
                     android:id="@+id/activity_payment_gridview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

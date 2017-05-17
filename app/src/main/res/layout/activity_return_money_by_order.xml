@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/view_bg_color"
-    tools:context="com.symboltech.wangpos.activity.ReturnMoneyByOrderActivity">
+    tools:context="com.symboltechshop.wangpos.activity.ReturnMoneyByOrderActivity">
 
     <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
     <LinearLayout
@@ -177,7 +177,7 @@
                         android:background="@drawable/green_corner_right_bt_shape"
                         android:layout_height="match_parent" />
                 </LinearLayout>
-                <com.symboltech.wangpos.view.ListViewForScrollView
+                <com.symboltechshop.wangpos.view.ListViewForScrollView
                     android:id="@+id/listview_return_type"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

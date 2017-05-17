@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/view_bg_color"
-    tools:context="com.symboltech.wangpos.activity.WorkLogActivity">
+    tools:context="com.symboltechshop.wangpos.activity.WorkLogActivity">
     <include android:id="@+id/common_title_bar" layout="@layout/common_title_bar" />
     <RelativeLayout
         android:id="@+id/rl_title_sallor"
@@ -43,7 +43,7 @@
                 android:textSize="@dimen/font_size_rz"
                 android:textColor="@color/white_font_color"/>
         </LinearLayout>
-        <com.symboltech.wangpos.view.ScllorTabView
+        <com.symboltechshop.wangpos.view.ScllorTabView
             android:id="@+id/scllortabview"
             android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
@@ -99,7 +99,7 @@
         android:textColor="@color/white"
         android:background="@drawable/btn_green_bg"
         android:layout_height="@dimen/height_ez" />
-    <com.symboltech.wangpos.view.DecoratorViewPager
+    <com.symboltechshop.wangpos.view.DecoratorViewPager
         android:id="@+id/view_pager_statistics"
         android:overScrollMode="never"
         android:layout_below="@id/ll_shop_info"
