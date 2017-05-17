@@ -193,9 +193,9 @@ public class PrepareReceiptInfo {
 					e.printStackTrace();
 				}
 			}else{
-				fontConfig.setSize(FontSizeEnum.SMALL);
+				fontConfig.setSize(FontSizeEnum.MIDDLE);
 				try {
-					printer.setPrnText("------------------\n", fontConfig);
+					printer.setPrnText("-------------------------------", fontConfig);
 				} catch (CallServiceException e) {
 					e.printStackTrace();
 				} catch (SdkException e) {
@@ -264,9 +264,9 @@ public class PrepareReceiptInfo {
 				}
 			}else {
 				if(FONT_BIG == size){
-					fontConfig.setSize(FontSizeEnum.MIDDLE);
+					fontConfig.setSize(FontSizeEnum.BIG);
 				}else{
-					fontConfig.setSize(FontSizeEnum.SMALL);
+					fontConfig.setSize(FontSizeEnum.MIDDLE);
 				}
 				try {
 					printer.setPrnText(text, fontConfig);
@@ -303,9 +303,9 @@ public class PrepareReceiptInfo {
 				}
 			}else{
 				if(FONT_BIG == size){
-					fontConfig.setSize(FontSizeEnum.MIDDLE);
+					fontConfig.setSize(FontSizeEnum.BIG);
 				}else{
-					fontConfig.setSize(FontSizeEnum.SMALL);
+					fontConfig.setSize(FontSizeEnum.MIDDLE);
 				}
 				try {
 					printer.setPrnText(StringUtil.formatLString(16, textLeftAlign)+StringUtil.formatLString(10, textRightAlign.replace("	", "")), fontConfig);
@@ -369,13 +369,11 @@ public class PrepareReceiptInfo {
 				e.printStackTrace();
 			}
 			fontConfig = new FontConfig();
-			fontConfig.setBold(BoldEnum.NOT_BOLD);//不加粗
-			fontConfig.setSize(FontSizeEnum.SMALL);//小号字体
+			fontConfig.setBold(BoldEnum.BOLD);//不加粗
+			fontConfig.setSize(FontSizeEnum.MIDDLE);//小号字体
 		}
 		JSONArray array = new JSONArray();
 		for(CouponInfo couponInfo: couponInfos){
-			addBlankLine(array, latticePrinter, printer, fontConfig);
-			addBlankLine(array, latticePrinter, printer, fontConfig);
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "优惠券名称:" + couponInfo.getName() + "	" + couponInfo.getAvailablemoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			addTextJson(array, latticePrinter, FONT_DEFAULT, SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 
@@ -397,9 +395,6 @@ public class PrepareReceiptInfo {
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "起始时间:" + couponInfo.getBegindate() + ":" + couponInfo.getEnddate(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			if(!TextUtils.isEmpty(couponInfo.getContent()))
 				addTextJson(array, latticePrinter, FONT_DEFAULT, "用券说明:" + couponInfo.getContent()	, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
-			addBlankLine(array, latticePrinter, printer, fontConfig);
-			addBlankLine(array, latticePrinter, printer, fontConfig);
-			addBlankLine(array, latticePrinter, printer, fontConfig);
 			addBlankLine(array, latticePrinter, printer, fontConfig);
 		}
 		JSONObject jsonObject = new JSONObject();
@@ -491,12 +486,10 @@ public class PrepareReceiptInfo {
 				e.printStackTrace();
 			}
 			fontConfig = new FontConfig();
-			fontConfig.setBold(BoldEnum.NOT_BOLD);//不加粗
-			fontConfig.setSize(FontSizeEnum.SMALL);//小号字体
+			fontConfig.setBold(BoldEnum.BOLD);//不加粗
+			fontConfig.setSize(FontSizeEnum.MIDDLE);//小号字体
 		}
 		JSONArray array = new JSONArray();
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
@@ -536,14 +529,7 @@ public class PrepareReceiptInfo {
 		addDashLine(array, latticePrinter, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收银员签字:", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "财务签字:", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		JSONObject jsonObject = new JSONObject();
 		if(latticePrinter!= null){
@@ -601,8 +587,8 @@ public class PrepareReceiptInfo {
 				e.printStackTrace();
 			}
 			fontConfig = new FontConfig();
-			fontConfig.setBold(BoldEnum.NOT_BOLD);//不加粗
-			fontConfig.setSize(FontSizeEnum.SMALL);//小号字体
+			fontConfig.setBold(BoldEnum.BOLD);//不加粗
+			fontConfig.setSize(FontSizeEnum.MIDDLE);//小号字体
 		}
 		List<Tickdatas> ticketDatas = (List<Tickdatas>) SpSaveUtils.getObject(MyApplication.context,
 				ConstantData.TICKET_FORMAT_LIST);
@@ -630,10 +616,6 @@ public class PrepareReceiptInfo {
 	}
 	public static JSONObject getReport(boolean isJob, ReportInfo reportInfo, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig){
 		JSONArray array = new JSONArray();
-
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-
 		if(ticketFormat.getTickbegin()!= null){
 			PrintString tickbegin = new PrintString(ticketFormat.getTickbegin());
 			tickbegin.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
@@ -817,17 +799,7 @@ public class PrepareReceiptInfo {
 		addDashLine(array, latticePrinter, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收银员签字", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "财务签字", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		JSONObject jsonObject = new JSONObject();
 		if(latticePrinter!= null){
@@ -867,8 +839,6 @@ public class PrepareReceiptInfo {
 
 	private static JSONObject printReportFromDefault(boolean isJob, ReportInfo reportInfo, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
 		JSONArray array = new JSONArray();
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 
 		if (isJob) {
@@ -956,17 +926,7 @@ public class PrepareReceiptInfo {
 		addDashLine(array, latticePrinter, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收银员签字", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "财务签字", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		JSONObject jsonObject = new JSONObject();
 		if(latticePrinter!= null){
@@ -1024,8 +984,8 @@ public class PrepareReceiptInfo {
 				e.printStackTrace();
 			}
 			fontConfig = new FontConfig();
-			fontConfig.setBold(BoldEnum.NOT_BOLD);//不加粗
-			fontConfig.setSize(FontSizeEnum.SMALL);//小号字体
+			fontConfig.setBold(BoldEnum.BOLD);//不加粗
+			fontConfig.setSize(FontSizeEnum.MIDDLE);//小号字体
 		}
 		List<Tickdatas> ticketDatas = (List<Tickdatas>) SpSaveUtils.getObject(MyApplication.context, ConstantData.TICKET_FORMAT_LIST);
 		if (ticketDatas != null && ticketDatas.size() > 0) {
@@ -1208,7 +1168,7 @@ public class PrepareReceiptInfo {
 									.replace(TicketFormatEnum.TICKET_TOTAL_MONEY.getLable(), "\t"+formatRString(8,bill.getTotalmoney()))
 									.replace(TicketFormatEnum.TICKET_TOTAL_USED_SCORE.getLable(), "    "+scoreUsed)
 									.replace(TicketFormatEnum.TICKET_DEAL_MONEY.getLable(), "\t\t" +formatRString(8, ""+ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), manjianMoney)))
-									.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable(), "\t\t" +formatRString(8, ""+ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue)))
+									.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable(), "\t\t" +formatRString(8, ""+manjianMoney))
 									.replace(TicketFormatEnum.TICKET_REAL_MONEY.getLable(), "\t\t" + formatRString(8, "" + ArithDouble.sub(ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), changeMoney),manjianMoney)));
 //
 							if(scoreValue ==0){
@@ -1447,7 +1407,6 @@ public class PrepareReceiptInfo {
 			}
 		}
 		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 	}
 	private static JSONObject getOrder(BillInfo bill, Boolean mend, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
 		JSONArray array = new JSONArray();
@@ -1539,9 +1498,9 @@ public class PrepareReceiptInfo {
 			addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, "合计：") + goodNumber, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		}
 		if (mend) {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "------补打小票--------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "-----------补打小票-----------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		} else {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "------------------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addDashLine(array, latticePrinter, printer, fontConfig);
 		}
 
 		if (!TextUtils.isEmpty(bill.getTotalmoney())) {
@@ -1660,7 +1619,6 @@ public class PrepareReceiptInfo {
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打时间：" + Utils.formatDate(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		}
 		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		JSONObject jsonObject = new JSONObject();
 		if(latticePrinter!= null){
 			// 真正提交打印事件
@@ -1717,8 +1675,8 @@ public class PrepareReceiptInfo {
 				e.printStackTrace();
 			}
 			fontConfig = new FontConfig();
-			fontConfig.setBold(BoldEnum.NOT_BOLD);//不加粗
-			fontConfig.setSize(FontSizeEnum.SMALL);//小号字体
+			fontConfig.setBold(BoldEnum.BOLD);//不加粗
+			fontConfig.setSize(FontSizeEnum.MIDDLE);//小号字体
 		}
 		List<Tickdatas> ticketDatas = (List<Tickdatas>) SpSaveUtils.getObject(MyApplication.context, ConstantData.TICKET_FORMAT_LIST);
 		if (ticketDatas != null && ticketDatas.size() > 0) {
@@ -2177,7 +2135,6 @@ public class PrepareReceiptInfo {
 			}
 		}
 		addBlankLine(array, latticePrinter, printer, fontConfig);
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 	}
 	public static JSONObject getBackOrder(BillInfo bill, boolean mend, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig){
 		JSONArray array = new JSONArray();
@@ -2275,9 +2232,9 @@ public class PrepareReceiptInfo {
 			total = ArithDouble.add(total, ArithDouble.sub(grantPoint, usedPoint));
 		}
 		if (flag) {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "-------补打小票--------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "-----------补打小票-----------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		} else {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "------------------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addDashLine(array, latticePrinter, printer, fontConfig);
 		}
 		addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(8, "合计") + formatLString(4, "-" + count)
 				+ formatLString(10, "-" + bill.getTotalmoney().replaceAll("-", ""))
@@ -2416,7 +2373,6 @@ public class PrepareReceiptInfo {
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打收款员：" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打时间：" + Utils.formatDate(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		}
-		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 		JSONObject jsonObject = new JSONObject();
 		if(latticePrinter!= null){

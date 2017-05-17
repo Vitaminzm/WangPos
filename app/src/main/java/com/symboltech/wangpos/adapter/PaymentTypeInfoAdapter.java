@@ -5,16 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
-import com.symboltech.wangpos.log.LogUtil;
-import com.symboltech.wangpos.msg.entity.CashierInfo;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.msg.entity.PayMentsCancleInfo;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
-import com.symboltech.wangpos.utils.StringUtil;
 
 import java.util.Collection;
 import java.util.List;
@@ -70,7 +67,7 @@ public class PaymentTypeInfoAdapter extends BaseAdapter {
 		}else {
 			holder = (Viewholder) convertView.getTag();
 		}
-		holder.tv_name.setText(paymentsInfo.get(position).getName()+"\t:");
+		holder.tv_name.setText(paymentsInfo.get(position).getName() + "\t:");
 		holder.tv_value.setText(paymentsInfo.get(position).getMoney());
 		return convertView;
 	}
@@ -91,9 +88,11 @@ public class PaymentTypeInfoAdapter extends BaseAdapter {
 					||paymentsInfo.get(i).getType().equals( PaymentTypeEnum.LING.getStyletype())
 					||paymentsInfo.get(i).getType().equals( PaymentTypeEnum.CASH.getStyletype())){
 				if(couponInfo.getId().equals(paymentsInfo.get(i).getId())){
-					paymentsInfo.get(i).setMoney(couponInfo.getMoney());
-					notifyDataSetChanged();
-					return;
+					if(!ConstantData.YXLM_ID.equals(couponInfo.getId())){
+						paymentsInfo.get(i).setMoney(couponInfo.getMoney());
+						notifyDataSetChanged();
+						return;
+					}
 				}
 			}
 		}

@@ -13,6 +13,8 @@
 
     <LinearLayout
         android:layout_marginTop="@dimen/margin_tz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_rz"
         android:id="@+id/ll_order_total_money"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,20 +24,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/margin_rz"
-            android:layout_marginRight="@dimen/margin_rz">
-
-            <TextView
-                android:id="@+id/tv_total_money_tip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/order_total_money"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_size_rz" />
-
+            android:gravity="center">
 
             <LinearLayout
+                android:id="@+id/ll_in_order_total_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -58,26 +50,26 @@
                     android:textColor="@color/font_color"
                     android:textSize="@dimen/font_size_rz" />
             </LinearLayout>
+            <TextView
+                android:layout_alignBottom="@id/ll_in_order_total_money"
+                android:layout_alignTop="@id/ll_in_order_total_money"
+                android:id="@+id/tv_total_money_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/order_total_money"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/rl_order_manjian_money"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_ot"
-            android:layout_marginLeft="@dimen/margin_rz"
-            android:layout_marginRight="@dimen/margin_rz">
-
-            <TextView
-                android:id="@+id/tv_manjian_money_tip"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/order_manjian_money"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_size_rz" />
-
+            android:gravity="center"
+            android:layout_marginTop="@dimen/margin_x">
 
             <LinearLayout
+                android:id="@+id/ll_order_manjian_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -100,11 +92,20 @@
                     android:textColor="@color/font_color"
                     android:textSize="@dimen/font_size_rz" />
             </LinearLayout>
-
+            <TextView
+                android:layout_alignBottom="@+id/ll_order_manjian_money"
+                android:layout_alignTop="@+id/ll_order_manjian_money"
+                android:id="@+id/tv_manjian_money_tip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/order_manjian_money"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
         </RelativeLayout>
         <View
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/margin_oz"
+            android:layout_marginTop="@dimen/margin_x"
             android:layout_height="1dp"
             android:layout_gravity="center"
             android:background="@color/view_line_color" />
@@ -212,7 +213,7 @@
     <RelativeLayout
         android:id="@+id/rl_payment"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_oxz"
+        android:layout_height="@dimen/height_ofz"
         android:layout_below="@id/rl_member_equity"
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginRight="@dimen/margin_rz">
@@ -221,17 +222,11 @@
             android:id="@+id/rl_wait_money"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/margin_tz">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/wait_money"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_size_rz" />
+            android:gravity="center"
+            android:layout_marginTop="@dimen/margin_x">
 
             <LinearLayout
+                android:id="@+id/ll_wait_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -254,6 +249,16 @@
                     android:textColor="@color/font_color"
                     android:textSize="@dimen/font_size_rz" />
             </LinearLayout>
+
+            <TextView
+                android:layout_alignBottom="@id/ll_wait_money"
+                android:layout_alignTop="@id/ll_wait_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/wait_money"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_size_rz" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -261,14 +266,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/rl_wait_money"
-            android:layout_marginTop="@dimen/margin_ov"
+            android:layout_marginTop="@dimen/margin_x"
             android:gravity="center_vertical">
 
             <TextView
                 android:id="@+id/text_pay_money"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_ov"
+                android:layout_marginTop="@dimen/margin_oz"
                 android:gravity="center"
                 android:text="@string/pay_money"
                 android:textColor="@color/font_color"
@@ -308,7 +313,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/margin_ov"
+                android:layout_marginTop="@dimen/margin_oz"
                 android:text="@string/yuan"
                 android:textColor="@color/font_color"
                 android:textSize="@dimen/font_size_rz" />
@@ -325,11 +330,11 @@
     <LinearLayout
         android:id="@+id/ll_pay_type_ditch"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/height_rnz"
+        android:layout_height="@dimen/height_rsz"
         android:layout_below="@id/rl_payment"
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_marginRight="@dimen/margin_rz"
-        android:layout_marginTop="@dimen/margin_rz"
+        android:layout_marginTop="@dimen/margin_ov"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -413,9 +418,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/margin_tz"
+            android:layout_marginBottom="@dimen/margin_v"
             android:layout_marginLeft="@dimen/margin_rz"
-            android:layout_marginTop="@dimen/margin_rz"
             android:text="@string/pay_info"
             android:textColor="@color/font_color"
             android:textSize="@dimen/font_size_rz" />

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/height_xzz"
+    android:layout_height="@dimen/height_fzz"
+    android:background="@drawable/radiud_bg">
+
+    <RelativeLayout
+        android:id="@+id/title_bar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/height_xz"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/radiud_lt_rt_bg">
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text="@string/record"
+            android:textSize="@dimen/big_font_size"
+            android:layout_centerInParent="true"/>
+        <ImageView
+            android:id="@+id/imageview_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/margin_fz"
+            android:src="@drawable/icon_close_selector"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/title_bar"
+        android:layout_marginTop="@dimen/margin_ov"
+        android:layout_marginBottom="@dimen/margin_ov"
+        android:layout_marginLeft="@dimen/margin_fz"
+        android:layout_marginRight="@dimen/margin_fz"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="@dimen/margin_oz"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ll_weichat_record"
+                android:layout_width="@dimen/height_ttz"
+                android:layout_height="@dimen/height_ez"
+                android:background="@drawable/btn_blue_bg"
+                android:gravity="center"
+                android:layout_marginRight="@dimen/margin_fz">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/pay_signin_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="15dp"
+                    android:text="@string/wechat_record"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_alipay_record"
+                android:layout_width="@dimen/height_ttz"
+                android:layout_height="@dimen/height_ez"
+                android:background="@drawable/btn_blue_bg"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/pay_clear_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/alipay_record"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginBottom="@dimen/margin_oz"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ll_bankcode_record"
+                android:layout_width="@dimen/height_ttz"
+                android:layout_height="@dimen/height_ez"
+                android:layout_marginRight="@dimen/margin_fz"
+                android:background="@drawable/btn_blue_bg"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/pay_search_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/bankcode_record"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_yipay_record"
+                android:layout_width="@dimen/height_ttz"
+                android:layout_height="@dimen/height_ez"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/btn_blue_bg"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/pay_jiaoyi_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/yipay_record"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginBottom="@dimen/margin_oz"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/ll_bank_record"
+                android:layout_width="@dimen/height_ttz"
+                android:layout_height="@dimen/height_ez"
+                android:layout_marginRight="@dimen/margin_fz"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/btn_blue_bg"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/pay_search_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/bank_record"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_store_record"
+                android:layout_width="@dimen/height_ttz"
+                android:layout_height="@dimen/height_ez"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/btn_blue_bg"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/pay_jiaoyi_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:text="@string/store_record"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_size_rz" />
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/ll_yxlm_record"
+            android:layout_width="@dimen/height_ttz"
+            android:layout_height="@dimen/height_ez"
+            android:layout_marginRight="@dimen/margin_fz"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/btn_blue_bg"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/pay_search_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/yxlm_record"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size_rz" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:visibility="invisible"
+            android:id="@+id/ll_pay_jiaoyi"
+            android:layout_width="@dimen/height_ttz"
+            android:layout_height="@dimen/height_ez"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/btn_blue_bg"
+            android:gravity="center">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/pay_jiaoyi_icon" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/trans"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size_rz" />
+        </LinearLayout>
+    </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

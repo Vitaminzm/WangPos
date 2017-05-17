@@ -384,6 +384,14 @@
     <string name="tom_return">隔日退货</string>
 
     <!-- 微信支付宝支付相关 -->
+    <string name="record">补录</string>
+    <string name="wechat_record">微信补录</string>
+    <string name="alipay_record">支付宝补录</string>
+    <string name="bankcode_record">银联扫码</string>
+    <string name="yipay_record">翼支付补录</string>
+    <string name="bank_record">银行卡补录</string>
+    <string name="store_record">商务卡补录</string>
+    <string name="yxlm_record">营销联盟</string>
     <string name="thirdpay_deal_time">"交易金额： "</string>
     <string name="please_input_alipay_trade_no">请输入支付宝流水号</string>
     <string name="please_input_weixin_trade_no">请输入微信流水号</string>

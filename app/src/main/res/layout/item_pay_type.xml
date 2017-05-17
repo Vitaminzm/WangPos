@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="@dimen/margin_ot"
     android:layout_height="match_parent">
     <ImageView
         android:id="@+id/item_image_key"

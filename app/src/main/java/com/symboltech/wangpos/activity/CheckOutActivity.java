@@ -30,11 +30,13 @@ import com.symboltech.wangpos.dialog.AddPayinfoDialog;
 import com.symboltech.wangpos.dialog.AlipayAndWeixinPayControllerInterfaceDialog;
 import com.symboltech.wangpos.dialog.CanclePayDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
+import com.symboltech.wangpos.dialog.RecordPayDialog;
 import com.symboltech.wangpos.dialog.ThirdPayDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.CancleAndConfirmback;
+import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.BillInfo;
@@ -102,6 +104,8 @@ public class CheckOutActivity extends BaseActivity {
 
     @Bind(R.id.title_text_content)
     TextView title_text_content;
+    @Bind(R.id.text_cancle_pay)
+    TextView text_cancle_pay;
 
     @Bind(R.id.text_order_total_money)
     TextView text_order_total_money;
@@ -255,6 +259,8 @@ public class CheckOutActivity extends BaseActivity {
         exchangeInfo.setExchangepoint("0");
         title_text_content.setText(getString(R.string.checkout));
 
+        text_cancle_pay.setBackgroundResource(R.drawable.btn_gray_bg);
+        text_cancle_pay.setEnabled(false);
         cartgoods = (List<GoodsInfo>) getIntent().getSerializableExtra(ConstantData.CART_HAVE_GOODS);
         salesman = getIntent().getStringExtra(ConstantData.SALESMAN_NAME);
         isMember = getIntent().getIntExtra(ConstantData.VERIFY_IS_MEMBER, ConstantData.MEMBER_IS_NOT_VERITY);
@@ -343,6 +349,41 @@ public class CheckOutActivity extends BaseActivity {
         paymentMoney = money;
         Intent intent_qr;
         switch (PaymentTypeEnum.getpaymentstyle(type.trim())){
+            case RECORD:
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else{
+                    new RecordPayDialog(this, new GeneralEditListener() {
+                        @Override
+                        public void editinput(String edit) {
+                            if(edit == null){
+                                paymentTypeAdapter.setPayTpyeNull();
+                                ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+                            }else{
+                                PayMentsCancleInfo infobank = new PayMentsCancleInfo();
+                                PayMentsInfo info = getPayInfoById(edit);
+                                if(info != null){
+                                    infobank.setId(info.getId());
+                                    infobank.setName(info.getName());
+                                    infobank.setType(info.getType());
+                                    infobank.setIsCancle(false);
+                                    infobank.setMoney(paymentMoney+"");
+                                    infobank.setOverage("0");
+                                    addPayTypeInfo(PaymentTypeEnum.RECORD, 0, 0, null, infobank);
+                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                }else{
+                                    paymentTypeAdapter.setPayTpyeNull();
+                                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+                                }
+                            }
+                        }
+                    }).show();
+                }
+                break;
             case CASH:
                 if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())){
                     if(paymentMoney >waitPayValue){
@@ -1291,6 +1332,11 @@ public class CheckOutActivity extends BaseActivity {
 //                    }
 //                }
             }
+            PayMentsInfo info = new PayMentsInfo();
+            info.setName("补录");
+            info.setType(PaymentTypeEnum.RECORD.getStyletype());
+            info.setId(PaymentTypeEnum.RECORD.getStyletype());
+            paymentTypeAdapter.add(info);
         }
     }
 
@@ -1312,6 +1358,17 @@ public class CheckOutActivity extends BaseActivity {
         return null;
     }
 
+    private PayMentsInfo getPayInfoById(String id){
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getId().equals(id)) {
+                return paymentslist.get(i);
+            }
+        }
+        return null;
+    }
 
     private String getPayTypeById(String id){
         List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
@@ -1367,7 +1424,6 @@ public class CheckOutActivity extends BaseActivity {
         }
         return null;
     }
-
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
