@@ -1,7 +1,6 @@
 package com.symboltechshop.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -13,9 +12,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.symboltechshop.wangpos.R;
+import com.symboltechshop.wangpos.app.ConstantData;
 import com.symboltechshop.wangpos.utils.SpSaveUtils;
 import com.symboltechshop.wangpos.utils.Utils;
-import com.symboltechshop.wangpos.app.ConstantData;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -27,7 +26,7 @@ import java.util.List;
  * @author so
  *
  */
-public class CameraSetDialog extends Dialog implements OnClickListener {
+public class CameraSetDialog extends BaseDialog implements OnClickListener {
 
 	private Context context;
 	private Spinner sp_bind_plate;

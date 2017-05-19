@@ -1,7 +1,6 @@
 package com.symboltechshop.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +15,7 @@ import com.symboltechshop.wangpos.service.RunTimeService;
  * @author so
  *
  */
-public class OfflineUploadDialog extends Dialog {
+public class OfflineUploadDialog extends BaseDialog {
 
 	private Context context;
 

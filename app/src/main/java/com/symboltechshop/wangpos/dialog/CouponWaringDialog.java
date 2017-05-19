@@ -1,7 +1,6 @@
 package com.symboltechshop.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -18,7 +17,7 @@ import com.symboltechshop.wangpos.interfaces.DialogFinishCallBack;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class CouponWaringDialog extends Dialog implements View.OnClickListener {
+public class CouponWaringDialog extends BaseDialog implements View.OnClickListener {
 	private Context context;
 	private String couponMoney, money;
 	private ImageView imageview_close;

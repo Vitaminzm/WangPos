@@ -2,7 +2,6 @@ package com.symboltechshop.wangpos.dialog;
 
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,19 +15,19 @@ import android.widget.TextView;
 
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.symboltechshop.wangpos.R;
+import com.symboltechshop.wangpos.activity.ReturnGoodsByNormalActivity;
 import com.symboltechshop.wangpos.activity.ReturnGoodsByOrderActivity;
 import com.symboltechshop.wangpos.app.AppConfigFile;
-import com.symboltechshop.wangpos.http.HttpActionHandle;
-import com.symboltechshop.wangpos.msg.entity.BillInfo;
-import com.symboltechshop.wangpos.result.BillResult;
-import com.symboltechshop.wangpos.utils.Utils;
-import com.symboltechshop.wangpos.activity.ReturnGoodsByNormalActivity;
 import com.symboltechshop.wangpos.app.ConstantData;
+import com.symboltechshop.wangpos.http.HttpActionHandle;
 import com.symboltechshop.wangpos.http.HttpRequestUtil;
 import com.symboltechshop.wangpos.http.HttpStringClient;
+import com.symboltechshop.wangpos.msg.entity.BillInfo;
+import com.symboltechshop.wangpos.result.BillResult;
 import com.symboltechshop.wangpos.utils.SpSaveUtils;
 import com.symboltechshop.wangpos.utils.StringUtil;
 import com.symboltechshop.wangpos.utils.ToastUtils;
+import com.symboltechshop.wangpos.utils.Utils;
 import com.symboltechshop.wangpos.view.HorizontalKeyBoard;
 
 import java.util.HashMap;
@@ -41,7 +40,7 @@ import java.util.Map;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class ReturnDialog extends Dialog implements View.OnClickListener {
+public class ReturnDialog extends BaseDialog implements View.OnClickListener {
 	public Context context;
 	private EditText edit_input_order_no;
 	private TextView text_return_normal, text_return_order, text_cancle, text_confirm, text_status;

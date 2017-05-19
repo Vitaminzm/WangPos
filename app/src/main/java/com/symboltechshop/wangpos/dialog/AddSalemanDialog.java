@@ -1,7 +1,6 @@
 package com.symboltechshop.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -24,7 +23,7 @@ import java.util.List;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class AddSalemanDialog extends Dialog implements View.OnClickListener {
+public class AddSalemanDialog extends BaseDialog implements View.OnClickListener {
 	private Context context;
 	private ImageView imageview_close;
 	private TextView text_title, text_confirm;

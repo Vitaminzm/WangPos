@@ -344,6 +344,7 @@
                 android:textColor="@color/font_color"
                 android:textSize="@dimen/font_size_rz" />
             <TextView
+                android:visibility="gone"
                 android:id="@+id/tv_pay_search"
                 android:paddingLeft="@dimen/margin_oz"
                 android:paddingRight="@dimen/margin_oz"

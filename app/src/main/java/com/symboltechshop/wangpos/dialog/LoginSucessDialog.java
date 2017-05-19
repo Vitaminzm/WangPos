@@ -1,6 +1,5 @@
 package com.symboltechshop.wangpos.dialog;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,7 +14,7 @@ import com.symboltechshop.wangpos.interfaces.DialogFinishCallBack;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class LoginSucessDialog extends Dialog {
+public class LoginSucessDialog extends BaseDialog {
 	private Context context;
 	private DialogFinishCallBack finishcallback;
 	/** refresh UI By handler */

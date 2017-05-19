@@ -1,7 +1,6 @@
 package com.symboltechshop.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,10 +13,10 @@ import android.widget.TextView;
 
 import com.symboltechshop.wangpos.R;
 import com.symboltechshop.wangpos.interfaces.CancleAndConfirmback;
+import com.symboltechshop.wangpos.utils.StringUtil;
 import com.symboltechshop.wangpos.utils.ToastUtils;
 import com.symboltechshop.wangpos.utils.Utils;
 import com.symboltechshop.wangpos.view.HorizontalKeyBoard;
-import com.symboltechshop.wangpos.utils.StringUtil;
 
 /**
  * Description 通用提示dialog
@@ -26,7 +25,7 @@ import com.symboltechshop.wangpos.utils.StringUtil;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class VerifyMemberDialog extends Dialog implements View.OnClickListener {
+public class VerifyMemberDialog extends BaseDialog implements View.OnClickListener {
 	public Context context;
 	private EditText edit_input_order_no;
 	private TextView text_title, text_print_order, text_print_slip, text_cancle, text_confirm;

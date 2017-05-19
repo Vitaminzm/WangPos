@@ -1,6 +1,5 @@
 package com.symboltechshop.wangpos.dialog;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +15,7 @@ import com.symboltechshop.wangpos.log.LogUtil;
 import com.symboltechshop.wangpos.service.RunTimeService;
 
 
-public class OfflineUpdateByLogDialog extends Dialog implements OnClickListener {
+public class OfflineUpdateByLogDialog extends BaseDialog implements OnClickListener {
 
 	private TextView bt_yes, bt_no, tips;
 	private Context context;

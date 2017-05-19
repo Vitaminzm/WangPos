@@ -43,7 +43,7 @@ import java.util.Map;
  * @date 创建时间：2015年11月3日 下午8:25:57
  * @version 1.0
  */
-public class AlipayAndWeixinPayControllerInterfaceDialog extends Dialog implements View.OnClickListener {
+public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog implements View.OnClickListener {
 
 	/** 确认支付支付途径 */
 	private int paymode;

@@ -37,7 +37,7 @@ import java.util.Map;
  * @author so
  *
  */
-public class AlipayAndWeixinPayReturnDialog extends Dialog implements View.OnClickListener {
+public class AlipayAndWeixinPayReturnDialog extends BaseDialog implements View.OnClickListener {
 
 	private Context mContext;
 	private LinearLayout serialTable, statusTable, resultTable;

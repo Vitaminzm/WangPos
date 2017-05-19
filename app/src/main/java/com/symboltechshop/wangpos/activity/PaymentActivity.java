@@ -661,7 +661,6 @@ public class PaymentActivity extends BaseActivity {
                         intent_payment.putExtra(ConstantData.GET_ORDER_VALUE_INFO, ArithDouble.parseDouble(MoneyAccuracyUtils.getmoneybytwo(
                                 ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type))));
                         intent_payment.putExtra(ConstantData.MEMBER_VERIFY, member_type);
-                        intent_payment.putExtra(ConstantData.GET_ORDER_MANJIAN_VALUE_INFO, ArithDouble.parseDouble(result.getSubmitgoods().getTotalmbjmoney()));
                         intent_payment.putExtra(ConstantData.MEMBER_EQUITY, result.getSubmitgoods());
                         intent_payment.putExtra(ConstantData.GET_MEMBER_INFO, memberBigdate.getMember());
                         intent_payment.putExtra(ConstantData.CART_HAVE_GOODS, (Serializable) shopCarList);
@@ -674,7 +673,6 @@ public class PaymentActivity extends BaseActivity {
                         // 订单总额
                         intent_payment.putExtra(ConstantData.GET_ORDER_VALUE_INFO, ArithDouble.parseDouble(MoneyAccuracyUtils.getmoneybytwo(
                                 ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type))));
-                        intent_payment.putExtra(ConstantData.GET_ORDER_MANJIAN_VALUE_INFO, ArithDouble.parseDouble(result.getSubmitgoods().getTotalmbjmoney()));
                         intent_payment.putExtra(ConstantData.CART_HAVE_GOODS, (Serializable) shopCarList);
                         startActivity(intent_payment);
                     }

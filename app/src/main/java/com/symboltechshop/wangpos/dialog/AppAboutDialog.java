@@ -1,23 +1,22 @@
 package com.symboltechshop.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.symboltechshop.wangpos.R;
-import com.symboltechshop.wangpos.app.MyApplication;
-import com.symboltechshop.wangpos.utils.Utils;
 import com.symboltechshop.wangpos.app.ConstantData;
+import com.symboltechshop.wangpos.app.MyApplication;
 import com.symboltechshop.wangpos.utils.StringUtil;
+import com.symboltechshop.wangpos.utils.Utils;
 
 /**
  * 交班选择框
  * @author so
  *
  */
-public class AppAboutDialog extends Dialog {
+public class AppAboutDialog extends BaseDialog {
 
 	private Context context;
 

@@ -44,7 +44,7 @@ import java.util.Map;
  * @author so
  *
  */
-public class SelectCarPlateDialog extends Dialog implements OnClickListener {
+public class SelectCarPlateDialog extends BaseDialog implements OnClickListener {
 
 	private Context context;
 	private MyRadioGroup radioGroup;

@@ -1,11 +1,11 @@
 package com.symboltechshop.wangpos.utils;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 
 import com.symboltechshop.wangpos.R;
+import com.symboltechshop.wangpos.dialog.BaseDialog;
 
 /**
  *
@@ -13,7 +13,7 @@ import com.symboltechshop.wangpos.R;
  * @date 创建时间：2015年11月13日 上午10:56:54
  * @version 1.0
  */
-public class HttpWaitDialogUtils extends Dialog{
+public class HttpWaitDialogUtils extends BaseDialog{
 
 	public HttpWaitDialogUtils(Context context) {
 		super(context, R.style.wait_dialog_bg);
@@ -26,5 +26,4 @@ public class HttpWaitDialogUtils extends Dialog{
 		setCanceledOnTouchOutside(false);
 		setCancelable(false);
 	}
-	
 }

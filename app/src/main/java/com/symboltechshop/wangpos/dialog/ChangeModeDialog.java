@@ -1,6 +1,5 @@
 package com.symboltechshop.wangpos.dialog;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -16,7 +15,7 @@ import com.symboltechshop.wangpos.utils.Utils;
  * 切换销售模式
  * 
  */
-public class ChangeModeDialog extends Dialog implements OnClickListener {
+public class ChangeModeDialog extends BaseDialog implements OnClickListener {
 
 	private HttpActionHandle mHttpactionhandler;
 	private TextView bt_yes, bt_no, tips;

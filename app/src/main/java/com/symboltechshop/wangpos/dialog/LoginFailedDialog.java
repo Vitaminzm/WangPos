@@ -14,7 +14,7 @@ import com.symboltechshop.wangpos.R;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class LoginFailedDialog extends Dialog {
+public class LoginFailedDialog extends BaseDialog {
 	public Context context;
 	public Handler handler = new Handler();
 	public LoginFailedDialog(Context context) {
