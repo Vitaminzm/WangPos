@@ -43,7 +43,7 @@ import java.util.Map;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class ReturnDialog extends Dialog implements View.OnClickListener {
+public class ReturnDialog extends BaseDialog implements View.OnClickListener {
 	public Context context;
 	private EditText edit_input_order_no;
 	private TextView text_return_normal, text_return_order, text_cancle, text_confirm, text_status;

@@ -23,7 +23,7 @@ import java.util.List;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class RecordPayDialog extends Dialog implements View.OnClickListener {
+public class RecordPayDialog extends BaseDialog implements View.OnClickListener {
 	private Context context;
 	private LinearLayout ll_weichat_record, ll_alipay_record, ll_bankcode_record, ll_yipay_record,
 						ll_bank_record, ll_store_record, ll_yxlm_record;

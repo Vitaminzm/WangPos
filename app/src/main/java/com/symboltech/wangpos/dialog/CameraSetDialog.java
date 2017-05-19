@@ -27,7 +27,7 @@ import java.util.List;
  * @author so
  *
  */
-public class CameraSetDialog extends Dialog implements OnClickListener {
+public class CameraSetDialog extends BaseDialog implements OnClickListener {
 
 	private Context context;
 	private Spinner sp_bind_plate;

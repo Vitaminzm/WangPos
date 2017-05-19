@@ -20,7 +20,7 @@ import com.symboltech.wangpos.utils.ToastUtils;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class UniversalHintDialog extends Dialog {
+public class UniversalHintDialog extends BaseDialog {
 	private Context context;
 	private String title, info;
 	private TextView tv_universalhint_title;

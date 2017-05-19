@@ -17,7 +17,7 @@ import com.symboltech.wangpos.utils.Utils;
  * @author so
  *
  */
-public class AppAboutDialog extends Dialog {
+public class AppAboutDialog extends BaseDialog {
 
 	private Context context;
 

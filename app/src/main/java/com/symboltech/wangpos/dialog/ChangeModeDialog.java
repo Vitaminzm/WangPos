@@ -18,7 +18,7 @@ import com.symboltech.wangpos.utils.Utils;
  * 切换销售模式
  * 
  */
-public class ChangeModeDialog extends Dialog implements OnClickListener {
+public class ChangeModeDialog extends BaseDialog implements OnClickListener {
 
 	private HttpActionHandle mHttpactionhandler;
 	private TextView bt_yes, bt_no, tips;

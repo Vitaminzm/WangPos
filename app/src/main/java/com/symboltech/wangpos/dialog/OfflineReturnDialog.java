@@ -40,7 +40,7 @@ import java.util.Map;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class OfflineReturnDialog extends Dialog implements View.OnClickListener {
+public class OfflineReturnDialog extends BaseDialog implements View.OnClickListener {
 	public Context context;
 	private TextView text_sale, text_return;
 	private ImageView imageview_close;

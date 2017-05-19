@@ -23,7 +23,7 @@ import com.symboltech.wangpos.utils.Utils;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class BankreturnDialog extends Dialog implements View.OnClickListener {
+public class BankreturnDialog extends BaseDialog implements View.OnClickListener {
 	public Context context;
 	private LinearLayout ll_function_print_order, ll_function;
 	private TextView  text_cardno, text_money, text_cancle, text_confirm, text_title, text_now_cancle, text_tom_return;

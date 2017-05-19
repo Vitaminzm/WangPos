@@ -25,7 +25,7 @@ import com.symboltech.wangpos.utils.Utils;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class ChangeManagerDialog extends Dialog implements View.OnClickListener {
+public class ChangeManagerDialog extends BaseDialog implements View.OnClickListener {
 	private  DialogFinishCallBack callBack;
 	public Context context;
 	private LinearLayout ll_dialog_change_manager;

@@ -16,7 +16,7 @@ import com.symboltech.wangpos.service.RunTimeService;
  * @author so
  *
  */
-public class OfflineUploadDialog extends Dialog {
+public class OfflineUploadDialog extends BaseDialog {
 
 	private Context context;
 

@@ -22,7 +22,7 @@ import java.util.List;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class AddPayinfoDialog extends Dialog implements View.OnClickListener {
+public class AddPayinfoDialog extends BaseDialog implements View.OnClickListener {
 	private Context context;
 	private ImageView imageview_close;
 	private TextView text_title, text_cancle_pay, text_submit_order;

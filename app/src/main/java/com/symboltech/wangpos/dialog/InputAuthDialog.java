@@ -27,7 +27,7 @@ import com.symboltech.wangpos.view.HorizontalKeyBoard;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class InputAuthDialog extends Dialog implements View.OnClickListener {
+public class InputAuthDialog extends BaseDialog implements View.OnClickListener {
 	public Context context;
 	private EditText edit_input_order_no;
 	private TextView text_title, text_print_order, text_print_slip, text_cancle, text_confirm;

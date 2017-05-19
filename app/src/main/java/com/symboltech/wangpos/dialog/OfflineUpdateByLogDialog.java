@@ -16,7 +16,7 @@ import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.service.RunTimeService;
 
 
-public class OfflineUpdateByLogDialog extends Dialog implements OnClickListener {
+public class OfflineUpdateByLogDialog extends BaseDialog implements OnClickListener {
 
 	private TextView bt_yes, bt_no, tips;
 	private Context context;

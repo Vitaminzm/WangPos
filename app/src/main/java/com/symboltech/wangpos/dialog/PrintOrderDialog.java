@@ -29,7 +29,7 @@ import com.symboltech.wangpos.view.HorizontalKeyBoard;
  * @date 创建时间：2015年11月6日 上午11:25:11
  * @version 1.0
  */
-public class PrintOrderDialog extends Dialog implements View.OnClickListener {
+public class PrintOrderDialog extends BaseDialog implements View.OnClickListener {
 	public Context context;
 	private EditText edit_input_order_no, edit_third_input_order_no;
 	private TextView text_title, text_print_order, text_print_slip, text_cancle, text_confirm, text_bank, text_yxlm, text_wf, text_store, text_third_cancle, text_third_confirm;
