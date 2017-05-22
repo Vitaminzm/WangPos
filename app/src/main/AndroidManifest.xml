@@ -21,7 +21,8 @@
     <uses-permission android:name="cn.koolcloud.pos.SERVICE" />
     <uses-permission android:name="com.wangpos.cashiercoreapp.coreapi" />
 
-    <application tools:replace="android:allowBackup"
+    <application
+        tools:replace="android:allowBackup"
         android:name="com.symboltechshop.wangpos.app.MyApplication"
         android:debuggable="false"
         android:allowBackup="false"

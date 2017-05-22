@@ -60,7 +60,6 @@ public class CanclePayAdapter extends BaseAdapter {
 //					if(ConstantData.YXLM_ID.equals(paymentsInfo.get(i).getId())){
 //						paymentsInfoAdapter.add(paymentsInfo.get(i));
 //					}
-					paymentsInfoAdapter.add(paymentsInfo.get(i));
 					//paymentsInfo.get(i).setIsCancle(true);
 				}else{
 						paymentsInfoAdapter.add(paymentsInfo.get(i));
