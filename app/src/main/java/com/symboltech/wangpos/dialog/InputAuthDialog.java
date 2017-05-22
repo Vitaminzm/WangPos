@@ -1,11 +1,11 @@
 package com.symboltech.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.InputType;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -80,11 +80,21 @@ public class InputAuthDialog extends BaseDialog implements View.OnClickListener 
 
 	private void initData() {
 		text_title.setText(title);
+		edit_input_order_no.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 		if(!StringUtil.isEmpty(hit)){
 			edit_input_order_no.setHint(hit);
 		}
 		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
-
+		if(!StringUtil.isEmpty(hit)){
+			edit_input_order_no.setHint(hit);
+		}
+		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				keyboard.show();
+			}
+		}, 500);
 	}
 
 	private void initUI() {
