@@ -1288,7 +1288,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 offlineUploadDialog.dismiss();
             }
             if(dao.getOffLineDataCount() > 0 || dao.getBankOffLineDataCount() > 0 ) {
-                new OfflineUpdateByLogDialog(MainActivity.this).show();
+                MainActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new OfflineUpdateByLogDialog(MainActivity.this).show();
+                    }
+                });
             }else {
                 Intent service = new Intent(getApplicationContext(), RunTimeService.class);
                 service.putExtra(ConstantData.UPDATE_STATUS, true);

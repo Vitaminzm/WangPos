@@ -16,18 +16,11 @@ import com.google.gson.Gson;
 import com.symboltechshop.wangpos.R;
 import com.symboltechshop.wangpos.adapter.CouponsAdapter;
 import com.symboltechshop.wangpos.app.AppConfigFile;
+import com.symboltechshop.wangpos.app.ConstantData;
 import com.symboltechshop.wangpos.app.MyApplication;
 import com.symboltechshop.wangpos.dialog.ChangeModeDialog;
 import com.symboltechshop.wangpos.dialog.CouponWaringDialog;
 import com.symboltechshop.wangpos.http.HttpActionHandle;
-import com.symboltechshop.wangpos.msg.entity.MemberInfo;
-import com.symboltechshop.wangpos.msg.entity.SubmitGoods;
-import com.symboltechshop.wangpos.result.CouponResult;
-import com.symboltechshop.wangpos.utils.ArithDouble;
-import com.symboltechshop.wangpos.utils.PaymentTypeEnum;
-import com.symboltechshop.wangpos.utils.Utils;
-import com.symboltechshop.zxing.app.CaptureActivity;
-import com.symboltechshop.wangpos.app.ConstantData;
 import com.symboltechshop.wangpos.http.HttpRequestUtil;
 import com.symboltechshop.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltechshop.wangpos.interfaces.KeyBoardListener;
@@ -35,13 +28,20 @@ import com.symboltechshop.wangpos.msg.entity.CheckCouponInfo;
 import com.symboltechshop.wangpos.msg.entity.CouponInfo;
 import com.symboltechshop.wangpos.msg.entity.ExchangeInfo;
 import com.symboltechshop.wangpos.msg.entity.ExchangemsgInfo;
+import com.symboltechshop.wangpos.msg.entity.MemberInfo;
 import com.symboltechshop.wangpos.msg.entity.PayMentsInfo;
+import com.symboltechshop.wangpos.msg.entity.SubmitGoods;
 import com.symboltechshop.wangpos.result.CheckCouponResult;
+import com.symboltechshop.wangpos.result.CouponResult;
 import com.symboltechshop.wangpos.result.ExchangemsgResult;
+import com.symboltechshop.wangpos.utils.ArithDouble;
+import com.symboltechshop.wangpos.utils.PaymentTypeEnum;
 import com.symboltechshop.wangpos.utils.SpSaveUtils;
 import com.symboltechshop.wangpos.utils.StringUtil;
 import com.symboltechshop.wangpos.utils.ToastUtils;
+import com.symboltechshop.wangpos.utils.Utils;
 import com.symboltechshop.wangpos.view.HorizontalKeyBoard;
+import com.symboltechshop.zxing.app.CaptureActivity;
 import com.ums.upos.sdk.exception.CallServiceException;
 import com.ums.upos.sdk.exception.SdkException;
 import com.ums.upos.sdk.scanner.OnScanListener;
@@ -589,14 +589,19 @@ public class MemberEquityActivity extends BaseActivity {
                     if (result.getCheckcouponinfo() != null) {
                         double overflow = ArithDouble.parseDouble(result.getCheckcouponinfo().getOveragemoney());
                         if (overflow > 0) {
-                            CouponWaringDialog dialog = new CouponWaringDialog(MemberEquityActivity.this, result.getCheckcouponinfo().getRulemoney(), result.getCheckcouponinfo().getCouponfacevalue(), new DialogFinishCallBack() {
-
+                            MemberEquityActivity.this.runOnUiThread(new Runnable() {
                                 @Override
-                                public void finish(int position) {
-                                    goPayment(coupons, result.getCheckcouponinfo());
+                                public void run() {
+                                    CouponWaringDialog dialog = new CouponWaringDialog(MemberEquityActivity.this, result.getCheckcouponinfo().getRulemoney(), result.getCheckcouponinfo().getCouponfacevalue(), new DialogFinishCallBack() {
+
+                                        @Override
+                                        public void finish(int position) {
+                                            goPayment(coupons, result.getCheckcouponinfo());
+                                        }
+                                    });
+                                    dialog.show();
                                 }
                             });
-                            dialog.show();
                         } else {
                             goPayment(coupons, result.getCheckcouponinfo());
                         }
