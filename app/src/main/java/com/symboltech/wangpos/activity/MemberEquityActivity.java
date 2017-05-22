@@ -589,14 +589,19 @@ public class MemberEquityActivity extends BaseActivity {
                     if (result.getCheckcouponinfo() != null) {
                         double overflow = ArithDouble.parseDouble(result.getCheckcouponinfo().getOveragemoney());
                         if (overflow > 0) {
-                            CouponWaringDialog dialog = new CouponWaringDialog(MemberEquityActivity.this, result.getCheckcouponinfo().getRulemoney(), result.getCheckcouponinfo().getCouponfacevalue(), new DialogFinishCallBack() {
+                           MemberEquityActivity.this.runOnUiThread(new Runnable() {
+                               @Override
+                               public void run() {
+                                   CouponWaringDialog dialog = new CouponWaringDialog(MemberEquityActivity.this, result.getCheckcouponinfo().getRulemoney(), result.getCheckcouponinfo().getCouponfacevalue(), new DialogFinishCallBack() {
 
-                                @Override
-                                public void finish(int position) {
-                                    goPayment(coupons, result.getCheckcouponinfo());
-                                }
-                            });
-                            dialog.show();
+                                       @Override
+                                       public void finish(int position) {
+                                           goPayment(coupons, result.getCheckcouponinfo());
+                                       }
+                                   });
+                                   dialog.show();
+                               }
+                           });
                         } else {
                             goPayment(coupons, result.getCheckcouponinfo());
                         }
