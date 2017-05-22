@@ -55,7 +55,6 @@ public class OfflineUpdateByLogDialog extends BaseDialog implements OnClickListe
 		case R.id.dialog_log_load_style_no:
 			Intent serviceintent = new Intent(context, RunTimeService.class);
 			serviceintent.putExtra(ConstantData.UPLOAD_OFFLINE_DATA_BYLOG, true);
-			serviceintent.putExtra(ConstantData.UPDATE_STATUS, true);
 			serviceintent.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
 			context.startService(serviceintent);
 			Intent intent = new Intent(context, LoginActivity.class);

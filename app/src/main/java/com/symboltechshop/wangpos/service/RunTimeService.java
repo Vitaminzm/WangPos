@@ -92,6 +92,8 @@ public class RunTimeService extends IntentService {
 			if(intent.getBooleanExtra(ConstantData.UPLOAD_OFFLINE_DATA_BYLOG, false)){
 				sendOffLineByLog(null, AppConfigFile.OFFLINE_DATA_COUNT);
 				sendBankOffLineByLog(null, AppConfigFile.OFFLINE_DATA_COUNT);
+				setCashierId(intent.getStringExtra(ConstantData.CASHIER_ID));
+				checkNetStatus(false);
 			}else {
 				checkNetStatus(false);
 			}
