@@ -19,26 +19,32 @@ import android.widget.TextView;
 
 import com.google.gson.reflect.TypeToken;
 import com.symboltechshop.koolcloud.transmodel.OrderBean;
+import com.symboltechshop.wangpos.R;
 import com.symboltechshop.wangpos.adapter.PaymentTypeHolderAdapter;
 import com.symboltechshop.wangpos.adapter.PaymentTypeInfoAdapter;
 import com.symboltechshop.wangpos.app.AppConfigFile;
 import com.symboltechshop.wangpos.app.ConstantData;
 import com.symboltechshop.wangpos.app.MyApplication;
 import com.symboltechshop.wangpos.db.dao.OrderInfoDao;
+import com.symboltechshop.wangpos.dialog.AddPayinfoDialog;
 import com.symboltechshop.wangpos.dialog.AlipayAndWeixinPayControllerInterfaceDialog;
 import com.symboltechshop.wangpos.dialog.CanclePayDialog;
 import com.symboltechshop.wangpos.dialog.ChangeModeDialog;
+import com.symboltechshop.wangpos.dialog.ThirdPayDialog;
 import com.symboltechshop.wangpos.http.GsonUtil;
 import com.symboltechshop.wangpos.http.HttpActionHandle;
 import com.symboltechshop.wangpos.http.HttpRequestUtil;
 import com.symboltechshop.wangpos.interfaces.CancleAndConfirmback;
 import com.symboltechshop.wangpos.interfaces.KeyBoardListener;
+import com.symboltechshop.wangpos.log.LogUtil;
 import com.symboltechshop.wangpos.msg.entity.BillInfo;
+import com.symboltechshop.wangpos.msg.entity.CashierInfo;
 import com.symboltechshop.wangpos.msg.entity.CouponInfo;
 import com.symboltechshop.wangpos.msg.entity.ExchangeInfo;
 import com.symboltechshop.wangpos.msg.entity.GoodsInfo;
 import com.symboltechshop.wangpos.msg.entity.MemberInfo;
 import com.symboltechshop.wangpos.msg.entity.PayMentsCancleInfo;
+import com.symboltechshop.wangpos.msg.entity.PayMentsInfo;
 import com.symboltechshop.wangpos.msg.entity.SubmitGoods;
 import com.symboltechshop.wangpos.msg.entity.ThirdPay;
 import com.symboltechshop.wangpos.msg.entity.ThirdPayInfo;
@@ -52,17 +58,11 @@ import com.symboltechshop.wangpos.utils.CurrencyUnit;
 import com.symboltechshop.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltechshop.wangpos.utils.PaymentTypeEnum;
 import com.symboltechshop.wangpos.utils.SpSaveUtils;
+import com.symboltechshop.wangpos.utils.StringUtil;
 import com.symboltechshop.wangpos.utils.ToastUtils;
 import com.symboltechshop.wangpos.utils.Utils;
 import com.symboltechshop.wangpos.view.HorizontalKeyBoard;
 import com.symboltechshop.zxing.app.CaptureActivity;
-import com.symboltechshop.wangpos.R;
-import com.symboltechshop.wangpos.dialog.AddPayinfoDialog;
-import com.symboltechshop.wangpos.dialog.ThirdPayDialog;
-import com.symboltechshop.wangpos.log.LogUtil;
-import com.symboltechshop.wangpos.msg.entity.CashierInfo;
-import com.symboltechshop.wangpos.msg.entity.PayMentsInfo;
-import com.symboltechshop.wangpos.utils.StringUtil;
 import com.ums.AppHelper;
 import com.ums.upos.sdk.exception.CallServiceException;
 import com.ums.upos.sdk.exception.SdkException;
@@ -72,6 +72,7 @@ import com.ums.upos.sdk.scanner.ScannerManager;
 import com.ums.upos.sdk.system.BaseSystemManager;
 import com.ums.upos.sdk.system.OnServiceStatusListener;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -373,6 +374,28 @@ public class CheckOutActivity extends BaseActivity {
                 waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                break;
+            case YXLM:
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else{
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                            json.put("extOrderNo",tradeNo);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json);
+                    }else{
+                        paymentTypeAdapter.setPayTpyeNull();
+                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_not_support));
+                    }
+                }
                 break;
             case WECHAT:
             case YIPAY:
@@ -1240,6 +1263,9 @@ public class CheckOutActivity extends BaseActivity {
             for (int i = 0; i < paymentslist.size(); i++) {
                 if (paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHAT.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.YIPAY.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.YXLM.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK_CODE.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.STORE.getStyletype())) {
                     if(!AppConfigFile.isOffLineMode()){
@@ -1256,14 +1282,15 @@ public class CheckOutActivity extends BaseActivity {
                         paymentTypeAdapter.add(paymentslist.get(i));
 //                    }
                 }
-//                else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
-//                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
-//                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())){
-//                    if(!isRecorded){
-//                        paymentTypeAdapter.add(paymentslist.get(i));
-//                        isRecorded = true;
-//                    }
-//                }
+                else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.STORERECORDED.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())){
+                    if(!isRecorded){
+                        paymentTypeAdapter.add(paymentslist.get(i));
+                        isRecorded = true;
+                    }
+                }
             }
         }
     }

@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.symboltechshop.wangpos.R;
-import com.symboltechshop.wangpos.app.ConstantData;
 import com.symboltechshop.wangpos.msg.entity.PayMentsInfo;
 import com.symboltechshop.wangpos.utils.PaymentTypeEnum;
 
@@ -120,35 +119,24 @@ public class PaymentTypeHolderAdapter extends RecyclerView.Adapter<PaymentTypeHo
 	private void switchUI(int position, ViewHolder holder) {
 		switch (PaymentTypeEnum.getpaymentstyle(paymentsInfo.get(position).getType().trim())) {
 			case WECHAT:
-			case ALIPAY:
-				if(ConstantData.WECHAT_ID.equals(paymentsInfo.get(position).getId())){
-					if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
-						holder.image_key.setImageResource(R.mipmap.weixin_icon_select);
-						holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
-					} else {
-						holder.image_key.setImageResource(R.mipmap.weixin_icon);
-						holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
-					}
-					holder.name_key.setText(paymentsInfo.get(position).getName());
-				}else if(ConstantData.ALPAY_ID.equals(paymentsInfo.get(position).getId())){
-					if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
-						holder.image_key.setImageResource(R.mipmap.zhifubao_icon_select);
-						holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
-					} else {
-						holder.image_key.setImageResource(R.mipmap.zhifubao_icon);
-						holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
-					}
-					holder.name_key.setText(paymentsInfo.get(position).getName());
-				}else{
-					if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
-						holder.image_key.setImageResource(R.mipmap.xianjin_icon_select);
-						holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
-					} else {
-						holder.image_key.setImageResource(R.mipmap.xianjin_icon);
-						holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
-					}
-					holder.name_key.setText(paymentsInfo.get(position).getName());
+				if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
+					holder.image_key.setImageResource(R.mipmap.weixin_icon_select);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
+				} else {
+					holder.image_key.setImageResource(R.mipmap.weixin_icon);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
 				}
+				holder.name_key.setText(paymentsInfo.get(position).getName());
+				break;
+			case ALIPAY:
+				if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
+					holder.image_key.setImageResource(R.mipmap.zhifubao_icon_select);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
+				} else {
+					holder.image_key.setImageResource(R.mipmap.zhifubao_icon);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
+				}
+				holder.name_key.setText(paymentsInfo.get(position).getName());
 				break;
 			case BANK:
 			case STORE:
