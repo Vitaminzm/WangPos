@@ -67,6 +67,14 @@
     <string name="warning_score_notfull">积分不足</string>
     <string name="cart_goods_sum_not_zero">数量不能为零 </string>
     <!-- 结账界面-->
+    <string name="record">补录</string>
+    <string name="wechat_record">微信补录</string>
+    <string name="alipay_record">支付宝补录</string>
+    <string name="bankcode_record">银联扫码</string>
+    <string name="hand_record">手工补录</string>
+    <string name="bank_record">银行卡补录</string>
+    <string name="store_record">商务卡补录</string>
+    <string name="yxlm_record">营销联盟</string>
     <string name="repeat">重试</string>
     <string name="confirm">确认</string>
     <string name="query">查询</string>

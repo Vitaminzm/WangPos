@@ -155,12 +155,13 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
     private List<BankPayInfo> bankStyle;
     /**
      * allowanceBankStyle-银行卡补录
+     * allowanceBusyStyle-银行卡补录
      * allowanceAlipayStyle-支付宝补录
      * allowanceWeixinStyle-微信补录
      */
-    private List<PayMentsInfo> allowanceBankStyle, allowanceAlipayStyle, allowanceWeixinStyle;
+    private List<PayMentsInfo> allowanceBankStyle, allowanceBusyStyle, allowanceAlipayStyle, allowanceWeixinStyle;
     private int bankFlag = 0, alipayFlag = 0, weixinFlag = 0, cashFlag,
-            allowanceBankFlag = 0, allowanceAlipayFlag = 0, allowanceWeixinFlag = 0;
+            allowanceBankFlag = 0, allowanceBusyFlag = 0,allowanceAlipayFlag = 0, allowanceWeixinFlag = 0;
     /**积分抵扣信息*/
     private ExchangeInfo exchangeInfo;
     /**coupon-优惠券 */
@@ -536,57 +537,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                 }
                             }
                         }).show();
-                    }else if(ConstantData.WECHAT_ID.equals(entity.getSkfsid())){
-                        new BankreturnDialog(this, getString(R.string.wechat_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
-                            @Override
-                            public void finish(int position) {
-                                if(position == 1){
-                                    try {
-                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
-                                        json.put("refNo",entity.getRefno());
-                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
-                                        json.put("extOrderNo",tradeNo);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
-                                }else if(position == 2){
-                                    try {
-                                        json.put("oldTraceNo",entity.getBatchno());
-                                        json.put("extOrderNo", tradeNo);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
-                                }
-                            }
-                        }).show();
-                    }else if(ConstantData.ALPAY_ID.equals(entity.getSkfsid())){
-                        new BankreturnDialog(this, getString(R.string.alipay_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
-                            @Override
-                            public void finish(int position) {
-                                if(position == 1){
-                                    try {
-                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
-                                        json.put("refNo",entity.getRefno());
-                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
-                                        json.put("extOrderNo",tradeNo);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
-                                }else if(position == 2){
-                                    try {
-                                        json.put("oldTraceNo",entity.getBatchno());
-                                        json.put("extOrderNo", tradeNo);
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
-                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
-                                }
-                            }
-                        }).show();
-                    }else if(ConstantData.YXLM_ID.equals(entity.getSkfsid())){
+                    }else if(PaymentTypeEnum.YXLM.getStyletype().equals(type)){
                         new BankreturnDialog(this, getString(R.string.qmh_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
                             @Override
                             public void finish(int position) {
@@ -713,6 +664,31 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
             }
             if (allowanceBankFlag < allowanceBankStyle.size()) {
                 returnAllowanceBank();
+            } else {
+                returnAllowanceBusy();
+            }
+        } else {
+            returnAllowanceBusy();
+        }
+    }
+
+    /**
+     * 商务卡补录
+     */
+    private void returnAllowanceBusy() {
+        if (allowanceBusyStyle != null && allowanceBusyFlag < allowanceBusyStyle.size()) {
+            PayMentsInfo entity = allowanceBusyStyle.get(allowanceBusyFlag);
+            if("true".equals(entity.getDes())){
+                allowanceBusyFlag += 1;
+            }else{
+                double money = ArithDouble.parseDouble(entity.getMoney());
+                entity.setMoney("-"+money);
+                entity.setDes("true");
+                commitStyles.add(entity);
+                allowanceBusyFlag += 1;
+            }
+            if (allowanceBusyFlag < allowanceBusyStyle.size()) {
+                returnAllowanceBusy();
             } else {
                 returnAllowanceAlipay();
             }
@@ -985,15 +961,20 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                     }
                     allowanceBankStyle.add(info);
                 } else if (PaymentTypeEnum.STORERECORDED.getStyletype().equals(type)) {
-                    if (allowanceAlipayStyle == null) {
-                        allowanceAlipayStyle = new ArrayList<PayMentsInfo>();
+                    if (allowanceBusyStyle == null) {
+                        allowanceBusyStyle = new ArrayList<PayMentsInfo>();
                     }
-                    allowanceAlipayStyle.add(info);
+                    allowanceBusyStyle.add(info);
                 } else if (PaymentTypeEnum.WECHATRECORDED.getStyletype().equals(type)) {
                     if (allowanceWeixinStyle == null) {
                         allowanceWeixinStyle = new ArrayList<PayMentsInfo>();
                     }
                     allowanceWeixinStyle.add(info.clone());
+                }  else if (PaymentTypeEnum.ALIPAYRECORDED.getStyletype().equals(type)) {
+                    if (allowanceAlipayStyle == null) {
+                        allowanceAlipayStyle = new ArrayList<PayMentsInfo>();
+                    }
+                    allowanceAlipayStyle.add(info);
                 } else if (PaymentTypeEnum.COUPON.getStyletype().equals(type)) {
                     couponMoney = ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage()));
                     coupon = info;

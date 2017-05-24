@@ -194,6 +194,7 @@ public class CanclePayDialog extends BaseActivity {
 				if(!payments.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
 					if(payments.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype())
 							|| payments.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
+							|| payments.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())
 							||payments.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
 							||payments.get(i).getType().equals(PaymentTypeEnum.STORERECORDED.getStyletype())){
 //						if(!ConstantData.YXLM_ID.equals(payments.get(i).getId())){
@@ -418,7 +419,10 @@ public class CanclePayDialog extends BaseActivity {
 
 	public void saleVoid(int position){
 		final PayMentsCancleInfo info = payments.get(position);
-		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype()) || info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
+		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())
+				|| info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())
+				|| info.getType().equals(PaymentTypeEnum.BANK_CODE.getStyletype())
+				|| info.getType().equals(PaymentTypeEnum.YIPAY.getStyletype())){
 //			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 //				if(isCancleCount > 0){
 //					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
@@ -469,7 +473,7 @@ public class CanclePayDialog extends BaseActivity {
 			}else{
 				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
 			}
-		}else if(ConstantData.YXLM_ID.equals(info.getId())){
+		}else if(info.getType().equals(PaymentTypeEnum.YXLM.getStyletype())){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				if(isCancleCount > 0){
 					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
@@ -494,7 +498,7 @@ public class CanclePayDialog extends BaseActivity {
 			}else{
 				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
 			}
-		}else {
+		}else if(info.getType().equals(PaymentTypeEnum.BANK.getStyletype())){
 			if (MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				if(isCancleCount > 0){
 					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");

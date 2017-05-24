@@ -30,11 +30,13 @@ import com.symboltechshop.wangpos.dialog.AddPayinfoDialog;
 import com.symboltechshop.wangpos.dialog.AlipayAndWeixinPayControllerInterfaceDialog;
 import com.symboltechshop.wangpos.dialog.CanclePayDialog;
 import com.symboltechshop.wangpos.dialog.ChangeModeDialog;
+import com.symboltechshop.wangpos.dialog.RecordPayDialog;
 import com.symboltechshop.wangpos.dialog.ThirdPayDialog;
 import com.symboltechshop.wangpos.http.GsonUtil;
 import com.symboltechshop.wangpos.http.HttpActionHandle;
 import com.symboltechshop.wangpos.http.HttpRequestUtil;
 import com.symboltechshop.wangpos.interfaces.CancleAndConfirmback;
+import com.symboltechshop.wangpos.interfaces.GeneralEditListener;
 import com.symboltechshop.wangpos.interfaces.KeyBoardListener;
 import com.symboltechshop.wangpos.log.LogUtil;
 import com.symboltechshop.wangpos.msg.entity.BillInfo;
@@ -349,6 +351,44 @@ public class CheckOutActivity extends BaseActivity {
         }
         Intent intent_qr;
         switch (PaymentTypeEnum.getpaymentstyle(type.trim())){
+            case ALIPAYRECORDED:
+            case WECHATRECORDED:
+            case HANDRECORDED:
+            case STORERECORDED:
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else{
+                    new RecordPayDialog(this, new GeneralEditListener() {
+                        @Override
+                        public void editinput(String edit) {
+                            if(edit == null){
+                                paymentTypeAdapter.setPayTpyeNull();
+                                ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+                            }else{
+                                PayMentsCancleInfo infobank = new PayMentsCancleInfo();
+                                PayMentsInfo info = getPayInfoByType(edit);
+                                if(info != null){
+                                    infobank.setId(info.getId());
+                                    infobank.setName(info.getName());
+                                    infobank.setType(info.getType());
+                                    infobank.setIsCancle(false);
+                                    infobank.setMoney(paymentMoney+"");
+                                    infobank.setOverage("0");
+                                    addPayTypeInfo(PaymentTypeEnum.HANDRECORDED, 0, 0, null, infobank);
+                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                }else{
+                                    paymentTypeAdapter.setPayTpyeNull();
+                                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+                                }
+                            }
+                        }
+                    }).show();
+                }
+                break;
             case CASH:
                 double cash = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(paymentTypeAdapter.getPayType().getId()));
                 double ling = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(PaymentTypeEnum.LING.getStyletype()));
@@ -504,6 +544,18 @@ public class CheckOutActivity extends BaseActivity {
                 }
                 break;
         }
+    }
+
+    private PayMentsInfo getPayInfoByType(String type){
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getType().equals(type)) {
+                return paymentslist.get(i);
+            }
+        }
+        return null;
     }
 
     // 1.执行调用之前需要调用WeiposImpl.as().init()方法，保证sdk初始化成功。
