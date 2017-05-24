@@ -41,6 +41,7 @@ import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.msg.entity.ConfigList;
 import com.symboltech.wangpos.msg.entity.LoginInfo;
+import com.symboltech.wangpos.result.BaseResult;
 import com.symboltech.wangpos.result.LoginResult;
 import com.symboltech.wangpos.result.UnLockResult;
 import com.symboltech.wangpos.service.RunTimeService;
@@ -275,6 +276,19 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                     @Override
                     public void editinput(String edit) {
                         if(edit.equals(AppConfigFile.AUTH_CODE)){
+                            Map<String, String> map = new HashMap<String, String>();
+                            map.put("personcode", SpSaveUtils.read(mContext, ConstantData.CASHIER_CODE, ""));
+                            HttpRequestUtil.getinstance().exit(HTTP_TASK_KEY, map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+                                @Override
+                                public void handleActionError(String actionName, String errmsg) {
+
+                                }
+
+                                @Override
+                                public void handleActionSuccess(String actionName, BaseResult result) {
+
+                                }
+                            });
                             MyApplication.stopTask();
                             OperateLog.getInstance().stopUpload();
                             InitializeConfig.clearCash(LoginActivity.this);

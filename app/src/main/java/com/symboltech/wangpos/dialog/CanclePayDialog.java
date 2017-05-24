@@ -494,7 +494,7 @@ public class CanclePayDialog extends BaseActivity{
 			}else{
 				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
 			}
-		}else {
+		}else if(info.getType().equals(PaymentTypeEnum.BANK.getStyletype())){
 			if (MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				if(isCancleCount > 0){
 					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");

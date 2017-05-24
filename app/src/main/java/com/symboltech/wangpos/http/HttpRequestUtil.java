@@ -134,6 +134,19 @@ public class HttpRequestUtil {
 	}
 
 	/**
+	 *
+	 * @author CWI-APST emial:26873204@qq.com
+	 * @param <T>
+	 * @Description: TODO(登陆)
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void exit(String tag, Map<String, String> param, final Class<T> clz, final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/exit"), param, clz,
+				httpactionhandler);
+	}
+	/**
 	 * 
 	 * @author CWI-APST emial:26873204@qq.com
 	 * @Description: TODO(unlock)
