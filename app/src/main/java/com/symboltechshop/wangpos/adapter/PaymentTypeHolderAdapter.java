@@ -163,6 +163,14 @@ public class PaymentTypeHolderAdapter extends RecyclerView.Adapter<PaymentTypeHo
 			case WECHATRECORDED:
 			case HANDRECORDED:
 			case STORERECORDED:
+				if (payType != null  && paymentsInfo.get(position).getId().equals(payType.getId())) {
+					holder.image_key.setImageResource(R.mipmap.xianjin_icon_select);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
+				} else {
+					holder.image_key.setImageResource(R.mipmap.xianjin_icon);
+					holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
+				}
+				holder.name_key.setText("补录");
 //				if (payType != null  && paymentsInfo.get(position).getId().equals(payType.getId())) {
 //					holder.image_key.setImageResource(R.mipmap.bulu_icon_select);
 //					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
