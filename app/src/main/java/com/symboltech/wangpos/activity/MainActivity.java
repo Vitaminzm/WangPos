@@ -1034,6 +1034,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             View v2 = mLayoutInflater.inflate(R.layout.view_button_offline_main, null);
             ButterKnife.findById(v2, R.id.rl_upload).setOnClickListener(onClickListener);
             ButterKnife.findById(v2, R.id.rl_sendcarcoupon).setOnClickListener(onClickListener);
+            ButterKnife.findById(v1, R.id.rl_sendcarcoupon).setBackgroundResource(R.drawable.btn_gray_bg);
+            ButterKnife.findById(v1, R.id.rl_sendcarcoupon).setEnabled(false);
             ButterKnife.findById(v2, R.id.rl_offline).setOnClickListener(onClickListener);
             ButterKnife.findById(v2, R.id.rl_weichat).setOnClickListener(onClickListener);
             ButterKnife.findById(v2, R.id.rl_bank).setOnClickListener(onClickListener);

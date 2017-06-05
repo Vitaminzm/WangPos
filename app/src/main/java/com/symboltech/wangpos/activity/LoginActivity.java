@@ -467,8 +467,13 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
      * login for http verification
      */
     private void loginforhttp(final String username, final String password) {
+        String uid  = MachineUtils.getUid(MyApplication.context);
+        if(StringUtil.isEmpty(uid)){
+            ToastUtils.sendtoastbyhandler(handler,"获取机器码异常");
+            return;
+        }
         Map<String, String> map = new HashMap<String, String>();
-        map.put("machinecode", MachineUtils.getUid(MyApplication.context));
+        map.put("machinecode", uid);
         map.put("personcode", username);
         map.put("password", MD5Utils.md5(password));
         LogUtil.i("lgs", "MachineUtils.getUid==========" + MachineUtils.getUid(MyApplication.context));

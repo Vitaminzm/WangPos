@@ -156,12 +156,18 @@ public class CheckOutActivity extends BaseActivity {
 
     public static final int THIRD_PAY_INFO = 1;
     public static final int ALREADY_THIRD_PAY_INFO = 2;
+    public static final int PAY_SUCCESS = 900;
     Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case ToastUtils.TOAST_WHAT:
                     ToastUtils.showtaostbyhandler(CheckOutActivity.this, msg);
+                    break;
+                case PAY_SUCCESS:
+                    if (waitPayValue <= 0) {
+                        clickCommitOrder();
+                    }
                     break;
                 case ALREADY_THIRD_PAY_INFO:
                     final List<ThirdPayInfo> thirdPayInfoList = (List<ThirdPayInfo>) msg.obj;
@@ -192,6 +198,9 @@ public class CheckOutActivity extends BaseActivity {
                             waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                             text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                             edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            if (waitPayValue <= 0) {
+                                clickCommitOrder();
+                            }
                         }
                     }).show();
                     break;
@@ -217,6 +226,9 @@ public class CheckOutActivity extends BaseActivity {
                     waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                     text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                     edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                    if (waitPayValue <= 0) {
+                        clickCommitOrder();
+                    }
                     break;
             }
         }
@@ -369,12 +381,13 @@ public class CheckOutActivity extends BaseActivity {
                                     infobank.setName(info.getName());
                                     infobank.setType(info.getType());
                                     infobank.setIsCancle(false);
-                                    infobank.setMoney(paymentMoney+"");
+                                    infobank.setMoney(paymentMoney + "");
                                     infobank.setOverage("0");
                                     addPayTypeInfo(PaymentTypeEnum.RECORD, 0, 0, null, infobank);
                                     waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                                     text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                                     edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                    handler.sendEmptyMessage(PAY_SUCCESS);
                                 }else{
                                     paymentTypeAdapter.setPayTpyeNull();
                                     ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
@@ -413,10 +426,12 @@ public class CheckOutActivity extends BaseActivity {
                         if(money > (ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling))){
                             addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
                             addPayTypeInfo(PaymentTypeEnum.LING, ArithDouble.sub(money, ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling)), 0, paymentTypeAdapter.getPayType(), null);
+                            handler.sendEmptyMessage(PAY_SUCCESS);
                         }else{
                             addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
                             paymentTypeInfoadapter.removeLing();
                             paymentTypeAdapter.setPayTpyeNull();
+                            handler.sendEmptyMessage(PAY_SUCCESS);
                         }
                     }else{
                         if(money > ArithDouble.add(waitPayValue, cash)){
@@ -431,6 +446,7 @@ public class CheckOutActivity extends BaseActivity {
                     waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                     text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                     edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                    handler.sendEmptyMessage(PAY_SUCCESS);
                 }
                 break;
             case WECHAT:
@@ -845,66 +861,7 @@ public class CheckOutActivity extends BaseActivity {
                 startActivityForResult(intentCancle, ConstantData.THRID_CANCLE_REQUEST_CODE);
                 break;
             case R.id.text_submit_order:
-                payments.clear();
-                if(waitPayValue > 0.0){
-                    if(paymentTypeAdapter.getPayType() != null && !edit_input_money.getText().toString().equals("") && paymentTypeAdapter.getPayType().getType().equals(PaymentTypeEnum.CASH.getStyletype())){
-
-                        PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
-                        payMentsInfoCoupon.setId(getPayTypeId(PaymentTypeEnum.CASH));
-                        payMentsInfoCoupon.setType(PaymentTypeEnum.CASH.getStyletype());
-                        payMentsInfoCoupon.setName(paymentTypeAdapter.getPayType().getName());
-                        payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.add(waitPayValue, 0)));
-                        payMentsInfoCoupon.setOverage(String.valueOf(0));
-                        payments.add(payMentsInfoCoupon);
-                    }else{
-                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_pay_failed));
-                        return;
-                    }
-                }
-                //增加积分抵扣
-                if (orderScore > 0) {
-                    PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
-                    payMentsInfoCoupon.setId(getPayTypeId(PaymentTypeEnum.SCORE));
-                    payMentsInfoCoupon.setType(PaymentTypeEnum.SCORE.getStyletype());
-                    payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.add(orderScore, orderScoreOverrage)));
-                    payMentsInfoCoupon.setOverage(String.valueOf(orderScoreOverrage));
-                    payments.add(payMentsInfoCoupon);
-                }
-                //增加优惠券
-                if (orderCoupon > 0.0) {
-                    PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
-                    payMentsInfoCoupon.setId(getPayTypeId(PaymentTypeEnum.COUPON));
-                    payMentsInfoCoupon.setType(PaymentTypeEnum.COUPON.getStyletype());
-                    payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.add(orderCoupon, orderCouponOverrage)));
-                    payMentsInfoCoupon.setOverage(String.valueOf(orderCouponOverrage));
-                    payments.add(payMentsInfoCoupon);
-                }
-                //除去找零，其他方式都加入到支付方式中
-                for (int i = 0; i < payMentsCancle.size(); i++){
-                    if (payMentsCancle.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())) {
-                        payLing = ArithDouble.parseDouble(payMentsCancle.get(i).getMoney());
-                        break;
-                    }
-                }
-                for (int i = 0; i < payMentsCancle.size(); i++) {
-                    if (payMentsCancle.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())) {
-                        continue;
-                    }
-                    PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
-
-                    if (payMentsCancle.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) && payMentsCancle.get(i).getId().equals("1")) {
-                        //减去找零金额
-                        payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.sub(ArithDouble.parseDouble(payMentsCancle.get(i).getMoney()), payLing)));
-                    } else {
-                        payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.add(ArithDouble.parseDouble(payMentsCancle.get(i).getMoney()), ArithDouble.parseDouble(payMentsCancle.get(i).getOverage()))));
-                    }
-                    payMentsInfoCoupon.setId(payMentsCancle.get(i).getId());
-                    payMentsInfoCoupon.setName(payMentsCancle.get(i).getName());
-                    payMentsInfoCoupon.setType(payMentsCancle.get(i).getType());
-                    payMentsInfoCoupon.setOverage(payMentsCancle.get(i).getOverage());
-                    payments.add(payMentsInfoCoupon);
-                }
-                commitOrder();
+                clickCommitOrder();
                 break;
             case R.id.imageview_more:
             case R.id.ll_member_equity:
@@ -980,6 +937,69 @@ public class CheckOutActivity extends BaseActivity {
         }
     }
 
+    private void clickCommitOrder(){
+        payments.clear();
+        if(waitPayValue > 0.0){
+            if(paymentTypeAdapter.getPayType() != null && !edit_input_money.getText().toString().equals("") && paymentTypeAdapter.getPayType().getType().equals(PaymentTypeEnum.CASH.getStyletype())){
+
+                PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
+                payMentsInfoCoupon.setId(getPayTypeId(PaymentTypeEnum.CASH));
+                payMentsInfoCoupon.setType(PaymentTypeEnum.CASH.getStyletype());
+                payMentsInfoCoupon.setName(paymentTypeAdapter.getPayType().getName());
+                payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.add(waitPayValue, 0)));
+                payMentsInfoCoupon.setOverage(String.valueOf(0));
+                payments.add(payMentsInfoCoupon);
+            }else{
+                ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_pay_failed));
+                return;
+            }
+        }
+        //增加积分抵扣
+        if (orderScore > 0) {
+            PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
+            payMentsInfoCoupon.setId(getPayTypeId(PaymentTypeEnum.SCORE));
+            payMentsInfoCoupon.setType(PaymentTypeEnum.SCORE.getStyletype());
+            payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.add(orderScore, orderScoreOverrage)));
+            payMentsInfoCoupon.setOverage(String.valueOf(orderScoreOverrage));
+            payments.add(payMentsInfoCoupon);
+        }
+        //增加优惠券
+        if (orderCoupon > 0.0) {
+            PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
+            payMentsInfoCoupon.setId(getPayTypeId(PaymentTypeEnum.COUPON));
+            payMentsInfoCoupon.setType(PaymentTypeEnum.COUPON.getStyletype());
+            payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.add(orderCoupon, orderCouponOverrage)));
+            payMentsInfoCoupon.setOverage(String.valueOf(orderCouponOverrage));
+            payments.add(payMentsInfoCoupon);
+        }
+        //除去找零，其他方式都加入到支付方式中
+        for (int i = 0; i < payMentsCancle.size(); i++){
+            if (payMentsCancle.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())) {
+                payLing = ArithDouble.parseDouble(payMentsCancle.get(i).getMoney());
+                break;
+            }
+        }
+        for (int i = 0; i < payMentsCancle.size(); i++) {
+            if (payMentsCancle.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())) {
+                continue;
+            }
+            PayMentsInfo payMentsInfoCoupon = new PayMentsInfo();
+
+            if (payMentsCancle.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) && payMentsCancle.get(i).getId().equals("1")) {
+                //减去找零金额
+                payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.sub(ArithDouble.parseDouble(payMentsCancle.get(i).getMoney()), payLing)));
+            } else {
+                payMentsInfoCoupon.setMoney(String.valueOf(ArithDouble.add(ArithDouble.parseDouble(payMentsCancle.get(i).getMoney()), ArithDouble.parseDouble(payMentsCancle.get(i).getOverage()))));
+            }
+            payMentsInfoCoupon.setId(payMentsCancle.get(i).getId());
+            payMentsInfoCoupon.setName(payMentsCancle.get(i).getName());
+            payMentsInfoCoupon.setType(payMentsCancle.get(i).getType());
+            payMentsInfoCoupon.setOverage(payMentsCancle.get(i).getOverage());
+            payments.add(payMentsInfoCoupon);
+        }
+        commitOrder();
+    }
+
     private boolean isContain(String code, List<PayMentsCancleInfo> payMentsCancle){
         boolean ret = false;
         if(StringUtil.isEmpty(code) || payMentsCancle.size() == 0){
@@ -1048,7 +1068,7 @@ public class CheckOutActivity extends BaseActivity {
                 waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-
+                handler.sendEmptyMessage(PAY_SUCCESS);
             }
         }else if(resultCode == ConstantData.QRCODE_RESULT_MEMBER_VERIFY){
             if(requestCode == ConstantData.QRCODE_REQURST_QR_PAY){
@@ -1125,7 +1145,7 @@ public class CheckOutActivity extends BaseActivity {
                             waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                             text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                             edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-
+                            handler.sendEmptyMessage(PAY_SUCCESS);
                         } else if (paytype == ConstantData.PAYMODE_BY_BANKCODE) {
                             PayMentsCancleInfo info = new PayMentsCancleInfo();
                             info.setId(paymentTypeAdapter.getPayType().getId());
@@ -1139,6 +1159,7 @@ public class CheckOutActivity extends BaseActivity {
                             waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                             text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                             edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            handler.sendEmptyMessage(PAY_SUCCESS);
                         }else if (paytype == ConstantData.PAYMODE_BY_YIPAY) {
                             PayMentsCancleInfo info = new PayMentsCancleInfo();
                             info.setId(paymentTypeAdapter.getPayType().getId());
@@ -1152,6 +1173,7 @@ public class CheckOutActivity extends BaseActivity {
                             waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                             text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                             edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            handler.sendEmptyMessage(PAY_SUCCESS);
                         }else if (paytype == ConstantData.PAYMODE_BY_WEIXIN) {
                             PayMentsCancleInfo info = new PayMentsCancleInfo();
                             info.setId(paymentTypeAdapter.getPayType().getId());
@@ -1165,6 +1187,7 @@ public class CheckOutActivity extends BaseActivity {
                             waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                             text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                             edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            handler.sendEmptyMessage(PAY_SUCCESS);
                         }
                     }
                 });

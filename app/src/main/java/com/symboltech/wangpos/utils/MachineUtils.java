@@ -5,6 +5,15 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
 
+import com.google.gson.reflect.TypeToken;
+import com.symboltech.wangpos.app.ConstantData;
+import com.symboltech.wangpos.app.MyApplication;
+import com.symboltech.wangpos.http.GsonUtil;
+import com.ums.AppHelper;
+
+import java.lang.reflect.Type;
+import java.util.Map;
+
 /**
  * machine get info
  * simple introduction
@@ -23,18 +32,30 @@ public class MachineUtils {
 	 * @return gid
 	 */
 	public static String getUid(Context context) {
-		TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-		WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-		WifiInfo info = wifiManager.getConnectionInfo();
-		String mID = android.os.Build.SERIAL;
-		if (mID != null && !"".equals(mID)) {
-			return mID;
-		} else {
-			mID = info.getMacAddress();
-			if (mID != null && !"".equals(mID)) {
-				return mID.replace(":", "");
-			} else {
+		if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+			String uid = AppHelper.getBaseSysInfo(context);
+			Type type =new TypeToken<Map<String, String>>(){}.getType();
+			try {
+				Map<String, Object> transData = GsonUtil.jsonToObect(uid);
+				return transData.get("SN").toString();
+			} catch (Exception e) {
+				e.printStackTrace();
 				return "";
+			}
+		}else{
+			TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+			WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+			WifiInfo info = wifiManager.getConnectionInfo();
+			String mID = android.os.Build.SERIAL;
+			if (mID != null && !"".equals(mID)) {
+				return mID;
+			} else {
+				mID = info.getMacAddress();
+				if (mID != null && !"".equals(mID)) {
+					return mID.replace(":", "");
+				} else {
+					return "";
+				}
 			}
 		}
 	}
