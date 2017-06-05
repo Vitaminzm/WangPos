@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Gson 解析工具 simple introduction
@@ -108,6 +109,16 @@ public class GsonUtil {
             Gson gson = getGsonInstance(false);
             T vo = gson.fromJson(json, cls);
             return vo;
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+    }
+
+    public static Map<String,Object> jsonToObect (String json) throws Exception{
+        try {
+            Gson gson = getGsonInstance(false);
+            Map<String, Object> map = gson.fromJson(json, new TypeToken<Map<String, Object>>() {}.getType());
+            return map;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
