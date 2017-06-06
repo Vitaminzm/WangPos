@@ -8,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,9 +18,11 @@ import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
+import com.symboltech.wangpos.dialog.CouponUsedDialog;
 import com.symboltech.wangpos.dialog.CouponWaringDialog;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
+import com.symboltech.wangpos.interfaces.CouponCallback;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.msg.entity.CheckCouponInfo;
@@ -66,6 +67,11 @@ public class MemberEquityActivity extends BaseActivity {
 
     @Bind(R.id.title_text_content)
     TextView title_text_content;
+
+    @Bind(R.id.text_total_money)
+    TextView text_total_money;
+    @Bind(R.id.text_coupon_count)
+    TextView text_coupon_count;
 
     @Bind(R.id.text_hold_score)
     TextView text_hold_score;
@@ -188,29 +194,35 @@ public class MemberEquityActivity extends BaseActivity {
                 sendAdapter = new CouponsAdapter(submitgoods.getCouponInfos(), 0, mContext);
                 sendAdapter.setOnItemClickListener(new CouponsAdapter.MyItemClickListener() {
                     @Override
-                            public void onItemClick(View view, int position) {
-                                ImageView coupon_select = (ImageView) view.findViewById(R.id.imageview_coupon_selected);
-                                if(coupon_select.getVisibility() == View.GONE){
-                                    if(getPayTypeId(PaymentTypeEnum.COUPON)!=null){
-                                        if ((ArithDouble.sub(orderTotleValue, orderScore)) <ArithDouble.add(orderCoupon, ArithDouble.parseDouble(sendAdapter.getItem(position).getAvailablemoney()))) {
-                                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_coupon_over_msg));
-                                            return;
+                            public void onItemClick(View view, final int position) {
+                                    new CouponUsedDialog(MemberEquityActivity.this, sendAdapter.getItem(position).clone(), new CouponCallback() {
+                                        @Override
+                                        public void doResult(CouponInfo couponInfo) {
+                                            doCoupon(couponInfo, position);
                                         }
-                                        orderCoupon = ArithDouble.add(orderCoupon, ArithDouble.parseDouble(sendAdapter.getItem(position).getAvailablemoney()));
-                                        couponList.add(sendAdapter.getItem(position));
-                                    }else{
-                                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
-                                        return;
-                                    }
-
-                                    sendAdapter.addSelect(position);
-                                    sendAdapter.notifyItemChanged(position);
-                                }else if(coupon_select.getVisibility() == View.VISIBLE){
-                                    orderCoupon = ArithDouble.sub(orderCoupon, ArithDouble.parseDouble(sendAdapter.getItem(position).getAvailablemoney()));
-                                    couponList.remove(sendAdapter.getItem(position));
-                                    sendAdapter.delSelect(position);
-                                    sendAdapter.notifyItemChanged(position);
-                                }
+                                    }).show();
+//                                ImageView coupon_select = (ImageView) view.findViewById(R.id.imageview_coupon_selected);
+//                                if(coupon_select.getVisibility() == View.GONE){
+//                                    if(getPayTypeId(PaymentTypeEnum.COUPON)!=null){
+//                                        if ((ArithDouble.sub(orderTotleValue, orderScore)) <ArithDouble.add(orderCoupon, ArithDouble.parseDouble(sendAdapter.getItem(position).getAvailablemoney()))) {
+//                                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_coupon_over_msg));
+//                                            return;
+//                                        }
+//                                        orderCoupon = ArithDouble.add(orderCoupon, ArithDouble.parseDouble(sendAdapter.getItem(position).getAvailablemoney()));
+//                                        couponList.add(sendAdapter.getItem(position));
+//                                    }else{
+//                                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+//                                        return;
+//                                    }
+//
+//                                    sendAdapter.addSelect(position);
+//                                    sendAdapter.notifyItemChanged(position);
+//                                }else if(coupon_select.getVisibility() == View.VISIBLE){
+//                                    orderCoupon = ArithDouble.sub(orderCoupon, ArithDouble.parseDouble(sendAdapter.getItem(position).getAvailablemoney()));
+//                                    couponList.remove(sendAdapter.getItem(position));
+//                                    sendAdapter.delSelect(position);
+//                                    sendAdapter.notifyItemChanged(position);
+//                                }
                             }
                         });
                 recycleview_hold_coupon.setAdapter(sendAdapter);
@@ -244,6 +256,40 @@ public class MemberEquityActivity extends BaseActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+
+    private void doCoupon(CouponInfo couponInfo, int position){
+        if(couponList.size() == 0){
+            if(ArithDouble.parseDouble(couponInfo.getAvailablemoney()) > 0){
+                couponList.add(couponInfo);
+                orderCoupon = ArithDouble.parseDouble(couponInfo.getAvailablemoney());
+                sendAdapter.addSelect(position);
+                sendAdapter.notifyItemChanged(position);
+                text_coupon_count.setText(couponList.size()+"");
+                text_total_money.setText(orderCoupon+"");
+            }
+            return;
+        }
+        for(CouponInfo info:couponList){
+            if(info.getCouponno().equals(couponInfo.getCouponno())){
+                couponList.remove(info);
+                break;
+            }
+        }
+        if(ArithDouble.parseDouble(couponInfo.getAvailablemoney()) == 0){
+            sendAdapter.delSelect(position);
+        }else{
+            sendAdapter.addSelect(position);
+            couponList.add(couponInfo);
+        }
+        orderCoupon = 0;
+        for(CouponInfo info:couponList){
+            orderCoupon = ArithDouble.add(orderCoupon, ArithDouble.parseDouble(info.getAvailablemoney()));
+        }
+        sendAdapter.notifyItemChanged(position);
+        text_coupon_count.setText(couponList.size()+"");
+        text_total_money.setText(orderCoupon+"");
     }
 
     @Override
@@ -287,6 +333,8 @@ public class MemberEquityActivity extends BaseActivity {
         int id = view.getId();
         switch (id){
             case R.id.title_icon_back:
+                finish();
+                break;
             case R.id.text_confirm:
 //                if(couponList.size()>0){
 //                    checkPaperCoupon(AppConfigFile.getBillId(), couponList);

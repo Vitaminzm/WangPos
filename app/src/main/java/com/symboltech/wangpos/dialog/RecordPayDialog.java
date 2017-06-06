@@ -1,7 +1,6 @@
 package com.symboltech.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -63,6 +62,34 @@ public class RecordPayDialog extends BaseDialog implements View.OnClickListener 
 		ll_store_record.setOnClickListener(this);
 		ll_yxlm_record = (LinearLayout) findViewById(R.id.ll_yxlm_record);
 		ll_yxlm_record.setOnClickListener(this);
+		if(!isContain(ConstantData.WECHAT_ID)){
+			ll_weichat_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_weichat_record.setEnabled(false);
+		}
+		if(!isContain(ConstantData.ALPAY_ID)){
+			ll_alipay_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_alipay_record.setEnabled(false);
+		}
+		if(!isContain(ConstantData.BANKCODE_ID)){
+			ll_bankcode_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_bankcode_record.setEnabled(false);
+		}
+		if(!isContain(ConstantData.YIPAY_ID)){
+			ll_yipay_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_yipay_record.setEnabled(false);
+		}
+		if(!isContain(getPayIdByType(PaymentTypeEnum.BANK.getStyletype()))){
+			ll_bank_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_bank_record.setEnabled(false);
+		}
+		if(!isContain(getPayIdByType(PaymentTypeEnum.STORE.getStyletype()))){
+			ll_store_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_store_record.setEnabled(false);
+		}
+		if(!isContain(ConstantData.YXLM_ID)){
+			ll_yxlm_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_yxlm_record.setEnabled(false);
+		}
 	}
 
 	@Override

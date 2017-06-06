@@ -17,6 +17,7 @@
     <color name="edit_bg">#434952</color>
     <color name="fifty_percent_transparent">#3f000000</color>
     <color name="waring_yellow">#F39F2A</color>
+    <color name="red_dark">#C0504D</color>
 
     <!-- popup window 配置-->
     <color name="popup_selected_color">#f3f3f3</color>

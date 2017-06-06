@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author so
  * 
  */
-public class CouponInfo implements Serializable {
+public class CouponInfo implements Serializable , Cloneable {
 
 	private static final long serialVersionUID = 1L;
 	public String getTitle() {
@@ -142,4 +142,14 @@ public class CouponInfo implements Serializable {
 		this.name = name;
 	}
 
+	@Override
+	public CouponInfo clone() {
+		CouponInfo clone = null;
+		try {
+			clone = (CouponInfo) super.clone();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return clone;
+	}
 }

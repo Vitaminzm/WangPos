@@ -1,6 +1,5 @@
 package com.symboltech.wangpos.dialog;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -389,7 +388,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 		// TODO Auto-generated method stub
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("old_trade_no", trade_no);
-		map.put("pay_type", paymode + "");
+		//map.put("pay_type", paymode + "");
 		HttpRequestUtil.getinstance().thirdpayquery(map, ThirdPayQueryResult.class,
 				new HttpActionHandle<ThirdPayQueryResult>() {
 
@@ -419,17 +418,19 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 					public void handleActionSuccess(String actionName, ThirdPayQueryResult result) {
 						// TODO Auto-generated method stub
 						if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
 								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_QUERY_SUCCESS.getOptLogCode(), context.getString(R.string.alipay_query_success));
-							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
-								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_QUERY_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_query_success));
-							}
+//							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_QUERY_SUCCESS.getOptLogCode(), context.getString(R.string.alipay_query_success));
+//							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_QUERY_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_query_success));
+//							}
 							ToastUtils.sendtoastbyhandler(handler,"支付完成");
 							AlipayAndWeixinPayControllerInterfaceDialog.this.dismiss();
 							if(callback != null){
 								ThirdPay thirdPay = new ThirdPay();
 								thirdPay.setPay_total_fee(result.getThirdpayquery().getTotal_fee());
 								thirdPay.setTrade_no(result.getThirdpayquery().getTrade_no());
+								thirdPay.setSkfsid(result.getThirdpayquery().getSkfsid());
 								callback.getPayValue(thirdPay);
 							}
 								
@@ -439,11 +440,12 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 							message.obj = result.getThirdpayquery().getTrade_no();
 							handler.sendMessage(message);
 						} else {
-							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
 								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_QUERY_FAILED.getOptLogCode(), context.getString(R.string.alipay_query_failed));
-							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
-								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_QUERY_FAILED.getOptLogCode(), context.getString(R.string.wechat_query_failed));
-							}
+//							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_QUERY_FAILED.getOptLogCode(), context.getString(R.string.alipay_query_failed));
+//							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_QUERY_FAILED.getOptLogCode(), context.getString(R.string.wechat_query_failed));
+//							}
 							Message message=Message.obtain();
 							message.what = 5;
 							message.obj = result.getMsg();
@@ -478,7 +480,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 		isrunning = false;
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("operater", SpSaveUtils.read(context, ConstantData.CASHIER_CODE, ""));
-		map.put("pay_type", paymode + "");
+		//map.put("pay_type", paymode + "");
 		map.put("old_trade_no", trade_no);
 		map.put("billid", "-" + AppConfigFile.getBillId());
 		map.put("total_fee", MoneyAccuracyUtils.thirdpaymoneydealbyinput(et_thirdpay_input.getText().toString()));
@@ -513,11 +515,12 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 					public void handleActionSuccess(String actionName, ThirdPaySalesReturnResult result) {
 						// TODO Auto-generated method stub
 						if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
-								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_RETURN_SUCCESS.getOptLogCode(), context.getString(R.string.alipay_return_success));
-							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
-								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_RETURN_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_return_success));
-							}
+//							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_RETURN_SUCCESS.getOptLogCode(), context.getString(R.string.alipay_return_success));
+//							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_RETURN_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_return_success));
+//							}
+							OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_RETURN_SUCCESS.getOptLogCode(), context.getString(R.string.alipay_return_success));
 							ll_thirdpay_money_input.setVisibility(View.GONE);
 							ll_thirdpay_hint.setVisibility(View.VISIBLE);
 							stopPay();
@@ -526,11 +529,12 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 									.setText(getContext().getString(R.string.thirdpay_salesreturn_succeed));
 							handler.sendEmptyMessageDelayed(4, 1000 * 2);
 						} else {
-							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
 								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_RETURN_FAILED.getOptLogCode(), context.getString(R.string.alipay_return_failed));
-							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
-								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_RETURN_FAILED.getOptLogCode(), context.getString(R.string.wechat_return_failed));
-							}
+//							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_RETURN_FAILED.getOptLogCode(), context.getString(R.string.alipay_return_failed));
+//							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_RETURN_FAILED.getOptLogCode(), context.getString(R.string.wechat_return_failed));
+//							}
 							ll_thirdpay_money_input.setVisibility(View.GONE);
 							ll_thirdpay_hint.setVisibility(View.VISIBLE);
 							ll_thirdpay_paying_result.setVisibility(View.VISIBLE);
@@ -568,7 +572,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 		isrunning = false;
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("operater", SpSaveUtils.read(context, ConstantData.CASHIER_CODE, ""));
-		map.put("pay_type", paymode + "");
+		//map.put("pay_type", paymode + "");
 		map.put("old_trade_no", et_thirdpay_input.getText().toString().trim());
 		map.put("billid", "-" + AppConfigFile.getBillId());
 		LogUtil.i("lgs", "old_trade_no===" + map.get("old_trade_no") + "==billid==" + map.get("billid") + "===" + "=="
@@ -602,17 +606,19 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 					public void handleActionSuccess(String actionName, ThirdPayCancelResult result) {
 						// TODO Auto-generated method stub
 						if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
 								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_REPEAL_SUCCESS.getOptLogCode(), context.getString(R.string.alipay_repeal_success));
-							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
-								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_REPEAL_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_repeal_success));
-							}
+//							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_REPEAL_SUCCESS.getOptLogCode(), context.getString(R.string.alipay_repeal_success));
+//							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_REPEAL_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_repeal_success));
+//							}
 						} else {
-							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
 								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_REPEAL_FAILED.getOptLogCode(), context.getString(R.string.alipay_repeal_failed));
-							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
-								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_REPEAL_FAILED.getOptLogCode(), context.getString(R.string.wechat_repeal_failed));
-							}
+//							if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_REPEAL_FAILED.getOptLogCode(), context.getString(R.string.alipay_repeal_failed));
+//							}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
+//								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_REPEAL_FAILED.getOptLogCode(), context.getString(R.string.wechat_repeal_failed));
+//							}
 							ll_thirdpay_money_input.setVisibility(View.GONE);
 							ll_thirdpay_hint.setVisibility(View.VISIBLE);
 							ll_thirdpay_paying_result.setVisibility(View.VISIBLE);
@@ -666,7 +672,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 			ip = Utils.getLocalIpAddress();
 		}
 		map.put("posip", ip);
-		map.put("pay_type", paymode + "");
+		//map.put("pay_type", paymode + "");
 		map.put("total_fee", MoneyAccuracyUtils.thirdpaymoneydealbyinput(et_thirdpay_input.getText().toString()));
 		if(isPay) {
 			map.put("billid", "" + AppConfigFile.getBillId());
@@ -705,11 +711,12 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 			public void handleActionSuccess(String actionName, ThirdPayResult result) {
 				// TODO Auto-generated method stub
 				if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-					if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
 						OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_TRADE_SUCCESS.getOptLogCode(), context.getString(R.string.alipay_trade_success));
-					}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
-						OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_TRADE_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_trade_success));
-					}
+//					if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
+//						OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_TRADE_SUCCESS.getOptLogCode(), context.getString(R.string.alipay_trade_success));
+//					}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
+//						OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_TRADE_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_trade_success));
+//					}
 					Message message=Message.obtain();
 					message.what = 6;
 					message.obj = result.getThirdpay();
@@ -720,11 +727,12 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 					message.obj = result.getThirdpay().getTrade_no();
 					handler.sendMessage(message);
 				} else {
-					if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
 						OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_TRADE_FAILED.getOptLogCode(), context.getString(R.string.alipay_trade_failed));
-					}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
-						OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_TRADE_FAILED.getOptLogCode(), context.getString(R.string.wechat_trade_failed));
-					}
+//					if(paymode == ConstantData.PAYMODE_BY_ALIPAY){
+//						OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_TRADE_FAILED.getOptLogCode(), context.getString(R.string.alipay_trade_failed));
+//					}else if(paymode == ConstantData.PAYMODE_BY_WEIXIN){
+//						OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_TRADE_FAILED.getOptLogCode(), context.getString(R.string.wechat_trade_failed));
+//					}
 					Message message=Message.obtain();
 					message.what = 5;
 					message.obj = result.getMsg();

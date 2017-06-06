@@ -80,8 +80,12 @@ public class RunTimeService extends IntentService {
 				uploadOfflineData(null, AppConfigFile.OFFLINE_DATA_COUNT);
 			}else
 			if(intent.getBooleanExtra(ConstantData.UPDATE_STATUS, false)){
-				setCashierId(intent.getStringExtra(ConstantData.CASHIER_ID));
+				String status = intent.getStringExtra(ConstantData.CASHIER_ID);
+				setCashierId(status);
 				checkNetStatus(false);
+				if(!StringUtil.isEmpty(status) && status.equals(ConstantData.POS_STATUS_LOGOUT)){
+					exit();
+				}
 			}
 			else
 			if(intent.getBooleanExtra(ConstantData.SAVE_THIRD_DATA, false)){
@@ -102,6 +106,21 @@ public class RunTimeService extends IntentService {
 
 	private DateFormat formatContent = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+	public void exit(){
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("personcode", SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""));
+		HttpRequestUtil.getinstance().exit(ConstantData.NET_TAG, map, BaseResult.class, new HttpActionHandle<BaseResult>() {
+			@Override
+			public void handleActionError(String actionName, String errmsg) {
+
+			}
+
+			@Override
+			public void handleActionSuccess(String actionName, BaseResult result) {
+
+			}
+		});
+	}
 
 	/**
 	 * 检测网络状态，发送心跳包

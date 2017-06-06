@@ -166,8 +166,8 @@ public class CheckOutActivity extends BaseActivity {
                     break;
                 case PAY_SUCCESS:
                     if (waitPayValue <= 0) {
-                        clickCommitOrder();
-                    }
+                    clickCommitOrder();
+                }
                     break;
                 case ALREADY_THIRD_PAY_INFO:
                     final List<ThirdPayInfo> thirdPayInfoList = (List<ThirdPayInfo>) msg.obj;
@@ -461,15 +461,15 @@ public class CheckOutActivity extends BaseActivity {
 //                }
            //     break;
             case ALIPAY:
-                if(ConstantData.WECHAT_ID.equals(payid)){
-                    paytype = ConstantData.PAYMODE_BY_WEIXIN;
-                }else if(ConstantData.ALPAY_ID.equals(payid)){
-                    paytype = ConstantData.PAYMODE_BY_ALIPAY;
-                }else if(ConstantData.BANKCODE_ID.equals(payid)){
-                    paytype = ConstantData.PAYMODE_BY_BANKCODE;
-                }else if(ConstantData.YIPAY_ID.equals(payid)){
-                    paytype = ConstantData.PAYMODE_BY_YIPAY;
-                }
+//                if(ConstantData.WECHAT_ID.equals(payid)){
+//                    paytype = ConstantData.PAYMODE_BY_WEIXIN;
+//                }else if(ConstantData.ALPAY_ID.equals(payid)){
+//                    paytype = ConstantData.PAYMODE_BY_ALIPAY;
+//                }else if(ConstantData.BANKCODE_ID.equals(payid)){
+//                    paytype = ConstantData.PAYMODE_BY_BANKCODE;
+//                }else if(ConstantData.YIPAY_ID.equals(payid)){
+//                    paytype = ConstantData.PAYMODE_BY_YIPAY;
+//                }
                 if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
                     int cameraType = SpSaveUtils.readInt(getApplicationContext(), ConstantData.CAMERATYPE, 1);
                     if(cameraType == 0){
@@ -1132,63 +1132,20 @@ public class CheckOutActivity extends BaseActivity {
 
                     @Override
                     public void getPayValue(ThirdPay value) {
-                        if (paytype == ConstantData.PAYMODE_BY_ALIPAY) {
-                            PayMentsCancleInfo info = new PayMentsCancleInfo();
-                            info.setId(paymentTypeAdapter.getPayType().getId());
-                            info.setName(paymentTypeAdapter.getPayType().getName());
-                            info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
-                            info.setIsCancle(false);
-                            info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
-                            info.setThridPay(value);
-                            info.setOverage("0");
-                            addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
-                            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            handler.sendEmptyMessage(PAY_SUCCESS);
-                        } else if (paytype == ConstantData.PAYMODE_BY_BANKCODE) {
-                            PayMentsCancleInfo info = new PayMentsCancleInfo();
-                            info.setId(paymentTypeAdapter.getPayType().getId());
-                            info.setName(paymentTypeAdapter.getPayType().getName());
-                            info.setType(PaymentTypeEnum.WECHAT.getStyletype());
-                            info.setIsCancle(false);
-                            info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
-                            info.setThridPay(value);
-                            info.setOverage("0");
-                            addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
-                            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            handler.sendEmptyMessage(PAY_SUCCESS);
-                        }else if (paytype == ConstantData.PAYMODE_BY_YIPAY) {
-                            PayMentsCancleInfo info = new PayMentsCancleInfo();
-                            info.setId(paymentTypeAdapter.getPayType().getId());
-                            info.setName(paymentTypeAdapter.getPayType().getName());
-                            info.setType(PaymentTypeEnum.WECHAT.getStyletype());
-                            info.setIsCancle(false);
-                            info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
-                            info.setThridPay(value);
-                            info.setOverage("0");
-                            addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
-                            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            handler.sendEmptyMessage(PAY_SUCCESS);
-                        }else if (paytype == ConstantData.PAYMODE_BY_WEIXIN) {
-                            PayMentsCancleInfo info = new PayMentsCancleInfo();
-                            info.setId(paymentTypeAdapter.getPayType().getId());
-                            info.setName(paymentTypeAdapter.getPayType().getName());
-                            info.setType(PaymentTypeEnum.WECHAT.getStyletype());
-                            info.setIsCancle(false);
-                            info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
-                            info.setThridPay(value);
-                            info.setOverage("0");
-                            addPayTypeInfo(PaymentTypeEnum.WECHAT, 0, 0, null, info);
-                            waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                            text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            handler.sendEmptyMessage(PAY_SUCCESS);
-                        }
+                        PayMentsInfo payMentsInfo = getPayInfoById(value.getSkfsid());
+                        PayMentsCancleInfo info = new PayMentsCancleInfo();
+                        info.setId(payMentsInfo.getId());
+                        info.setName(payMentsInfo.getName());
+                        info.setType(payMentsInfo.getType());
+                        info.setIsCancle(false);
+                        info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                        info.setThridPay(value);
+                        info.setOverage("0");
+                        addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
+                        waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                        text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                        handler.sendEmptyMessage(PAY_SUCCESS);
                     }
                 });
         paydialog.show();
@@ -1325,13 +1282,24 @@ public class CheckOutActivity extends BaseActivity {
     private void getPayType() {
 
         boolean isRecorded = false;
+        boolean isThird = false;
         List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
         if(paymentslist != null){
             for (int i = 0; i < paymentslist.size(); i++) {
                 if (paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())
-                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHAT.getStyletype())
-                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())
-                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.STORE.getStyletype())) {
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHAT.getStyletype())) {
+                    if(!AppConfigFile.isOffLineMode()){
+                        if(!isThird){
+                            PayMentsInfo info = new PayMentsInfo();
+                            info.setName("扫码付");
+                            info.setType(paymentslist.get(i).getType());
+                            info.setId(paymentslist.get(i).getId());
+                            paymentTypeAdapter.add(info);
+                            isThird = true;
+                        }
+                    }
+                }else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.STORE.getStyletype())){
                     if(!AppConfigFile.isOffLineMode()){
                         paymentTypeAdapter.add(paymentslist.get(i));
                     }

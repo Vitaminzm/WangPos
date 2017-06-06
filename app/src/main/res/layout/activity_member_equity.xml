@@ -191,6 +191,65 @@
                 android:text="@string/yuan"
                 android:textColor="@color/font_color"/>
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="@dimen/margin_xz"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_rx"
+                android:text="已选择优惠券张数:"
+                android:textColor="@color/font_color"/>
+            <TextView
+                android:id="@+id/text_coupon_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_ft"
+                android:layout_marginLeft="@dimen/margin_ez"
+                android:text="0"
+                android:textColor="@color/edit_font_color"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_rx"
+                android:layout_marginLeft="@dimen/margin_xv"
+                android:text="张"
+                android:textColor="@color/font_color"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="@dimen/margin_rv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_rx"
+                android:text="已使用总金额汇总:"
+                android:textColor="@color/font_color"/>
+            <TextView
+                android:id="@+id/text_total_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_ft"
+                android:layout_marginLeft="@dimen/margin_ez"
+                android:text="0"
+                android:textColor="@color/edit_font_color"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_rx"
+                android:layout_marginLeft="@dimen/margin_xv"
+                android:text="@string/yuan"
+                android:textColor="@color/font_color"/>
+
+        </LinearLayout>
     </LinearLayout>
 
     <TextView

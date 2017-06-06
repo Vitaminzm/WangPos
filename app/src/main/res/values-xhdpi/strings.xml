@@ -142,6 +142,8 @@
     <string name="uesed">使用</string>
     <string name="deduction">抵扣</string>
 
+    <!--优惠券使用-->
+    <string name="coupon_used">用券详情</string>
     <!--支付详情 -->
     <string name="payment_info">支付详情</string>
     <string name="order_info">账单信息</string>
@@ -400,22 +402,22 @@
     <string name="please_input_trade_no">请输入第三方流水号</string>
     <string name="please_input_correct_money">请输入正确金额！！！</string>
     <string name="alipay_trade">支付宝交易</string>
-    <string name="alipay_trade_success">支付宝交易成功</string>
-    <string name="alipay_trade_failed">支付宝交易失败</string>
-    <string name="alipay_trade_cancle">支付宝交易取消</string>
+    <string name="alipay_trade_success">扫码付交易成功</string>
+    <string name="alipay_trade_failed">扫码付交易失败</string>
+    <string name="alipay_trade_cancle">扫码付交易取消</string>
     <string name="alipay_query">支付宝查询</string>
-    <string name="alipay_query_success">支付宝查询成功</string>
-    <string name="alipay_query_failed">支付宝查询失败</string>
-    <string name="alipay_query_cancle">支付宝查询取消</string>
+    <string name="alipay_query_success">扫码付查询成功</string>
+    <string name="alipay_query_failed">扫码付查询失败</string>
+    <string name="alipay_query_cancle">扫码付查询取消</string>
     <string name="alipay_repeal">支付宝撤销</string>
-    <string name="alipay_repeal_success">支付宝撤销成功</string>
-    <string name="alipay_repeal_failed">支付宝撤销失败</string>
-    <string name="alipay_repeal_cancle">支付宝撤销取消</string>
+    <string name="alipay_repeal_success">扫码付撤销成功</string>
+    <string name="alipay_repeal_failed">扫码付撤销失败</string>
+    <string name="alipay_repeal_cancle">扫码付撤销取消</string>
     <string name="alipay_return">支付宝退货</string>
     <string name="qmh_return">全民惠退货</string>
-    <string name="alipay_return_success">支付宝退货成功</string>
-    <string name="alipay_return_failed">支付宝退货失败</string>
-    <string name="alipay_return_cancle">支付宝退货取消</string>
+    <string name="alipay_return_success">扫码付退货成功</string>
+    <string name="alipay_return_failed">扫码付退货失败</string>
+    <string name="alipay_return_cancle">扫码付退货取消</string>
     <string name="wechat_trade">微信交易</string>
     <string name="wechat_trade_success">微信交易成功</string>
     <string name="wechat_trade_failed">微信交易失败</string>

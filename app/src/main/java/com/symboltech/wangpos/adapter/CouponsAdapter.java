@@ -87,7 +87,9 @@ public class CouponsAdapter extends RecyclerView.Adapter<CouponsAdapter.ViewHold
 		return selectPosition;
 	}
 	public void addSelect(int position){
-		selectPosition.add((Integer)position);
+		if(!selectPosition.contains(position)){
+			selectPosition.add(position);
+		}
 	}
 
 	public  int getSelectedCount(){

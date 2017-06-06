@@ -55,11 +55,6 @@
                 android:gravity="center"
                 android:layout_marginRight="@dimen/margin_fz">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/pay_signin_icon" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -75,11 +70,6 @@
                 android:layout_height="@dimen/height_ez"
                 android:background="@drawable/btn_blue_bg"
                 android:gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/pay_clear_icon" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -108,11 +98,6 @@
                 android:background="@drawable/btn_blue_bg"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/pay_search_icon" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -130,11 +115,6 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/btn_blue_bg"
                 android:gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/pay_jiaoyi_icon" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -163,11 +143,6 @@
                 android:background="@drawable/btn_blue_bg"
                 android:gravity="center">
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/pay_search_icon" />
-
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -185,11 +160,6 @@
                 android:layout_marginTop="8dp"
                 android:background="@drawable/btn_blue_bg"
                 android:gravity="center">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@mipmap/pay_jiaoyi_icon" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -217,11 +187,6 @@
             android:background="@drawable/btn_blue_bg"
             android:gravity="center">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/pay_search_icon" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -240,12 +205,6 @@
             android:layout_marginTop="8dp"
             android:background="@drawable/btn_blue_bg"
             android:gravity="center">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/pay_jiaoyi_icon" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

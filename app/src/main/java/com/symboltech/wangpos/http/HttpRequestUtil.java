@@ -143,7 +143,7 @@ public class HttpRequestUtil {
 	 * @param httpactionhandler
 	 */
 	public <T> void exit(String tag, Map<String, String> param, final Class<T> clz, final HttpActionHandle<T> httpactionhandler) {
-		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/exit"), param, clz,
+		HttpServiceStringClient.getinstance().getForObject(tag, getUrl("xbapi/exit"), param, clz,
 				httpactionhandler);
 	}
 	/**

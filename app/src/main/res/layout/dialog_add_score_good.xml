@@ -43,6 +43,7 @@
         android:layout_marginBottom="@dimen/margin_rz"
         android:cacheColorHint="@color/transparent"
         android:numColumns="2"
+        android:overScrollMode="never"
         android:scrollbars="none"/>
     <TextView
         android:id="@+id/text_confirm"

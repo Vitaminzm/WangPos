@@ -20,6 +20,16 @@ public class ThirdPayQuery implements Serializable{
 	private String total_fee;
 	/** 交易途径 */
 	private String pay_type;
+	/** 收款方式id */
+	private String skfsid;
+
+	public String getSkfsid() {
+		return skfsid;
+	}
+
+	public void setSkfsid(String skfsid) {
+		this.skfsid = skfsid;
+	}
 
 	public String getTrade_no() {
 		return trade_no;

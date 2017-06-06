@@ -68,6 +68,7 @@
         android:layout_marginRight="@dimen/margin_nv"
         android:layout_marginLeft="@dimen/margin_nv"
         android:dividerHeight="@dimen/margin_ov"
+        android:overScrollMode="never"
         android:cacheColorHint="@color/transparent"
         android:listSelector="@drawable/gridview_selector"
         android:scrollbars="none"/>

@@ -20,6 +20,7 @@
     <!-- 登录界面-->
     <dimen name="font_size_ez">40sp</dimen>
     <dimen name="font_size_xz">30sp</dimen>
+    <dimen name="font_size_fv">22sp</dimen>
     <dimen name="font_size_ft">21sp</dimen>
     <dimen name="font_size_fz">20sp</dimen>
     <dimen name="font_size_rx">18sp</dimen>
