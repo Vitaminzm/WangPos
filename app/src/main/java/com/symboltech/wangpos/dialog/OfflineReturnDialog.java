@@ -1,37 +1,18 @@
 package com.symboltech.wangpos.dialog;
 
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.github.ybq.android.spinkit.SpinKitView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.PaymentActivity;
 import com.symboltech.wangpos.activity.ReturnGoodsByNormalActivity;
-import com.symboltech.wangpos.activity.ReturnGoodsByOrderActivity;
 import com.symboltech.wangpos.app.AppConfigFile;
-import com.symboltech.wangpos.app.ConstantData;
-import com.symboltech.wangpos.http.HttpActionHandle;
-import com.symboltech.wangpos.http.HttpRequestUtil;
-import com.symboltech.wangpos.msg.entity.BillInfo;
-import com.symboltech.wangpos.result.BillResult;
-import com.symboltech.wangpos.utils.SpSaveUtils;
-import com.symboltech.wangpos.utils.StringUtil;
-import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Description 通用提示dialog
@@ -67,6 +48,8 @@ public class OfflineReturnDialog extends BaseDialog implements View.OnClickListe
 		imageview_close.setOnClickListener(this);
 		text_sale.setOnClickListener(this);
 		text_return.setOnClickListener(this);
+		text_return.setBackgroundResource(R.drawable.btn_gray_bg);
+		text_return.setEnabled(false);
 	}
 
 	@Override

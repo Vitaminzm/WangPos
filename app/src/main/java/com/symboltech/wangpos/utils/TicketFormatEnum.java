@@ -111,7 +111,14 @@ public enum TicketFormatEnum {
 	/** 收款方式明细结束*/
 	TICKET_PAYTYPE_END("\\[收款方式明细结束\\]"),
 
-
+	/** 待返券明细开始*/
+	TICKET_DFQ_COUPON_BEGIN("\\[待返券开始\\]"),
+	/** 待返券明细结束*/
+	TICKET_DFQ_COUPON_END("\\[待返券开始\\]"),
+	/** 待返券明细结束*/
+	TICKET_DFQ_COUPON_NAME("\\[返券规则\\]"),
+	/** 待返券明细结束*/
+	TICKET_DFQ_COUPON_MONEY("\\[返券金额\\]"),
 	//---------------会员信息--------------------------------------
 
 	/** 会员卡号*/

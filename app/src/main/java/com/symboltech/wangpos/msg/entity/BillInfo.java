@@ -93,6 +93,15 @@ public class BillInfo implements Serializable {
 	private List<PayMentsInfo> paymentslist;
 	private List<CouponInfo> usedcouponlist;// 交易用卷信息
 	private List<CouponInfo> allcouponlist;// 用户持有用卷信息
+	private List<DfqCoupon> dfqlist;//待付券列表
+
+	public List<DfqCoupon> getDfqlist() {
+		return dfqlist;
+	}
+
+	public void setDfqlist(List<DfqCoupon> dfqlist) {
+		this.dfqlist = dfqlist;
+	}
 
 	public String getRandomcode() {
 		return randomcode;

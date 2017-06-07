@@ -433,7 +433,19 @@ public class HttpRequestUtil {
 		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/manualparkcoupon"), param, clz,
 				httpactionhandler);
 	}
-	
+
+	/**
+	 * @Description 密码修改
+	 * @author zmm
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void repassword(String tag, Map<String, String> param, final Class<T> clz,
+									 final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/repassword"), param, clz,
+				httpactionhandler);
+	}
 	/**
 	 * @Description 会员激活
 	 * @author zmm

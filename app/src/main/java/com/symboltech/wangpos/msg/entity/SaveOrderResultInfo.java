@@ -20,6 +20,15 @@ public class SaveOrderResultInfo implements Serializable {
 	private String randomcode; //小票随机校验码
 	private List<CouponInfo> grantcouponlist; // 返券列表
 	private List<CouponInfo> allcouponlist;//会员总积分
+	private List<DfqCoupon> dfqlist;//待付券列表
+
+	public List<DfqCoupon> getDfqlist() {
+		return dfqlist;
+	}
+
+	public void setDfqlist(List<DfqCoupon> dfqlist) {
+		this.dfqlist = dfqlist;
+	}
 
 	public String getRandomcode() {
 		return randomcode;

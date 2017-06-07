@@ -1,7 +1,6 @@
 package com.symboltech.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -91,9 +90,15 @@ public class InputDialog extends BaseDialog implements View.OnClickListener {
 		if(!StringUtil.isEmpty(hit)){
 			edit_input_order_no.setHint(hit);
 		}
-		if(flag)
+		if(flag){
 			keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
-		else{
+			handler.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					keyboard.show();
+				}
+			},300);
+		}else{
 			if(!StringUtil.isEmpty(AppConfigFile.getHost_config()))
 				edit_input_order_no.setText(AppConfigFile.getHost_config());
 		}
@@ -144,8 +149,6 @@ public class InputDialog extends BaseDialog implements View.OnClickListener {
 						gel.editinput(edit_input_order_no.getText().toString().trim());
 						this.dismiss();
 					}else{
-						gel.editinput(edit_input_order_no.getText().toString().trim());
-						this.dismiss();
 						boolean result=edit_input_order_no.getText().toString().trim().matches("^[0-9]*$");
 						if(result){
 							gel.editinput(edit_input_order_no.getText().toString().trim());

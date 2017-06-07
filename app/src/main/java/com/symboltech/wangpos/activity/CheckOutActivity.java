@@ -1224,6 +1224,7 @@ public class CheckOutActivity extends BaseActivity {
                     bill.setGoodslist(cartgoods);
                     bill.setGrantcouponlist(result.getSaveOrderInfo().getGrantcouponlist());
                     bill.setAllcouponlist(result.getSaveOrderInfo().getAllcouponlist());
+                    bill.setDfqlist(result.getSaveOrderInfo().getDfqlist());
                     AppConfigFile.setLast_billid(AppConfigFile.getBillId());
                     AppConfigFile.setBillId(result.getSaveOrderInfo().getBillid());
                     Intent intent_pay_detail = new Intent(CheckOutActivity.this, PaymentDetailActivity.class);

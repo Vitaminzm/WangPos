@@ -15,6 +15,7 @@ import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.CouponInfo;
+import com.symboltech.wangpos.msg.entity.DfqCoupon;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
@@ -1118,6 +1119,26 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true));
 							}
+							Pattern patternuse = Pattern.compile(TicketFormatEnum.TICKET_DFQ_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_DFQ_COUPON_END.getLable());
+							Matcher matcheruse = patternuse.matcher(tickend.getString());
+							String couponFormatall = null;
+							String couponFormat = null;
+							if(matcheruse.find()) {
+								couponFormatall = matcheruse.group(0);
+								couponFormat = matcheruse.group(1);
+							}
+							if(couponFormat != null && bill.getDfqlist() != null && bill.getDfqlist().size() > 0){
+								StringBuilder builder = new StringBuilder().append("");
+								int len = couponFormat.length();
+								for(DfqCoupon infos:bill.getDfqlist()){
+									builder.append(format(infos.getDfqgzname()) +formatRString(8,infos.getDfqmoney())+"\n");
+								}
+								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(coupontemp.getString(), builder.toString());
+							}else if(couponFormatall != null){
+								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(coupontemp.getString(), "");
+							}
 							String[] codes = tickend.getString().split("\n");
 							for (String code:codes){
 								addTextJson(array, latticePrinter, FONT_DEFAULT, code, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
@@ -1600,16 +1621,22 @@ public class PrepareReceiptInfo {
 			addDashLine(array, latticePrinter, printer, fontConfig);
 		}
 		if (bill.getUsedcouponlist() != null && bill.getUsedcouponlist().size() > 0) {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "使用券", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "使用券信息", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			for (CouponInfo info : bill.getUsedcouponlist()) {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getName()) + "	" + info.getAvailablemoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
 		}
 
 		if (bill.getGrantcouponlist() != null && bill.getGrantcouponlist().size() > 0) {
-			addTextJson(array, latticePrinter, FONT_DEFAULT, "新增券", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "新增券信息", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			for (CouponInfo info : bill.getGrantcouponlist()) {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getName()) + "	" + info.getAvailablemoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			}
+		}
+		if(bill.getDfqlist() != null && bill.getDfqlist().size() >0){
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "待返券信息", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			for (DfqCoupon info : bill.getDfqlist()) {
+				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getDfqgzname()) + "	" + info.getDfqmoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
 		}
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "验证码:" + bill.getRandomcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
@@ -1847,6 +1874,25 @@ public class PrepareReceiptInfo {
 									tickend.replace(TicketFormatEnum.TICKET_SALE_DATE.getLable(), getDateTime(date, basic.getDateformat(), true))
 											.replace(TicketFormatEnum.TICKET_SALE_TIME.getLable(), getDateTime(date, basic.getTimeformat(), false));
 								}
+							}
+							Pattern patternuse = Pattern.compile(TicketFormatEnum.TICKET_DFQ_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_DFQ_COUPON_END.getLable());
+							Matcher matcheruse = patternuse.matcher(tickend.getString());
+							String couponFormatall = null;
+							String couponFormat = null;
+							if(matcheruse.find()) {
+								couponFormatall = matcheruse.group(0);
+								couponFormat = matcheruse.group(1);
+							}
+							if(couponFormat != null && bill.getDfqlist() != null && bill.getDfqlist().size() > 0){
+								StringBuilder builder = new StringBuilder().append("");
+								for(DfqCoupon infos:bill.getDfqlist()){
+									builder.append(format(infos.getDfqgzname()) +formatRString(8,infos.getDfqmoney())+"\n");
+								}
+								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(coupontemp.getString(), builder.toString());
+							}else if(couponFormatall != null){
+								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(coupontemp.getString(), "");
 							}
 							String[] codes = tickend.getString().split("\n");
 							for (String code:codes){

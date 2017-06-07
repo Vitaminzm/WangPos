@@ -374,7 +374,7 @@ public class PaymentActivity extends BaseActivity {
         AppConfigFile.delActivity(this);
     }
 
-    @OnClick({R.id.title_icon_back, R.id.text_confirm_order, R.id.radio_add_score_good, R.id.radio_select_good, R.id.radio_add_salesman, R.id.radio_look_member})
+    @OnClick({R.id.title_icon_back, R.id.text_confirm_order, R.id.radio_add_score_good, R.id.radio_select_good, R.id.radio_add_good, R.id.radio_add_salesman, R.id.radio_look_member})
     public void back(View view) {
         int id = view.getId();
         switch (id) {
@@ -383,6 +383,19 @@ public class PaymentActivity extends BaseActivity {
                 break;
             case R.id.text_confirm_order:
                 submitgoodsorder();
+                break;
+            case R.id.radio_add_good:
+                if (goodinfos != null && goodinfos.size() > 0) {
+                    new InputDialog(this, "请输入商品码", "请输入商品码", new GeneralEditListener(){
+
+                        @Override
+                        public void editinput(final String edit) {
+                            getGoodsBycode(edit);
+                        }
+                    }).show();
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_no_good));
+                }
                 break;
             case R.id.radio_add_score_good:
                 if(memberBigdate !=null && memberBigdate.getGoodslist() != null && memberBigdate.getGoodslist().size() > 0){
@@ -450,6 +463,31 @@ public class PaymentActivity extends BaseActivity {
             case R.id.radio_look_member:
                 lookMember();
                 break;
+        }
+    }
+
+    public void getGoodsBycode(String code){
+        if(StringUtil.isEmpty(code)){
+            ToastUtils.sendtoastbyhandler(handler,"输入商品码为空");
+            return;
+        }
+        boolean isFind = false;
+        for(int i = 0;i<goodinfos.size();i++){
+            GoodsInfo info = goodinfos.get(i);
+            if(code.equals(info.getBarcode())){
+                isFind = true;
+                if (info.getSpmode().trim().equals("0")) {
+                    addcartgoods(null, i, ConstantData.GOOD_PRICE_NO_CHANGE);
+                } else {
+
+                    position = i;
+                    keyboard.show();
+                }
+                break;
+            }
+        }
+        if(!isFind){
+            ToastUtils.sendtoastbyhandler(handler, "未找到该商品");
         }
     }
 

@@ -449,6 +449,17 @@
     <string name="car_plate_send_success">停车券发送成功！</string>
     <string name="car_plate_send_failed">停车券发送失败！</string>
 
+    <!-- 密码修改界面 -->
+    <string name="change_passeord">修改登录密码</string>
+    <string name="original_passeord">原密码</string>
+    <string name="please_original_passeord">请输入原密码</string>
+    <string name="new_passeord">新密码</string>
+    <string name="please_new_passeord">请输入新密码</string>
+    <string name="confirm_passeord">确认密码</string>
+    <string name="please_confirm_passeord">请输入确认密码</string>
+
+
+
     <string-array name="cameraType">
         <item>前置摄像头</item>
         <item>后置摄像头</item>

@@ -79,65 +79,86 @@
         <include layout="@layout/view_bill_info" />
     </FrameLayout>
 
-    <LinearLayout
+    <HorizontalScrollView
         android:background="@color/view_bg_color"
         android:id="@+id/radioGroup_function"
         android:layout_above="@id/fl_bill_info"
+        android:overScrollMode="never"
+        android:scrollbars="none"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="@dimen/margin_vv"
-        android:paddingRight="@dimen/margin_vv"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/radio_select_good"
-            android:layout_width="wrap_content"
-            android:button="@null"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:paddingTop="10dp"
+            android:paddingBottom="5dp"
+            android:paddingLeft="@dimen/margin_vv"
+            android:paddingRight="@dimen/margin_vv"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@null"
-            android:drawableTop="@drawable/btn_select_good_selector"
-            android:drawablePadding="@dimen/margin_ov"
-            android:textSize="@dimen/font_size_tf"
-            android:textColor="@drawable/btn_font_color_selector"
-            android:text="@string/select_good"/>
-        <TextView
-            android:id="@+id/radio_add_score_good"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:button="@null"
-            android:layout_marginLeft="@dimen/margin_rv"
-            android:drawableTop="@drawable/btn_add_score_good_selector"
-            android:drawablePadding="@dimen/margin_ov"
-            android:textSize="@dimen/font_size_tf"
-            android:textColor="@drawable/btn_font_color_selector"
-            android:text="@string/add_score_good"/>
-        <TextView
-            android:id="@+id/radio_look_member"
-            android:layout_width="wrap_content"
-            android:button="@null"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:drawableTop="@drawable/btn_look_member_selector"
-            android:drawablePadding="@dimen/margin_ov"
-            android:layout_marginLeft="@dimen/margin_rv"
-            android:textSize="@dimen/font_size_tf"
-            android:textColor="@drawable/btn_font_color_selector"
-            android:text="@string/look_member"/>
-        <TextView
-            android:id="@+id/radio_add_salesman"
-            android:layout_width="wrap_content"
-            android:button="@null"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:layout_marginLeft="@dimen/margin_rv"
-            android:drawableTop="@drawable/btn_add_saleman_selector"
-            android:drawablePadding="@dimen/margin_ov"
-            android:textColor="@drawable/btn_font_color_selector"
-            android:textSize="@dimen/font_size_tf"
-            android:text="@string/add_saleman"/>
-    </LinearLayout>
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/radio_select_good"
+                android:layout_width="wrap_content"
+                android:button="@null"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableTop="@drawable/btn_select_good_selector"
+                android:drawablePadding="@dimen/margin_ov"
+                android:textSize="@dimen/font_size_tf"
+                android:textColor="@drawable/btn_font_color_selector"
+                android:text="@string/select_good"/>
+
+            <TextView
+                android:id="@+id/radio_add_score_good"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:button="@null"
+                android:layout_marginLeft="@dimen/margin_rv"
+                android:drawableTop="@drawable/btn_add_score_good_selector"
+                android:drawablePadding="@dimen/margin_ov"
+                android:textSize="@dimen/font_size_tf"
+                android:textColor="@drawable/btn_font_color_selector"
+                android:text="@string/add_score_good"/>
+
+            <TextView
+                android:id="@+id/radio_look_member"
+                android:layout_width="wrap_content"
+                android:button="@null"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableTop="@drawable/btn_look_member_selector"
+                android:drawablePadding="@dimen/margin_ov"
+                android:layout_marginLeft="@dimen/margin_rv"
+                android:textSize="@dimen/font_size_tf"
+                android:textColor="@drawable/btn_font_color_selector"
+                android:text="@string/look_member"/>
+            <TextView
+                android:id="@+id/radio_add_salesman"
+                android:layout_width="wrap_content"
+                android:button="@null"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_marginLeft="@dimen/margin_rv"
+                android:drawableTop="@drawable/btn_add_saleman_selector"
+                android:drawablePadding="@dimen/margin_ov"
+                android:textColor="@drawable/btn_font_color_selector"
+                android:textSize="@dimen/font_size_tf"
+                android:text="@string/add_saleman"/>
+            <TextView
+                android:id="@+id/radio_add_good"
+                android:layout_width="wrap_content"
+                android:button="@null"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:drawableTop="@drawable/btn_select_good_selector"
+                android:drawablePadding="@dimen/margin_ov"
+                android:layout_marginLeft="@dimen/margin_rv"
+                android:textSize="@dimen/font_size_tf"
+                android:textColor="@drawable/btn_font_color_selector"
+                android:text="@string/add_good"/>
+        </LinearLayout>
+    </HorizontalScrollView >
+
     <FrameLayout
         android:background="@color/view_bg_color"
         android:layout_above="@id/radioGroup_function"
@@ -148,6 +169,7 @@
             android:id="@+id/goods_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:overScrollMode="never"
             android:background="@drawable/icon_bg_scroll"
             android:layout_marginRight="@dimen/margin_tz"
             android:layout_marginLeft="@dimen/margin_tz"
