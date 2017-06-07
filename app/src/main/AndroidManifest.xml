@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.symboltechshop.wangpos"
-    android:versionCode="1705241304"
-    android:versionName="1.0.2">
+    android:versionCode="1706071304"
+    android:versionName="1.0.3">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -73,7 +73,7 @@
 
         <meta-data
             android:name="pos_update_time"
-            android:value="2017年5月17日 " >
+            android:value="2017年6月7日 " >
         </meta-data>
     </application>
 
