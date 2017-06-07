@@ -165,9 +165,9 @@ public class CheckOutActivity extends BaseActivity {
                     ToastUtils.showtaostbyhandler(CheckOutActivity.this, msg);
                     break;
                 case PAY_SUCCESS:
-                    if (waitPayValue <= 0) {
-                    clickCommitOrder();
-                }
+                    if (waitPayValue == 0) {
+                        clickCommitOrder();
+                    }
                     break;
                 case ALREADY_THIRD_PAY_INFO:
                     final List<ThirdPayInfo> thirdPayInfoList = (List<ThirdPayInfo>) msg.obj;
@@ -198,7 +198,7 @@ public class CheckOutActivity extends BaseActivity {
                             waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                             text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                             edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            if (waitPayValue <= 0) {
+                            if (waitPayValue == 0) {
                                 clickCommitOrder();
                             }
                         }
@@ -226,7 +226,7 @@ public class CheckOutActivity extends BaseActivity {
                     waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                     text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                     edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                    if (waitPayValue <= 0) {
+                    if (waitPayValue == 0) {
                         clickCommitOrder();
                     }
                     break;
@@ -861,7 +861,11 @@ public class CheckOutActivity extends BaseActivity {
                 startActivityForResult(intentCancle, ConstantData.THRID_CANCLE_REQUEST_CODE);
                 break;
             case R.id.text_submit_order:
-                clickCommitOrder();
+                if (waitPayValue >= 0) {
+                    clickCommitOrder();
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler,"支付信息异常");
+                }
                 break;
             case R.id.imageview_more:
             case R.id.ll_member_equity:
