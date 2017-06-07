@@ -795,6 +795,14 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
      * 提交退货单
      */
     private void commitOrder() {
+        double money = 0;
+        for(PayMentsInfo info:commitStyles){
+            money = ArithDouble.add(money, ArithDouble.parseDouble(info.getMoney()));
+        }
+        if(ArithDouble.add(ArithDouble.parseDouble(billInfo.getTotalmoney()), money)!= 0){
+            ToastUtils.sendtoastbyhandler(handler,"交易信息错误");
+            return;
+        }
         dealCoupon(billInfo.getUsedcouponlist());
         BillInfo bill = new BillInfo();
         bill.setBillid(AppConfigFile.getBillId());
