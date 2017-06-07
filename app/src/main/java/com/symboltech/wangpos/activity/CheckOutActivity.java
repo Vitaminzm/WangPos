@@ -1296,7 +1296,7 @@ public class CheckOutActivity extends BaseActivity {
                     if(!AppConfigFile.isOffLineMode()){
                         if(!isThird){
                             PayMentsInfo info = new PayMentsInfo();
-                            info.setName("扫码付");
+                            info.setName("融合支付");
                             info.setType(paymentslist.get(i).getType());
                             info.setId(paymentslist.get(i).getId());
                             paymentTypeAdapter.add(info);
