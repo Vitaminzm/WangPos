@@ -550,7 +550,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 }
                 gotoFunction(MemberAccessActivity.class);
                 break;
-            case R.id.rl_sendcarcoupon:
+            case R.id.rl_password_change:
                 if(AppConfigFile.isOffLineMode()){
                     ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
                     return;
@@ -1034,7 +1034,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             views.add(v1);
             View v2 = mLayoutInflater.inflate(R.layout.view_button_offline_main, null);
             ButterKnife.findById(v2, R.id.rl_upload).setOnClickListener(onClickListener);
-            ButterKnife.findById(v2, R.id.rl_sendcarcoupon).setOnClickListener(onClickListener);
+            ButterKnife.findById(v2, R.id.rl_password_change).setOnClickListener(onClickListener);
 //            ButterKnife.findById(v2, R.id.rl_sendcarcoupon).setBackgroundResource(R.drawable.btn_gray_bg);
 //            ButterKnife.findById(v2, R.id.rl_sendcarcoupon).setEnabled(false);
             ButterKnife.findById(v2, R.id.rl_offline).setOnClickListener(onClickListener);

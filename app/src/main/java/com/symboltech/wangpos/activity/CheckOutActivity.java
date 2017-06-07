@@ -322,6 +322,15 @@ public class CheckOutActivity extends BaseActivity {
                     return;
                 }
                 // 设置当前支付方式
+                if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                    if(scannerManager != null){
+                        try {
+                            scannerManager.stopScan();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 paymentTypeAdapter.setPayTpye(position);
                 doPay(money);
             }
@@ -1138,6 +1147,15 @@ public class CheckOutActivity extends BaseActivity {
                     public void getPayValue(ThirdPay value) {
                         PayMentsInfo payMentsInfo = getPayInfoById(value.getSkfsid());
                         PayMentsCancleInfo info = new PayMentsCancleInfo();
+                        if(payMentsInfo == null){
+                            info.setId(value.getSkfsid());
+                            info.setName("异常支付");
+                            info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
+                        }else{
+                            info.setId(payMentsInfo.getId());
+                            info.setName(payMentsInfo.getName());
+                            info.setType(payMentsInfo.getType());
+                        }
                         info.setId(payMentsInfo.getId());
                         info.setName(payMentsInfo.getName());
                         info.setType(payMentsInfo.getType());

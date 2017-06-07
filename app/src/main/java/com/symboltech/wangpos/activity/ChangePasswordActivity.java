@@ -114,7 +114,7 @@ public class ChangePasswordActivity extends BaseActivity {
                     ToastUtils.sendtoastbyhandler(handler,"确认密码与新密码不一致");
                     return;
                 }
-                if(!original_passeord.equals(new_passeord)){
+                if(original_passeord.equals(new_passeord)){
                     ToastUtils.sendtoastbyhandler(handler,"原密码与新密码一致，不能提交");
                     return;
                 }

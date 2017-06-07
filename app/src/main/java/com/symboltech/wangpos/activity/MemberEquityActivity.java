@@ -260,6 +260,10 @@ public class MemberEquityActivity extends BaseActivity {
 
 
     private void doCoupon(CouponInfo couponInfo, int position){
+        if(getPayTypeId(PaymentTypeEnum.COUPON) == null){
+            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+            return;
+        }
         if(couponList.size() == 0){
             if(ArithDouble.parseDouble(couponInfo.getAvailablemoney()) > 0){
                 couponList.add(couponInfo);

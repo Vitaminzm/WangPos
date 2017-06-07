@@ -84,7 +84,7 @@
         android:layout_marginTop="@dimen/btn_margin"
         android:orientation="horizontal" >
         <RelativeLayout
-            android:id="@+id/rl_sendcarcoupon"
+            android:id="@+id/rl_password_change"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:gravity="center"
@@ -94,7 +94,7 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/btn_sendcarcoupon_icon" />
+                android:src="@mipmap/btn_password_change" />
 
         </RelativeLayout>
         <RelativeLayout
