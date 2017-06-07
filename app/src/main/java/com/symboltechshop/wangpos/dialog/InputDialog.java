@@ -1,7 +1,6 @@
 package com.symboltechshop.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,8 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.symboltechshop.wangpos.R;
-import com.symboltechshop.wangpos.app.AppConfigFile;
 import com.symboltechshop.wangpos.activity.MainActivity;
+import com.symboltechshop.wangpos.app.AppConfigFile;
 import com.symboltechshop.wangpos.interfaces.GeneralEditListener;
 import com.symboltechshop.wangpos.utils.StringUtil;
 import com.symboltechshop.wangpos.utils.ToastUtils;
@@ -144,8 +143,6 @@ public class InputDialog extends BaseDialog implements View.OnClickListener {
 						gel.editinput(edit_input_order_no.getText().toString().trim());
 						this.dismiss();
 					}else{
-						gel.editinput(edit_input_order_no.getText().toString().trim());
-						this.dismiss();
 						boolean result=edit_input_order_no.getText().toString().trim().matches("^[0-9]*$");
 						if(result){
 							gel.editinput(edit_input_order_no.getText().toString().trim());
