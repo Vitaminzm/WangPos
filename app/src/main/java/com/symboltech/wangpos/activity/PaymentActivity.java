@@ -641,6 +641,7 @@ public class PaymentActivity extends BaseActivity {
         billinfo.setBillid(AppConfigFile.getBillId());
         billinfo.setSaletype("0");
         billinfo.setCashier(String.valueOf(text_saleman_name.getTag()));
+        billinfo.setCashiername(text_saleman_name.getText().toString());
         String type = SpSaveUtils.read(MyApplication.context, ConstantData.MALL_MONEY_OMIT, "0");
         billinfo.setTotalmoney(MoneyAccuracyUtils
                 .getmoneybytwo(ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type)));
