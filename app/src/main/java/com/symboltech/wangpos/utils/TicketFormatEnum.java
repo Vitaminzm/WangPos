@@ -119,7 +119,7 @@ public enum TicketFormatEnum {
 	/** 待返券明细开始*/
 	TICKET_DFQ_COUPON_BEGIN("\\[待返券开始\\]"),
 	/** 待返券明细结束*/
-	TICKET_DFQ_COUPON_END("\\[待返券开始\\]"),
+	TICKET_DFQ_COUPON_END("\\[待返券结束\\]"),
 	/** 待返券明细结束*/
 	TICKET_DFQ_COUPON_NAME("\\[返券规则\\]"),
 	/** 待返券明细结束*/
