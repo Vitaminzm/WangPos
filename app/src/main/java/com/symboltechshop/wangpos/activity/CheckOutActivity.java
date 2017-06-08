@@ -1236,7 +1236,7 @@ public class CheckOutActivity extends BaseActivity {
                     bill.setParkcouponhour(result.getSaveOrderInfo().getParkcouponhour());
                     bill.setParkcouponaddhour(result.getSaveOrderInfo().getParkcouponaddhour());
                     bill.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
-                    bill.setCashier(SpSaveUtils.read(mContext, ConstantData.CASHIER_CODE, ""));
+                    bill.setCashier(SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""));
                     bill.setCashiername(SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""));
                     bill.setSalemanname(salesman);
                     bill.setSaleman(getSalemanCode(salesman));
@@ -1415,7 +1415,7 @@ public class CheckOutActivity extends BaseActivity {
             return null;
         for (int i = 0; i < sales.size(); i++) {
             if (sales.get(i).getCashiername().equals(typeEnum)) {
-                return sales.get(i).getCashiercode();
+                return sales.get(i).getCashierid();
             }
         }
         return null;

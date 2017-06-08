@@ -624,7 +624,7 @@ public class PrepareReceiptInfo {
 					.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""))
 					.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 			if(isJob){
-				tickbegin.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+				tickbegin.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 						.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""));
 			}
 			Tickdatas.TickbasicEntity basic = ticketFormat.getTickbasic();
@@ -1079,7 +1079,7 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_NORMAL_LINE.getLable(), basic.getLineformat()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDALINE.getLable(), basic.getLineformat_again()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
-										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true));
 							}
@@ -1114,7 +1114,7 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_LINE.getLable(), basic.getLineformat()+"\n")
 										.replace(TicketFormatEnum.TICKET_NORMAL_LINE.getLable(), basic.getLineformat()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
-										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true));
 							}
@@ -1795,7 +1795,7 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_HOT_LINE.getLable(), basic.getHotline())
 										.replace(TicketFormatEnum.TICKET_BUDALINE.getLable(), basic.getLineformat_again()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
-										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true))
 										.replace(TicketFormatEnum.TICKET_LINE.getLable(), basic.getLineformat()+"\n")
@@ -1836,7 +1836,7 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_HOT_LINE.getLable(), basic.getHotline())
 										.replace(TicketFormatEnum.TICKET_BUDALINE.getLable(), basic.getLineformat_again()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
-										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true))
 										.replace(TicketFormatEnum.TICKET_LINE.getLable(), basic.getLineformat()+"\n")
