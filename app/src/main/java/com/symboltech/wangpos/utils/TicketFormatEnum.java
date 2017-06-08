@@ -13,8 +13,8 @@ public enum TicketFormatEnum {
 
 	/** 收款员系统码*/
 	TICKET_CASHER_CODE("\\[收款员系统码\\]"),
-	/** 营业员系统码*/
-	TICKET_SALE_CODE("\\[营业员系统码\\]"),
+	/** 销售员系统码*/
+	TICKET_SALE_CODE("\\[销售员系统码\\]"),
 	/** 店铺代码*/
 	TICKET_AUTH_CODE("\\[验证码\\]"),
 	/** 店铺代码*/
@@ -123,7 +123,7 @@ public enum TicketFormatEnum {
 	/** 待返券明细结束*/
 	TICKET_DFQ_COUPON_NAME("\\[返券规则\\]"),
 	/** 待返券明细结束*/
-	TICKET_DFQ_COUPON_MONEY("\\[返券金额\\]"),
+	TICKET_DFQ_COUPON_MONEY("\\[待返券金额\\]"),
 	//---------------会员信息--------------------------------------
 
 	/** 会员卡号*/

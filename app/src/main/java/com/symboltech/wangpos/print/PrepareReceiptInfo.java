@@ -69,6 +69,7 @@ import static com.symboltech.wangpos.utils.StringUtil.formatLString;
 import static com.symboltech.wangpos.utils.StringUtil.formatRString;
 
 public class PrepareReceiptInfo {
+
 	/** 以下2个值为硬件厂商定制，请勿修改！ */
 	private static final int FONT_DEFAULT = 0x1111;
 	private static final int FONT_BIG = 0x1124;
@@ -1098,6 +1099,28 @@ public class PrepareReceiptInfo {
 					case 2:
 						if(ticketFormat.getTickend()!= null){
 							PrintString tickend = new PrintString(ticketFormat.getTickend());
+
+							Pattern patternuse = Pattern.compile(TicketFormatEnum.TICKET_DFQ_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_DFQ_COUPON_END.getLable());
+							Matcher matcheruse = patternuse.matcher(tickend.getString());
+							String couponFormatall = null;
+							String couponFormat = null;
+							if(matcheruse.find()) {
+								couponFormatall = matcheruse.group(0);
+								couponFormat = matcheruse.group(1);
+							}
+							if(couponFormat != null && bill.getDfqlist() != null && bill.getDfqlist().size() > 0){
+								StringBuilder builder = new StringBuilder().append("");
+								for(DfqCoupon infos:bill.getDfqlist()){
+									PrintString coupon = new PrintString(couponFormat).replace(TicketFormatEnum.TICKET_DFQ_COUPON_NAME.getLable(), infos.getDfqgzname())
+											.replace(TicketFormatEnum.TICKET_DFQ_COUPON_MONEY.getLable(), formatLString(8, infos.getDfqmoney()));
+									builder.append(coupon.getString());
+								}
+								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(coupontemp.getString(), builder.toString());
+							}else if(couponFormatall != null){
+								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(coupontemp.getString(), "");
+							}
 							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
 									.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
@@ -1125,26 +1148,6 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true));
-							}
-							Pattern patternuse = Pattern.compile(TicketFormatEnum.TICKET_DFQ_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_DFQ_COUPON_END.getLable());
-							Matcher matcheruse = patternuse.matcher(tickend.getString());
-							String couponFormatall = null;
-							String couponFormat = null;
-							if(matcheruse.find()) {
-								couponFormatall = matcheruse.group(0);
-								couponFormat = matcheruse.group(1);
-							}
-							if(couponFormat != null && bill.getDfqlist() != null && bill.getDfqlist().size() > 0){
-								StringBuilder builder = new StringBuilder().append("");
-								int len = couponFormat.length();
-								for(DfqCoupon infos:bill.getDfqlist()){
-									builder.append(format(infos.getDfqgzname()) +formatRString(8,infos.getDfqmoney())+"\n");
-								}
-								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-								tickend.replace(coupontemp.getString(), builder.toString());
-							}else if(couponFormatall != null){
-								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-								tickend.replace(coupontemp.getString(), "");
 							}
 							String[] codes = tickend.getString().split("\n");
 							for (String code:codes){
@@ -1218,7 +1221,8 @@ public class PrepareReceiptInfo {
 								StringBuilder builder = new StringBuilder().append("");
 								int len = couponFormat.length();
 								for(CouponInfo infos:bill.getUsedcouponlist()){
-									builder.append(format(infos.getName()) +formatRString(8,infos.getAvailablemoney())+"\n");
+									builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, infos.getAvailablemoney().replace("	", ""))+"\n");
+									//builder.append(format(infos.getName()) +formatRString(8,infos.getAvailablemoney())+"\n");
 								}
 								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
 								moneys.replace(coupontemp.getString(), builder.toString());
@@ -1240,7 +1244,8 @@ public class PrepareReceiptInfo {
 								int len = moneyFormat.length()/3;
 								for(PayMentsInfo infos:bill.getPaymentslist()){
 									if (PaymentTypeEnum.getpaymentstyle(infos.getType()) != PaymentTypeEnum.SCORE && PaymentTypeEnum.getpaymentstyle(infos.getType()) != PaymentTypeEnum.COUPON) {
-										builder.append(format(infos.getName()) +formatRString(8,infos.getMoney())+"\n");
+										//builder.append(format(infos.getName()) +formatRString(8,infos.getMoney())+"\n");
+										builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, infos.getMoney().replace("	", ""))+"\n");
 									}
 
 								}
@@ -1650,7 +1655,7 @@ public class PrepareReceiptInfo {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getDfqgzname()) + "	" + info.getDfqmoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
 		}
-		addTextJson(array, latticePrinter, FONT_DEFAULT, "验证码:" + bill.getRandomcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "发票验证码:" + bill.getRandomcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		if (mend) {
 			addDashLine(array, latticePrinter, printer, fontConfig);
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打收款员：" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
@@ -1856,6 +1861,27 @@ public class PrepareReceiptInfo {
 					case 2:
 						if(ticketFormat.getTickend()!= null){
 							PrintString tickend = new PrintString(ticketFormat.getTickend());
+							Pattern patternuse = Pattern.compile(TicketFormatEnum.TICKET_DFQ_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_DFQ_COUPON_END.getLable());
+							Matcher matcheruse = patternuse.matcher(tickend.getString());
+							String couponFormatall = null;
+							String couponFormat = null;
+							if(matcheruse.find()) {
+								couponFormatall = matcheruse.group(0);
+								couponFormat = matcheruse.group(1);
+							}
+							if(couponFormat != null && bill.getDfqlist() != null && bill.getDfqlist().size() > 0){
+								StringBuilder builder = new StringBuilder().append("");
+								for(DfqCoupon infos:bill.getDfqlist()){
+									PrintString coupon = new PrintString(couponFormat).replace(TicketFormatEnum.TICKET_DFQ_COUPON_NAME.getLable(), infos.getDfqgzname())
+											.replace(TicketFormatEnum.TICKET_DFQ_COUPON_MONEY.getLable(), formatLString(8, infos.getDfqmoney()));
+									builder.append(coupon.getString());
+								}
+								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(coupontemp.getString(), builder.toString());
+							}else if(couponFormatall != null){
+								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(coupontemp.getString(), "");
+							}
 							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
 									.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
@@ -1889,25 +1915,6 @@ public class PrepareReceiptInfo {
 									tickend.replace(TicketFormatEnum.TICKET_SALE_DATE.getLable(), getDateTime(date, basic.getDateformat(), true))
 											.replace(TicketFormatEnum.TICKET_SALE_TIME.getLable(), getDateTime(date, basic.getTimeformat(), false));
 								}
-							}
-							Pattern patternuse = Pattern.compile(TicketFormatEnum.TICKET_DFQ_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_DFQ_COUPON_END.getLable());
-							Matcher matcheruse = patternuse.matcher(tickend.getString());
-							String couponFormatall = null;
-							String couponFormat = null;
-							if(matcheruse.find()) {
-								couponFormatall = matcheruse.group(0);
-								couponFormat = matcheruse.group(1);
-							}
-							if(couponFormat != null && bill.getDfqlist() != null && bill.getDfqlist().size() > 0){
-								StringBuilder builder = new StringBuilder().append("");
-								for(DfqCoupon infos:bill.getDfqlist()){
-									builder.append(format(infos.getDfqgzname()) +formatRString(8,infos.getDfqmoney())+"\n");
-								}
-								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-								tickend.replace(coupontemp.getString(), builder.toString());
-							}else if(couponFormatall != null){
-								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-								tickend.replace(coupontemp.getString(), "");
 							}
 							String[] codes = tickend.getString().split("\n");
 							for (String code:codes){
@@ -1991,7 +1998,8 @@ public class PrepareReceiptInfo {
 									builder.append("优惠券存在溢余("+couponOverrage+"元)");
 								}
 								for(CouponInfo infos:bill.getUsedcouponlist()){
-									builder.append(format(infos.getName()) +formatRString(8,infos.getAvailablemoney())+"\n");
+									builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, infos.getAvailablemoney().replace("	", ""))+"\n");
+									//builder.append(format(infos.getName()) +formatRString(8,infos.getAvailablemoney())+"\n");
 								}
 								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
 								moneys.replace(coupontemp.getString(), builder.toString());
@@ -2014,7 +2022,8 @@ public class PrepareReceiptInfo {
 									String type = infos.getType();
 									if(PaymentTypeEnum.COUPON.equals(type) || PaymentTypeEnum.SCORE.equals(type))
 										continue;
-									builder.append(format(infos.getName()) +formatRString(8,infos.getMoney())+"\n");
+									builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, infos.getMoney().replace("	", ""))+"\n");
+									//builder.append(format(infos.getName()) +formatRString(8,infos.getMoney())+"\n");
 								}
 								PrintString moneytemp = new PrintString(moneyFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
 								moneys.replace(moneytemp.getString(), builder.toString()).replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
