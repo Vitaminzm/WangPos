@@ -437,6 +437,77 @@ public class CheckOutActivity extends BaseActivity {
                     }
                 }
                 break;
+            case YIPAY_BANK:
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else {
+                    if (MyApplication.posType.equals(ConstantData.POS_TYPE_Y)) {
+                        JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt", CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                            json.put("extOrderNo", tradeNo);
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.STORE, ConstantData.YIPAY_XF, json);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        edit_input_money.setText("");
+                        paymentTypeAdapter.setPayTpyeNull();
+                        ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+                    }
+                }
+                break;
+            case YXLM_BANK:
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else {
+                    if (MyApplication.posType.equals(ConstantData.POS_TYPE_Y)) {
+                        JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt", CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                            json.put("extOrderNo", tradeNo);
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        edit_input_money.setText("");
+                        paymentTypeAdapter.setPayTpyeNull();
+                        ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+                    }
+                }
+                break;
+            case WEIPAY_BANK:
+            case ALIPAY_BANK:
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                }else {
+                    if (MyApplication.posType.equals(ConstantData.POS_TYPE_Y)) {
+                        JSONObject json = new JSONObject();
+                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                        try {
+                            json.put("amt", CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                            json.put("extOrderNo", tradeNo);
+                            json.put("tradeType", "useScan");
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.POS_TONG, ConstantData.POS_TONG_XF, json);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        edit_input_money.setText("");
+                        paymentTypeAdapter.setPayTpyeNull();
+                        ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+                    }
+                }
+                break;
             case WECHAT:
             case YIPAY:
             case BANK_CODE:

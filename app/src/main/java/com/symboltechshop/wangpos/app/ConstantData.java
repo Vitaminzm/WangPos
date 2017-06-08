@@ -510,6 +510,7 @@ public class ConstantData {
 
 	/** POS通*/
 	public static final String POS_TONG_XF = "POS通";
+
 	/** 消费撤销*/
 	public static final String POS_XFCX = "消费撤销";
 
@@ -518,6 +519,12 @@ public class ConstantData {
 
 	/** 预付卡*/
 	public static final String STORE = "预付卡";
+	/** 翼支付消费*/
+	public static final String YIPAY_XF = "翼支付消费";
+	/** 翼支付撤销*/
+	public static final String YIPAY_CX = "翼支付撤销";
+	/** 翼支付退货*/
+	public static final String YIPAY_TH = "翼支付退货";
 
 	/** 银行卡收款*/
 	public static final String YHK_SK = "银行卡收款";

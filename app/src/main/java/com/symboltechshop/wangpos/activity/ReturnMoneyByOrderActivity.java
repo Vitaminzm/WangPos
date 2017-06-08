@@ -562,6 +562,106 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                 }
                             }
                         }).show();
+                    }else if(PaymentTypeEnum.WEIPAY_BANK.getStyletype().equals(type)){
+                        new BankreturnDialog(this, getString(R.string.wechat_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
+                            @Override
+                            public void finish(int position) {
+                                if(position == 1){
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                        json.put("refNo",entity.getRefno());
+                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                                        json.put("extOrderNo",tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
+                                }else if(position == 2){
+                                    try {
+                                        json.put("oldTraceNo",entity.getBatchno());
+                                        json.put("extOrderNo", tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
+                                }
+                            }
+                        }).show();
+                    }else if(PaymentTypeEnum.ALIPAY_BANK.getStyletype().equals(type)){
+                        new BankreturnDialog(this, getString(R.string.alipay_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
+                            @Override
+                            public void finish(int position) {
+                                if(position == 1){
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                        json.put("refNo",entity.getRefno());
+                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                                        json.put("extOrderNo",tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
+                                }else if(position == 2){
+                                    try {
+                                        json.put("oldTraceNo",entity.getBatchno());
+                                        json.put("extOrderNo", tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
+                                }
+                            }
+                        }).show();
+                    }else if(PaymentTypeEnum.YXLM_BANK.getStyletype().equals(type)){
+                        new BankreturnDialog(this, getString(R.string.qmh_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
+                            @Override
+                            public void finish(int position) {
+                                if(position == 1){
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                        json.put("refNo",entity.getRefno());
+                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                                        json.put("extOrderNo",tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YHK_TH, json);
+                                }else if(position == 2){
+                                    try {
+                                        json.put("orgTraceNo",entity.getBatchno());
+                                        json.put("extOrderNo", tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YHK_CX, json);
+                                }
+                            }
+                        }).show();
+                    }else if(PaymentTypeEnum.YIPAY_BANK.getStyletype().equals(type)){
+                        new BankreturnDialog(this, getString(R.string.qmh_return), entity.getCardno(), entity.getAmount(), new DialogFinishCallBack() {
+                            @Override
+                            public void finish(int position) {
+                                if(position == 1){
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                        json.put("refNo",entity.getRefno());
+                                        json.put("date",Utils.formatDate(new Date(System.currentTimeMillis()), "MMdd"));
+                                        json.put("extOrderNo",tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YIPAY_TH, json);
+                                }else if(position == 2){
+                                    try {
+                                        json.put("orgTraceNo",entity.getBatchno());
+                                        json.put("extOrderNo", tradeNo);
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YIPAY_CX, json);
+                                }
+                            }
+                        }).show();
                     }
                 }
             }

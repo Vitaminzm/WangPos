@@ -119,6 +119,7 @@ public class PaymentTypeHolderAdapter extends RecyclerView.Adapter<PaymentTypeHo
 	private void switchUI(int position, ViewHolder holder) {
 		switch (PaymentTypeEnum.getpaymentstyle(paymentsInfo.get(position).getType().trim())) {
 			case WECHAT:
+			case WEIPAY_BANK:
 				if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
 					holder.image_key.setImageResource(R.mipmap.weixin_icon_select);
 					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
@@ -129,6 +130,7 @@ public class PaymentTypeHolderAdapter extends RecyclerView.Adapter<PaymentTypeHo
 				holder.name_key.setText(paymentsInfo.get(position).getName());
 				break;
 			case ALIPAY:
+			case ALIPAY_BANK:
 				if (payType != null && paymentsInfo.get(position).getId().equals(payType.getId())) {
 					holder.image_key.setImageResource(R.mipmap.zhifubao_icon_select);
 					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
