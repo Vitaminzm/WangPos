@@ -1386,6 +1386,8 @@ public class CheckOutActivity extends BaseActivity {
             for (int i = 0; i < paymentslist.size(); i++) {
                 if (paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAY.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHAT.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.WEIPAY_BANK.getStyletype())
+                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.ALIPAY_BANK.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.YIPAY.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.YXLM.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK_CODE.getStyletype())
