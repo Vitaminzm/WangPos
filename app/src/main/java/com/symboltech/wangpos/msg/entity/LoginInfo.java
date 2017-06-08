@@ -27,9 +27,18 @@ public class LoginInfo implements Serializable{
 	private String person_id;
 	private String person_name;
 	private String personcode;
+	private String personxtm;//营业员系统吗
 	private String posno;
 	private String ismallpos;//0 普通收银 1集中收银
 	private String serviceurl = ""; //修改本地IP地址
+
+	public String getPersonxtm() {
+		return personxtm;
+	}
+
+	public void setPersonxtm(String personxtm) {
+		this.personxtm = personxtm;
+	}
 
 	public String getIsmallpos() {
 		return ismallpos;

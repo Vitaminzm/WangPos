@@ -16,8 +16,10 @@ public class BillInfo implements Serializable {
 	private String posno; // 款台
 	private String billid; // 小票
 	private String cashier; // 收款员工号
-	private String cashiername; // 款员名称
+	private String cashiername; // 收款员名称
+	private String cashierxtm; // 收款员系统号
 	private String saleman; // 营业员工号
+	private String salemanxtm; // 营业员系统号
 	private String salemanname; // 营业员名称
 	private String totalmoney; // 交易总金额
 	private String realmoney;//实际交易金额
@@ -34,6 +36,22 @@ public class BillInfo implements Serializable {
 	private String totalpoint;//会员总积分
 
 	private String totalmbjmoney;//扣减金额
+
+	public String getCashierxtm() {
+		return cashierxtm;
+	}
+
+	public void setCashierxtm(String cashierxtm) {
+		this.cashierxtm = cashierxtm;
+	}
+
+	public String getSalemanxtm() {
+		return salemanxtm;
+	}
+
+	public void setSalemanxtm(String salemanxtm) {
+		this.salemanxtm = salemanxtm;
+	}
 
 	public String getTotalmbjmoney() {
 		return totalmbjmoney;

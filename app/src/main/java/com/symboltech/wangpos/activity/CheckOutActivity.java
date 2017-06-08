@@ -1230,8 +1230,13 @@ public class CheckOutActivity extends BaseActivity {
                     bill.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
                     bill.setCashier(SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""));
                     bill.setCashiername(SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""));
+                    bill.setCashierxtm(SpSaveUtils.read(mContext, ConstantData.PERSON_XTM, ""));
                     bill.setSalemanname(salesman);
-                    bill.setSaleman(getSalemanCode(salesman));
+                    CashierInfo cashierInfo = getSalemanCode(salesman);
+                    if(cashierInfo != null){
+                        bill.setSaleman(cashierInfo.getCashierid());
+                        bill.setSalemanxtm(cashierInfo.getPersonxtm());
+                    }
                     bill.setRealmoney("" + ArithDouble.sub(orderTotleValue, ArithDouble.add(orderCoupon, orderScore)));
 
                     bill.setRandomcode(result.getSaveOrderInfo().getRandomcode());
@@ -1277,8 +1282,15 @@ public class CheckOutActivity extends BaseActivity {
                 boolean result = dao.addOrderPaytypeinfo(AppConfigFile.getBillId(), null, null, null, payLing, "1", SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""), payments);
                 if(result){
                     bill.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
+                    bill.setCashier(SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""));
                     bill.setCashiername(SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""));
+                    bill.setCashierxtm(SpSaveUtils.read(mContext, ConstantData.PERSON_XTM, ""));
                     bill.setSalemanname(salesman);
+                    CashierInfo cashierInfo = getSalemanCode(salesman);
+                    if(cashierInfo != null){
+                        bill.setSaleman(cashierInfo.getCashierid());
+                        bill.setSalemanxtm(cashierInfo.getPersonxtm());
+                    }
                     bill.setRealmoney("" + ArithDouble.sub(orderTotleValue, ArithDouble.add(orderCoupon, orderScore)));
                     bill.setTotalmoney(String.valueOf(orderTotleValue));
                     bill.setGoodslist(cartgoods);
@@ -1424,14 +1436,14 @@ public class CheckOutActivity extends BaseActivity {
      * @Description: 获取销售人员Code
      *
      */
-    private String getSalemanCode(String typeEnum) {
+    private CashierInfo getSalemanCode(String typeEnum) {
 
         List<CashierInfo> sales = (List<CashierInfo>) SpSaveUtils.getObject(mContext, ConstantData.SALEMANLIST);
         if(sales == null)
             return null;
         for (int i = 0; i < sales.size(); i++) {
             if (sales.get(i).getCashiername().equals(typeEnum)) {
-                return sales.get(i).getCashierid();
+                return sales.get(i);
             }
         }
         return null;

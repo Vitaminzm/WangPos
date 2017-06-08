@@ -10,6 +10,11 @@ package com.symboltech.wangpos.utils;
 public enum TicketFormatEnum {
 
 	//--小票头 尾
+
+	/** 收款员系统码*/
+	TICKET_CASHER_CODE("\\[收款员系统码\\]"),
+	/** 营业员系统码*/
+	TICKET_SALE_CODE("\\[营业员系统码\\]"),
 	/** 店铺代码*/
 	TICKET_AUTH_CODE("\\[验证码\\]"),
 	/** 店铺代码*/

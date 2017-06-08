@@ -585,6 +585,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_NAME, logininfo.getPerson_name());
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_ID, logininfo.getPerson_id());
         SpSaveUtils.write(MyApplication.context, ConstantData.CASHIER_CODE, logininfo.getPersoncode());
+        SpSaveUtils.write(MyApplication.context, ConstantData.PERSON_XTM, logininfo.getPersonxtm());
         SpSaveUtils.write(MyApplication.context, ConstantData.LOGIN_TOKEN, logininfo.getToken());
         if (logininfo.getConfiglists() != null && logininfo.getConfiglists().size() > 0) {
             for (ConfigList cl : logininfo.getConfiglists()) {

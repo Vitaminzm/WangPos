@@ -235,6 +235,9 @@ public class ConstantData {
 	/** 收银员代码 */
 	public static final String CASHIER_CODE = "cashier_code";
 
+	/** 收银员系统码 */
+	public static final String PERSON_XTM = "person_xtm";
+
 	/** save token */
 	public static final String LOGIN_TOKEN = "token";
 

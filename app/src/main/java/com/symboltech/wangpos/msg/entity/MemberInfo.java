@@ -16,6 +16,7 @@ public class MemberInfo implements Serializable {
 	private String memberno;// 会员卡号
 	private String membertype;// 会员类型
 	private String membername;// 会员名称
+	private String membertypename;// 会员卡名称
 	private String phoneno;// 手机号
 	private String point;// 积分
 	private String cent_available;// 可用积分
@@ -30,6 +31,14 @@ public class MemberInfo implements Serializable {
 	private List<String> saletag;//消费标签
 	private String status;// 积分规则描述
 	private List<CarInfo> listcar;
+
+	public String getMembertypename() {
+		return membertypename;
+	}
+
+	public void setMembertypename(String membertypename) {
+		this.membertypename = membertypename;
+	}
 
 	public String getStatus() {
 		return status;

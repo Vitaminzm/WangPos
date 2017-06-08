@@ -493,6 +493,7 @@ public class PrepareReceiptInfo {
 		JSONArray array = new JSONArray();
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员系统码：" + SpSaveUtils.read(MyApplication.context, ConstantData.PERSON_XTM, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(MyApplication.context, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
 			if(StringUtil.isEmpty(SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))){
 				addTextJson(array, latticePrinter, FONT_DEFAULT, "门店:" + SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
@@ -625,8 +626,10 @@ public class PrepareReceiptInfo {
 					.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""))
 					.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 			if(isJob){
-				tickbegin.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
-						.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""));
+				tickbegin.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
+						.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
+						.replace(TicketFormatEnum.TICKET_CASHER_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.PERSON_XTM, ""));
+
 			}
 			Tickdatas.TickbasicEntity basic = ticketFormat.getTickbasic();
 			if(basic != null){
@@ -1066,8 +1069,10 @@ public class PrepareReceiptInfo {
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
 									.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), bill.getCashiername())
+									.replace(TicketFormatEnum.TICKET_CASHER_CODE.getLable(), bill.getCashierxtm())
 									.replace(TicketFormatEnum.TICKET_SALEMAN_CODE.getLable(), bill.getSaleman())
 									.replace(TicketFormatEnum.TICKET_SALEMAN_NAME.getLable(), bill.getSalemanname())
+									.replace(TicketFormatEnum.TICKET_SALE_CODE.getLable(), bill.getSalemanxtm())
 									.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 							TickbasicEntity basic = ticketFormat.getTickbasic();
 							if(basic != null){
@@ -1080,7 +1085,7 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_NORMAL_LINE.getLable(), basic.getLineformat()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDALINE.getLable(), basic.getLineformat_again()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
-										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true));
 							}
@@ -1101,8 +1106,10 @@ public class PrepareReceiptInfo {
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
 									.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), bill.getCashiername())
+									.replace(TicketFormatEnum.TICKET_CASHER_CODE.getLable(), bill.getCashierxtm())
 									.replace(TicketFormatEnum.TICKET_SALEMAN_CODE.getLable(), bill.getSaleman())
 									.replace(TicketFormatEnum.TICKET_SALEMAN_NAME.getLable(), bill.getSalemanname())
+									.replace(TicketFormatEnum.TICKET_SALE_CODE.getLable(), bill.getSalemanxtm())
 									.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 							TickbasicEntity basic = ticketFormat.getTickbasic();
 							if(basic != null){
@@ -1115,7 +1122,7 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_LINE.getLable(), basic.getLineformat()+"\n")
 										.replace(TicketFormatEnum.TICKET_NORMAL_LINE.getLable(), basic.getLineformat()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
-										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true));
 							}
@@ -1259,7 +1266,7 @@ public class PrepareReceiptInfo {
 								vip.replace(TicketFormatEnum.TICKET_MEMBER_NO.getLable(), formatRString(8, bill.getMember().getMemberno()))
 										.replace(TicketFormatEnum.TICKET_MEMBER_NAME.getLable(), formatRString(8, bill.getMember().getMembername()))
 										.replace(TicketFormatEnum.TICKET_MEMBER_TEL.getLable(), formatRString(8, bill.getMember().getPhoneno()))
-										.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), formatRString(8, bill.getMember().getMembertype()));
+										.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), formatRString(8, bill.getMember().getMembertypename()));
 								double addScore = 0, usedScore = 0, exchangeScore = 0;
 								if (!TextUtils.isEmpty(bill.getAwardpoint())) {
 									addScore = ArithDouble.parseDouble(bill.getAwardpoint());
@@ -1502,6 +1509,7 @@ public class PrepareReceiptInfo {
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "订单号：" + bill.getBillid(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号：" + bill.getPosno(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员：" + bill.getCashiername(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员系统码：" + bill.getCashierxtm(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "销售：" + bill.getSalemanname(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "日期：" + bill.getSaletime(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(6, "商品") + formatLString(6, "数量")
@@ -1584,6 +1592,9 @@ public class PrepareReceiptInfo {
 		if (member != null) {
 			double addScore = 0, usedScore = 0, exchangeScore = 0;
 			addDashLine(array, latticePrinter, printer, fontConfig);
+			if (!TextUtils.isEmpty(member.getMembertypename())) {
+				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, "会员卡类型：") + "	" + member.getMembertypename(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			}
 			if (!TextUtils.isEmpty(member.getMemberno())) {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, "会员卡号：") + "	" + member.getMemberno(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
@@ -1810,8 +1821,10 @@ public class PrepareReceiptInfo {
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
 									.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), bill.getCashiername())
+									.replace(TicketFormatEnum.TICKET_CASHER_CODE.getLable(), bill.getCashierxtm())
 									.replace(TicketFormatEnum.TICKET_SALEMAN_CODE.getLable(), bill.getSaleman())
 									.replace(TicketFormatEnum.TICKET_SALEMAN_NAME.getLable(), bill.getSalemanname())
+									.replace(TicketFormatEnum.TICKET_SALE_CODE.getLable(), bill.getSalemanxtm())
 									.replace(TicketFormatEnum.TICKET_RETURN_REASON.getLable(), bill.getBackreason())
 									.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 							TickbasicEntity basic = ticketFormat.getTickbasic();
@@ -1821,7 +1834,7 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_HOT_LINE.getLable(), basic.getHotline())
 										.replace(TicketFormatEnum.TICKET_BUDALINE.getLable(), basic.getLineformat_again()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
-										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true))
 										.replace(TicketFormatEnum.TICKET_LINE.getLable(), basic.getLineformat()+"\n")
@@ -1850,8 +1863,10 @@ public class PrepareReceiptInfo {
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
 									.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), bill.getCashiername())
+									.replace(TicketFormatEnum.TICKET_CASHER_CODE.getLable(), bill.getCashierxtm())
 									.replace(TicketFormatEnum.TICKET_SALEMAN_CODE.getLable(), bill.getSaleman())
 									.replace(TicketFormatEnum.TICKET_SALEMAN_NAME.getLable(), bill.getSalemanname())
+									.replace(TicketFormatEnum.TICKET_SALE_CODE.getLable(), bill.getSalemanxtm())
 									.replace(TicketFormatEnum.TICKET_RETURN_REASON.getLable(), bill.getBackreason())
 									.replace(TicketFormatEnum.TICKET_NORMAL_LINE.getLable(), "\n")
 									.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
@@ -1862,7 +1877,7 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_HOT_LINE.getLable(), basic.getHotline())
 										.replace(TicketFormatEnum.TICKET_BUDALINE.getLable(), basic.getLineformat_again()+"\n")
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
-										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_CODE, ""))
+										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true))
 										.replace(TicketFormatEnum.TICKET_LINE.getLable(), basic.getLineformat()+"\n")
@@ -2026,7 +2041,7 @@ public class PrepareReceiptInfo {
 								vip.replace(TicketFormatEnum.TICKET_MEMBER_NO.getLable(), formatRString(8, bill.getMember().getMemberno()))
 										.replace(TicketFormatEnum.TICKET_MEMBER_NAME.getLable(), formatRString(8, bill.getMember().getMembername()))
 										.replace(TicketFormatEnum.TICKET_MEMBER_TEL.getLable(), formatRString(8, bill.getMember().getPhoneno()))
-										.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), formatRString(8, bill.getMember().getMembertype()));
+										.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), formatRString(8, bill.getMember().getMembertypename()));
 								double awardScore = 0;
 								double usedScore = 0;
 								double exchangeScore = 0;
@@ -2259,6 +2274,7 @@ public class PrepareReceiptInfo {
 		} else {
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "销售:" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		}
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员系统码：" + bill.getCashierxtm(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "日期：" + bill.getSaletime(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(8, "商品") + formatLString(4, "数量") + formatLString(6, "金额") + "消耗积分", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 
@@ -2365,6 +2381,9 @@ public class PrepareReceiptInfo {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, "会员卡号:") + member.getMemberno(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			} else {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, "会员卡号:") + 0, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			}
+			if (!TextUtils.isEmpty(member.getMembertypename())) {
+				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, "会员卡类型：") + "	" + member.getMembertypename(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
 			double awardScore = 0;
 			double usedScore = 0;

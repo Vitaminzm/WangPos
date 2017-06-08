@@ -26,6 +26,7 @@ public class UserInfo implements Serializable {
 	/** 用户姓名 */
 	public String personname;
 
+
 	public String getPersonname() {
 		return personname;
 	}
@@ -58,5 +59,4 @@ public class UserInfo implements Serializable {
 		this.password = password;
 	}
 
-	
 }

@@ -48,6 +48,14 @@ public class CashierInfo implements Serializable {
 		this.work_type = work_type;
 	}
 
+	public String getPersonxtm() {
+		return personxtm;
+	}
+
+	public void setPersonxtm(String personxtm) {
+		this.personxtm = personxtm;
+	}
+
 	@SerializedName("person_id")
 	private String cashierid;
 
@@ -57,5 +65,7 @@ public class CashierInfo implements Serializable {
 	@SerializedName("personcode")
 	private String cashiercode;
 
+	/** 用户系统码 */
+	public String personxtm;
 	private String work_type;
 }

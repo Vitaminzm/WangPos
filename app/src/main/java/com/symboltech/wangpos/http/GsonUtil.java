@@ -27,7 +27,7 @@ public class GsonUtil {
         if (createNew) {
             return new GsonBuilder().serializeNulls().create();
         } else if (gson == null) {
-            gson = new GsonBuilder().serializeNulls().create();
+            gson = new GsonBuilder().create();
         }
         return gson;
     }
