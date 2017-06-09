@@ -448,7 +448,30 @@ public class CanclePayDialog extends BaseActivity {
 //				thirdcancle(position);
 //			}
 			thirdcancle(position);
-		}else if(info.getType().equals(PaymentTypeEnum.STORE.getStyletype())){
+		}else if(info.getType().equals(PaymentTypeEnum.WEIPAY_BANK.getStyletype())||
+				info.getType().equals(PaymentTypeEnum.ALIPAY_BANK.getStyletype())){
+			if(isCancleCount > 0){
+					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
+					return;
+				}
+				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
+						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+					this.position = position;
+					JSONObject json = new JSONObject();
+					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+					try {
+						json.put("oldTraceNo",info.getTraceNo());
+						json.put("extOrderNo", tradeNo);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					}
+					isCancleCount++;
+					info.setDes(getString(R.string.cancleing_pay));
+					canclePayAdapter.notifyDataSetChanged();
+					AppHelper.callTrans(CanclePayDialog.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
+				}
+		}
+		else if(info.getType().equals(PaymentTypeEnum.STORE.getStyletype())){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				if(isCancleCount > 0){
 					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");

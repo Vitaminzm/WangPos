@@ -7,9 +7,14 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.symboltechshop.wangpos.R;
+import com.symboltechshop.wangpos.app.ConstantData;
 import com.symboltechshop.wangpos.interfaces.GeneralEditListener;
+import com.symboltechshop.wangpos.msg.entity.PayMentsInfo;
 import com.symboltechshop.wangpos.utils.PaymentTypeEnum;
+import com.symboltechshop.wangpos.utils.SpSaveUtils;
 import com.symboltechshop.wangpos.utils.StringUtil;
+
+import java.util.List;
 
 /**
  *
@@ -19,7 +24,7 @@ import com.symboltechshop.wangpos.utils.StringUtil;
  */
 public class RecordPayDialog extends BaseDialog implements View.OnClickListener {
 	private Context context;
-	private LinearLayout ll_weichat_record, ll_alipay_record, ll_bankcode_record, ll_hand_record;
+	private LinearLayout ll_weichat_record, ll_alipay_record, ll_store_record, ll_hand_record;
 	private GeneralEditListener finishcallback;
 
 	private String payId;
@@ -42,14 +47,31 @@ public class RecordPayDialog extends BaseDialog implements View.OnClickListener 
 	}
 
 	private void initUI() {
+
 		ll_weichat_record = (LinearLayout) findViewById(R.id.ll_weichat_record);
 		ll_weichat_record.setOnClickListener(this);
+		if(!getPayInfoByType(PaymentTypeEnum.WECHATRECORDED.getStyletype())){
+			ll_weichat_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_weichat_record.setEnabled(false);
+		}
 		ll_alipay_record = (LinearLayout) findViewById(R.id.ll_alipay_record);
 		ll_alipay_record.setOnClickListener(this);
-		ll_bankcode_record = (LinearLayout) findViewById(R.id.ll_bankcode_record);
-		ll_bankcode_record.setOnClickListener(this);
+		if(!getPayInfoByType(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())){
+			ll_alipay_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_alipay_record.setEnabled(false);
+		}
+		ll_store_record = (LinearLayout) findViewById(R.id.ll_store_record);
+		ll_store_record.setOnClickListener(this);
+		if(!getPayInfoByType(PaymentTypeEnum.STORERECORDED.getStyletype())){
+			ll_store_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_store_record.setEnabled(false);
+		}
 		ll_hand_record = (LinearLayout) findViewById(R.id.ll_hand_record);
 		ll_hand_record.setOnClickListener(this);
+		if(!getPayInfoByType(PaymentTypeEnum.HANDRECORDED.getStyletype())){
+			ll_hand_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_hand_record.setEnabled(false);
+		}
 	}
 
 	@Override
@@ -62,8 +84,8 @@ public class RecordPayDialog extends BaseDialog implements View.OnClickListener 
 			case R.id.ll_alipay_record:
 				payId = PaymentTypeEnum.ALIPAYRECORDED.getStyletype();
 				break;
-			case R.id.ll_bankcode_record:
-				payId = PaymentTypeEnum.BANK_CODE.getStyletype();
+			case R.id.ll_store_record:
+				payId = PaymentTypeEnum.STORERECORDED.getStyletype();
 				break;
 			case R.id.ll_hand_record:
 				payId = PaymentTypeEnum.HANDRECORDED.getStyletype();
@@ -75,5 +97,17 @@ public class RecordPayDialog extends BaseDialog implements View.OnClickListener 
 			finishcallback.editinput(null);
 		}
 		dismiss();
+	}
+
+	private boolean getPayInfoByType(String type){
+		List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(context, ConstantData.PAYMENTSLIST);
+		if(paymentslist == null)
+			return false;
+		for (int i = 0; i < paymentslist.size(); i++) {
+			if (paymentslist.get(i).getType().equals(type)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }
