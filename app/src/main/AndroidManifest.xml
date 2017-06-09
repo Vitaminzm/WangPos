@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.symboltech.wangpos"
-    android:versionCode="1705171104"
-    android:versionName="1.0.8">
+    android:versionCode="1706091104"
+    android:versionName="1.0.9">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
