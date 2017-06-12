@@ -37,10 +37,10 @@
         android:layout_height="match_parent"
         android:horizontalSpacing="@dimen/margin_tz"
         android:verticalSpacing="@dimen/margin_tz"
-        android:layout_marginTop="@dimen/margin_rz"
+        android:layout_marginTop="@dimen/margin_ov"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_marginBottom="@dimen/margin_rz"
+        android:layout_marginBottom="@dimen/margin_ov"
         android:cacheColorHint="@color/transparent"
         android:numColumns="2"
         android:overScrollMode="never"
@@ -51,12 +51,11 @@
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
         android:layout_height="@dimen/height_ez"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="@dimen/margin_tf"
         android:gravity="center"
         android:focusable="true"
         android:layout_alignParentBottom="true"
         android:text="@string/confirm"
         android:background="@drawable/login_bt_selector"
-        android:textColor="@android:color/white"
-        />
+        android:textColor="@android:color/white"/>
 </RelativeLayout>

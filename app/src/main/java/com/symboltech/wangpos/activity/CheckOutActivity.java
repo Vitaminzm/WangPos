@@ -1143,6 +1143,7 @@ public class CheckOutActivity extends BaseActivity {
 
                     @Override
                     public void getPayValue(ThirdPay value) {
+                        LogUtil.i("lgs","--------1-------");
                         PayMentsInfo payMentsInfo = getPayInfoById(value.getSkfsid());
                         PayMentsCancleInfo info = new PayMentsCancleInfo();
                         if(payMentsInfo == null){
@@ -1154,9 +1155,6 @@ public class CheckOutActivity extends BaseActivity {
                             info.setName(payMentsInfo.getName());
                             info.setType(payMentsInfo.getType());
                         }
-                        info.setId(payMentsInfo.getId());
-                        info.setName(payMentsInfo.getName());
-                        info.setType(payMentsInfo.getType());
                         info.setIsCancle(false);
                         info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
                         info.setThridPay(value);

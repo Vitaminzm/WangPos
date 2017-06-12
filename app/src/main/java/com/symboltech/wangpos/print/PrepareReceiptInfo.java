@@ -1199,14 +1199,21 @@ public class PrepareReceiptInfo {
 									.replace(TicketFormatEnum.TICKET_TOTAL_MONEY.getLable(), "\t"+formatRString(8,bill.getTotalmoney()))
 									.replace(TicketFormatEnum.TICKET_TOTAL_USED_SCORE.getLable(), "    "+scoreUsed)
 									.replace(TicketFormatEnum.TICKET_DEAL_MONEY.getLable(), "\t\t" +formatRString(8, ""+ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), manjianMoney)))
-									.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable(), "\t\t" +formatRString(8, ""+manjianMoney))
+									//.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable(), "\t\t" +formatRString(8, ""+manjianMoney))
 									.replace(TicketFormatEnum.TICKET_REAL_MONEY.getLable(), "\t\t" + formatRString(8, "" + ArithDouble.sub(ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), changeMoney),manjianMoney)));
 //
-							if(scoreValue ==0){
-								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable()+TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");
+							if(manjianMoney == 0){
+								moneys.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");
 							}else{
-								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable(), ""+scorePay)
-										.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable(), "\t" +formatRString(8, ""+scoreValue));
+								moneys.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable(), StringUtil.formatLString(16, "满减金额") + StringUtil.formatLString(10, "-" + scoreValue));
+							}
+							if(scoreValue ==0){
+								//moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable()+TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");
+								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");
+							}else{
+//								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable(), ""+scorePay)
+//										.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable(), "\t" +formatRString(8, ""+scoreValue));
+								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable(), StringUtil.formatLString(16, "积分抵扣") + StringUtil.formatLString(10, "折扣:-" + scoreValue));
 							}
 
 							Pattern patternuse = Pattern.compile(TicketFormatEnum.TICKET_CASH_COUPON_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_CASH_COUPON_END.getLable());
@@ -1221,7 +1228,7 @@ public class PrepareReceiptInfo {
 								StringBuilder builder = new StringBuilder().append("");
 								int len = couponFormat.length();
 								for(CouponInfo infos:bill.getUsedcouponlist()){
-									builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, infos.getAvailablemoney().replace("	", ""))+"\n");
+									builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, "折扣:-"+infos.getAvailablemoney())+"\n");
 									//builder.append(format(infos.getName()) +formatRString(8,infos.getAvailablemoney())+"\n");
 								}
 								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
@@ -1271,7 +1278,7 @@ public class PrepareReceiptInfo {
 								vip.replace(TicketFormatEnum.TICKET_MEMBER_NO.getLable(), formatRString(8, bill.getMember().getMemberno()))
 										.replace(TicketFormatEnum.TICKET_MEMBER_NAME.getLable(), formatRString(8, bill.getMember().getMembername()))
 										.replace(TicketFormatEnum.TICKET_MEMBER_TEL.getLable(), formatRString(8, bill.getMember().getPhoneno()))
-										.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), formatRString(8, bill.getMember().getMembertypename()));
+										.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), bill.getMember().getMembertypename());
 								double addScore = 0, usedScore = 0, exchangeScore = 0;
 								if (!TextUtils.isEmpty(bill.getAwardpoint())) {
 									addScore = ArithDouble.parseDouble(bill.getAwardpoint());
@@ -1439,6 +1446,8 @@ public class PrepareReceiptInfo {
 				}
 			}
 		}
+		addBlankLine(array, latticePrinter, printer, fontConfig);
+		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 	}
 	private static JSONObject getOrder(BillInfo bill, Boolean mend, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig) {
@@ -1975,12 +1984,13 @@ public class PrepareReceiptInfo {
 									.replace(TicketFormatEnum.TICKET_TOTAL_RETURN_GOOD_SCORE.getLable(), "" +total)
 									.replace(TicketFormatEnum.TICKET_RETURN_DEAL_MONEY.getLable(), "\t\t"+formatRString(8, MoneyAccuracyUtils.getmoneybytwo(realMoney)))
 									.replace(TicketFormatEnum.TICKET_RETURN_REAL_MONEY.getLable(), "\t\t"+formatRString(8, MoneyAccuracyUtils.getmoneybytwo(realMoney)));
-
-							if(deductionValue <= 0){
-								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable()+TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");
+							if(deductionValue ==0){
+								//moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable()+TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");
+								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");
 							}else{
-								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable(), ""+scorePay)
-										.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable(), "\t" +formatRString(8, ""+deductionValue));
+//								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable(), ""+scorePay)
+//										.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable(), "\t" +formatRString(8, ""+scoreValue));
+								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable(), StringUtil.formatLString(16, "积分抵扣") + StringUtil.formatLString(10, "折扣:-" + deductionValue));
 							}
 
 
@@ -1998,7 +2008,7 @@ public class PrepareReceiptInfo {
 									builder.append("优惠券存在溢余("+couponOverrage+"元)");
 								}
 								for(CouponInfo infos:bill.getUsedcouponlist()){
-									builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, infos.getAvailablemoney().replace("	", ""))+"\n");
+									builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, "折扣:-"+infos.getAvailablemoney().replace("	", ""))+"\n");
 									//builder.append(format(infos.getName()) +formatRString(8,infos.getAvailablemoney())+"\n");
 								}
 								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
@@ -2050,7 +2060,7 @@ public class PrepareReceiptInfo {
 								vip.replace(TicketFormatEnum.TICKET_MEMBER_NO.getLable(), formatRString(8, bill.getMember().getMemberno()))
 										.replace(TicketFormatEnum.TICKET_MEMBER_NAME.getLable(), formatRString(8, bill.getMember().getMembername()))
 										.replace(TicketFormatEnum.TICKET_MEMBER_TEL.getLable(), formatRString(8, bill.getMember().getPhoneno()))
-										.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), formatRString(8, bill.getMember().getMembertypename()));
+										.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), bill.getMember().getMembertypename());
 								double awardScore = 0;
 								double usedScore = 0;
 								double exchangeScore = 0;
@@ -2204,6 +2214,8 @@ public class PrepareReceiptInfo {
 				}
 			}
 		}
+		addBlankLine(array, latticePrinter, printer, fontConfig);
+		addBlankLine(array, latticePrinter, printer, fontConfig);
 		addBlankLine(array, latticePrinter, printer, fontConfig);
 	}
 	public static JSONObject getBackOrder(BillInfo bill, boolean mend, Tickdatas ticketFormat, LatticePrinter latticePrinter, PrinterManager printer, FontConfig fontConfig){

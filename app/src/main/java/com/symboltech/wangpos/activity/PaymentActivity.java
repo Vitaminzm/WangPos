@@ -375,7 +375,7 @@ public class PaymentActivity extends BaseActivity {
     }
 
     @OnClick({R.id.title_icon_back, R.id.text_confirm_order, R.id.radio_add_score_good, R.id.radio_select_good, R.id.radio_add_good, R.id.radio_add_salesman, R.id.radio_look_member})
-    public void back(View view) {
+    public void click(View view) {
         int id = view.getId();
         switch (id) {
             case R.id.title_icon_back:
@@ -474,7 +474,7 @@ public class PaymentActivity extends BaseActivity {
         boolean isFind = false;
         for(int i = 0;i<goodinfos.size();i++){
             GoodsInfo info = goodinfos.get(i);
-            if(code.equals(info.getBarcode())){
+            if(code.equals(info.getCode())){
                 isFind = true;
                 if (info.getSpmode().trim().equals("0")) {
                     addcartgoods(null, i, ConstantData.GOOD_PRICE_NO_CHANGE);

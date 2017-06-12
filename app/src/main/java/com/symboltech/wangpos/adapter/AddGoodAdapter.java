@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
+import com.symboltech.wangpos.view.TextScrollView;
 
 import java.util.List;
 
@@ -59,8 +60,9 @@ public class AddGoodAdapter extends BaseAdapter {
 		if(convertView == null) {
 			holder = new Viewholder();
 			convertView = inflater.inflate(R.layout.item_add_good, null);
-			holder.tv_name = (TextView) convertView.findViewById(R.id.text_good_name);
+			holder.tv_name = (TextScrollView) convertView.findViewById(R.id.text_good_name);
 			holder.tv_info = (TextView) convertView.findViewById(R.id.text_good_info);
+			holder.tv_code = (TextView) convertView.findViewById(R.id.text_good_code);
 			holder.ll_add_good = (LinearLayout) convertView.findViewById(R.id.ll_add_good);
 			convertView.setTag(holder);
 		}else {
@@ -68,10 +70,11 @@ public class AddGoodAdapter extends BaseAdapter {
 		}
 		holder.tv_name.setText(goods.get(position).getGoodsname());
 		if(ConstantData.GOODS_SOURCE_BY_BRAND.equals(goods.get(position).getSptype()) || ConstantData.GOODS_SOURCE_BY_BINTEGRAL.equals(goods.get(position).getSptype())){
-			holder.tv_info.setText("￥"+goods.get(position).getPrice());
+			holder.tv_info.setText("￥" + goods.get(position).getPrice());
 		}else {
-			holder.tv_info.setText("￥"+goods.get(position).getPrice()+"  积分"+goods.get(position).getPoint());
+			holder.tv_info.setText("￥" + goods.get(position).getPrice() + "  积分" + goods.get(position).getPoint());
 		}
+		holder.tv_code.setText(goods.get(position).getCode());
 		if(position == this.position){
 			holder.ll_add_good.setBackgroundResource(R.drawable.circle_corner_bt_shape);
 		}else{
@@ -81,7 +84,8 @@ public class AddGoodAdapter extends BaseAdapter {
 	}
 	
 	private class Viewholder {
-		public TextView tv_name, tv_info;
+		public TextView tv_code, tv_info;
+		public TextScrollView tv_name;
 		public LinearLayout ll_add_good;
 	}
 

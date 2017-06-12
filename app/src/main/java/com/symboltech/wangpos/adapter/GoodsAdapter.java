@@ -113,17 +113,17 @@ public class GoodsAdapter extends BaseAdapter {
 		int type = Integer.parseInt(goodsInfo.getSptype().trim());
 		switch (type) {
 			case 1://ConstantData.GOODS_SOURCE_BY_INTEGRAL:
-				holder.text_good_code.setText(goodsInfo.getBarcode() + "/" + context.getString(R.string.score_good));
+				holder.text_good_code.setText(goodsInfo.getCode() + "/" + context.getString(R.string.score_good));
 				break;
 			case 0://ConstantData.GOODS_SOURCE_BY_BRAND:
-				holder.text_good_code.setText(goodsInfo.getBarcode()+"/"+context.getString(R.string.brand_good));
+				holder.text_good_code.setText(goodsInfo.getCode()+ "/"+context.getString(R.string.brand_good));
 				holder.ll_score_info.setVisibility(View.GONE);
 				break;
 			case 2://ConstantData.GOODS_SOURCE_BY_SINTEGRAL:
-				holder.text_good_code.setText(goodsInfo.getBarcode() + "/" + context.getString(R.string.sscore_good));
+				holder.text_good_code.setText(goodsInfo.getCode() + "/" + context.getString(R.string.sscore_good));
 				break;
 			case 3://ConstantData.GOODS_SOURCE_BY_BINTEGRAL:
-				holder.text_good_code.setText(goodsInfo.getBarcode()+"/"+context.getString(R.string.brandbig_good));
+				holder.text_good_code.setText(goodsInfo.getCode()+"/"+context.getString(R.string.brandbig_good));
 				holder.ll_score_info.setVisibility(View.GONE);
 				break;
 			default:

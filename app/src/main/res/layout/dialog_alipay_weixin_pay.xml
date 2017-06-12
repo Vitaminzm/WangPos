@@ -182,7 +182,7 @@
 
                     <TextView
                         android:id="@+id/tv_thirdpay_paying_cancel"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="@dimen/height_ez"
                         android:layout_marginRight="23dp"
                         android:layout_weight="1"
@@ -194,7 +194,7 @@
 
                     <TextView
                         android:id="@+id/tv_thirdpay_paying_enter"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="@dimen/height_ez"
                         android:layout_marginLeft="23dp"
                         android:layout_weight="1"

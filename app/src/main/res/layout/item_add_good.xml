@@ -4,12 +4,23 @@
     android:layout_width="@dimen/height_txz"
     android:orientation="vertical"
     android:background="@drawable/circle_corner_bt_shape"
-    android:layout_height="@dimen/height_nz">
+    android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/text_good_name"
+        android:id="@+id/text_good_code"
         android:layout_width="match_parent"
         android:layout_height="@dimen/margin_fv"
+        android:gravity="center"
+        android:textSize="@dimen/font_size_tf"
+        android:textColor="@color/white"
+        android:text="商品名称"/>
+    <com.symboltech.wangpos.view.TextScrollView
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:id="@+id/text_good_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:textSize="@dimen/font_size_tf"
         android:textColor="@color/white"

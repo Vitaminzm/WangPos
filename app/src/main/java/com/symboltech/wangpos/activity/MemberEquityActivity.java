@@ -232,7 +232,10 @@ public class MemberEquityActivity extends BaseActivity {
                 if(coupons != null && coupons.size() > 0){
                     int scoll = sendAdapter.addAllByshow(coupons);
                     recycleview_hold_coupon.scrollToPosition(scoll);
+                    couponList.addAll(coupons);
                     orderCoupon = ArithDouble.add(orderCoupon, ArithDouble.add(orderCard, orderCardOverrage));
+                    text_coupon_count.setText(couponList.size() + "");
+                    text_total_money.setText(orderCoupon+"");
                 }
             }
         }else{
@@ -262,6 +265,10 @@ public class MemberEquityActivity extends BaseActivity {
     private void doCoupon(CouponInfo couponInfo, int position){
         if(getPayTypeId(PaymentTypeEnum.COUPON) == null){
             ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+            return;
+        }
+        if ((ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderScore), orderCoupon)) < ArithDouble.parseDouble(couponInfo.getAvailablemoney())) {
+            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_coupon_over_msg));
             return;
         }
         if(couponList.size() == 0){
@@ -478,7 +485,7 @@ public class MemberEquityActivity extends BaseActivity {
                                             return;
                                         }
 
-                                        if ((ArithDouble.sub(orderTotleValue, orderScore)) < orderCoupon) {
+                                        if ((ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderScore), orderCoupon)) < ArithDouble.parseDouble(result.getCouponinfo().getAvailablemoney())) {
                                             ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_coupon_over_msg));
                                             return;
                                         }
