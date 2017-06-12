@@ -173,6 +173,7 @@ public class PaymentTypeHolderAdapter extends RecyclerView.Adapter<PaymentTypeHo
 					holder.name_key.setTextColor(context.getResources().getColor(R.color.font_color));
 				}
 				holder.name_key.setText("补录");
+				break;
 //				if (payType != null  && paymentsInfo.get(position).getId().equals(payType.getId())) {
 //					holder.image_key.setImageResource(R.mipmap.bulu_icon_select);
 //					holder.name_key.setTextColor(context.getResources().getColor(R.color.orange));
