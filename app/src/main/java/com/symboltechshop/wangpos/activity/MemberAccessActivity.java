@@ -270,7 +270,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 
     @Override
     protected void onResume() {
-        LogUtil.i("lgs","onResume----");
+        LogUtil.i("lgs", "onResume----");
         super.onResume();
         text_phone_number.setChecked(true);
         ll_swaip_card.setVisibility(View.GONE);
@@ -299,6 +299,15 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
            if(scannerManager != null){
                try {
                    scannerManager.stopScan();
+               } catch (SdkException e) {
+                   e.printStackTrace();
+               } catch (CallServiceException e) {
+                   e.printStackTrace();
+               }
+           }
+           if(cardSlotManager != null){
+               try {
+                   cardSlotManager.stopRead();
                } catch (SdkException e) {
                    e.printStackTrace();
                } catch (CallServiceException e) {
