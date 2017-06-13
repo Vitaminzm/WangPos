@@ -36,6 +36,15 @@ public class BillInfo implements Serializable {
 	private String totalpoint;//会员总积分
 
 	private String totalmbjmoney;//扣减金额
+ 	private String crmfqmemebeno;//crm发券会员卡号
+
+	public String getCrmfqmemebeno() {
+		return crmfqmemebeno;
+	}
+
+	public void setCrmfqmemebeno(String crmfqmemebeno) {
+		this.crmfqmemebeno = crmfqmemebeno;
+	}
 
 	public String getCashierxtm() {
 		return cashierxtm;

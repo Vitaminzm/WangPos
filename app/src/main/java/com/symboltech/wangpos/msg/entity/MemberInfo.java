@@ -31,6 +31,15 @@ public class MemberInfo implements Serializable {
 	private List<String> saletag;//消费标签
 	private String status;// 积分规则描述
 	private List<CarInfo> listcar;
+	private String IsCRMHY;
+
+	public String getIsCRMHY() {
+		return IsCRMHY;
+	}
+
+	public void setIsCRMHY(String isCRMHY) {
+		IsCRMHY = isCRMHY;
+	}
 
 	public String getMembertypename() {
 		return membertypename;

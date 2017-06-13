@@ -293,6 +293,18 @@ public class HttpRequestUtil {
 	}
 
 	/**
+	 * @Description 获取会员所有信息
+	 * @author so
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void getCrmhyyhq(String tag, Map<String, String> param, final Class<T> clz,
+									 final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(tag, getUrl("xbapi/GetCRMHYYHQ"), param, clz,
+				httpactionhandler);
+	}
+	/**
 	 * @Description 保存退货单
 	 * @author so
 	 * @param param

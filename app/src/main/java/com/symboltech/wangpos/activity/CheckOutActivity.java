@@ -239,7 +239,8 @@ public class CheckOutActivity extends BaseActivity {
     private int isMember = ConstantData.MEMBER_IS_NOT_VERITY;
     // 会员信息
     private MemberInfo member;
-
+    //crm发券会员卡号
+    private String crmfqmemebeno;
     //会员权益
     private SubmitGoods member_equity = null;
     //销售人员名字
@@ -886,10 +887,11 @@ public class CheckOutActivity extends BaseActivity {
                         intent.putExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, orderScoreOverrage);
                         intent.putExtra(ConstantData.GET_ORDER_SCORE_INFO, orderScore);
                         intent.putExtra(ConstantData.USE_INTERRAL, (Serializable)exchangeInfo);
-
-                        intent.putExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, orderCouponOverrage);
-                        intent.putExtra(ConstantData.GET_ORDER_COUPON_INFO, orderCoupon);
-                        intent.putExtra(ConstantData.CAN_USED_COUPON, (Serializable)coupons);
+                        if(StringUtil.isEmpty(crmfqmemebeno)){
+                            intent.putExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, orderCouponOverrage);
+                            intent.putExtra(ConstantData.GET_ORDER_COUPON_INFO, orderCoupon);
+                            intent.putExtra(ConstantData.CAN_USED_COUPON, (Serializable)coupons);
+                        }
                         startActivityForResult(intent, ConstantData.MEMBER_EQUITY_REQUEST_CODE);
                     }else {
                         ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_no_equity));
@@ -1072,6 +1074,7 @@ public class CheckOutActivity extends BaseActivity {
                 // 使用的卡券
                 // 获取使用卡券信息
                 coupons = (List<CouponInfo>) data.getSerializableExtra(ConstantData.CAN_USED_COUPON);
+                crmfqmemebeno = data.getStringExtra(ConstantData.CRM_COUPON_NO);
                 orderCouponOverrage = data.getDoubleExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, 0.0);
                 orderCoupon = ArithDouble.sub(data.getDoubleExtra(ConstantData.GET_ORDER_COUPON_INFO, 0.0), orderCouponOverrage);
                 text_coupon_deduction_money.setText(orderCoupon + "");
@@ -1106,13 +1109,14 @@ public class CheckOutActivity extends BaseActivity {
                 if (null != data) {
                     StringBuilder result = new StringBuilder();
                     Map<String,String> map = AppHelper.filterTransResult(data);
+                    LogUtil.i("lgs",map.toString());
                     if("0".equals(map.get(AppHelper.RESULT_CODE))){
                         Type type =new TypeToken<Map<String, String>>(){}.getType();
                         try {
                             Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
                             if("00".equals(transData.get("resCode"))){
                                 OrderBean orderBean= new OrderBean();
-                                orderBean.setTransAmount(transData.get("amt"));
+                                orderBean.setTransAmount(ArithDouble.parseDouble(transData.get("amt"))*100+"");
                                 orderBean.setTxnId(transData.get("extOrderNo"));
                                 orderBean.setAccountNo(transData.get("cardNo"));
                                 orderBean.setAcquId(transData.get("cardIssuerCode"));
@@ -1189,6 +1193,9 @@ public class CheckOutActivity extends BaseActivity {
         bill.setPaymentslist(payments);
         bill.setExchange(exchangeInfo);
         bill.setTotalmbjmoney(orderManjianValue+"");
+        if(!StringUtil.isEmpty(crmfqmemebeno)){
+            bill.setCrmfqmemebeno(crmfqmemebeno);
+        }
         Map<String, String> map = new HashMap<String, String>();
         try {
             map.put("billInfo", GsonUtil.beanToJson(bill));

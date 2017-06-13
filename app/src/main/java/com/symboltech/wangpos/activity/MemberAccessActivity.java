@@ -305,6 +305,15 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                    e.printStackTrace();
                }
            }
+           if(cardSlotManager != null){
+               try {
+                   cardSlotManager.stopRead();
+               } catch (SdkException e) {
+                   e.printStackTrace();
+               } catch (CallServiceException e) {
+                   e.printStackTrace();
+               }
+           }
            try {
                LogUtil.i("lgs","out-------------");
                BaseSystemManager.getInstance().deviceServiceLogout();

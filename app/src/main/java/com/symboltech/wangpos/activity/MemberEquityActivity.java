@@ -25,6 +25,7 @@ import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.CouponCallback;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
+import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.CheckCouponInfo;
 import com.symboltech.wangpos.msg.entity.CouponInfo;
 import com.symboltech.wangpos.msg.entity.ExchangeInfo;
@@ -34,6 +35,7 @@ import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.SubmitGoods;
 import com.symboltech.wangpos.result.CheckCouponResult;
 import com.symboltech.wangpos.result.CouponResult;
+import com.symboltech.wangpos.result.CrmCouponResult;
 import com.symboltech.wangpos.result.ExchangemsgResult;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
@@ -43,6 +45,12 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
+import com.ums.upos.sdk.cardslot.CardInfoEntity;
+import com.ums.upos.sdk.cardslot.CardSlotManager;
+import com.ums.upos.sdk.cardslot.CardSlotTypeEnum;
+import com.ums.upos.sdk.cardslot.CardTypeEnum;
+import com.ums.upos.sdk.cardslot.OnCardInfoListener;
+import com.ums.upos.sdk.cardslot.SwipeSlotOptions;
 import com.ums.upos.sdk.exception.CallServiceException;
 import com.ums.upos.sdk.exception.SdkException;
 import com.ums.upos.sdk.scanner.OnScanListener;
@@ -56,8 +64,10 @@ import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -93,16 +103,23 @@ public class MemberEquityActivity extends BaseActivity {
     private double maxScoreValue;
 
     private CouponsAdapter sendAdapter;
+    private List<CouponInfo> adapterData;
     private double orderScore = 0;
     private double orderCoupon = 0;
     private SubmitGoods submitgoods;
     private List<CouponInfo> couponList;
 
+    //crm发券会员卡号
+    private String crmfqmemebeno;
+
     private ExchangeInfo exchangeInfo = new ExchangeInfo();
     private ScannerManager scannerManager;
     private boolean isLoading = false;
 
-    static class MyHandler extends Handler {
+    private CardSlotManager cardSlotManager = null;
+    public static final int Vipcard = 2;
+    public static final int SEARCHCARDERROR = -1;
+    class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
@@ -116,14 +133,94 @@ public class MemberEquityActivity extends BaseActivity {
                 case ToastUtils.TOAST_WHAT:
                     ToastUtils.showtaostbyhandler(theActivity,msg);
                     break;
+                case SEARCHCARDERROR:
+                    if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        if(cardSlotManager == null){
+                            return;
+                        }
+                        try {
+                            cardSlotManager.stopRead();
+                        } catch (SdkException e) {
+                            e.printStackTrace();
+                        } catch (CallServiceException e) {
+                            e.printStackTrace();
+                        }
+                        searchCardInfo();
+                    }
+                    break;
+                case Vipcard:
+                    memberverifymethodbyhttp((String) msg.obj);
+                   if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        if(cardSlotManager == null){
+                            return;
+                        }
+//                        try {
+//                            cardSlotManager.stopRead();
+//                        } catch (SdkException e) {
+//                            e.printStackTrace();
+//                        } catch (CallServiceException e) {
+//                            e.printStackTrace();
+//                        }
+                        searchCardInfo();
+                    }
+                    break;
             }
         }
+    }
+
+    private boolean isVerify = false;
+    private void memberverifymethodbyhttp(final String obj) {
+        if(isVerify){
+            ToastUtils.sendtoastbyhandler(handler, "验证中请稍后");
+            return;
+        }
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("memberno", obj);
+        HttpRequestUtil.getinstance().getCrmhyyhq(HTTP_TASK_KEY, map, CrmCouponResult.class, new HttpActionHandle<CrmCouponResult>() {
+
+            @Override
+            public void handleActionStart() {
+                isVerify = true;
+                startwaitdialog();
+            }
+
+            @Override
+            public void handleActionFinish() {
+                isVerify = false;
+                closewaitdialog();
+            }
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName, final CrmCouponResult result) {
+                if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+                    if(result.getData()!= null &&result.getData().size() >0){
+                        MemberEquityActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                crmfqmemebeno = obj;
+                                adapterData.addAll(result.getData());
+                                sendAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }else {
+                        ToastUtils.sendtoastbyhandler(handler, "无可用优惠券");
+                    }
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                }
+            }
+        });
     }
 
     MyHandler handler = new MyHandler(this);
     @Override
     protected void initData() {
         couponList = new ArrayList<CouponInfo>();
+        adapterData = new ArrayList<CouponInfo>();
         ExchangeInfo temp = (ExchangeInfo) getIntent().getSerializableExtra(ConstantData.USE_INTERRAL);
         if(temp!= null){
             exchangeInfo.setExchangemoney(temp.getExchangemoney());
@@ -182,16 +279,21 @@ public class MemberEquityActivity extends BaseActivity {
             }
         });
         //显示可用的最大积分
-        if (submitgoods != null){
+      //  if (submitgoods != null)
+        {
             maxScoreValue = ArithDouble.parseDouble(submitgoods.getLimitpoint());
             text_max_score.setText(maxScoreValue +"");
             edit_used_score.setText(exchangeInfo.getExchangepoint());
             orderScore = ArithDouble.parseDouble(exchangeInfo.getExchangemoney());
             text_deduction_money.setText(exchangeInfo.getExchangemoney());
             // 显示会员拥有卡券
-            if(submitgoods.getCouponInfos() != null && submitgoods.getCouponInfos().size() > 0){
+            //if(submitgoods.getCouponInfos() != null && submitgoods.getCouponInfos().size() > 0)
+            {
                 recycleview_hold_coupon.setVisibility(View.VISIBLE);
-                sendAdapter = new CouponsAdapter(submitgoods.getCouponInfos(), 0, mContext);
+                if(submitgoods!= null && submitgoods.getCouponInfos() != null && submitgoods.getCouponInfos().size() > 0){
+                    adapterData.addAll(submitgoods.getCouponInfos());
+                }
+                sendAdapter = new CouponsAdapter(adapterData, 0, mContext);
                 sendAdapter.setOnItemClickListener(new CouponsAdapter.MyItemClickListener() {
                     @Override
                             public void onItemClick(View view, final int position) {
@@ -238,9 +340,10 @@ public class MemberEquityActivity extends BaseActivity {
                     text_total_money.setText(orderCoupon+"");
                 }
             }
-        }else{
-            recycleview_hold_coupon.setVisibility(View.INVISIBLE);
         }
+// else{
+//            recycleview_hold_coupon.setVisibility(View.INVISIBLE);
+//        }
 
         if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
             try {
@@ -252,6 +355,7 @@ public class MemberEquityActivity extends BaseActivity {
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "扫码登录失败");
+                                    cardSlotManager = new CardSlotManager();
                                 }
                             }
                         });
@@ -261,6 +365,59 @@ public class MemberEquityActivity extends BaseActivity {
         }
     }
 
+    private void searchCardInfo() {
+        if(cardSlotManager == null){
+            return;
+        }
+        Set<CardSlotTypeEnum> slotTypes = new HashSet<CardSlotTypeEnum>();
+        slotTypes.add(CardSlotTypeEnum.SWIPE);
+        Set<CardTypeEnum> cardTypes = new HashSet<CardTypeEnum>();
+        cardTypes.add(CardTypeEnum.MAG_CARD);
+        int timeout = 0;
+        try {
+            Map<CardSlotTypeEnum, Bundle> options = new HashMap<CardSlotTypeEnum, Bundle>();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(SwipeSlotOptions.LRC_CHECK, false);
+            options.put(CardSlotTypeEnum.SWIPE, bundle);
+            cardSlotManager.setConfig(options);
+            cardSlotManager.readCard(slotTypes, cardTypes, timeout,
+                    new OnCardInfoListener() {
+
+                        @Override
+                        public void onCardInfo(int arg0, CardInfoEntity arg1) {
+                            if (0 != arg0) {
+                                handler.sendEmptyMessage(SEARCHCARDERROR);
+                            } else {
+                                switch (arg1.getActuralEnterType()) {
+                                    case MAG_CARD:
+                                        LogUtil.i("lgs", "磁道1：" + arg1.getTk1()
+                                                + "\n" + "磁道2：" + arg1.getTk2()
+                                                + "\n" + "磁道3：" + arg1.getTk3());
+                                        Message msg = Message.obtain();
+                                        msg.obj = arg1.getTk2();
+                                        msg.what = Vipcard;
+                                        handler.sendMessage(msg);
+                                        break;
+                                    default:
+                                        break;
+                                }
+//                                try {
+//                                    cardSlotManager.stopRead();
+//                                } catch (SdkException e) {
+//                                    e.printStackTrace();
+//                                } catch (CallServiceException e) {
+//                                    e.printStackTrace();
+//                                }
+                            }
+                        }
+                    }, null);
+        } catch (SdkException e) {
+            e.printStackTrace();
+        } catch (CallServiceException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     private void doCoupon(CouponInfo couponInfo, int position){
         if(getPayTypeId(PaymentTypeEnum.COUPON) == null){
@@ -319,6 +476,15 @@ public class MemberEquityActivity extends BaseActivity {
             if(scannerManager != null){
                 try {
                     scannerManager.stopScan();
+                } catch (SdkException e) {
+                    e.printStackTrace();
+                } catch (CallServiceException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(cardSlotManager != null){
+                try {
+                    cardSlotManager.stopRead();
                 } catch (SdkException e) {
                     e.printStackTrace();
                 } catch (CallServiceException e) {
@@ -709,6 +875,7 @@ public class MemberEquityActivity extends BaseActivity {
         // 积分抵扣信息
         intent_payment.putExtra(ConstantData.USE_INTERRAL, exchangeInfo);
         intent_payment.putExtra(ConstantData.CAN_USED_COUPON, (Serializable) coupons);
+        intent_payment.putExtra(ConstantData.CRM_COUPON_NO, crmfqmemebeno);
         setResult(ConstantData.MEMBER_EQUITY_RESULT_CODE, intent_payment);
         finish();
     }
