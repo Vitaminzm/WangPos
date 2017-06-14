@@ -1205,7 +1205,7 @@ public class PrepareReceiptInfo {
 							if(manjianMoney == 0){
 								moneys.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");
 							}else{
-								moneys.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable(), StringUtil.formatLString(16, "满减金额") + StringUtil.formatLString(10, "-" + scoreValue));
+								moneys.replace(TicketFormatEnum.TICKET_MANJIAN_MONEY.getLable(), StringUtil.formatLString(16, "满减金额") + StringUtil.formatLString(10, "-" + manjianMoney));
 							}
 							if(scoreValue ==0){
 								//moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable()+TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable()+TicketFormatEnum.TICKET_ENTER.getLable(), "");

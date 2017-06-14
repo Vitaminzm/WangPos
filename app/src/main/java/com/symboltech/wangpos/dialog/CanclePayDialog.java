@@ -196,9 +196,7 @@ public class CanclePayDialog extends BaseActivity{
 							|| payments.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
 							||payments.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
 							||payments.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())){
-						if(!ConstantData.YXLM_ID.equals(payments.get(i).getId())){
 							cash = ArithDouble.add(cash, ArithDouble.parseDouble(payments.get(i).getMoney()));
-						}
 					}
 					totalMoney = ArithDouble.add(totalMoney, ArithDouble.parseDouble(payments.get(i).getMoney()));
 				}else{
@@ -469,31 +467,6 @@ public class CanclePayDialog extends BaseActivity{
 			}else{
 				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
 			}
-		}else if(ConstantData.YXLM_ID.equals(info.getId())){
-			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-				if(isCancleCount > 0){
-					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
-					return;
-				}
-				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
-						||payments.get(position).getDes().equals(getString(R.string.cancled))){
-					this.position = position;
-					JSONObject json = new JSONObject();
-					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-					try {
-						json.put("orgTraceNo",info.getTraceNo());
-						json.put("extOrderNo", tradeNo);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-					isCancleCount++;
-					info.setDes(getString(R.string.cancleing_pay));
-					canclePayAdapter.notifyDataSetChanged();
-					AppHelper.callTrans(CanclePayDialog.this, ConstantData.QMH, ConstantData.YHK_CX, json);
-				}
-			}else{
-				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
-			}
 		}else if(info.getType().equals(PaymentTypeEnum.BANK.getStyletype())){
 			if (MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				if(isCancleCount > 0){
@@ -576,7 +549,11 @@ public class CanclePayDialog extends BaseActivity{
 					isCancleCount++;
 					info.setDes(getString(R.string.cancleing_pay));
 					canclePayAdapter.notifyDataSetChanged();
-					AppHelper.callTrans(CanclePayDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
+					if(ConstantData.YXLM_ID.equals(info.getId())){
+						AppHelper.callTrans(CanclePayDialog.this, ConstantData.QMH, ConstantData.YHK_CX, json);
+					}else{
+						AppHelper.callTrans(CanclePayDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
+					}
 				}
 			}
 		}

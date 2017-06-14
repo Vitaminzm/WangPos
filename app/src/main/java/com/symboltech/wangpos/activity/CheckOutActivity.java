@@ -74,7 +74,6 @@ import com.ums.upos.sdk.scanner.ScannerManager;
 import com.ums.upos.sdk.system.BaseSystemManager;
 import com.ums.upos.sdk.system.OnServiceStatusListener;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Serializable;
@@ -258,6 +257,8 @@ public class CheckOutActivity extends BaseActivity {
 
     // 使用卡券信息
     private List<CouponInfo> coupons;
+    // 所有卡券信息
+    private List<CouponInfo> allCoupons;
     // 使用积分信息
     private ExchangeInfo exchangeInfo;
     private List<PayMentsInfo> payments = new ArrayList<PayMentsInfo>();
@@ -267,6 +268,7 @@ public class CheckOutActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        allCoupons = new ArrayList<>();
         exchangeInfo = new ExchangeInfo();
         exchangeInfo.setExchangemoney("0");
         exchangeInfo.setExchangepoint("0");
@@ -284,10 +286,10 @@ public class CheckOutActivity extends BaseActivity {
             if(member_equity != null && (member_equity.getCouponInfos() != null || member_equity.getLimitpoint()!= null)){
                 rl_member_equity.setVisibility(View.VISIBLE);
             }else{
-                rl_member_equity.setVisibility(View.GONE);
+                rl_member_equity.setVisibility(View.VISIBLE);
             }
         }else{
-            rl_member_equity.setVisibility(View.GONE);
+            rl_member_equity.setVisibility(View.VISIBLE);
         }
         orderTotleValue = getIntent().getDoubleExtra(ConstantData.GET_ORDER_VALUE_INFO, 0.0);
         text_order_total_money.setText(MoneyAccuracyUtils.getmoneybytwo(orderTotleValue));
@@ -408,54 +410,31 @@ public class CheckOutActivity extends BaseActivity {
                 }
                 break;
             case CASH:
-                if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())){
-                    if(paymentMoney >waitPayValue){
+                double cash = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(paymentTypeAdapter.getPayType().getId()));
+                double ling = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(PaymentTypeEnum.LING.getStyletype()));
+                if("1".equals(paymentTypeAdapter.getPayType().getId())){
+                    if(money > (ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling))){
+                        addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                        addPayTypeInfo(PaymentTypeEnum.LING, ArithDouble.sub(money, ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling)), 0, paymentTypeAdapter.getPayType(), null);
+                    }else{
+                        addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
+                        paymentTypeInfoadapter.removeLing();
+                        paymentTypeAdapter.setPayTpyeNull();
+                    }
+                }else{
+                    if(money > ArithDouble.add(waitPayValue, cash)){
                         edit_input_money.setText("");
                         paymentTypeAdapter.setPayTpyeNull();
                         ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                        return;
                     }else{
-                        if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-                            JSONObject json = new JSONObject();
-                            String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-                            try {
-                                json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
-                                json.put("extOrderNo",tradeNo);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json);
-                        }else{
-                            paymentTypeAdapter.setPayTpyeNull();
-                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_not_support));
-                        }
+                        addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
                     }
-                }else{
-                    double cash = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(paymentTypeAdapter.getPayType().getId()));
-                    double ling = ArithDouble.parseDouble(paymentTypeInfoadapter.getMoneyById(PaymentTypeEnum.LING.getStyletype()));
-                    if("1".equals(paymentTypeAdapter.getPayType().getId())){
-                        if(money > (ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling))){
-                            addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
-                            addPayTypeInfo(PaymentTypeEnum.LING, ArithDouble.sub(money, ArithDouble.sub(ArithDouble.add(waitPayValue, cash), ling)), 0, paymentTypeAdapter.getPayType(), null);
-                        }else{
-                            addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
-                            paymentTypeInfoadapter.removeLing();
-                            paymentTypeAdapter.setPayTpyeNull();
-                        }
-                    }else{
-                        if(money > ArithDouble.add(waitPayValue, cash)){
-                            edit_input_money.setText("");
-                            paymentTypeAdapter.setPayTpyeNull();
-                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
-                            return;
-                        }else{
-                            addPayTypeInfo(PaymentTypeEnum.CASH, money, 0, paymentTypeAdapter.getPayType(), null);
-                        }
-                    }
-                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                    handler.sendEmptyMessage(PAY_SUCCESS);
                 }
+                waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                handler.sendEmptyMessage(PAY_SUCCESS);
                 break;
             case WECHAT:
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_WEIXIN_IS_INPUT, "0"))){
@@ -541,9 +520,13 @@ public class CheckOutActivity extends BaseActivity {
                         try {
                             json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
                             json.put("extOrderNo",tradeNo);
-                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
                         } catch (Exception e) {
                             e.printStackTrace();
+                        }
+                        if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())) {
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json);
+                        }else {
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
                         }
                     }
                 }
@@ -877,29 +860,35 @@ public class CheckOutActivity extends BaseActivity {
                 break;
             case R.id.imageview_more:
             case R.id.ll_member_equity:
-                if(member_type != null && !member_type.equals(ConstantData.MEMBER_VERIFY_BY_PHONE)){
-                    if(member_equity != null && (member_equity.getCouponInfos() != null || member_equity.getLimitpoint()!= null)){
+//                if(member_type != null && !member_type.equals(ConstantData.MEMBER_VERIFY_BY_PHONE)){
+//                    if(member_equity != null && (member_equity.getCouponInfos() != null || member_equity.getLimitpoint()!= null)){
                         Intent intent = new Intent(this, MemberEquityActivity.class);
                         intent.putExtra(ConstantData.CART_ALL_MONEY, ArithDouble.add(ArithDouble.add(waitPayValue, orderScore), orderCoupon)+"");
-                        intent.putExtra(ConstantData.MEMBER_EQUITY, member_equity);
-                        intent.putExtra(ConstantData.GET_MEMBER_INFO, member);
 
-                        intent.putExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, orderScoreOverrage);
-                        intent.putExtra(ConstantData.GET_ORDER_SCORE_INFO, orderScore);
-                        intent.putExtra(ConstantData.USE_INTERRAL, (Serializable)exchangeInfo);
-                        if(StringUtil.isEmpty(crmfqmemebeno)){
-                            intent.putExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, orderCouponOverrage);
-                            intent.putExtra(ConstantData.GET_ORDER_COUPON_INFO, orderCoupon);
-                            intent.putExtra(ConstantData.CAN_USED_COUPON, (Serializable)coupons);
+                        if(member != null){
+                            intent.putExtra(ConstantData.GET_MEMBER_INFO, member);
+                            if(member_type != null && !member_type.equals(ConstantData.MEMBER_VERIFY_BY_PHONE)){
+                                intent.putExtra(ConstantData.MEMBER_EQUITY, member_equity);
+                                if(allCoupons.size() == 0 && member_equity != null && member_equity.getCouponInfos() != null){
+                                    allCoupons.addAll(member_equity.getCouponInfos());
+                                }
+                                intent.putExtra(ConstantData.GET_ORDER_SCORE_OVERAGE, orderScoreOverrage);
+                                intent.putExtra(ConstantData.GET_ORDER_SCORE_INFO, orderScore);
+                                intent.putExtra(ConstantData.USE_INTERRAL, (Serializable)exchangeInfo);
+                            }
                         }
+                        intent.putExtra(ConstantData.GET_ORDER_COUPON_OVERAGE, orderCouponOverrage);
+                        intent.putExtra(ConstantData.GET_ORDER_COUPON_INFO, orderCoupon);
+                        intent.putExtra(ConstantData.CAN_USED_COUPON, (Serializable)coupons);
+                        intent.putExtra(ConstantData.ALL_COUPON, (Serializable)allCoupons);
                         startActivityForResult(intent, ConstantData.MEMBER_EQUITY_REQUEST_CODE);
-                    }else {
-                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_no_equity));
-                    }
-                }else{
-                    ToastUtils.sendtoastbyhandler(handler, "手机号验证会员不允许使用权益");
-                    return;
-                }
+//                    }else {
+//                        ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_no_equity));
+//                    }
+//                }else{
+//                    ToastUtils.sendtoastbyhandler(handler, "手机号验证会员不允许使用权益");
+//                    return;
+//                }
                 break;
             case R.id.title_icon_back:
                 if (payMentsCancle.size()>0) {
@@ -1071,7 +1060,8 @@ public class CheckOutActivity extends BaseActivity {
                 orderScore = ArithDouble.sub(data.getDoubleExtra(ConstantData.GET_ORDER_SCORE_INFO, 0.0), orderScoreOverrage);
                 text_score_deduction_money.setText(orderScore + "");
                 exchangeInfo = (ExchangeInfo) data.getSerializableExtra(ConstantData.USE_INTERRAL);
-                // 使用的卡券
+                // 所有的卡券
+                allCoupons = (List<CouponInfo>) data.getSerializableExtra(ConstantData.ALL_COUPON);
                 // 获取使用卡券信息
                 coupons = (List<CouponInfo>) data.getSerializableExtra(ConstantData.CAN_USED_COUPON);
                 crmfqmemebeno = data.getStringExtra(ConstantData.CRM_COUPON_NO);

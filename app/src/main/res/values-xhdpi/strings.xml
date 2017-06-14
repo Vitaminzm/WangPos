@@ -313,6 +313,7 @@
     <string name="thirdpay_sign_success">签到成功</string>
     <string name="thirdpay_sign_failed">签到失败</string>
     <string name="thirdpay_swip_card">请刷卡</string>
+    <string name="swip_card">刷卡</string>
     <string name="thirdpay_swip_card_done">刷卡完成</string>
     <string name="thirdpay_input_pwd">请输密码</string>
     <string name="thirdpay_input_pwd_done">输密结束</string>

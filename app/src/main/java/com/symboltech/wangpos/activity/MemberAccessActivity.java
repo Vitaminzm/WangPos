@@ -121,6 +121,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     memberverifymethodbyhttp(ConstantData.MEMBER_VERIFY_BY_QR, (String) msg.obj);
                     break;
                 case SEARCHCARDERROR:
+                    ToastUtils.sendtoastbyhandler(handler,"刷卡失败，请重试");
                     if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
                         if(cardSlotManager == null){
                             return;
@@ -673,12 +674,14 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     @Override
                     public void handleActionSuccess(String actionName, final AllMemeberInfoResult result) {
                         if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+
                             Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
                             paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
                             paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
 //                            paymentIntent.putExtra(ConstantData.MEMBER_IS_SECOND_VERIFY, isChecked);
                             paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
                             MemberAccessActivity.this.startActivity(paymentIntent);
+                            MemberAccessActivity.this.finish();
                         } else if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK_ADD_MEMBER)){
                             MemberAccessActivity.this.runOnUiThread(new Runnable() {
                                 @Override
@@ -692,6 +695,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                                                     paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
                                                     paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
                                                     MemberAccessActivity.this.startActivity(paymentIntent);
+                                                    MemberAccessActivity.this.finish();
                                                 }
                                             });
                                     uhd.show();

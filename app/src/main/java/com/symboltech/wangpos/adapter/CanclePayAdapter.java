@@ -57,9 +57,6 @@ public class CanclePayAdapter extends BaseAdapter {
 				if(paymentsInfo.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())|| paymentsInfo.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype()) ||
 						paymentsInfo.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) ||paymentsInfo.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
-					if(ConstantData.YXLM_ID.equals(paymentsInfo.get(i).getId())){
-						paymentsInfoAdapter.add(paymentsInfo.get(i));
-					}
 					//paymentsInfo.get(i).setIsCancle(true);
 				}else{
 						paymentsInfoAdapter.add(paymentsInfo.get(i));

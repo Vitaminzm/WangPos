@@ -14,7 +14,9 @@
         android:layout_below="@id/common_title_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_rz"
+        android:layout_marginTop="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginRight="@dimen/margin_rz"
         android:orientation="vertical">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -34,9 +36,23 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:src="@mipmap/icon_qr"/>
+        <TextView
+            android:id="@+id/tv_swipcard_coupon"
+            android:paddingLeft="@dimen/margin_oz"
+            android:paddingRight="@dimen/margin_oz"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/height_xz"
+            android:layout_marginRight="@dimen/margin_oz"
+            android:gravity="center"
+            android:layout_toLeftOf="@id/imageview_qr"
+            android:background="@drawable/btn_green_bg"
+            android:text="@string/swip_card"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_size_rz" />
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
+        android:visibility="invisible"
         android:id="@+id/recycleview_hold_coupon"
         android:layout_marginTop="@dimen/margin_rz"
         android:layout_marginBottom="@dimen/margin_rz"
@@ -55,11 +71,11 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_score_info"
         android:layout_below="@id/ll_member_hold_coupon"
         android:orientation="vertical"
         android:layout_marginRight="@dimen/margin_rz"
         android:layout_marginLeft="@dimen/margin_rz"
-        android:layout_marginBottom="@dimen/margin_fz"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
@@ -192,8 +208,17 @@
                 android:textColor="@color/font_color"/>
         </LinearLayout>
 
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ll_coupon_info"
+        android:layout_marginTop="@dimen/margin_rz"
+        android:layout_below="@id/ll_score_info"
+        android:orientation="vertical"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
         <LinearLayout
-            android:layout_marginTop="@dimen/margin_xz"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -250,6 +275,73 @@
                 android:textColor="@color/font_color"/>
 
         </LinearLayout>
+        <View
+            android:layout_marginTop="@dimen/margin_rz"
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:background="@color/view_line_color"
+            android:layout_height="1dp"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_below="@id/ll_coupon_info"
+        android:layout_marginRight="@dimen/margin_rz"
+        android:layout_marginLeft="@dimen/margin_rz"
+        android:layout_marginBottom="@dimen/margin_fz"
+        android:layout_marginTop="@dimen/margin_fz"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_rz"
+                android:textColor="@color/font_color"
+                android:layout_centerVertical="true"
+                android:text="返券会员卡"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/tv_swipcard_memberno"
+                android:paddingLeft="@dimen/margin_oz"
+                android:paddingRight="@dimen/margin_oz"
+                android:layout_width="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_height="@dimen/height_xz"
+                android:layout_marginRight="@dimen/margin_fv"
+                android:gravity="center"
+                android:background="@drawable/btn_green_bg"
+                android:text="@string/swip_card"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_size_rz" />
+
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_oz"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/font_size_rz"
+                android:text="当前卡号"
+                android:textColor="@color/font_color"/>
+            <TextView
+                android:id="@+id/tv_crm_memberno"
+                android:layout_width="@dimen/height_rnz"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/font_size_rx"
+                android:gravity="center"
+                android:layout_marginLeft="@dimen/margin_ez"
+                android:background="@drawable/icon_edittext_bg_press"
+                android:text="0"
+                android:textColor="@color/font_color"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <TextView

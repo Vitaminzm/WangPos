@@ -376,6 +376,9 @@ public class ConstantData {
 	/** 可用券信息 */
 	public static final String CAN_USED_COUPON = "can_used_coupon";
 
+	/** 所有券信息 */
+	public static final String ALL_COUPON = "all_coupon";
+
 	/** crm发券会员卡号*/
 	public static final String CRM_COUPON_NO = "crmfqmemebeno";
 

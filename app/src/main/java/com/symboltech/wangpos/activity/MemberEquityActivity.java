@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -77,6 +78,8 @@ public class MemberEquityActivity extends BaseActivity {
 
     @Bind(R.id.title_text_content)
     TextView title_text_content;
+    @Bind(R.id.tv_crm_memberno)
+    TextView tv_crm_memberno;
 
     @Bind(R.id.text_total_money)
     TextView text_total_money;
@@ -97,6 +100,8 @@ public class MemberEquityActivity extends BaseActivity {
     RecyclerView recycleview_hold_coupon;
     @Bind(R.id.ll_keyboard)
     RelativeLayout ll_keyboard;
+    @Bind(R.id.ll_score_info)
+    LinearLayout ll_score_info;
 
     private double orderTotleValue;
     private MemberInfo member;
@@ -109,8 +114,6 @@ public class MemberEquityActivity extends BaseActivity {
     private SubmitGoods submitgoods;
     private List<CouponInfo> couponList;
 
-    //crm发券会员卡号
-    private String crmfqmemebeno;
 
     private ExchangeInfo exchangeInfo = new ExchangeInfo();
     private ScannerManager scannerManager;
@@ -135,6 +138,7 @@ public class MemberEquityActivity extends BaseActivity {
                     break;
                 case SEARCHCARDERROR:
                     if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+                        ToastUtils.sendtoastbyhandler(handler,"刷卡失败，请重试");
                         if(cardSlotManager == null){
                             return;
                         }
@@ -145,23 +149,24 @@ public class MemberEquityActivity extends BaseActivity {
                         } catch (CallServiceException e) {
                             e.printStackTrace();
                         }
-                        searchCardInfo();
+                        searchCardInfo(isVerifyCoupon);
                     }
                     break;
                 case Vipcard:
-                    memberverifymethodbyhttp((String) msg.obj);
-                   if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-                        if(cardSlotManager == null){
-                            return;
-                        }
-//                        try {
-//                            cardSlotManager.stopRead();
-//                        } catch (SdkException e) {
-//                            e.printStackTrace();
-//                        } catch (CallServiceException e) {
-//                            e.printStackTrace();
-//                        }
-                        searchCardInfo();
+                    if(isVerifyCoupon){
+                        memberverifymethodbyhttp((String) msg.obj);
+                    }else{
+                        tv_crm_memberno.setText((String) msg.obj);
+                    }
+                    if(cardSlotManager == null){
+                        return;
+                    }
+                    try {
+                        cardSlotManager.stopRead();
+                    } catch (SdkException e) {
+                        e.printStackTrace();
+                    } catch (CallServiceException e) {
+                        e.printStackTrace();
                     }
                     break;
             }
@@ -176,6 +181,7 @@ public class MemberEquityActivity extends BaseActivity {
         }
         Map<String, String> map = new HashMap<String, String>();
         map.put("memberno", obj);
+        map.put("billid", AppConfigFile.getBillId());
         HttpRequestUtil.getinstance().getCrmhyyhq(HTTP_TASK_KEY, map, CrmCouponResult.class, new HttpActionHandle<CrmCouponResult>() {
 
             @Override
@@ -201,7 +207,10 @@ public class MemberEquityActivity extends BaseActivity {
                         MemberEquityActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                crmfqmemebeno = obj;
+                                if(adapterData.containsAll(result.getData())){
+                                    ToastUtils.sendtoastbyhandler(handler, "同一张卡多次刷无效");
+                                    return;
+                                }
                                 adapterData.addAll(result.getData());
                                 sendAdapter.notifyDataSetChanged();
                             }
@@ -231,12 +240,18 @@ public class MemberEquityActivity extends BaseActivity {
         }
         title_text_content.setText(getString(R.string.number_access));
         orderTotleValue = ArithDouble.parseDouble(getIntent().getStringExtra(ConstantData.CART_ALL_MONEY));
-        submitgoods = (SubmitGoods) getIntent().getSerializableExtra(ConstantData.MEMBER_EQUITY);
         member = (MemberInfo) getIntent().getSerializableExtra(ConstantData.GET_MEMBER_INFO);
         //显示积分兑换规则
         if(member != null){
+            tv_crm_memberno.setText(member.getMemberno());
+            submitgoods = (SubmitGoods) getIntent().getSerializableExtra(ConstantData.MEMBER_EQUITY);
+            if(submitgoods== null){
+                ll_score_info.setVisibility(View.GONE);
+            }
             //score_rule.setText(member.getPointrule());
             text_hold_score.setText(member.getCent_total());
+        }else{
+            ll_score_info.setVisibility(View.GONE);
         }
         new HorizontalKeyBoard(this, this, edit_used_score, ll_keyboard, new KeyBoardListener() {
             @Override
@@ -281,7 +296,11 @@ public class MemberEquityActivity extends BaseActivity {
         //显示可用的最大积分
       //  if (submitgoods != null)
         {
-            maxScoreValue = ArithDouble.parseDouble(submitgoods.getLimitpoint());
+            if(submitgoods == null){
+                maxScoreValue = 0;
+            }else{
+                maxScoreValue = ArithDouble.parseDouble(submitgoods.getLimitpoint());
+            }
             text_max_score.setText(maxScoreValue +"");
             edit_used_score.setText(exchangeInfo.getExchangepoint());
             orderScore = ArithDouble.parseDouble(exchangeInfo.getExchangemoney());
@@ -289,9 +308,10 @@ public class MemberEquityActivity extends BaseActivity {
             // 显示会员拥有卡券
             //if(submitgoods.getCouponInfos() != null && submitgoods.getCouponInfos().size() > 0)
             {
+                List<CouponInfo> couponInfos = (List<CouponInfo>) getIntent().getSerializableExtra(ConstantData.ALL_COUPON);
                 recycleview_hold_coupon.setVisibility(View.VISIBLE);
-                if(submitgoods!= null && submitgoods.getCouponInfos() != null && submitgoods.getCouponInfos().size() > 0){
-                    adapterData.addAll(submitgoods.getCouponInfos());
+                if(couponInfos != null && couponInfos.size() > 0){
+                    adapterData.addAll(couponInfos);
                 }
                 sendAdapter = new CouponsAdapter(adapterData, 0, mContext);
                 sendAdapter.setOnItemClickListener(new CouponsAdapter.MyItemClickListener() {
@@ -353,9 +373,10 @@ public class MemberEquityActivity extends BaseActivity {
                             @Override
                             public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                 if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                    cardSlotManager = new CardSlotManager();
                                 }else{
                                     ToastUtils.sendtoastbyhandler(handler, "扫码登录失败");
-                                    cardSlotManager = new CardSlotManager();
+
                                 }
                             }
                         });
@@ -365,16 +386,20 @@ public class MemberEquityActivity extends BaseActivity {
         }
     }
 
-    private void searchCardInfo() {
+    private boolean isVerifyCoupon = true;
+    private void searchCardInfo(boolean flag) {
         if(cardSlotManager == null){
             return;
         }
+        ToastUtils.sendtoastbyhandler(handler,"请刷卡！");
+        isVerifyCoupon = flag;
         Set<CardSlotTypeEnum> slotTypes = new HashSet<CardSlotTypeEnum>();
         slotTypes.add(CardSlotTypeEnum.SWIPE);
         Set<CardTypeEnum> cardTypes = new HashSet<CardTypeEnum>();
         cardTypes.add(CardTypeEnum.MAG_CARD);
         int timeout = 0;
         try {
+            cardSlotManager.stopRead();
             Map<CardSlotTypeEnum, Bundle> options = new HashMap<CardSlotTypeEnum, Bundle>();
             Bundle bundle = new Bundle();
             bundle.putBoolean(SwipeSlotOptions.LRC_CHECK, false);
@@ -502,7 +527,7 @@ public class MemberEquityActivity extends BaseActivity {
 
     }
 
-    @OnClick({R.id.title_icon_back, R.id.imageview_qr, R.id.text_confirm})
+    @OnClick({R.id.title_icon_back, R.id.imageview_qr, R.id.text_confirm, R.id.tv_swipcard_coupon, R.id.tv_swipcard_memberno})
     public void click(View view){
         if(Utils.isFastClick()){
             return;
@@ -512,6 +537,13 @@ public class MemberEquityActivity extends BaseActivity {
             case R.id.title_icon_back:
                 finish();
                 break;
+            case R.id.tv_swipcard_coupon:
+                searchCardInfo(true);
+                break;
+            case R.id.tv_swipcard_memberno:
+                searchCardInfo(false);
+                break;
+
             case R.id.text_confirm:
 //                if(couponList.size()>0){
 //                    checkPaperCoupon(AppConfigFile.getBillId(), couponList);
@@ -875,7 +907,8 @@ public class MemberEquityActivity extends BaseActivity {
         // 积分抵扣信息
         intent_payment.putExtra(ConstantData.USE_INTERRAL, exchangeInfo);
         intent_payment.putExtra(ConstantData.CAN_USED_COUPON, (Serializable) coupons);
-        intent_payment.putExtra(ConstantData.CRM_COUPON_NO, crmfqmemebeno);
+        intent_payment.putExtra(ConstantData.ALL_COUPON, (Serializable) adapterData);
+        intent_payment.putExtra(ConstantData.CRM_COUPON_NO, tv_crm_memberno.getText().toString());
         setResult(ConstantData.MEMBER_EQUITY_RESULT_CODE, intent_payment);
         finish();
     }
