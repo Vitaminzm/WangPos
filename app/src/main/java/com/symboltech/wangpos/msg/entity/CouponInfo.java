@@ -143,6 +143,11 @@ public class CouponInfo implements Serializable , Cloneable {
 	}
 
 	@Override
+	public boolean equals(Object o) {
+		return couponno.equals(((CouponInfo) o).getCouponno());
+	}
+
+	@Override
 	public CouponInfo clone() {
 		CouponInfo clone = null;
 		try {
