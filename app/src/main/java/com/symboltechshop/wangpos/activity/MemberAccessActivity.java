@@ -679,6 +679,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 //                            paymentIntent.putExtra(ConstantData.MEMBER_IS_SECOND_VERIFY, isChecked);
                             paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
                             MemberAccessActivity.this.startActivity(paymentIntent);
+                            MemberAccessActivity.this.finish();
                         } else if (result.getCode().equals(ConstantData.HTTP_RESPONSE_OK_ADD_MEMBER)){
                             MemberAccessActivity.this.runOnUiThread(new Runnable() {
                                 @Override
@@ -692,6 +693,7 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                                                     paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
                                                     paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
                                                     MemberAccessActivity.this.startActivity(paymentIntent);
+                                                    MemberAccessActivity.this.finish();
                                                 }
                                             });
                                     uhd.show();

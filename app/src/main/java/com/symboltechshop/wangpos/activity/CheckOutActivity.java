@@ -1160,7 +1160,11 @@ public class CheckOutActivity extends BaseActivity {
                             Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
                             if("00".equals(transData.get("resCode"))){
                                 OrderBean orderBean= new OrderBean();
-                                orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(transData.get("amt")));
+                                if(!StringUtil.isEmpty(transData.get("baseAmt"))){
+                                    orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(transData.get("baseAmt")));
+                                }else{
+                                    orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(transData.get("amt")));
+                                }
                                 orderBean.setTxnId(transData.get("extOrderNo"));
                                 orderBean.setAccountNo(transData.get("cardNo"));
                                 orderBean.setAcquId(transData.get("cardIssuerCode"));
