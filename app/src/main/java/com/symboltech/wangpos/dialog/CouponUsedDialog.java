@@ -20,6 +20,8 @@ import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.wangpos.view.TextScrollView;
 
+import java.util.List;
+
 /**
  * Description 通用提示dialog
  * 
@@ -51,11 +53,13 @@ public class CouponUsedDialog extends BaseDialog implements View.OnClickListener
 	};
 	private HorizontalKeyBoard keyboard;
 
-	public CouponUsedDialog(Context context, CouponInfo couponInfo, CouponCallback couponCallback) {
+	private List<CouponInfo> list;
+	public CouponUsedDialog(Context context, List<CouponInfo> list,CouponInfo couponInfo, CouponCallback couponCallback) {
 		super(context, R.style.dialog_login_bg);
 		this.context = context;
 		this.couponCallback = couponCallback;
 		this.couponInfo = couponInfo;
+		this.list= list;
 	}
 
 	@Override
@@ -72,7 +76,16 @@ public class CouponUsedDialog extends BaseDialog implements View.OnClickListener
 		tv_coupon_name.setText(couponInfo.getName());
 		tv_coupon_date.setText(couponInfo.getEnddate());
 		tv_coupon_big_money.setText(couponInfo.getAvailablemoney());
-		edit_money.setText(couponInfo.getAvailablemoney());
+		if(list!= null && list.size()>0){
+			for(CouponInfo info:list){
+				if(info.getCouponno().equals(couponInfo.getCouponno())){
+					edit_money.setText(info.getAvailablemoney());
+					break;
+				}
+			}
+		}else{
+			edit_money.setText(couponInfo.getAvailablemoney());
+		}
 		keyboard = new HorizontalKeyBoard(context, this, edit_money, null, new KeyBoardListener() {
 			@Override
 			public void onComfirm() {

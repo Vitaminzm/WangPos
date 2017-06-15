@@ -125,7 +125,7 @@ public class ConstantData {
 	public static final String WECHAT_ID = "63";
 
 	/**银联扫码id*/
-	public static final String BANKCODE_ID = "76";
+	public static final String BANKCODE_ID = "67";
 
 	/**翼支付id*/
 	public static final String YIPAY_ID = "53";

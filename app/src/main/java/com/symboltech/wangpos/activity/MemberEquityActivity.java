@@ -85,6 +85,8 @@ public class MemberEquityActivity extends BaseActivity {
     TextView text_total_money;
     @Bind(R.id.text_coupon_count)
     TextView text_coupon_count;
+    @Bind(R.id.tv_waitpay)
+    TextView tv_waitpay;
 
     @Bind(R.id.text_hold_score)
     TextView text_hold_score;
@@ -204,12 +206,15 @@ public class MemberEquityActivity extends BaseActivity {
             public void handleActionSuccess(String actionName, final CrmCouponResult result) {
                 if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
                     if(result.getData()!= null &&result.getData().size() >0){
+
                         MemberEquityActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 if(adapterData.containsAll(result.getData())){
                                     ToastUtils.sendtoastbyhandler(handler, "同一张卡多次刷无效");
                                     return;
+                                }else{
+                                    ToastUtils.sendtoastbyhandler(handler, "刷卡成功");
                                 }
                                 adapterData.addAll(result.getData());
                                 sendAdapter.notifyDataSetChanged();
@@ -240,6 +245,7 @@ public class MemberEquityActivity extends BaseActivity {
         }
         title_text_content.setText(getString(R.string.number_access));
         orderTotleValue = ArithDouble.parseDouble(getIntent().getStringExtra(ConstantData.CART_ALL_MONEY));
+        tv_waitpay.setText(orderTotleValue+"");
         member = (MemberInfo) getIntent().getSerializableExtra(ConstantData.GET_MEMBER_INFO);
         //显示积分兑换规则
         if(member != null){
@@ -317,7 +323,7 @@ public class MemberEquityActivity extends BaseActivity {
                 sendAdapter.setOnItemClickListener(new CouponsAdapter.MyItemClickListener() {
                     @Override
                             public void onItemClick(View view, final int position) {
-                                    new CouponUsedDialog(MemberEquityActivity.this, sendAdapter.getItem(position).clone(), new CouponCallback() {
+                                    new CouponUsedDialog(MemberEquityActivity.this, couponList,sendAdapter.getItem(position).clone(), new CouponCallback() {
                                         @Override
                                         public void doResult(CouponInfo couponInfo) {
                                             doCoupon(couponInfo, position);
@@ -459,8 +465,9 @@ public class MemberEquityActivity extends BaseActivity {
                 orderCoupon = ArithDouble.parseDouble(couponInfo.getAvailablemoney());
                 sendAdapter.addSelect(position);
                 sendAdapter.notifyItemChanged(position);
-                text_coupon_count.setText(couponList.size()+"");
+                text_coupon_count.setText(couponList.size() + "");
                 text_total_money.setText(orderCoupon+"");
+                tv_waitpay.setText(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderScore), orderCoupon)+"");
             }
             return;
         }
@@ -481,8 +488,9 @@ public class MemberEquityActivity extends BaseActivity {
             orderCoupon = ArithDouble.add(orderCoupon, ArithDouble.parseDouble(info.getAvailablemoney()));
         }
         sendAdapter.notifyItemChanged(position);
-        text_coupon_count.setText(couponList.size()+"");
+        text_coupon_count.setText(couponList.size() + "");
         text_total_money.setText(orderCoupon+"");
+        tv_waitpay.setText(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderScore), orderCoupon)+"");
     }
 
     @Override
@@ -692,6 +700,7 @@ public class MemberEquityActivity extends BaseActivity {
                                         sendAdapter.addSelect(sendAdapter.getItemCount() - 1);
                                         couponList.add(result.getCouponinfo());
                                         recycleview_hold_coupon.scrollToPosition(sendAdapter.getItemCount() - 1);
+                                        tv_waitpay.setText(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderScore), orderCoupon) + "");
                                     }
                                 });
                             }
@@ -765,11 +774,16 @@ public class MemberEquityActivity extends BaseActivity {
                             //抵扣值大于0才显示
                             if (orderScore >= 0) {
                                 if (orderScore == 0) {
+                                    exchangeInfo.setExchangemoney("0");
+                                    exchangeInfo.setExchangepoint("0");
                                     edit_used_score.setText(exchangeInfo.getExchangepoint());
                                     text_deduction_money.setText(exchangeInfo.getExchangemoney());
                                     return;
                                 }
                                 if (orderScore > ArithDouble.sub(orderTotleValue, orderCoupon)) {
+                                    orderScore = 0;
+                                    exchangeInfo.setExchangemoney("0");
+                                    exchangeInfo.setExchangepoint("0");
                                     edit_used_score.setText(exchangeInfo.getExchangepoint());
                                     text_deduction_money.setText(exchangeInfo.getExchangemoney());
                                     ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_score_over_msg));
@@ -777,6 +791,7 @@ public class MemberEquityActivity extends BaseActivity {
                                 }
                                 edit_used_score.setText(exchangeInfo.getExchangepoint());
                                 text_deduction_money.setText(exchangeInfo.getExchangemoney());
+                                tv_waitpay.setText(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderScore), orderCoupon) + "");
                             } else {
                                 ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_cannot_use_msg));
                             }

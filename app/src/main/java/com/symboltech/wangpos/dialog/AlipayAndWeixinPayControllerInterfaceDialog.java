@@ -409,7 +409,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 						// TODO Auto-generated method stub
 						ToastUtils.sendtoastbyhandler(handler, errmsg);
 						Message message=Message.obtain();
-						message.what = 5;
+						message.what = 7;
 						message.obj = errmsg;
 						handler.sendMessage(message);
 					}
@@ -702,7 +702,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 				// TODO Auto-generated method stub
 				ToastUtils.sendtoastbyhandler(handler, errmsg);
 				Message message=Message.obtain();
-				message.what = 5;
+				message.what = 7;
 				message.obj = errmsg;
 				handler.sendMessage(message);
 			}
