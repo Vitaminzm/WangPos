@@ -32,6 +32,7 @@ import com.symboltech.wangpos.dialog.CanclePayDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
 import com.symboltech.wangpos.dialog.RecordPayDialog;
 import com.symboltech.wangpos.dialog.ThirdPayDialog;
+import com.symboltech.wangpos.dialog.VerifyAuthDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
@@ -379,34 +380,8 @@ public class CheckOutActivity extends BaseActivity {
                     paymentTypeAdapter.setPayTpyeNull();
                     ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
                 }else{
-                    new RecordPayDialog(this, new GeneralEditListener() {
-                        @Override
-                        public void editinput(String edit) {
-                            if(edit == null){
-                                paymentTypeAdapter.setPayTpyeNull();
-                                ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
-                            }else{
-                                PayMentsCancleInfo infobank = new PayMentsCancleInfo();
-                                PayMentsInfo info = getPayInfoById(edit);
-                                if(info != null){
-                                    infobank.setId(info.getId());
-                                    infobank.setName(info.getName());
-                                    infobank.setType(info.getType());
-                                    infobank.setIsCancle(false);
-                                    infobank.setMoney(paymentMoney + "");
-                                    infobank.setOverage("0");
-                                    addPayTypeInfo(PaymentTypeEnum.RECORD, 0, 0, null, infobank);
-                                    waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                                    text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                                    edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                                    handler.sendEmptyMessage(PAY_SUCCESS);
-                                }else{
-                                    paymentTypeAdapter.setPayTpyeNull();
-                                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
-                                }
-                            }
-                        }
-                    }).show();
+                    startActivityForResult(new Intent(this, VerifyAuthDialog.class), ConstantData.VERIFY_AUTH_REQUEST_CODE);
+
                 }
                 break;
             case CASH:
@@ -1131,7 +1106,39 @@ public class CheckOutActivity extends BaseActivity {
                     ToastUtils.sendtoastbyhandler(handler, "支付异常！");
                 }
             }
+        }else if (resultCode == ConstantData.VERIFY_AUTH_RESULT_CODE) {
+            if(requestCode==ConstantData.VERIFY_AUTH_REQUEST_CODE) {
+                new RecordPayDialog(this, new GeneralEditListener() {
+                    @Override
+                    public void editinput(String edit) {
+                        if(edit == null){
+                            paymentTypeAdapter.setPayTpyeNull();
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+                        }else{
+                            PayMentsCancleInfo infobank = new PayMentsCancleInfo();
+                            PayMentsInfo info = getPayInfoById(edit);
+                            if(info != null){
+                                infobank.setId(info.getId());
+                                infobank.setName(info.getName());
+                                infobank.setType(info.getType());
+                                infobank.setIsCancle(false);
+                                infobank.setMoney(paymentMoney + "");
+                                infobank.setOverage("0");
+                                addPayTypeInfo(PaymentTypeEnum.RECORD, 0, 0, null, infobank);
+                                waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                handler.sendEmptyMessage(PAY_SUCCESS);
+                            }else{
+                                paymentTypeAdapter.setPayTpyeNull();
+                                ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
+                            }
+                        }
+                    }
+                }).show();
+            }
         }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
