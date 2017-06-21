@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.app.AppConfigFile;
@@ -413,7 +412,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
                             intent.putExtra(ConstantData.BILL, billInfo);
                             startActivity(intent);
                         }else {
-                            Toast.makeText(mContext, getString(R.string.offline_save_goods_failed), Toast.LENGTH_SHORT).show();
+                            ToastUtils.sendtoastbyhandler(handler, getString(R.string.offline_save_goods_failed));
                         }
                     }
 
@@ -425,10 +424,10 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
                 });
 
             }else {
-                Toast.makeText(mContext, R.string.waring_return_moeny_right_err, Toast.LENGTH_SHORT).show();
+                ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_return_moeny_right_err));
             }
         }else {
-            Toast.makeText(mContext, R.string.waring_putfull_roder, Toast.LENGTH_SHORT).show();
+            ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_putfull_roder));
         }
     }
 

@@ -17,7 +17,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.DemandNoteTableAdapter;
@@ -228,7 +227,7 @@ public class DemandNoteActivity extends BaseActivity {
 
             @Override
             public void handleActionError(String actionName, String errmsg) {
-                Toast.makeText(mContext, errmsg, Toast.LENGTH_SHORT).show();
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
             }
 
             @Override

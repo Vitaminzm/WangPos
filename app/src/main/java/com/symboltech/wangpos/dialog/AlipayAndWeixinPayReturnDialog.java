@@ -1,6 +1,5 @@
 package com.symboltech.wangpos.dialog;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.ybq.android.spinkit.SpinKitView;
 import com.symboltech.wangpos.R;
@@ -75,6 +73,8 @@ public class AlipayAndWeixinPayReturnDialog extends BaseDialog implements View.O
 				resultTable.setVisibility(View.VISIBLE);
 			}else if(msg.what == STATUS_CODE_ERROR) {
 				dismiss();
+			}else if(msg.what ==ToastUtils.TOAST_WHAT){
+					ToastUtils.showtaostbyhandler(mContext, msg);
 			}
 		};
 	};
@@ -201,7 +201,7 @@ public class AlipayAndWeixinPayReturnDialog extends BaseDialog implements View.O
 		if(v.getId() == confirm.getId()) {
 			String number = serialNumber.getText().toString();
 			if(TextUtils.isEmpty(number) || "".equals(number)) {
-				Toast.makeText(mContext, mContext.getResources().getString(R.string.please_input_trade_no), Toast.LENGTH_SHORT).show();
+				ToastUtils.sendtoastbyhandler(mHandler, mContext.getResources().getString(R.string.please_input_trade_no));
 				return;
 			}
 			serialTable.setVisibility(View.GONE);
@@ -272,7 +272,7 @@ public class AlipayAndWeixinPayReturnDialog extends BaseDialog implements View.O
 
 			@Override
 			public void handleActionOffLine() {
-				Toast.makeText(mContext, R.string.offline_waring, Toast.LENGTH_SHORT).show();
+				ToastUtils.sendtoastbyhandler(mHandler, mContext.getResources().getString(R.string.offline_waring));
 			}
 
 			@Override

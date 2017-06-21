@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.ReportTableAdapter;
@@ -202,7 +201,7 @@ public class WorkLogActivity extends BaseActivity {
 
             @Override
             public void handleActionError(String actionName, String errmsg) {
-                Toast.makeText(mContext, errmsg, Toast.LENGTH_SHORT).show();
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
             }
 
             @Override
@@ -228,7 +227,7 @@ public class WorkLogActivity extends BaseActivity {
                     reportInfo = dao.findPaytypeBytime(SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""), System.currentTimeMillis());
                 }
                 if(reportInfo == null) {
-                    Toast.makeText(mContext, "报表没有数据", Toast.LENGTH_SHORT).show();
+                    ToastUtils.sendtoastbyhandler(handler, "报表没有数据");
                 }else {
                     myPagerAdapter.refreshData(reportInfo.getSale(), reportInfo.getRefund(), reportInfo.getTotal());
                 }
