@@ -165,9 +165,9 @@ public class CheckOutActivity extends BaseActivity {
                     ToastUtils.showtaostbyhandler(CheckOutActivity.this, msg);
                     break;
                 case PAY_SUCCESS:
-                    if (waitPayValue == 0) {
-                        clickCommitOrder();
-                    }
+//                    if (waitPayValue == 0) {
+//                        clickCommitOrder();
+//                    }
                     break;
                 case ALREADY_THIRD_PAY_INFO:
                     final List<ThirdPayInfo> thirdPayInfoList = (List<ThirdPayInfo>) msg.obj;
@@ -409,7 +409,7 @@ public class CheckOutActivity extends BaseActivity {
                 waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                handler.sendEmptyMessage(PAY_SUCCESS);
+               // handler.sendEmptyMessage(PAY_SUCCESS);
                 break;
             case WECHAT:
 //                if("1".equals(SpSaveUtils.read(getApplicationContext(), ConstantData.MALL_WEIXIN_IS_INPUT, "0"))){
@@ -1047,7 +1047,7 @@ public class CheckOutActivity extends BaseActivity {
                 waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                handler.sendEmptyMessage(PAY_SUCCESS);
+                //handler.sendEmptyMessage(PAY_SUCCESS);
             }
         }else if(resultCode == ConstantData.QRCODE_RESULT_MEMBER_VERIFY){
             if(requestCode == ConstantData.QRCODE_REQURST_QR_PAY){
@@ -1128,7 +1128,7 @@ public class CheckOutActivity extends BaseActivity {
                                 waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                                 text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                                 edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                                handler.sendEmptyMessage(PAY_SUCCESS);
+                                //handler.sendEmptyMessage(PAY_SUCCESS);
                             }else{
                                 paymentTypeAdapter.setPayTpyeNull();
                                 ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_paytype_err_msg));
@@ -1168,7 +1168,7 @@ public class CheckOutActivity extends BaseActivity {
                         waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                         text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                         edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                        handler.sendEmptyMessage(PAY_SUCCESS);
+                        //handler.sendEmptyMessage(PAY_SUCCESS);
                     }
                 });
         paydialog.show();

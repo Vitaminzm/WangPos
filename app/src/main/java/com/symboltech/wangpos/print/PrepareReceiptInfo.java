@@ -1070,6 +1070,7 @@ public class PrepareReceiptInfo {
 							tickbegin.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
 									.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
+									.replace(TicketFormatEnum.TICKET_AUTH_CODE.getLable(), bill.getRandomcode())
 									.replace(TicketFormatEnum.TICKET_BILL_NO.getLable(), bill.getBillid())
 									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
 									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
@@ -1543,7 +1544,8 @@ public class PrepareReceiptInfo {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, "店铺:" + SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, "") , KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
 		}
-		addTextJson(array, latticePrinter, FONT_DEFAULT, "订单号：" + bill.getBillid(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		//addTextJson(array, latticePrinter, FONT_DEFAULT, "小票号：" + bill.getBillid()+, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "小票号：" + bill.getBillid() + "    发票验证码:" + bill.getRandomcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款台号：" + bill.getPosno(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员：" + bill.getCashiername(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "收款员系统码：" + bill.getCashierxtm(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
@@ -1690,7 +1692,7 @@ public class PrepareReceiptInfo {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, info.getDfqgzname()) + "	" + info.getDfqmoney() + "元", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 			}
 		}
-		addTextJson(array, latticePrinter, FONT_DEFAULT, "发票验证码:" + bill.getRandomcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		//addTextJson(array, latticePrinter, FONT_DEFAULT, "发票验证码:" + bill.getRandomcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		if (mend) {
 			addDashLine(array, latticePrinter, printer, fontConfig);
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打收款员：" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);

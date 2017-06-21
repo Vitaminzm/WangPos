@@ -40,7 +40,7 @@
     <!-- 销售界面-->
     <string name="pay">支付</string>
     <string name="desk_code_no">收款台号：</string>
-    <string name="bill_id">订单号：</string>
+    <string name="bill_id">小票号：</string>
     <string name="salesman">销售员：</string>
     <string name="total_money">总计金额</string>
     <string name="consume_score">消耗积分</string>
@@ -114,7 +114,7 @@
     <string name="weichat">微信</string>
     <string name="alipay">支付宝</string>
     <string name="bank">银行卡</string>
-    <string name="store">预付卡</string>
+    <string name="store">商务卡</string>
     <string name="cash">现  金</string>
     <string name="yxlm">营销联盟</string>
     <string name="codepay">条码付</string>
@@ -147,7 +147,7 @@
     <!--支付详情 -->
     <string name="payment_info">支付详情</string>
     <string name="order_info">账单信息</string>
-    <string name="order_id">订单编号：</string>
+    <string name="order_id">小票号：</string>
     <string name="order_time">订单时间：</string>
     <string name="order_money">订单金额：</string>
     <string name="coupon">代金券</string>
@@ -338,14 +338,15 @@
     <string name="pay_bu_print_bill">补打小票</string>
     <string name="pay_bu_print_slip">补打签购单</string>
     <string name="waring_no_found_bill">没有该订单</string>
-    <string name="please_input_order_no">请输入订单号</string>
-    <string name="pleae_order_number">请输入正确订单号</string>
+    <string name="please_input_order_no">请输入小票号</string>
+    <string name="pleae_order_number">请输入正确小票号</string>
     <string name="pleae_verify_auth">请输入授权号</string>
 
     <string name="change_job">交班</string>
     <string name="change_job_report">班报</string>
     <string name="change_day_report">日报</string>
     <string name="change_manager">切换操作员</string>
+    <string name="goto_login">返回登录界面</string>
     <string name="demand_note">缴款单</string>
     <string name="desk_demand">收款台缴款</string>
     <string name="total_bi_total">笔数合计</string>
