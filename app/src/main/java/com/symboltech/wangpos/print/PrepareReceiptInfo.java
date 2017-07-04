@@ -1124,7 +1124,7 @@ public class PrepareReceiptInfo {
 								tickend.replace(coupontemp.getString(), builder.toString());
 							}else if(couponFormatall != null){
 								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-								tickend.replace(coupontemp.getString(), "无");
+								tickend.replace(coupontemp.getString(), "----");
 							}
 							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))

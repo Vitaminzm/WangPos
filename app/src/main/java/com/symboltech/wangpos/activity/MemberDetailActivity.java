@@ -51,6 +51,9 @@ public class MemberDetailActivity extends BaseActivity {
     LinearLayout ll_member_hold_coupon;
     private CouponsAdapter holdAdapter;
 
+    @Bind(R.id.text_member_activate)
+    TextView text_member_activate;
+
     @Bind(R.id.ll_sale_info)
     LinearLayout ll_sale_info;
     @Bind(R.id.text_sale_total)
@@ -142,6 +145,8 @@ public class MemberDetailActivity extends BaseActivity {
         }else {
             ll_sale_info.setVisibility(View.GONE);
         }
+        text_member_activate.setBackgroundResource(R.drawable.btn_gray_bg);
+        text_member_activate.setEnabled(false);
     }
 
     @Override

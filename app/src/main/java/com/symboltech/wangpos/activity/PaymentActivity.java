@@ -1,5 +1,6 @@
 package com.symboltech.wangpos.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.database.DataSetObserver;
 import android.graphics.Color;
@@ -113,6 +114,9 @@ public class PaymentActivity extends BaseActivity {
             switch (msg.what) {
                 case ToastUtils.TOAST_WHAT:
                     ToastUtils.showtaostbyhandler(theActivity, msg);
+                    break;
+                case ToastUtils.TOAST_WHAT_DIALOG:
+                    new AlertDialog.Builder(theActivity).setTitle("错误提示").setMessage(msg.obj.toString()).setPositiveButton("确定", null).setCancelable(false).show();
                     break;
             }
         }
@@ -718,7 +722,8 @@ public class PaymentActivity extends BaseActivity {
                         startActivity(intent_payment);
                     }
                 } else {
-                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                    ToastUtils.sendtoastdialogbyhandler(handler, result.getMsg());
+                    //ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                 }
             }
 

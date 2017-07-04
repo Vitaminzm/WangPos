@@ -17,7 +17,8 @@ public class ToastUtils {
 
 	/** 用于响应show toast by handler obj.waht*/
 	public static final int TOAST_WHAT = 618;
-	
+	public static final int TOAST_WHAT_DIALOG = 619;
+
 	/**
 	 * 
 	 * @author CWI-APST emial:26873204@qq.com
@@ -33,7 +34,22 @@ public class ToastUtils {
 		msg.obj = content;
 		handler.sendMessage(msg);
 	}
-	
+
+	/**
+	 *
+	 * @author CWI-APST emial:26873204@qq.com
+	 * @Description: TODO(sendtoastbyhandler)
+	 * @param handler
+	 * @param content
+	 */
+	public static void sendtoastdialogbyhandler(Handler handler, String content){
+		if(content == null || content.length() <= 0)
+			return;
+		Message msg = new Message();
+		msg.what = TOAST_WHAT_DIALOG;
+		msg.obj = content;
+		handler.sendMessage(msg);
+	}
 	/**
 	 * 
 	 * @author CWI-APST emial:26873204@qq.com

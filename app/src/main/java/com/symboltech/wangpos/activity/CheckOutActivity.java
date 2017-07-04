@@ -1,6 +1,7 @@
 package com.symboltech.wangpos.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -163,6 +164,9 @@ public class CheckOutActivity extends BaseActivity {
             switch (msg.what) {
                 case ToastUtils.TOAST_WHAT:
                     ToastUtils.showtaostbyhandler(CheckOutActivity.this, msg);
+                    break;
+                case ToastUtils.TOAST_WHAT_DIALOG:
+                    new AlertDialog.Builder(CheckOutActivity.this).setTitle("错误提示").setMessage(msg.obj.toString()).setPositiveButton("确定", null).setCancelable(false).show();
                     break;
                 case PAY_SUCCESS:
 //                    if (waitPayValue == 0) {
@@ -1096,7 +1100,8 @@ public class CheckOutActivity extends BaseActivity {
                                 msg.obj = orderBean;
                                 handler.sendMessage(msg);
                             }else{
-                                ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
+                                ToastUtils.sendtoastdialogbyhandler(handler, transData.get("resDesc"));
+                               // ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -1259,7 +1264,7 @@ public class CheckOutActivity extends BaseActivity {
                     intent_pay_detail.putExtra(ConstantData.ORDER_INFO, bill);
                     startActivity(intent_pay_detail);
                 } else {
-                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                    ToastUtils.sendtoastdialogbyhandler(handler, result.getMsg());
                 }
             }
 
