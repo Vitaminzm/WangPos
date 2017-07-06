@@ -41,6 +41,7 @@ import com.symboltech.wangpos.interfaces.CancleAndConfirmback;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.CashierInfo;
 import com.symboltech.wangpos.msg.entity.CouponInfo;
@@ -60,6 +61,7 @@ import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.CashierSign;
 import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
+import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
@@ -202,9 +204,9 @@ public class CheckOutActivity extends BaseActivity {
                             waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                             text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                             edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                            if (waitPayValue == 0) {
-                                clickCommitOrder();
-                            }
+//                            if (waitPayValue == 0) {
+//                                clickCommitOrder();
+//                            }
                         }
                     }).show();
                     break;
@@ -230,9 +232,9 @@ public class CheckOutActivity extends BaseActivity {
                     waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                     text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                     edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                    if (waitPayValue == 0) {
-                        clickCommitOrder();
-                    }
+//                    if (waitPayValue == 0) {
+//                        clickCommitOrder();
+//                    }
                     break;
             }
         }
@@ -503,8 +505,10 @@ public class CheckOutActivity extends BaseActivity {
                             e.printStackTrace();
                         }
                         if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())) {
+                            OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "营销联盟收款");
                             AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json);
                         }else {
+                            OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "银行卡收款");
                             AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
                         }
                     }
@@ -526,6 +530,7 @@ public class CheckOutActivity extends BaseActivity {
                         try {
                             json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
                             json.put("extOrderNo",tradeNo);
+                            OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "储值卡收款");
                             AppHelper.callTrans(CheckOutActivity.this, ConstantData.STORE, ConstantData.YHK_XF, json);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -1078,6 +1083,7 @@ public class CheckOutActivity extends BaseActivity {
                 if (null != data) {
                     StringBuilder result = new StringBuilder();
                     Map<String,String> map = AppHelper.filterTransResult(data);
+                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE_SUCCESS.getOptLogCode(), map.toString());
                     LogUtil.i("lgs",map.toString());
                     if("0".equals(map.get(AppHelper.RESULT_CODE))){
                         Type type =new TypeToken<Map<String, String>>(){}.getType();

@@ -462,6 +462,7 @@ public class CanclePayDialog extends BaseActivity{
 					isCancleCount++;
 					info.setDes(getString(R.string.cancleing_pay));
 					canclePayAdapter.notifyDataSetChanged();
+					OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "储值卡撤销");
 					AppHelper.callTrans(CanclePayDialog.this, ConstantData.STORE, ConstantData.YHK_CX, json);
 				}
 			}else{

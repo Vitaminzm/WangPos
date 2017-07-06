@@ -37,6 +37,7 @@ import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.OnReturnFinishListener;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.msg.entity.BankPayInfo;
 import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.CouponInfo;
@@ -52,6 +53,7 @@ import com.symboltech.wangpos.utils.AndroidUtils;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.CashierSign;
 import com.symboltech.wangpos.utils.CurrencyUnit;
+import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
@@ -501,6 +503,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                    } catch (JSONException e) {
                                        e.printStackTrace();
                                    }
+                                   OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "储值卡退货");
                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.STORE, ConstantData.YHK_TH, json);
                                }else if(position == 2){
                                    try {
@@ -509,6 +512,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                    } catch (JSONException e) {
                                        e.printStackTrace();
                                    }
+                                   OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "储值卡撤销");
                                    AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.STORE, ConstantData.YHK_CX, json);
                                }
                             }
@@ -526,6 +530,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "银行卡退货");
                                     AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
                                 }else if(position == 2){
                                     try {
@@ -534,6 +539,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "银行卡撤销");
                                     AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
                                 }
                             }
@@ -551,6 +557,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "微信退货");
                                     AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
                                 }else if(position == 2){
                                     try {
@@ -559,6 +566,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "微信撤销");
                                     AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
                                 }
                             }
@@ -576,6 +584,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "支付宝退货");
                                     AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
                                 }else if(position == 2){
                                     try {
@@ -584,6 +593,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "支付宝撤销");
                                     AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
                                 }
                             }
@@ -601,6 +611,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "营销联盟退货");
                                     AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YHK_TH, json);
                                 }else if(position == 2){
                                     try {
@@ -609,6 +620,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                                     } catch (JSONException e) {
                                         e.printStackTrace();
                                     }
+                                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "营销联盟撤销");
                                     AppHelper.callTrans(ReturnMoneyByOrderActivity.this, ConstantData.QMH, ConstantData.YHK_CX, json);
                                 }
                             }
@@ -1129,6 +1141,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 if (null != data) {
                     StringBuilder result = new StringBuilder();
                     Map<String,String> map = AppHelper.filterTransResult(data);
+                    OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE_SUCCESS.getOptLogCode(), map.toString());
                     Type type =new TypeToken<Map<String, String>>(){}.getType();
                     try {
                         Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
