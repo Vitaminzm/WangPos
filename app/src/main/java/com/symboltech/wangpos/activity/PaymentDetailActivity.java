@@ -109,6 +109,8 @@ public class PaymentDetailActivity extends BaseActivity {
     TextView text_used_score;
     @Bind(R.id.text_add_score)
     TextView text_add_score;
+    @Bind(R.id.text_print_coupon)
+    TextView text_print_coupon;
 
     @Bind(R.id.activity_payment_gridview)
     GridViewForScrollView activity_payment_gridview;
@@ -382,6 +384,8 @@ public class PaymentDetailActivity extends BaseActivity {
         isMember = getIntent().getIntExtra(ConstantData.VERIFY_IS_MEMBER, ConstantData.MEMBER_IS_NOT_VERITY);
         paymentTypeInfoDetailAdapter = new PaymentTypeInfoDetailAdapter(getApplicationContext(), new ArrayList<PayMentsInfo>());
         activity_payment_gridview.setAdapter(paymentTypeInfoDetailAdapter);
+        text_print_coupon.setBackgroundResource(R.drawable.btn_gray_bg);
+        text_print_coupon.setEnabled(false);
     }
     @Override
     protected void recycleMemery() {

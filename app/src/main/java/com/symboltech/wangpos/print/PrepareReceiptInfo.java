@@ -1114,7 +1114,7 @@ public class PrepareReceiptInfo {
 								couponFormat = matcheruse.group(1);
 							}
 							if(couponFormat != null && bill.getDfqlist() != null && bill.getDfqlist().size() > 0){
-								StringBuilder builder = new StringBuilder().append("");
+								StringBuilder builder = new StringBuilder().append("请确认待返券信息\n");
 								for(DfqCoupon infos:bill.getDfqlist()){
 									PrintString coupon = new PrintString(couponFormat).replace(TicketFormatEnum.TICKET_DFQ_COUPON_NAME.getLable(), infos.getDfqgzname())
 											.replace(TicketFormatEnum.TICKET_DFQ_COUPON_MONEY.getLable(), formatLString(8, infos.getDfqmoney()));
@@ -1124,7 +1124,7 @@ public class PrepareReceiptInfo {
 								tickend.replace(coupontemp.getString(), builder.toString());
 							}else if(couponFormatall != null){
 								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-								tickend.replace(coupontemp.getString(), "----");
+								tickend.replace(coupontemp.getString(), "");
 							}
 							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
@@ -1916,7 +1916,7 @@ public class PrepareReceiptInfo {
 								couponFormat = matcheruse.group(1);
 							}
 							if(couponFormat != null && bill.getDfqlist() != null && bill.getDfqlist().size() > 0){
-								StringBuilder builder = new StringBuilder().append("");
+								StringBuilder builder = new StringBuilder().append("请确认待返券信息\n");
 								for(DfqCoupon infos:bill.getDfqlist()){
 									PrintString coupon = new PrintString(couponFormat).replace(TicketFormatEnum.TICKET_DFQ_COUPON_NAME.getLable(), infos.getDfqgzname())
 											.replace(TicketFormatEnum.TICKET_DFQ_COUPON_MONEY.getLable(), formatLString(8, infos.getDfqmoney()));
@@ -1926,7 +1926,7 @@ public class PrepareReceiptInfo {
 								tickend.replace(coupontemp.getString(), builder.toString());
 							}else if(couponFormatall != null){
 								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-								tickend.replace(coupontemp.getString(), "无");
+								tickend.replace(coupontemp.getString(), "");
 							}
 							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
 									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
