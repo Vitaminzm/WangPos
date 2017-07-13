@@ -32,8 +32,8 @@ import java.util.List;
 public class CouponUsedDialog extends BaseDialog implements View.OnClickListener {
 	public Context context;
 	private EditText edit_money;
-	private TextView tv_coupon_money, tv_coupon_date, tv_coupon_big_money, text_cancle, text_confirm;
-	private TextScrollView tv_coupon_name;
+	private TextView tv_coupon_date, tv_coupon_big_money, text_cancle, text_confirm;
+	private TextScrollView tv_coupon_money, tv_coupon_name;
 	private ImageView imageview_close;
 	private CouponCallback couponCallback;
 	private CouponInfo couponInfo;
@@ -126,7 +126,7 @@ public class CouponUsedDialog extends BaseDialog implements View.OnClickListener
 	private void initUI() {
 		edit_money = (EditText) findViewById(R.id.edit_money);
 		imageview_close = (ImageView) findViewById(R.id.imageview_close);
-		tv_coupon_money = (TextView) findViewById(R.id.tv_coupon_money);
+		tv_coupon_money = (TextScrollView) findViewById(R.id.tv_coupon_money);
 		tv_coupon_name = (TextScrollView) findViewById(R.id.tv_coupon_name);
 		tv_coupon_date = (TextView) findViewById(R.id.tv_coupon_date);
 		tv_coupon_big_money = (TextView) findViewById(R.id.tv_coupon_big_money);

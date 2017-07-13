@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="@dimen/height_xzz"
     android:layout_height="@dimen/height_fzz"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/radiud_bg"
     android:shadowColor="#7f000000"
     android:shadowDx="5"
@@ -38,8 +37,8 @@
     <LinearLayout
         android:layout_below="@id/title_bar"
         android:layout_width="fill_parent"
-        android:layout_marginLeft="@dimen/margin_sz"
-        android:layout_marginRight="@dimen/margin_sz"
+        android:layout_marginLeft="@dimen/margin_fz"
+        android:layout_marginRight="@dimen/margin_fz"
         android:layout_height="fill_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical" >
@@ -49,19 +48,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <TextView
+            <com.symboltech.wangpos.view.TextScrollView
                 android:id="@+id/tv_coupon_money"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:textSize="@dimen/font_size_fv"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:focusable="true"
                 android:gravity="center_vertical"
                 android:textStyle="bold"
                 android:textColor="@color/black"
-                android:text="120元"/>
+                android:text="0元"/>
             <com.symboltech.wangpos.view.TextScrollView
                 android:id="@+id/tv_coupon_name"
-                android:layout_weight="3"
+                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:singleLine="true"
                 android:ellipsize="marquee"
