@@ -15,6 +15,7 @@ public class ConstantData {
 	public static final String POS_TYPE_W = "WPOS";
 	public static final String POS_TYPE_K = "KPOS";
 	public static final String POS_TYPE_Y = "YPOS";
+	public static final String POS_TYPE_P = "PPOS";
 	public static final String POS_TYPE_NONE = "NONE";
 	/** 基数,用于配置常量参数 */
 	public static final int BASE_CODE = 0x200;

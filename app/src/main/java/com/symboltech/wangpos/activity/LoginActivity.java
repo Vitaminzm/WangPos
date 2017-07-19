@@ -262,6 +262,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
         if(Utils.isFastClick()){
             return;
         }
+//        DisplayMetrics metrics = new DisplayMetrics();
+//        Display display = this.getWindowManager().getDefaultDisplay();
+//        display.getMetrics(metrics);
+//        LogUtil.i("lgs", "高："+display.getHeight()+"宽："+display.getWidth()+"屏幕密度比："+metrics.density);
+//        LogUtil.i("lgs", "text_cashier_name:"+text_cashier_name.getTextSize());
+//        LogUtil.i("lgs", ""+MachineUtils.px2dip(getApplicationContext(), 100));
         switch (v.getId()) {
             case R.id.text_login:
                 if (iscashier) {

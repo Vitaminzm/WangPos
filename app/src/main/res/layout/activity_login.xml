@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
-            android:layout_marginTop="@dimen/margin_tzz"
+            android:layout_marginTop="@dimen/margin_oof"
             android:layout_gravity="center"
             android:textSize="@dimen/font_size_ez"
             android:text="@string/intelligentPOS"/>

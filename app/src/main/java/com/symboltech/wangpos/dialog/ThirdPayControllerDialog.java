@@ -2506,6 +2506,10 @@ public class ThirdPayControllerDialog extends BaseActivity{
 			}.start();
 		}else if (MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
 				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
-		}
+		}else{
+				ll_function.setVisibility(View.VISIBLE);
+				ll_input_money.setVisibility(View.GONE);
+				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
+			}
 	}
 }

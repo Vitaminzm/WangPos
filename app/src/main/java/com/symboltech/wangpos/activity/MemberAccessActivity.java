@@ -534,6 +534,9 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                 startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
             }
 
+        }else{
+            Intent intent_qr = new Intent(this, CaptureActivity.class);
+            startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_MEMBER_VERIFY);
         }
     }
 
