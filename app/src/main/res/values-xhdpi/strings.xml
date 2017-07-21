@@ -56,6 +56,7 @@
     <string name="add_saleman">添加销售</string>
     <string name="money">金额</string>
     <string name="score">积分</string>
+    <string name="zk">折扣</string>
     <string name="warning_no_saleman">没有销售员！</string>
     <string name="warning_no_good">没有商品！</string>
     <string name="brand_good">品种商品</string>
@@ -339,7 +340,7 @@
     <string name="pay_bu_print_slip">补打签购单</string>
     <string name="waring_no_found_bill">没有该订单</string>
     <string name="please_input_order_no">请输入小票号</string>
-    <string name="pleae_order_number">请输入正确小票号</string>
+    <string name="pleae_order_number">输入不能为空</string>
     <string name="pleae_verify_auth">请输入授权号</string>
 
     <string name="change_job">交班</string>
