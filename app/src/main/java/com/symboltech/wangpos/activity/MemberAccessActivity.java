@@ -704,6 +704,13 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                                     uhd.show();
                                 }
                             });
+                        }else if(result.getCode().equals(ConstantData.HTTP_RESPONSE_OK_MEMBER_OFFLINE)){
+                            Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
+                            paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
+                            paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
+                            paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
+                            MemberAccessActivity.this.startActivity(paymentIntent);
+                            MemberAccessActivity.this.finish();
                         }else {
                             ToastUtils.sendtoastbyhandler(handler, result.getMsg());
                         }
@@ -797,60 +804,60 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
 //                });
     }
 
-    /**
-     * 获取会员所有信息
-     */
-    private void getAllMemberInfo(String memberID, final String isChecked, final String verifyType) {
-        Map<String, String> map = new HashMap<String, String>();
-        map.put("id", memberID);
-        HttpRequestUtil.getinstance().getAllMemberInfo(HTTP_TASK_KEY, map, AllMemeberInfoResult.class,
-                new HttpActionHandle<AllMemeberInfoResult>() {
-
-                    @Override
-                    public void handleActionStart() {
-                        startwaitdialog();
-                    }
-
-                    @Override
-                    public void handleActionFinish() {
-                        closewaitdialog();
-                    }
-
-                    @Override
-                    public void handleActionError(String actionName, String errmsg) {
-                        ToastUtils.sendtoastbyhandler(handler, errmsg);
-                    }
-
-                    @Override
-                    public void handleActionSuccess(String actionName, AllMemeberInfoResult result) {
-                        if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-                            Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
-                            paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
-                            paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
-                            paymentIntent.putExtra(ConstantData.MEMBER_IS_SECOND_VERIFY, isChecked);
-                            paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
-                            MemberAccessActivity.this.startActivity(paymentIntent);
-                        } else {
-                            ToastUtils.sendtoastbyhandler(handler, result.getMsg());
-                        }
-                    }
-                    @Override
-                    public void startChangeMode() {
-                        final HttpActionHandle httpActionHandle = this;
-                        MemberAccessActivity.this.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                new ChangeModeDialog(MemberAccessActivity.this, httpActionHandle).show();
-                            }
-                        });
-                    }
-                    @Override
-                    public void handleActionChangeToOffLine() {
-                        Intent intent = new Intent(MemberAccessActivity.this, MainActivity.class);
-                        startActivity(intent);
-                    }
-                });
-    }
+//    /**
+//     * 获取会员所有信息
+//     */
+//    private void getAllMemberInfo(String memberID, final String isChecked, final String verifyType) {
+//        Map<String, String> map = new HashMap<String, String>();
+//        map.put("id", memberID);
+//        HttpRequestUtil.getinstance().getAllMemberInfo(HTTP_TASK_KEY, map, AllMemeberInfoResult.class,
+//                new HttpActionHandle<AllMemeberInfoResult>() {
+//
+//                    @Override
+//                    public void handleActionStart() {
+//                        startwaitdialog();
+//                    }
+//
+//                    @Override
+//                    public void handleActionFinish() {
+//                        closewaitdialog();
+//                    }
+//
+//                    @Override
+//                    public void handleActionError(String actionName, String errmsg) {
+//                        ToastUtils.sendtoastbyhandler(handler, errmsg);
+//                    }
+//
+//                    @Override
+//                    public void handleActionSuccess(String actionName, AllMemeberInfoResult result) {
+//                        if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+//                            Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
+//                            paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
+//                            paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
+//                            paymentIntent.putExtra(ConstantData.MEMBER_IS_SECOND_VERIFY, isChecked);
+//                            paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
+//                            MemberAccessActivity.this.startActivity(paymentIntent);
+//                        } else {
+//                            ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+//                        }
+//                    }
+//                    @Override
+//                    public void startChangeMode() {
+//                        final HttpActionHandle httpActionHandle = this;
+//                        MemberAccessActivity.this.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                new ChangeModeDialog(MemberAccessActivity.this, httpActionHandle).show();
+//                            }
+//                        });
+//                    }
+//                    @Override
+//                    public void handleActionChangeToOffLine() {
+//                        Intent intent = new Intent(MemberAccessActivity.this, MainActivity.class);
+//                        startActivity(intent);
+//                    }
+//                });
+//    }
 
     private boolean isRun = false;
     class ReadMagTask extends Thread {

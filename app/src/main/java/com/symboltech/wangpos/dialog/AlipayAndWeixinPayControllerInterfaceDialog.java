@@ -24,7 +24,7 @@ import com.symboltech.wangpos.result.ThirdPayCancelResult;
 import com.symboltech.wangpos.result.ThirdPayQueryResult;
 import com.symboltech.wangpos.result.ThirdPayResult;
 import com.symboltech.wangpos.result.ThirdPaySalesReturnResult;
-import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
+import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
@@ -483,7 +483,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 		//map.put("pay_type", paymode + "");
 		map.put("old_trade_no", trade_no);
 		map.put("billid", "-" + AppConfigFile.getBillId());
-		map.put("total_fee", MoneyAccuracyUtils.thirdpaymoneydealbyinput(et_thirdpay_input.getText().toString()));
+		map.put("total_fee", CurrencyUnit.yuan2fenStr(et_thirdpay_input.getText().toString()));
 		LogUtil.i("lgs", "old_trade_no===" + trade_no + "==billid==" + map.get("billid") + "===" + map.get("total_fee")
 				+ "==" + map.get("pay_type"));
 		HttpRequestUtil.getinstance().thirdpaysalesreturn(map, ThirdPaySalesReturnResult.class,
@@ -673,7 +673,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 		}
 		map.put("posip", ip);
 		//map.put("pay_type", paymode + "");
-		map.put("total_fee", MoneyAccuracyUtils.thirdpaymoneydealbyinput(et_thirdpay_input.getText().toString()));
+		map.put("total_fee", CurrencyUnit.yuan2fenStr(et_thirdpay_input.getText().toString()));
 		if(isPay) {
 			map.put("billid", "" + AppConfigFile.getBillId());
 		}else {

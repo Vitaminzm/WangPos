@@ -170,6 +170,9 @@ public class ConstantData {
 	/** http 请求成功并添加会员 */
 	public static final String HTTP_RESPONSE_OK_ADD_MEMBER = "99";
 
+	/** http 请求成功离线会员 */
+	public static final String HTTP_RESPONSE_OK_MEMBER_OFFLINE = "40";
+
 	/** http 请求支付等待 */
 	public static final String HTTP_RESPONSE_THIRDPAY_WAIT = "98";
 

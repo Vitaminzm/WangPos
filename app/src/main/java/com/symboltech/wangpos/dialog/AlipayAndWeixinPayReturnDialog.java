@@ -21,6 +21,7 @@ import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.OnReturnFinishListener;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.result.ThirdPaySalesReturnResult;
+import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
@@ -235,7 +236,7 @@ public class AlipayAndWeixinPayReturnDialog extends BaseDialog implements View.O
 	private void getBackResult(String number) {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("operater", SpSaveUtils.read(mContext, ConstantData.CASHIER_CODE, ""));
-		map.put("total_fee", MoneyAccuracyUtils.thirdpaymoneydealbyinput(money));
+		map.put("total_fee", CurrencyUnit.yuan2fenStr(money));
 		map.put("billid", billid);
 		map.put("old_trade_no", number);
 		map.put("pay_type", type);
