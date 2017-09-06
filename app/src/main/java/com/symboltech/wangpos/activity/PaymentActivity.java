@@ -39,6 +39,7 @@ import com.symboltech.wangpos.msg.entity.BillInfo;
 import com.symboltech.wangpos.msg.entity.CashierInfo;
 import com.symboltech.wangpos.msg.entity.GoodsAndSalerInfo;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
+import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.result.SubmitGoodsResult;
 import com.symboltech.wangpos.utils.ArithDouble;
@@ -737,11 +738,15 @@ public class PaymentActivity extends BaseActivity {
             public void handleActionOffLine() {
                 String type = SpSaveUtils.read(MyApplication.context, ConstantData.MALL_MONEY_OMIT, "0");
                 OrderInfoDao dao = new OrderInfoDao(mContext);
+                MemberInfo memberInfo = null;
+                if(memberBigdate != null){
+                    memberInfo = memberBigdate.getMember();
+                }
                 boolean result = dao.addOrderGoodsInfo(AppConfigFile.getBillId(),
                         SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""),
                         String.valueOf(text_saleman_name.getTag()),
                         String.valueOf(text_saleman_name.getText()), "0",
-                        ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type), shopCarList);
+                        ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type), shopCarList, memberInfo);
                 if (result) {
                     Intent intent_payment = new Intent(PaymentActivity.this, CheckOutActivity.class);
                     // 是否是会员标识

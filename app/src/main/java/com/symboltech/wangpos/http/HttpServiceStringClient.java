@@ -110,25 +110,38 @@ public class HttpServiceStringClient {
 		Set<Map.Entry<String, String>> set = param.entrySet();
 		for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
 			Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
+			if(entry.getValue() == null){
+				httpactionhandler.handleActionError(actionname, "参数异常");
+				httpactionhandler.handleActionFinish();
+				return;
+			}
 			builder.add(entry.getKey(), entry.getValue());
 		}
 		LogUtil.i("lgs","map--ss---"+param.toString());
 		FormBody formBody = builder.build();
-		Request request = new Request.Builder().tag(actionname)
-				.url(url)
-				.post(formBody)
-				.build();
+		Request request;
+		try {
+			request = new Request.Builder().tag(actionname)
+					.url(url)
+					.post(formBody)
+					.build();
+		}catch (Exception e){
+			e.printStackTrace();
+			httpactionhandler.handleActionError(actionname, "服务器地址错误");
+			httpactionhandler.handleActionFinish();
+			return;
+		}
 		requestPost(url, param, request, new Callback() {
 			@Override
 			public void onFailure(Call call, IOException e) {
 				e.printStackTrace();
 				Boolean ret = false;
-				if(e.getMessage() != null){
-					if (e.getMessage().contains("Failed to connect to") || e.getMessage().contains("failed to connect to")){
+				if (e.getMessage() != null) {
+					if (e.getMessage().contains("Failed to connect to") || e.getMessage().contains("failed to connect to")) {
 						ret = true;
 					}
 				}
-				if(ret){
+				if (ret) {
 					if (AppConfigFile.isNetConnect()) {
 						AppConfigFile.setNetConnect(false);
 					}
@@ -140,36 +153,36 @@ public class HttpServiceStringClient {
 			@Override
 			public void onResponse(Call call, Response response) throws IOException {
 				T result = null;
-				LogUtil.i("lgs", response.code()+response.message());
-				if(response != null && response.code()== 200){
-					if(!AppConfigFile.isNetConnect()) {
+				LogUtil.i("lgs", response.code() + response.message());
+				if (response != null && response.code() == 200) {
+					if (!AppConfigFile.isNetConnect()) {
 						AppConfigFile.setNetConnect(true);
 					}
 					try {
-						String re =  response.body().string();
-						LogUtil.i("lgs", "response====service======" +re);
+						String re = response.body().string();
+						LogUtil.i("lgs", "response====service======" + re);
 						result = gson.fromJson(re, clz);
-						if(result != null){
-							if(((BaseResult) result).getCode()!= null)
+						if (result != null) {
+							if (((BaseResult) result).getCode() != null)
 								httpactionhandler.handleActionSuccess(actionname, result);
-							else{
+							else {
 								httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
 							}
-						}else{
+						} else {
 							httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
 						}
 
-				} catch (JsonSyntaxException e) {
-					httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
-					e.printStackTrace();
-				} catch (JsonParseException e) {
-					httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
-					e.printStackTrace();
-				} catch (IOException e) {
-					httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
-					e.printStackTrace();
-				}
-				}else{
+					} catch (JsonSyntaxException e) {
+						httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
+						e.printStackTrace();
+					} catch (JsonParseException e) {
+						httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
+						e.printStackTrace();
+					} catch (IOException e) {
+						httpactionhandler.handleActionError(actionname, MyApplication.context.getString(R.string.exception_opt));
+						e.printStackTrace();
+					}
+				} else {
 					httpactionhandler.handleActionError(actionname, response.message());
 				}
 				httpactionhandler.handleActionFinish();

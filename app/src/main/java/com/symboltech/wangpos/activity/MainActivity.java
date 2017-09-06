@@ -18,7 +18,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.symboltech.koolcloud.aidl.AidlRequestManager;
 import com.symboltech.koolcloud.transmodel.OrderBean;
@@ -544,10 +543,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 lockscreen();
                 break;
             case R.id.rl_member:
-                if(AppConfigFile.isOffLineMode()){
-                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
-                    return;
-                }
+//                if(AppConfigFile.isOffLineMode()){
+//                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.offline_waring));
+//                    return;
+//                }
                 gotoFunction(MemberAccessActivity.class);
                 break;
             case R.id.rl_password_change:
@@ -1195,7 +1194,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             Map<String, String> map = new HashMap<String, String>();
             //重新复制开始的订单号
             final String newBillID = billinfos.get(billinfos.size() - 1).getConfirmbillinfos().getBillid();
-            String json = new GsonBuilder().serializeNulls().create().toJson(billinfos);
+            String json = null;
+            try {
+                json = GsonUtil.beanToJson(billinfos);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            LogUtil.i("info",json);
             map.put("billinfo", json);
             HttpRequestUtil.getinstance().uploadOfflineData(map, OfflineDataResult.class,
                     new HttpActionHandle<OfflineDataResult>() {
@@ -1250,7 +1255,12 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             Map<String, String> map = new HashMap<String, String>();
             // 重新复制开始的订单号
             final String newBillID = bankinfos.get(bankinfos.size() - 1).getTradeno();
-            String json = new GsonBuilder().serializeNulls().create().toJson(bankinfos);
+            String json = null;
+            try {
+                json = GsonUtil.beanToJson(bankinfos);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             LogUtil.v("lgs", "error = " + json);
             map.put("data", json);
             HttpRequestUtil.getinstance().uploadOfflineBankData(map, OfflineDataResult.class,

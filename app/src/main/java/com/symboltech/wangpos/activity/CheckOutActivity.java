@@ -438,6 +438,12 @@ public class CheckOutActivity extends BaseActivity {
 //                }else if(ConstantData.YIPAY_ID.equals(payid)){
 //                    paytype = ConstantData.PAYMODE_BY_YIPAY;
 //                }
+                if(paymentMoney >waitPayValue){
+                    edit_input_money.setText("");
+                    paymentTypeAdapter.setPayTpyeNull();
+                    ToastUtils.sendtoastbyhandler(handler, getString(R.string.waring_msg_large));
+                    return;
+                }
                 if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
                     int cameraType = SpSaveUtils.readInt(getApplicationContext(), ConstantData.CAMERATYPE, 1);
                     if(cameraType == 0){
@@ -1195,7 +1201,6 @@ public class CheckOutActivity extends BaseActivity {
         if(coupons != null){
             bill.setUsedcouponlist(coupons);
         }
-        bill.setBackreason("null");
         bill.setSaletime(Utils.formatDate(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"));
         if (payLing > 0) {
             bill.setChangemoney(String.valueOf(payLing));
@@ -1242,6 +1247,7 @@ public class CheckOutActivity extends BaseActivity {
                         bill.setExchangedpoint(exchangeInfo.getExchangepoint());
                         bill.setTotalpoint(result.getSaveOrderInfo().getTotalpoint());
                     }
+                    bill.setBackreason("null");
                     bill.setParkcouponhour(result.getSaveOrderInfo().getParkcouponhour());
                     bill.setParkcouponaddhour(result.getSaveOrderInfo().getParkcouponaddhour());
                     bill.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
@@ -1350,19 +1356,19 @@ public class CheckOutActivity extends BaseActivity {
                     }
                 }else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.STORE.getStyletype())){
-                    if(!AppConfigFile.isOffLineMode()){
-                        paymentTypeAdapter.add(paymentslist.get(i));
-                    }
+//                    if(!AppConfigFile.isOffLineMode()){
+//                    }
+                    paymentTypeAdapter.add(paymentslist.get(i));
                 }else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype())){
-                    if(ConstantData.YXLM_ID.equals(paymentslist.get(i).getId())){
-                        if(!AppConfigFile.isOffLineMode()){
-                            paymentTypeAdapter.add(paymentslist.get(i));
-                        }
-                    }else{
+//                    if(ConstantData.YXLM_ID.equals(paymentslist.get(i).getId())){
+//                        if(!AppConfigFile.isOffLineMode()){
+//                            paymentTypeAdapter.add(paymentslist.get(i));
+//                        }
+//                    }else{
                         paymentTypeAdapter.setPayTpye(paymentslist.get(i));
                         paymentTypeAdapter.notifyDataSetChanged();
-                        paymentTypeAdapter.add(paymentslist.get(i));
-                    }
+                    paymentTypeAdapter.add(paymentslist.get(i));
+//                    }
                 }
 //                else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
 //                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())

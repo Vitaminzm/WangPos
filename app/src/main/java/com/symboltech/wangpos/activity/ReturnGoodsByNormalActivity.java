@@ -406,7 +406,7 @@ public class ReturnGoodsByNormalActivity extends BaseActivity implements View.On
                     @Override
                     public void handleActionOffLine() {
                         OrderInfoDao dao = new OrderInfoDao(mContext);
-                        if(dao.addOrderGoodsInfo(billInfo.getBillid(), SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""), billInfo.getCashier(), SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""), billInfo.getSaletype(), Double.parseDouble(billInfo.getTotalmoney()), billInfo.getGoodslist())) {
+                        if(dao.addOrderGoodsInfo(billInfo.getBillid(), SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""), billInfo.getCashier(), SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""), billInfo.getSaletype(), Double.parseDouble(billInfo.getTotalmoney()), billInfo.getGoodslist(), billInfo.getMember())) {
                             Intent intent = new Intent(mContext, ReturnMoneyByNormalActivity.class);
                             intent.putExtra(ConstantData.TOTAL_RETURN_MONEY, billInfo.getTotalmoney());
                             intent.putExtra(ConstantData.BILL, billInfo);

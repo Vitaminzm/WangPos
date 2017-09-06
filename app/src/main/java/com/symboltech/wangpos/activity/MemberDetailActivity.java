@@ -98,6 +98,9 @@ public class MemberDetailActivity extends BaseActivity {
     protected void initData() {
         title_text_content.setText(getString(R.string.member_info));
         memberBigdate = (AllMemberInfo) getIntent().getSerializableExtra(ConstantData.ALLMEMBERINFO);
+        if(memberBigdate == null){
+            memberBigdate= new AllMemberInfo();
+        }
         MemberInfo memberInfo = memberBigdate.getMember();
         if(memberInfo != null){
             text_member_name.setText(memberInfo.getMembername());

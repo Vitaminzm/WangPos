@@ -33,7 +33,7 @@ public class SymboltechMallDBOpenHelper {
 	private static final String DATABASE_NAME = "sysboltech_mall_pos_database";
 
 	/** Database Version */
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	/** Table Name */
 	private static final String DATABASE_TABLE_LOGIN_USER_NAME = "login_user_name";
@@ -99,6 +99,8 @@ public class SymboltechMallDBOpenHelper {
 	private static final String ORDER_OLDBILLID = "oldbillid";//原销售id
 	private static final String ORDER_OLDPOSNO = "oldposno";//原款台号
 	private static final String ORDER_SALETYPE = "saletype";//交易类型
+	private static final String ORDER_MEMBERCARD = "membercard";//会员卡号
+	private static final String ORDER_MEMBERPHONE = "memberphone";//会员手机号
 	private static final String ORDER_TOTALMONEY = "totalmoney";//交易金额
 	private static final String ORDER_BACKREASON = "backreason";//退货原因
 	private static final String ORDER_CHANGEMONEY = "changemoney";//找零金额
@@ -112,6 +114,7 @@ public class SymboltechMallDBOpenHelper {
 			+ ORDER_PERSONID + " varchar(5) not null, " + ORDER_CASHIER +" varchar(5) not null, "
 			+ ORDER_CASHIERNAME + " varchar(10) not null, "
 			+ ORDER_OLDBILLID+" varchar(10), " + ORDER_OLDPOSNO + " varchar(10), " 
+			+ ORDER_MEMBERCARD+" varchar(30), " + ORDER_MEMBERPHONE + " varchar(15), "
 			+ ORDER_SALETYPE+ " varchar(5) not null, " + ORDER_TOTALMONEY +" decimal(14,2) not null, "
 			+ ORDER_BACKREASON+" varchar(30), "+ ORDER_CHANGEMONEY + " decimal(14,2) default 0.0, "
 			+ ORDER_SALEGOODSTIME +" timespace not null, "+ ORDER_STATUS +" varchar(5) not null default 0, "

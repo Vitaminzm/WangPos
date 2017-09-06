@@ -10,9 +10,9 @@ import java.io.Serializable;
 
 /**
  * 商品info
- * 
+ *
  * @author so
- * 
+ *
  */
 public class GoodsInfo implements Serializable, Cloneable {
 
@@ -21,7 +21,6 @@ public class GoodsInfo implements Serializable, Cloneable {
 	private String inx;// 商品顺序
 	private String code;// 商品代码
 	private String price;// 商品价格
-	private String zkprice;// 商品折扣价格
 	private String usedpoint = "0";// 消耗的总积分
 	private String grantpoint = "0";//获得的积分
 	private String saleamt;// 销售金额
@@ -79,14 +78,6 @@ public class GoodsInfo implements Serializable, Cloneable {
 	public void setAddprice(String addprice) {
 		this.addprice = addprice;
 		updatepriceandointegral();
-	}
-
-	public String getZkprice() {
-		return zkprice;
-	}
-
-	public void setZkprice(String zkprice) {
-		this.zkprice = zkprice;
 	}
 
 	public String getPoint() {
@@ -222,7 +213,7 @@ public class GoodsInfo implements Serializable, Cloneable {
 
 	/**
 	 * 更新总价格和积分详情
-	 * 
+	 *
 	 * @author CWI-APST email:26873204@qq.com
 	 * @Description: TODO
 	 */
@@ -241,7 +232,7 @@ public class GoodsInfo implements Serializable, Cloneable {
 			if (!StringUtil.isEmpty(sptype) && !StringUtil.isEmpty(this.salecount)
 					&& (!StringUtil.isEmpty(this.price) || !StringUtil.isEmpty(this.addprice))) {
 				if (ConstantData.GOODS_SOURCE_BY_BRAND.equals(sptype) || ConstantData.GOODS_SOURCE_BY_BINTEGRAL.equals(sptype)) {
-					this.saleamt = MoneyAccuracyUtils.getmoneybytwo(ArithDouble.parseInt(this.salecount) * ArithDouble.sub(ArithDouble.parseDouble(this.price), ArithDouble.parseDouble(this.zkprice)));
+					this.saleamt = MoneyAccuracyUtils.getmoneybytwo(ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.price));
 				} else if (ConstantData.GOODS_SOURCE_BY_INTEGRAL.equals(sptype)|| ConstantData.GOODS_SOURCE_BY_SINTEGRAL.equals(sptype)) {
 					this.saleamt = MoneyAccuracyUtils.getmoneybytwo(ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.addprice));
 				}

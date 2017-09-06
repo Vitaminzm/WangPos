@@ -6,12 +6,12 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.symboltech.koolcloud.transmodel.OrderBean;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.db.dao.OrderInfoDao;
+import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
@@ -376,7 +376,12 @@ public class RunTimeService extends IntentService {
 			Map<String, String> map = new HashMap<String, String>();
 			// 重新复制开始的订单号
 			final String newBillID = billinfos.get(billinfos.size() - 1).getConfirmbillinfos().getBillid();
-			String json = new GsonBuilder().serializeNulls().create().toJson(billinfos);
+			String json = null;
+			try {
+				json = GsonUtil.beanToJson(billinfos);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			LogUtil.v("lgs", "error = " + json);
 			map.put("billinfo", json);
 			HttpRequestUtil.getinstance().uploadOfflineData(map, OfflineDataResult.class,
@@ -425,7 +430,12 @@ public class RunTimeService extends IntentService {
 			Map<String, String> map = new HashMap<String, String>();
 			// 重新复制开始的订单号
 			final String newBillID = bankinfos.get(bankinfos.size() - 1).getTradeno();
-			String json = new GsonBuilder().serializeNulls().create().toJson(bankinfos);
+			String json = null;
+			try {
+				json = GsonUtil.beanToJson(bankinfos);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 			LogUtil.v("lgs", "error = " + json);
 			map.put("data", json);
 			HttpRequestUtil.getinstance().uploadOfflineBankData(map, OfflineDataResult.class,

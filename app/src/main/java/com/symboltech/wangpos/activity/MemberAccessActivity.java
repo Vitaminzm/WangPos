@@ -32,6 +32,7 @@ import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.msg.entity.AllMemberInfo;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.AllMemeberInfoResult;
 import com.symboltech.wangpos.utils.AndroidUtils;
@@ -646,9 +647,13 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
      *            验证value
      */
     private boolean isVerify = false;
-    private  void memberverifymethodbyhttp(final String verifyType, String verifyValue) {
+    private  void memberverifymethodbyhttp(final String verifyType, final String verifyValue) {
         if(isVerify){
             ToastUtils.sendtoastbyhandler(handler, "验证中请稍后");
+            return;
+        }
+        if(StringUtil.isEmpty(verifyValue)){
+            ToastUtils.sendtoastbyhandler(handler, "验证信息为空");
             return;
         }
         Map<String, String> map = new HashMap<String, String>();
@@ -677,7 +682,10 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     @Override
                     public void handleActionSuccess(String actionName, final AllMemeberInfoResult result) {
                         if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-
+                            if(result.getAllInfo()== null){
+                                ToastUtils.sendtoastbyhandler(handler, "获取会员信息失败");
+                                return;
+                            }
                             Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
                             paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
                             paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
@@ -693,6 +701,10 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                                             new DialogFinishCallBack() {
                                                 @Override
                                                 public void finish(int p) {
+                                                    if(result.getAllInfo()== null){
+                                                        ToastUtils.sendtoastbyhandler(handler, "获取会员信息失败");
+                                                        return;
+                                                    }
                                                     Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
                                                     paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
                                                     paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
@@ -705,6 +717,10 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                                 }
                             });
                         }else if(result.getCode().equals(ConstantData.HTTP_RESPONSE_OK_MEMBER_OFFLINE)){
+                            if(result.getAllInfo()== null){
+                                ToastUtils.sendtoastbyhandler(handler, "获取会员信息失败");
+                                return;
+                            }
                             Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
                             paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, result.getAllInfo());
                             paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
@@ -731,6 +747,24 @@ public class MemberAccessActivity extends BaseActivity implements RadioGroup.OnC
                     public void handleActionChangeToOffLine() {
                         Intent intent = new Intent(MemberAccessActivity.this, MainActivity.class);
                         startActivity(intent);
+                    }
+
+                    @Override
+                    public void handleActionOffLine() {
+                        AllMemberInfo allMemberInfo = new AllMemberInfo();
+                        MemberInfo memberInfo = new MemberInfo();
+                        if(verifyType == ConstantData.MEMBER_VERIFY_BY_PHONE){
+                            memberInfo.setPhoneno(verifyValue);
+                        }else {
+                            memberInfo.setMemberno(verifyValue);
+                        }
+                        allMemberInfo.setMember(memberInfo);
+                        Intent paymentIntent = new Intent(MemberAccessActivity.this, PaymentActivity.class);
+                        paymentIntent.putExtra(ConstantData.ALLMEMBERINFO, allMemberInfo);
+                        paymentIntent.putExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_MEMBER);
+                        paymentIntent.putExtra(ConstantData.MEMBER_VERIFY, verifyType);
+                        MemberAccessActivity.this.startActivity(paymentIntent);
+                        MemberAccessActivity.this.finish();
                     }
                 });
 //        HttpRequestUtil.getinstance().getmemberinfo(HTTP_TASK_KEY, map, MemberInfoResult.class,

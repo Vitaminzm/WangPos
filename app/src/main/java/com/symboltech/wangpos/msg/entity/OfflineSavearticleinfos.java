@@ -22,9 +22,17 @@ public class OfflineSavearticleinfos implements Serializable {
      private String saletime;
      private String saletype;
      private String totalmoney;
+	 private MemberInfo member;
      private List<OfflineGoodsInfo> goodslist;
-     
-     
+
+	public MemberInfo getMember() {
+		return member;
+	}
+
+	public void setMember(MemberInfo member) {
+		this.member = member;
+	}
+
 	public String getCashiername() {
 		return cashiername;
 	}

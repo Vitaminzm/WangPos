@@ -10,6 +10,7 @@ import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.db.SymboltechMallDBOpenHelper;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
+import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.msg.entity.OfflineBankInfo;
 import com.symboltech.wangpos.msg.entity.OfflineBillInfo;
 import com.symboltech.wangpos.msg.entity.OfflineConfirmbillinfos;
@@ -121,6 +122,16 @@ public class OrderInfoDao {
 			OfflineConfirmbillinfos confirmbill = new OfflineConfirmbillinfos();
 			OfflineSavearticleinfos savearticle = new OfflineSavearticleinfos();
 			String orderid = cursor.getString(cursor.getColumnIndex("billid"));
+			String memberCard = cursor.getString(cursor.getColumnIndex("membercard"));
+			String memberPhone = cursor.getString(cursor.getColumnIndex("memberphone"));
+			MemberInfo memberInfo = new MemberInfo();
+			if(!StringUtil.isEmpty(memberCard)){
+				memberInfo.setMemberno(memberCard);
+				savearticle.setMember(memberInfo);
+			}else if(!StringUtil.isEmpty(memberPhone)){
+				memberInfo.setPhoneno(memberPhone);
+				savearticle.setMember(memberInfo);
+			}
 			savearticle.setBillid(orderid);
 			savearticle.setCashier(cursor.getString(cursor.getColumnIndex("cashier")));
 			savearticle.setCashiername(cursor.getString(cursor.getColumnIndex("cashiername")));
@@ -153,7 +164,7 @@ public class OrderInfoDao {
 	public List<OfflineBillInfo> getOfflineOrderInfo(int count){
 		List<OfflineBillInfo> result = new ArrayList<OfflineBillInfo>();
 		SQLiteDatabase db = helper.getReadableDatabase();
-		Cursor cursor = db.query("user_order", null, "offline = ? and status = ?", new String[] { "0", "1" }, null, null, " billid asc limit " + count);
+		Cursor cursor = db.query("user_order", null, "offline = ? and status = ?", new String[]{"0", "1"}, null, null, " billid asc limit " + count);
 
 		while(cursor.moveToNext()){
 			OfflineBillInfo info = new OfflineBillInfo();
@@ -248,7 +259,7 @@ public class OrderInfoDao {
 	 * @param goodsInfo 商品信息列表
 	 * @return
 	 */
-	public boolean addOrderGoodsInfo(String billid, String personid, String cashier, String cashiername, String saletype, double totalmoney, List<GoodsInfo> goodsInfo) {
+	public boolean addOrderGoodsInfo(String billid, String personid, String cashier, String cashiername, String saletype, double totalmoney, List<GoodsInfo> goodsInfo, MemberInfo memberInfo) {
 		boolean ret = false;
 		if (!StringUtil.isEmpty(billid) && !StringUtil.isEmpty(personid) && goodsInfo != null && goodsInfo.size() > 0
 				&& !StringUtil.isEmpty(cashier) && !StringUtil.isEmpty(saletype)) {
@@ -270,6 +281,14 @@ public class OrderInfoDao {
 			values.put("saletype", saletype);
 			values.put("totalmoney", totalmoney);
 			values.put("time", format.format(new Date()));
+			if(memberInfo != null){
+				if(!StringUtil.isEmpty(memberInfo.getPhoneno())){
+					values.put("memberphone", memberInfo.getPhoneno());
+				}
+				if(!StringUtil.isEmpty(memberInfo.getMemberno())){
+					values.put("membercard", memberInfo.getMemberno());
+				}
+			}
 			long success = -1;
 			success = db.insert("user_order", null, values);
 			if(success != -1){

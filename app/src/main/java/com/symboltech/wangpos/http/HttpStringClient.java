@@ -121,14 +121,27 @@ public class HttpStringClient {
 		Set<Map.Entry<String, String>> set = param.entrySet();
 		for (Iterator<Map.Entry<String, String>> it = set.iterator(); it.hasNext();) {
 			Map.Entry<String, String> entry = (Map.Entry<String, String>) it.next();
+			if(entry.getValue() == null){
+				httpactionhandler.handleActionError(actionname, "参数异常");
+				httpactionhandler.handleActionFinish();
+				return;
+			}
 			builder.add(entry.getKey(), entry.getValue());
 		}
 		LogUtil.i("lgs","map-----"+param.toString());
 		FormBody formBody = builder.build();
-		Request request = new Request.Builder().tag(actionname)
-				.url(url)
-				.post(formBody)
-				.build();
+		Request request;
+		try {
+			request = new Request.Builder().tag(actionname)
+					.url(url)
+					.post(formBody)
+					.build();
+		}catch (Exception e){
+			e.printStackTrace();
+			httpactionhandler.handleActionError(actionname, "服务器地址错误");
+			httpactionhandler.handleActionFinish();
+			return;
+		}
 		requestPost(url, param, request, new Callback() {
 			@Override
 			public void onFailure(Call call, IOException e) {
