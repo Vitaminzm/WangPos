@@ -122,6 +122,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         @Override
                         public void handleActionChangeToOffLine() {
                             ChangeUI(0);
+                            uploadOfflineData(true);
                         }
                     }).show();
                 }
@@ -239,11 +240,11 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     };
     @Override
     protected void initData() {
-        if(AppConfigFile.isOffLineMode()){
-            ChangeUI(1);
-        }else{
-            ChangeUI(0);
-        }
+//        if(AppConfigFile.isOffLineMode()){
+//            ChangeUI(1);
+//        }else{
+//            ChangeUI(0);
+//        }
         if(ConstantData.CASH_COLLECT.equals(SpSaveUtils.read(mContext, ConstantData.CASH_TYPE, ConstantData.CASH_NORMAL))){
             SpSaveUtils.delete(mContext,  ConstantData.BRANDGOODSLIST);
             SpSaveUtils.delete(mContext, ConstantData.SALEMANLIST);
@@ -591,6 +592,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 service.putExtra(ConstantData.UPDATE_STATUS, true);
                                 service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
                                 startService(service);
+                                AppConfigFile.setOffLineMode(false);
                                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                                 intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
                                 MainActivity.this.startActivity(intent);
@@ -601,6 +603,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                                 service.putExtra(ConstantData.UPDATE_STATUS, true);
                                 service.putExtra(ConstantData.CASHIER_ID, ConstantData.POS_STATUS_LOGOUT);
                                 startService(service);
+                                AppConfigFile.setOffLineMode(false);
                                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
                                 intent.putExtra(ConstantData.LOGIN_WITH_CHOOSE_KEY, ConstantData.LOGIN_WITH_CASHIER);
                                 MainActivity.this.startActivity(intent);
@@ -906,7 +909,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
             @Override
             public void handleActionChangeToOffLine() {
-                ChangeUI(1);
+               // ChangeUI(1);
             }
 
             @Override
@@ -974,7 +977,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
                     @Override
                     public void handleActionOffLine() {
-                        ChangeUI(1);
+                      //  ChangeUI(1);
                     }
                 });
     }

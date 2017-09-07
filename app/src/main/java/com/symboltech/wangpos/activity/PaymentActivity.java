@@ -42,6 +42,7 @@ import com.symboltech.wangpos.msg.entity.GoodsInfo;
 import com.symboltech.wangpos.msg.entity.MemberInfo;
 import com.symboltech.wangpos.result.InitializeInfResult;
 import com.symboltech.wangpos.result.SubmitGoodsResult;
+import com.symboltech.wangpos.result.ZklResult;
 import com.symboltech.wangpos.utils.ArithDouble;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
@@ -102,7 +103,7 @@ public class PaymentActivity extends BaseActivity {
     private double summoney;
     private int sumintegral;
 
-    static class MyHandler extends Handler {
+    class MyHandler extends Handler {
         WeakReference<BaseActivity> mActivity;
 
         MyHandler(BaseActivity activity) {
@@ -118,6 +119,16 @@ public class PaymentActivity extends BaseActivity {
                     break;
                 case ToastUtils.TOAST_WHAT_DIALOG:
                     new AlertDialog.Builder(theActivity).setTitle("错误提示").setMessage(msg.obj.toString()).setPositiveButton("确定", null).setCancelable(false).show();
+                    break;
+                case 3:
+                    int position = (int) msg.obj;
+                    theActivity.closewaitdialog();
+                    addcartgoods(null, null, position, ConstantData.GOOD_PRICE_NO_CHANGE);
+                    break;
+                case 4:
+                    int positiongood = (int) msg.obj;
+                    theActivity.closewaitdialog();
+                    getGoodsZkl(positiongood, null);
                     break;
             }
         }
@@ -169,7 +180,11 @@ public class PaymentActivity extends BaseActivity {
                         return;
                     }
                     if(goodinfos != null && goodinfos.size() > 0){
-                        addcartgoods(value, position, ConstantData.GOOD_PRICE_CAN_CHANGE);
+                        if(AppConfigFile.isOffLineMode() || memberBigdate== null){
+                            addcartgoods(value, null, position, ConstantData.GOOD_PRICE_CAN_CHANGE);
+                        }else{
+                            getGoodsZkl(position, value);
+                        }
                         edit_input_money.setText("");
                     }else{
                         ToastUtils.sendtoastbyhandler(handler,getString(R.string.warning_no_good));
@@ -341,7 +356,7 @@ public class PaymentActivity extends BaseActivity {
      * @param position 位置
      * @param tag   是否改价
      */
-    protected void addcartgoods(String value, int position, int tag) {
+    protected void addcartgoods(String value, String zk, int position, int tag) {
         GoodsInfo goodsInfo = null;
         GoodsInfo gs = goodinfos.get(position);
         try {
@@ -352,6 +367,9 @@ public class PaymentActivity extends BaseActivity {
         goodsInfo.setSalecount("1");
         if(tag == ConstantData.GOOD_PRICE_CAN_CHANGE){
             goodsInfo.setPrice(MoneyAccuracyUtils.formatMoneyByTwo(value));
+        }
+        if (!StringUtil.isEmpty(zk)){
+            goodsInfo.setZkprice(MoneyAccuracyUtils.formatMoneyByTwo(zk));
         }
         shopCarList.add(goodsInfo);
         goodsAdapter.notifyDataSetChanged();
@@ -419,12 +437,20 @@ public class PaymentActivity extends BaseActivity {
                     new AddGoodDialog(PaymentActivity.this, goodinfos, new DialogFinishCallBack() {
                         @Override
                         public void finish(int p) {
-                            if (goodinfos.get(p).getSpmode().trim().equals("0")) {
-                                addcartgoods(null, p, ConstantData.GOOD_PRICE_NO_CHANGE);
-                            } else {
-                                position = p;
-                                keyboard.show();
+                            if(AppConfigFile.isOffLineMode() || memberBigdate== null){
+                                if (goodinfos.get(p).getSpmode().trim().equals("0")) {
+                                    addcartgoods(null, null, p, ConstantData.GOOD_PRICE_NO_CHANGE);
+                                } else {
+                                    position = p;
+                                    keyboard.show();
+                                }
+                            }else{
+                                Message msg = Message.obtain();
+                                msg.what = 4;
+                                msg.obj = p;
+                                handler.sendMessage(msg);
                             }
+
                         }
                     }).show();
 
@@ -471,31 +497,96 @@ public class PaymentActivity extends BaseActivity {
         }
     }
 
-    public void getGoodsBycode(String code){
+    public void getGoodsBycode(final String code){
         if(StringUtil.isEmpty(code)){
-            ToastUtils.sendtoastbyhandler(handler,"输入商品码为空");
+            ToastUtils.sendtoastbyhandler(handler, "输入商品码为空");
             return;
         }
-        boolean isFind = false;
-        for(int i = 0;i<goodinfos.size();i++){
-            GoodsInfo info = goodinfos.get(i);
-            if(code.equals(info.getCode())){
-                isFind = true;
-                if (info.getSpmode().trim().equals("0")) {
-                    addcartgoods(null, i, ConstantData.GOOD_PRICE_NO_CHANGE);
-                } else {
-
-                    position = i;
-                    keyboard.show();
+        startwaitdialog();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean isFind = false;
+                for(int i = 0;i<goodinfos.size();i++){
+                    GoodsInfo info = goodinfos.get(i);
+                    if(code.equals(info.getCode())){
+                        isFind = true;
+                        if(AppConfigFile.isOffLineMode() || memberBigdate== null){
+                            if (info.getSpmode().trim().equals("0")) {
+                                position = i;
+                                Message msg = Message.obtain();
+                                msg.what = 3;
+                                msg.obj = i;
+                                handler.sendMessage(msg);
+                            } else {
+                                position = i;
+                                keyboard.show();
+                            }
+                        }else{
+                            Message msg = Message.obtain();
+                            msg.what = 4;
+                            msg.obj = i;
+                            handler.sendMessage(msg);
+                        }
+                        break;
+                    }
                 }
-                break;
+                if(!isFind){
+                    ToastUtils.sendtoastbyhandler(handler, "未找到该商品");
+                }
             }
-        }
-        if(!isFind){
-            ToastUtils.sendtoastbyhandler(handler, "未找到该商品");
-        }
+        }).start();
     }
 
+    public void getGoodsZkl(final int position, final String price){
+        if(memberBigdate == null || memberBigdate.getMember()==null){
+            ToastUtils.sendtoastbyhandler(handler, "会员信息有误不能查询折扣");
+            return;
+        }
+        final GoodsInfo goodsInfo = goodinfos.get(position);
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("spid", goodsInfo.getId());
+        if(StringUtil.isEmpty(price)){
+            map.put("money", ""+ArithDouble.sub(ArithDouble.parseDouble(goodsInfo.getPrice()), ArithDouble.parseDouble(goodsInfo.getZkprice())));
+        }else{
+            map.put("money", ""+ArithDouble.sub(ArithDouble.parseDouble(price), ArithDouble.parseDouble(goodsInfo.getZkprice())));
+        }
+        map.put("membertypename", memberBigdate.getMember().getMembertypename());
+        HttpRequestUtil.getinstance().getgoodszkl(map, ZklResult.class, new HttpActionHandle<ZklResult>() {
+            @Override
+            public void handleActionStart() {
+                startwaitdialog();
+            }
+
+            @Override
+            public void handleActionFinish() {
+                closewaitdialog();
+            }
+
+            @Override
+            public void handleActionError(String actionName, String errmsg) {
+                ToastUtils.sendtoastbyhandler(handler, errmsg);
+            }
+
+            @Override
+            public void handleActionSuccess(String actionName, final ZklResult result) {
+                if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+                    PaymentActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(StringUtil.isEmpty(price)){
+                                addcartgoods(null, ArithDouble.sub(ArithDouble.parseDouble(goodsInfo.getPrice()), result.getData()) + "", position, ConstantData.GOOD_PRICE_NO_CHANGE);
+                            }else{
+                                addcartgoods(price, ArithDouble.sub(ArithDouble.parseDouble(price), result.getData()) + "", position, ConstantData.GOOD_PRICE_CAN_CHANGE);
+                            }
+                        }
+                    });
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                }
+            }
+        });
+    }
     public void getGoodsByrydmOffline(String rydm){
         boolean isFind = false;
         List<GoodsAndSalerInfo> datas =(List<GoodsAndSalerInfo>)SpSaveUtils.getObject(getApplicationContext(), SpSaveUtils.SAVE_FOR_SP_KEY_OFFLINE, ConstantData.OFFLINE_CASH);
@@ -516,7 +607,7 @@ public class PaymentActivity extends BaseActivity {
                                     @Override
                                     public void finish(int p) {
                                         if (goodinfos.get(p).getSpmode().trim().equals("0")) {
-                                            addcartgoods(null, p, ConstantData.GOOD_PRICE_NO_CHANGE);
+                                            addcartgoods(null, null, p, ConstantData.GOOD_PRICE_NO_CHANGE);
                                         } else {
                                             position = p;
                                             keyboard.show();
@@ -585,7 +676,7 @@ public class PaymentActivity extends BaseActivity {
                                     @Override
                                     public void finish(int p) {
                                         if (goodinfos.get(p).getSpmode().trim().equals("0")) {
-                                            addcartgoods(null, p, ConstantData.GOOD_PRICE_NO_CHANGE);
+                                            addcartgoods(null, null, p, ConstantData.GOOD_PRICE_NO_CHANGE);
                                         } else {
                                             position = p;
                                             keyboard.show();
@@ -749,8 +840,13 @@ public class PaymentActivity extends BaseActivity {
                         ArithDouble.parseDoubleByType(text_total_money.getText().toString(), type), shopCarList, memberInfo);
                 if (result) {
                     Intent intent_payment = new Intent(PaymentActivity.this, CheckOutActivity.class);
-                    // 是否是会员标识
-                    intent_payment.putExtra(ConstantData.VERIFY_IS_MEMBER, ConstantData.MEMBER_IS_NOT_VERITY);
+                    if (enterFlag == ConstantData.ENTER_CASHIER_BY_MEMBER) {
+                        intent_payment.putExtra(ConstantData.VERIFY_IS_MEMBER, ConstantData.MEMBER_IS_VERITY);
+                        intent_payment.putExtra(ConstantData.GET_MEMBER_INFO, memberBigdate.getMember());
+                    }else {
+                        // 是否是会员标识
+                        intent_payment.putExtra(ConstantData.VERIFY_IS_MEMBER, ConstantData.MEMBER_IS_NOT_VERITY);
+                    }
                     intent_payment.putExtra(ConstantData.SALESMAN_NAME, text_saleman_name.getText().toString());
                     // 订单总额
                     intent_payment.putExtra(ConstantData.GET_ORDER_VALUE_INFO, ArithDouble.parseDouble(MoneyAccuracyUtils.getmoneybytwo(

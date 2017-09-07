@@ -12,6 +12,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.app.MyApplication;
 import com.symboltech.wangpos.msg.entity.BillInfo;
@@ -1185,6 +1186,9 @@ public class PrepareReceiptInfo {
 											.replace(TicketFormatEnum.TICKET_COUNT.getLable(),  formatRString(4, infos.getSalecount()))
 											.replace(TicketFormatEnum.TICKET_MONEY.getLable(), formatRString(8, infos.getSaleamt()))
 											.replace(TicketFormatEnum.TICKET_USED_SCORE.getLable(), infos.getUsedpoint());
+									if(ArithDouble.parseDouble(infos.getZkprice()) > 0){
+										good.append("已优惠("+ArithDouble.parseInt(infos.getSalecount())* ArithDouble.parseDouble(infos.getZkprice())+"元)\n");
+									}
 									builder.append(good.getString());
 								}
 								PrintString goodtemp = new PrintString(goodFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
@@ -1316,6 +1320,9 @@ public class PrepareReceiptInfo {
 												.replace(TicketFormatEnum.TICKET_NORMAL_LINE.getLable(), basic.getLineformat()+"\n")
 												.replace(TicketFormatEnum.TICKET_BUDALINE.getLable(), basic.getLineformat_again()+"\n");
 									}
+								}
+								if(AppConfigFile.isOffLineMode()){
+									vip.append("本次积分待网络正常后重新计算");
 								}
 								String[] codes = vip.getString().split("\n");
 								for (String code:codes){
@@ -1560,6 +1567,9 @@ public class PrepareReceiptInfo {
 				addTextJson(array, latticePrinter, FONT_DEFAULT, formatLString(10, g.getCode())
 						+ formatLString(6, g.getSalecount())
 						+ formatLString(10, g.getSaleamt()) + g.getUsedpoint(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+				if(ArithDouble.parseDouble(g.getZkprice()) > 0){
+					addTextJson(array, latticePrinter, FONT_DEFAULT, "已优惠("+ArithDouble.parseInt(g.getSalecount())* ArithDouble.parseDouble(g.getZkprice())+"元)", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+				}
 			}
 		}
 		if (bill.getGoodslist() != null) {
@@ -1668,6 +1678,11 @@ public class PrepareReceiptInfo {
 //				}
 //			}
 
+		}
+		if(!mend){
+			if(AppConfigFile.isOffLineMode() && member!= null){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "本次积分待网络正常后重新计算", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			}
 		}
 		if ((bill.getUsedcouponlist() != null && bill.getUsedcouponlist().size() > 0)
 				|| (bill.getGrantcouponlist() != null && bill.getGrantcouponlist().size() > 0)) {
@@ -2566,6 +2581,15 @@ public class PrepareReceiptInfo {
 		public String getString(){
 			return print;
 		}
+
+		public PrintString append(String append){
+			if(print == null || append == null){
+				return this;
+			}
+			print = print+append;
+			return this;
+		}
+
 	}
 
 	/**

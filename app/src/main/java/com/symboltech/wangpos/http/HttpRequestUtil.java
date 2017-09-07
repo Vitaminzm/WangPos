@@ -214,6 +214,18 @@ public class HttpRequestUtil {
 	}
 
 	/**
+	 * 根据收银员id获取商品信息   集中收银
+	 * @param param
+	 * @param clz
+	 * @param httpactionhandler
+	 */
+	public <T> void getgoodszkl(Map<String, String> param, final Class<T> clz,
+									 final HttpActionHandle<T> httpactionhandler) {
+		HttpStringClient.getinstance().getForObject(clz.getName(), getUrl("xbapi/GetGoodsZKL"), param, clz,
+				httpactionhandler);
+	}
+
+	/**
 	 * 提交缴款单
 	 * @param param
 	 * @param clz

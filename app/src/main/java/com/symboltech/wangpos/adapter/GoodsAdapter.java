@@ -87,7 +87,10 @@ public class GoodsAdapter extends BaseAdapter {
 			convertView = inflater.inflate(R.layout.item_shoppinggood, null);
 			holder.text_good_name = (TextView) convertView.findViewById(R.id.text_good_name);
 			holder.ll_bg = (LinearLayout) convertView.findViewById(R.id.ll_bg);
+			holder.ll_zk_info = (LinearLayout) convertView.findViewById(R.id.ll_zk_info);
 			holder.text_money = (TextView) convertView.findViewById(R.id.text_money);
+			holder.text_zk = (TextView) convertView.findViewById(R.id.text_zk);
+			holder.text_good_price = (TextView) convertView.findViewById(R.id.text_good_price);
 			holder.text_score = (TextView) convertView.findViewById(R.id.text_score);
 			holder.text_good_code = (TextView) convertView.findViewById(R.id.text_good_code);
 			holder.text_good_count = (TextView) convertView.findViewById(R.id.text_good_count);
@@ -107,6 +110,7 @@ public class GoodsAdapter extends BaseAdapter {
 		}else{
 			holder.ll_bg.setBackgroundColor(context.getResources().getColor(R.color.white));
 		}
+
 		holder.imageview_quantity_plus.setTag(position);
 		holder.imageview_quantity_minus.setTag(position);
 		holder.text_good_name.setText(goodsInfo.getGoodsname());
@@ -134,16 +138,23 @@ public class GoodsAdapter extends BaseAdapter {
 		}else{
 			holder.text_score.setText(goodsInfo.getUsedpoint());
 		}
+		holder.text_zk.setText(MoneyAccuracyUtils.getmoneybytwo(ArithDouble.parseInt(goodsInfo.getSalecount()) * ArithDouble.parseDouble(goodsInfo.getZkprice())));
+		if(ArithDouble.parseDouble(goodsInfo.getZkprice()) == 0){
+			holder.ll_zk_info.setVisibility(View.GONE);
+		}else{
+			holder.ll_zk_info.setVisibility(View.VISIBLE);
+		}
 		holder.text_good_count.setText(goodsInfo.getSalecount());
+		holder.text_good_price.setText(goodsInfo.getPrice());
 		holder.text_money.setText(MoneyAccuracyUtils.formatMoneyByTwo(goodsInfo.getSaleamt()));
 		return convertView;
 	}
 
 
 	private class Viewholder {
-		public TextView text_good_name, text_money, text_score, text_good_code, text_good_count;
+		public TextView text_good_name, text_money, text_score, text_good_code, text_good_count,text_good_price, text_zk;
 		public ImageView imageview_quantity_plus, imageview_quantity_minus;
-		public LinearLayout ll_score_info, ll_bg;
+		public LinearLayout ll_score_info, ll_bg, ll_zk_info;
 	}
 	class CompentOnTouch implements View.OnTouchListener {
 
@@ -172,9 +183,9 @@ public class GoodsAdapter extends BaseAdapter {
 					isOnLongClick = true;
 					new MiusThread().start();
 				} else if (eventAction == MotionEvent.ACTION_UP) {
-					isOnLongClick = false;
+						isOnLongClick = false;
 				} else if (eventAction == MotionEvent.ACTION_MOVE ) {
-					isOnLongClick = true;
+						isOnLongClick = true;
 				}else if(eventAction ==MotionEvent.ACTION_CANCEL){
 					isOnLongClick = false;
 				}
@@ -185,9 +196,9 @@ public class GoodsAdapter extends BaseAdapter {
 					isOnLongClick = true;
 					new PlusThread().start();
 				} else if (eventAction == MotionEvent.ACTION_UP) {
-					isOnLongClick = false;
+						isOnLongClick = false;
 				} else if (eventAction == MotionEvent.ACTION_MOVE) {
-					isOnLongClick = true;
+						isOnLongClick = true;
 				}else if(eventAction ==MotionEvent.ACTION_CANCEL){
 					isOnLongClick = false;
 				}

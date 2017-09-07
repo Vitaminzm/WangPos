@@ -1304,6 +1304,9 @@ public class CheckOutActivity extends BaseActivity {
                 OrderInfoDao dao = new OrderInfoDao(mContext);
                 boolean result = dao.addOrderPaytypeinfo(AppConfigFile.getBillId(), null, null, null, payLing, "1", SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""), payments);
                 if(result){
+                    if (isMember == ConstantData.MEMBER_IS_VERITY) {
+                        bill.setMember(member);
+                    }
                     bill.setPosno(SpSaveUtils.read(mContext, ConstantData.CASHIER_DESK_CODE, ""));
                     bill.setCashier(SpSaveUtils.read(mContext, ConstantData.CASHIER_ID, ""));
                     bill.setCashiername(SpSaveUtils.read(mContext, ConstantData.CASHIER_NAME, ""));
