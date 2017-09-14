@@ -1,7 +1,6 @@
 package com.symboltech.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +16,7 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.MainActivity;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
+import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
@@ -70,7 +70,37 @@ public class PrintOrderDialog extends BaseDialog implements View.OnClickListener
 	}
 
 	private void initData() {
-		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
+		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null, new KeyBoardListener() {
+			@Override
+			public void onComfirm() {
+
+			}
+
+			@Override
+			public void onCancel() {
+
+			}
+
+			@Override
+			public void onValue(String value) {
+				if (!StringUtil.isEmpty(edit_input_order_no.getText().toString().trim())) {
+					boolean result=edit_input_order_no.getText().toString().trim().matches("[0-9]{1,10}");
+					if(result){
+						gel.editinput(edit_input_order_no.getText().toString().trim());
+						dismiss();
+					}else{
+						ToastUtils.sendtoastbyhandler(handler, context.getString(R.string.waring_format_msg));
+					}
+				} else {
+					if (!StringUtil.isEmpty(AppConfigFile.getLast_billid())) {
+						gel.editinput(AppConfigFile.getLast_billid());
+						dismiss();
+					} else {
+						ToastUtils.sendtoastbyhandler(handler,context.getString(R.string.pleae_order_number));
+					}
+				}
+			}
+		});
 		if (!StringUtil.isEmpty(AppConfigFile.getLast_billid())) {
 			edit_input_order_no.setHint(AppConfigFile.getLast_billid());
 		}

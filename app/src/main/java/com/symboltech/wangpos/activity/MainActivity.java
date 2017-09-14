@@ -344,6 +344,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onResume() {
         if(AppConfigFile.isOffLineMode()){
+            ChangeUI(0);
             //手动监测网络状态
             Intent serviceintent = new Intent(MainActivity.this, RunTimeService.class);
             serviceintent.putExtra(ConstantData.CHECK_NET, true);

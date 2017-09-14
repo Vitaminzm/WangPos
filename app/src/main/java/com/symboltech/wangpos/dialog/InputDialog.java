@@ -15,6 +15,7 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.MainActivity;
 import com.symboltech.wangpos.app.AppConfigFile;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
+import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
@@ -91,7 +92,37 @@ public class InputDialog extends BaseDialog implements View.OnClickListener {
 			edit_input_order_no.setHint(hit);
 		}
 		if(flag){
-			keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
+			keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null, new KeyBoardListener() {
+				@Override
+				public void onComfirm() {
+
+				}
+
+				@Override
+				public void onCancel() {
+
+				}
+
+				@Override
+				public void onValue(String value) {
+					if (!StringUtil.isEmpty(edit_input_order_no.getText().toString().trim())) {
+						if(!flag){
+							gel.editinput(edit_input_order_no.getText().toString().trim());
+							dismiss();
+						}else{
+							boolean result=edit_input_order_no.getText().toString().trim().matches("^[0-9]*$");
+							if(result){
+								gel.editinput(edit_input_order_no.getText().toString().trim());
+								dismiss();
+							}else{
+								ToastUtils.sendtoastbyhandler(handler, context.getString(R.string.waring_format_msg));
+							}
+						}
+					} else {
+						ToastUtils.sendtoastbyhandler(handler,context.getString(R.string.pleae_order_number));
+					}
+				}
+			});
 			handler.postDelayed(new Runnable() {
 				@Override
 				public void run() {

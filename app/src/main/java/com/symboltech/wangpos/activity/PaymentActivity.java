@@ -369,7 +369,11 @@ public class PaymentActivity extends BaseActivity {
             goodsInfo.setPrice(MoneyAccuracyUtils.formatMoneyByTwo(value));
         }
         if (!StringUtil.isEmpty(zk)){
-            goodsInfo.setZkprice(MoneyAccuracyUtils.formatMoneyByTwo(zk));
+            if(!StringUtil.isEmpty(goodsInfo.getZkprice())){
+                goodsInfo.setZkprice(MoneyAccuracyUtils.formatMoneyByTwo(""+ArithDouble.add(ArithDouble.parseDouble(zk), ArithDouble.parseDouble(goodsInfo.getZkprice()))));
+            }else{
+                goodsInfo.setZkprice(MoneyAccuracyUtils.formatMoneyByTwo(zk));
+            }
         }
         shopCarList.add(goodsInfo);
         goodsAdapter.notifyDataSetChanged();
@@ -445,10 +449,16 @@ public class PaymentActivity extends BaseActivity {
                                     keyboard.show();
                                 }
                             }else{
-                                Message msg = Message.obtain();
-                                msg.what = 4;
-                                msg.obj = p;
-                                handler.sendMessage(msg);
+                                if (goodinfos.get(p).getSpmode().trim().equals("0")) {
+                                    Message msg = Message.obtain();
+                                    msg.what = 4;
+                                    msg.obj = p;
+                                    handler.sendMessage(msg);
+                                } else {
+                                    position = p;
+                                    keyboard.show();
+                                }
+
                             }
 
                         }
@@ -519,6 +529,7 @@ public class PaymentActivity extends BaseActivity {
                                 msg.obj = i;
                                 handler.sendMessage(msg);
                             } else {
+                                closewaitdialog();
                                 position = i;
                                 keyboard.show();
                             }
@@ -532,6 +543,7 @@ public class PaymentActivity extends BaseActivity {
                     }
                 }
                 if(!isFind){
+                    closewaitdialog();
                     ToastUtils.sendtoastbyhandler(handler, "未找到该商品");
                 }
             }
@@ -574,10 +586,14 @@ public class PaymentActivity extends BaseActivity {
                     PaymentActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            if(StringUtil.isEmpty(price)){
-                                addcartgoods(null, ArithDouble.sub(ArithDouble.parseDouble(goodsInfo.getPrice()), result.getData()) + "", position, ConstantData.GOOD_PRICE_NO_CHANGE);
+                            if(result.getData()!= null){
+                                if(StringUtil.isEmpty(price)){
+                                    addcartgoods(null, ArithDouble.parseDouble(result.getData().getHyzkmoney()) + "", position, ConstantData.GOOD_PRICE_NO_CHANGE);
+                                }else{
+                                    addcartgoods(price, ArithDouble.parseDouble(result.getData().getHyzkmoney()) + "", position, ConstantData.GOOD_PRICE_CAN_CHANGE);
+                                }
                             }else{
-                                addcartgoods(price, ArithDouble.sub(ArithDouble.parseDouble(price), result.getData()) + "", position, ConstantData.GOOD_PRICE_CAN_CHANGE);
+                                ToastUtils.sendtoastbyhandler(handler, "数据异常");
                             }
                         }
                     });

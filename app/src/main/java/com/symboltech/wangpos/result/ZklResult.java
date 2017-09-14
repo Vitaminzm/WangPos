@@ -1,17 +1,18 @@
 package com.symboltech.wangpos.result;
 
 import com.google.gson.annotations.SerializedName;
+import com.symboltech.wangpos.msg.entity.ZklInfo;
 
 public class ZklResult extends BaseResult {
 
 	@SerializedName("data")
-	private Double data;
+	private ZklInfo data;
 
-	public Double getData() {
+	public ZklInfo getData() {
 		return data;
 	}
 
-	public void setData(Double data) {
+	public void setData(ZklInfo data) {
 		this.data = data;
 	}
 }

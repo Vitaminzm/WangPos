@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.MainActivity;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
+import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
@@ -84,11 +85,30 @@ public class InputAuthDialog extends BaseDialog implements View.OnClickListener 
 		if(!StringUtil.isEmpty(hit)){
 			edit_input_order_no.setHint(hit);
 		}
-		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
 		if(!StringUtil.isEmpty(hit)){
 			edit_input_order_no.setHint(hit);
 		}
-		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null);
+		keyboard = new HorizontalKeyBoard(context, this, edit_input_order_no, null, new KeyBoardListener() {
+			@Override
+			public void onComfirm() {
+
+			}
+
+			@Override
+			public void onCancel() {
+
+			}
+
+			@Override
+			public void onValue(String value) {
+				if (!StringUtil.isEmpty(edit_input_order_no.getText().toString().trim())) {
+					gel.editinput(edit_input_order_no.getText().toString().trim());
+					dismiss();
+				} else {
+					ToastUtils.sendtoastbyhandler(handler,context.getString(R.string.pleae_verify_auth));
+				}
+			}
+		});
 		handler.postDelayed(new Runnable() {
 			@Override
 			public void run() {

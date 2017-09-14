@@ -21,7 +21,7 @@ public class GoodsInfo implements Serializable, Cloneable {
 	private String inx;// 商品顺序
 	private String code;// 商品代码
 	private String price;// 商品价格
-	private String zkprice;// 商品折扣价格
+	private String zkprice = "0";// 商品折扣价格
 	private String usedpoint = "0";// 消耗的总积分
 	private String grantpoint = "0";//获得的积分
 	private String saleamt;// 销售金额
@@ -237,7 +237,14 @@ public class GoodsInfo implements Serializable, Cloneable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		try {
+			if (!StringUtil.isEmpty(this.zkprice) && !StringUtil.isEmpty(this.salecount)) {
+				this.discmoney =  MoneyAccuracyUtils.getmoneybytwo(ArithDouble.parseInt(this.salecount) * ArithDouble.parseDouble(this.zkprice));
+			}
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		try {
 			if (!StringUtil.isEmpty(sptype) && !StringUtil.isEmpty(this.salecount)
 					&& (!StringUtil.isEmpty(this.price) || !StringUtil.isEmpty(this.addprice))) {
