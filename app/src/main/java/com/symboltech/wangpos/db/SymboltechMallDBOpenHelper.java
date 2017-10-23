@@ -33,7 +33,7 @@ public class SymboltechMallDBOpenHelper {
 	private static final String DATABASE_NAME = "sysboltech_mall_pos_database";
 
 	/** Database Version */
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 
 	/** Table Name */
 	private static final String DATABASE_TABLE_LOGIN_USER_NAME = "login_user_name";
@@ -196,6 +196,12 @@ public class SymboltechMallDBOpenHelper {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			LogUtil.i(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion);
 			if(newVersion > oldVersion){
+				db.execSQL("drop table if exists "+ DATABASE_TABLE_LOGIN_USER_NAME);
+				db.execSQL("drop table if exists "+ DATABASE_TABLE_LOGIN);
+				db.execSQL("drop table if exists "+ DATABASE_TABLE_ORDER);
+				db.execSQL("drop table if exists "+ DATABASE_TABLE_PAYTYPE);
+				db.execSQL("drop table if exists "+ DATABASE_TABLE_GOODS);
+				db.execSQL("drop table if exists "+ DATABASE_TABLE_BANK_INFO);
 				onCreate(db); //创建新的表
 			}
 		}

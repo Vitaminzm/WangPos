@@ -1,7 +1,6 @@
 package com.symboltech.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -14,6 +13,7 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.AddSalemanAdapter;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.msg.entity.CashierInfo;
+import com.symboltech.wangpos.utils.Utils;
 
 import java.util.List;
 
@@ -76,6 +76,9 @@ public class AddSalemanDialog extends BaseDialog implements View.OnClickListener
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 			case R.id.imageview_close:

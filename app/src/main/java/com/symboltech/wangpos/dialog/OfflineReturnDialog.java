@@ -12,6 +12,7 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.activity.PaymentActivity;
 import com.symboltech.wangpos.activity.ReturnGoodsByNormalActivity;
 import com.symboltech.wangpos.app.AppConfigFile;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 /**
@@ -54,6 +55,9 @@ public class OfflineReturnDialog extends BaseDialog implements View.OnClickListe
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 			case R.id.text_sale:

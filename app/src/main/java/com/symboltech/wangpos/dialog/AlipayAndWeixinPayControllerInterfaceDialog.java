@@ -237,6 +237,10 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
+
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.tv_thirdpay_cancel:

@@ -13,6 +13,7 @@ import com.symboltech.wangpos.activity.MainActivity;
 import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.service.RunTimeService;
+import com.symboltech.wangpos.utils.Utils;
 
 
 public class OfflineUpdateByLogDialog extends BaseDialog implements OnClickListener {
@@ -43,6 +44,9 @@ public class OfflineUpdateByLogDialog extends BaseDialog implements OnClickListe
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		switch (v.getId()) {
 		case R.id.dialog_log_load_style_yes:
 			try {

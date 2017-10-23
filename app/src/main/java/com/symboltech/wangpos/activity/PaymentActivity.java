@@ -403,6 +403,9 @@ public class PaymentActivity extends BaseActivity {
 
     @OnClick({R.id.title_icon_back, R.id.text_confirm_order, R.id.radio_add_score_good, R.id.radio_select_good, R.id.radio_add_good, R.id.radio_add_salesman, R.id.radio_look_member})
     public void click(View view) {
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id) {
             case R.id.title_icon_back:

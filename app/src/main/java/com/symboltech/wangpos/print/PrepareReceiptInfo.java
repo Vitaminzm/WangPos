@@ -1025,6 +1025,10 @@ public class PrepareReceiptInfo {
 		}else if(count == 3){
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "[商场联]"+"\n\n", KposPrinterManager.CONTENT_ALIGN_RIGHT, printer, fontConfig);
 		}
+		String vipNo =null;
+		if(bill.getMember()!=null){
+			vipNo = bill.getMember().getMemberno();
+		}
 		int goodNumber = 0;
 		double scoreUsed = 0;//积分抵扣
 		double scoreValue = 0;//积分抵扣
@@ -1347,12 +1351,47 @@ public class PrepareReceiptInfo {
 							}
 							if(couponFormat != null && bill.getGrantcouponlist() != null && bill.getGrantcouponlist().size() > 0){
 								StringBuilder builder = new StringBuilder();
+								boolean isHavesbCoupon= false;
+								boolean isHavecrmCoupon = false;
 								for(CouponInfo infos:bill.getGrantcouponlist()){
-									PrintString coupon = new PrintString(couponFormat)
-											.replace(TicketFormatEnum.TICKET_COUPON_NAME.getLable(), infos.getName())
-											.replace(TicketFormatEnum.TICKET_COUPON_MONEY.getLable(), infos.getAvailablemoney()+"元")
-											.replace(TicketFormatEnum.TICKET_COUPON_ENDDATE.getLable(), infos.getEnddate());
-									builder.append(coupon.getString());
+									String [] list = null;
+									if(infos.getCouponno() != null){
+										list= infos.getCouponno().split("\\|");
+									}
+									if(list!= null && list.length>1){
+										if(isHavecrmCoupon){
+											PrintString coupon = new PrintString(couponFormat)
+													.replace(TicketFormatEnum.TICKET_COUPON_NAME.getLable(), infos.getName())
+													.replace(TicketFormatEnum.TICKET_COUPON_MONEY.getLable(), infos.getAvailablemoney()+"元")
+													.replace(TicketFormatEnum.TICKET_COUPON_ENDDATE.getLable(), infos.getEnddate());
+											builder.append(coupon.getString());
+										}else{
+											isHavecrmCoupon = true;
+											builder.append("返券卡号:"+list[0]+"\n");
+											PrintString coupon = new PrintString(couponFormat)
+													.replace(TicketFormatEnum.TICKET_COUPON_NAME.getLable(), infos.getName())
+													.replace(TicketFormatEnum.TICKET_COUPON_MONEY.getLable(), infos.getAvailablemoney()+"元")
+													.replace(TicketFormatEnum.TICKET_COUPON_ENDDATE.getLable(), infos.getEnddate());
+											builder.append(coupon.getString());
+										}
+									}else {
+										if(isHavesbCoupon){
+											PrintString coupon = new PrintString(couponFormat)
+													.replace(TicketFormatEnum.TICKET_COUPON_NAME.getLable(), infos.getName())
+													.replace(TicketFormatEnum.TICKET_COUPON_MONEY.getLable(), infos.getAvailablemoney()+"元")
+													.replace(TicketFormatEnum.TICKET_COUPON_ENDDATE.getLable(), infos.getEnddate());
+											builder.append(coupon.getString());
+										}else{
+											isHavesbCoupon = true;
+											builder.append("返券卡号:"+vipNo+"\n");
+											PrintString coupon = new PrintString(couponFormat)
+													.replace(TicketFormatEnum.TICKET_COUPON_NAME.getLable(), infos.getName())
+													.replace(TicketFormatEnum.TICKET_COUPON_MONEY.getLable(), infos.getAvailablemoney()+"元")
+													.replace(TicketFormatEnum.TICKET_COUPON_ENDDATE.getLable(), infos.getEnddate());
+											builder.append(coupon.getString());
+										}
+									}
+
 								}
 								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
 								sendcoupon.replace(coupontemp.getString(), builder.toString()).replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");

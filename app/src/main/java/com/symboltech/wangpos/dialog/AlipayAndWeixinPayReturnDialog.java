@@ -25,6 +25,7 @@ import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
 import java.util.HashMap;
@@ -199,6 +200,9 @@ public class AlipayAndWeixinPayReturnDialog extends BaseDialog implements View.O
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		if(v.getId() == confirm.getId()) {
 			String number = serialNumber.getText().toString();
 			if(TextUtils.isEmpty(number) || "".equals(number)) {

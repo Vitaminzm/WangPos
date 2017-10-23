@@ -13,6 +13,7 @@ import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
+import com.symboltech.wangpos.utils.Utils;
 
 import java.util.List;
 
@@ -94,6 +95,9 @@ public class RecordPayDialog extends BaseDialog implements View.OnClickListener 
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 			case R.id.ll_weichat_record:

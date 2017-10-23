@@ -177,6 +177,9 @@ public class ReturnGoodsByOrderActivity extends BaseActivity {
 
     @OnClick({R.id.title_icon_back, R.id.text_confirm_return_order})
     public void click(View view){
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id){
             case R.id.title_icon_back:

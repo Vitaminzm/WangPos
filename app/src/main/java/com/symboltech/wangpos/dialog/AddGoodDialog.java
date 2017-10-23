@@ -13,6 +13,7 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.AddGoodAdapter;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.msg.entity.GoodsInfo;
+import com.symboltech.wangpos.utils.Utils;
 
 import java.util.List;
 
@@ -70,6 +71,9 @@ public class AddGoodDialog extends BaseDialog implements View.OnClickListener {
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 			case R.id.imageview_close:

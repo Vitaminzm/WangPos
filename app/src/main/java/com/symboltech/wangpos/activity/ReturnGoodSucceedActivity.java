@@ -30,6 +30,7 @@ import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.GridViewForScrollView;
 import com.ums.upos.sdk.exception.SdkException;
 import com.ums.upos.sdk.system.BaseSystemManager;
@@ -260,6 +261,9 @@ public class ReturnGoodSucceedActivity extends BaseActivity {
 
     @OnClick({R.id.text_confirm, R.id.text_print})
     public void click(View view){
+        if(Utils.isFastClick()){
+            return;
+        }
         int id = view.getId();
         switch (id){
             case R.id.text_confirm:

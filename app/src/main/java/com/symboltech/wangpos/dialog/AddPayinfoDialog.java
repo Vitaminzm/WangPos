@@ -1,7 +1,6 @@
 package com.symboltech.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -13,6 +12,7 @@ import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.adapter.AddPayinfoAdapter;
 import com.symboltech.wangpos.interfaces.CancleAndConfirmback;
 import com.symboltech.wangpos.msg.entity.ThirdPayInfo;
+import com.symboltech.wangpos.utils.Utils;
 
 import java.util.List;
 
@@ -66,6 +66,9 @@ public class AddPayinfoDialog extends BaseDialog implements View.OnClickListener
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		switch (id){
 			case R.id.imageview_close:

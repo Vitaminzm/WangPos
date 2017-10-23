@@ -1,18 +1,15 @@
 package com.symboltech.wangpos.dialog;
 
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
 import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
-import com.symboltech.wangpos.utils.ToastUtils;
+import com.symboltech.wangpos.utils.Utils;
 
 /**
  * Description 通用提示dialog
@@ -69,6 +66,9 @@ public class CouponWaringDialog extends BaseDialog implements View.OnClickListen
 
 	@Override
 	public void onClick(View v) {
+		if(Utils.isFastClick()){
+			return;
+		}
 		int id = v.getId();
 		if(id == R.id.text_cancle || id == R.id.imageview_close){
 			dismiss();
