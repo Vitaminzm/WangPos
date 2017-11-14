@@ -16,6 +16,8 @@ import android.telephony.TelephonyManager;
 import com.symboltech.wangpos.log.LogUtil;
 
 import org.apache.http.conn.util.InetAddressUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,7 +38,9 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -82,6 +86,40 @@ public class Utils {
 
     }
 
+    public static final Map filterTransResult(String var2) {
+        HashMap var1 = new HashMap();
+        if(var2 != null && !var2.isEmpty()) {
+            System.out.println(var2);
+            try {
+                JSONObject var3 = new JSONObject(var2);
+                if(!var3.isNull("appName")) {
+                    var1.put("appName", var3.getString("appName"));
+                }
+
+                if(!var3.isNull("transId")) {
+                    var1.put("transId", var3.getString("transId"));
+                }
+
+                if(!var3.isNull("resultCode")) {
+                    var1.put("resultCode", var3.getString("resultCode"));
+                }
+
+                if(!var3.isNull("resultMsg")) {
+                    var1.put("resultMsg", var3.getString("resultMsg"));
+                }
+
+                if(!var3.isNull("transData")) {
+                    var1.put("transData", var3.getString("transData"));
+                }
+            } catch (JSONException var4) {
+                var4.printStackTrace();
+            }
+
+            return var1;
+        } else {
+            return var1;
+        }
+    }
     /**
      * 获取随机的UUID
      *

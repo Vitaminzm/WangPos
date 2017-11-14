@@ -46,10 +46,12 @@ import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
 import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
+import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.TextScrollView;
 import com.ums.AppHelper;
+import com.ums.anypay.service.IOnTransEndListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -463,7 +465,7 @@ public class CanclePayDialog extends BaseActivity{
 					info.setDes(getString(R.string.cancleing_pay));
 					canclePayAdapter.notifyDataSetChanged();
 					OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "储值卡撤销");
-					AppHelper.callTrans(CanclePayDialog.this, ConstantData.STORE, ConstantData.YHK_CX, json);
+					AppHelper.callTrans(CanclePayDialog.this, ConstantData.STORE, ConstantData.YHK_CX, json, listener);
 				}
 			}else{
 				ToastUtils.sendtoastbyhandler(handler, "暂不支持");
@@ -551,14 +553,62 @@ public class CanclePayDialog extends BaseActivity{
 					info.setDes(getString(R.string.cancleing_pay));
 					canclePayAdapter.notifyDataSetChanged();
 					if(ConstantData.YXLM_ID.equals(info.getId())){
-						AppHelper.callTrans(CanclePayDialog.this, ConstantData.QMH, ConstantData.YHK_CX, json);
+						AppHelper.callTrans(CanclePayDialog.this, ConstantData.QMH, ConstantData.YHK_CX, json, listener);
 					}else{
-						AppHelper.callTrans(CanclePayDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
+						AppHelper.callTrans(CanclePayDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json, listener);
 					}
 				}
 			}
 		}
 	}
+
+	IOnTransEndListener listener = new IOnTransEndListener() {
+		@Override
+		public void onEnd(String reslutmsg) {
+			// TODO Auto-generated method stub
+			LogUtil.i("lgs", "AIDL异步返回 result = " + reslutmsg);
+			PayMentsCancleInfo info = payments.get(position);
+			isCancleCount--;
+			if(StringUtil.isEmpty(reslutmsg)){
+				info.setDes(getString(R.string.cancled_failed));
+				canclePayAdapter.notifyDataSetChanged();
+				ToastUtils.sendtoastbyhandler(handler, "撤销异常！");
+			}else{
+				Map<String,String> map = Utils.filterTransResult(reslutmsg);
+				OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE_SUCCESS.getOptLogCode(), map.toString());
+				Type type =new TypeToken<Map<String, String>>(){}.getType();
+				try {
+					Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+					LogUtil.i("lgs",transData.toString());
+					if("00".equals(transData.get("resCode"))){
+						OrderBean orderBean= new OrderBean();
+						orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(info.getMoney()));
+						orderBean.setTxnId(transData.get("extOrderNo"));
+						orderBean.setAccountNo(transData.get("cardNo"));
+						orderBean.setAcquId(transData.get("cardIssuerCode"));
+						orderBean.setBatchId(transData.get("traceNo"));
+						orderBean.setRefNo(transData.get("refNo"));
+						info.setIsCancle(true);
+						info.setDes(getString(R.string.cancled_pay));
+						canclePayAdapter.notifyDataSetChanged();
+						orderBean.setPaymentId(payments.get(position).getId());
+						orderBean.setTransType(ConstantData.TRANS_REVOKE);
+						orderBean.setTraceId(AppConfigFile.getBillId());
+						Intent serviceintent = new Intent(mContext, RunTimeService.class);
+						serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+						serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+						startService(serviceintent);
+					}else{
+						info.setDes(getString(R.string.cancled_failed));
+						canclePayAdapter.notifyDataSetChanged();
+						ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	};
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {

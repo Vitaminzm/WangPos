@@ -36,6 +36,7 @@ import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.log.LogUtil;
+import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.msg.entity.WposBankRefundInfo;
 import com.symboltech.wangpos.msg.entity.WposPayInfo;
@@ -49,6 +50,7 @@ import com.symboltech.wangpos.utils.CashierSign;
 import com.symboltech.wangpos.utils.CodeBitmap;
 import com.symboltech.wangpos.utils.CurrencyUnit;
 import com.symboltech.wangpos.utils.MoneyAccuracyUtils;
+import com.symboltech.wangpos.utils.OptLogEnum;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
@@ -57,6 +59,7 @@ import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
 import com.ums.AppHelper;
+import com.ums.anypay.service.IOnTransEndListener;
 import com.wangpos.pay.UnionPay.PosConfig;
 import com.wangpos.poscore.PosCore;
 import com.wangpos.poscore.impl.PosCoreFactory;
@@ -567,19 +570,19 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				spin_kit.setVisibility(View.VISIBLE);
 				text_status.setText(R.string.thirdpay_requesting);
 				if("bank".equals(bankType)){
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_SIGN, json);
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_SIGN, json, listener);
 				}else if("store".equals(bankType)){
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_SIGN, json);
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_SIGN, json, listener);
 				}
 			}else if(Type.equals(PaymentTypeEnum.WECHAT.getStyletype())){
-				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.YHK_SIGN, json);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.YHK_SIGN, json, listener);
 			}else if(Type.equals(ConstantData.YXLM_ID)){
 				ll_function.setVisibility(View.GONE);
 				ll_input_money.setVisibility(View.GONE);
 				ll_paying_status.setVisibility(View.VISIBLE);
 				spin_kit.setVisibility(View.VISIBLE);
 				text_status.setText(R.string.thirdpay_requesting);
-				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_SIGN, json);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_SIGN, json, listener);
 			}
 		}else {
 			ToastUtils.sendtoastbyhandler(handler,"暂不支持");
@@ -598,19 +601,19 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				spin_kit.setVisibility(View.VISIBLE);
 				text_status.setText(R.string.thirdpay_requesting);
 				if("bank".equals(bankType)){
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_JS, json);
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_JS, json, listener);
 				}else if("store".equals(bankType)){
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_JS, json);
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_JS, json, listener);
 				}
 			}else if(Type.equals(PaymentTypeEnum.WECHAT.getStyletype())){
-				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.YHK_JS, json);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.YHK_JS, json, listener);
 			}else if(Type.equals(ConstantData.YXLM_ID)){
 				ll_function.setVisibility(View.GONE);
 				ll_input_money.setVisibility(View.GONE);
 				ll_paying_status.setVisibility(View.VISIBLE);
 				spin_kit.setVisibility(View.VISIBLE);
 				text_status.setText(R.string.thirdpay_requesting);
-				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_JS, json);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_JS, json, listener);
 			}
 		}else{
 			ToastUtils.sendtoastbyhandler(handler,"暂不支持");
@@ -749,9 +752,9 @@ public class ThirdPayControllerDialog extends BaseActivity{
 						spin_kit.setVisibility(View.VISIBLE);
 						text_status.setText(R.string.thirdpay_requesting);
 						if("bank".equals(bankType)){
-							AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json);
+							AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_TH, json, listener);
 						}else if("store".equals(bankType)){
-							AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_TH, json);
+							AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_TH, json, listener);
 						}
 					}else if(Type.equals(PaymentTypeEnum.WECHAT.getStyletype())){
 						JSONObject json = new JSONObject();
@@ -768,7 +771,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 						ll_paying_status.setVisibility(View.VISIBLE);
 						spin_kit.setVisibility(View.VISIBLE);
 						text_status.setText(R.string.thirdpay_requesting);
-						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json);
+						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json, listener);
 					}else if(Type.equals(ConstantData.YXLM_ID)){
 						JSONObject json = new JSONObject();
 						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
@@ -784,7 +787,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 						ll_paying_status.setVisibility(View.VISIBLE);
 						spin_kit.setVisibility(View.VISIBLE);
 						text_status.setText(R.string.thirdpay_requesting);
-						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_TH, json);
+						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_TH, json, listener);
 					}
 				}else{
 					Map<String, String> map = new HashMap<String, String>();
@@ -920,9 +923,9 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					e.printStackTrace();
 				}
 				if("bank".equals(bankType)){
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json);
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CX, json, listener);
 				}else if("store".equals(bankType)){
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_CX, json);
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_CX, json, listener);
 				}
 			}else{
 				requestRefundCashier(edit_money.getText().toString());
@@ -937,7 +940,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.POS_XFCX, json, listener);
 			}else{
 				Map<String, String> map = new HashMap<String, String>();
 				map.put("operater", SpSaveUtils.read(getApplicationContext(), ConstantData.CASHIER_CODE, ""));
@@ -1019,7 +1022,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_CX, json);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_CX, json, listener);
 			}else{
 				ToastUtils.sendtoastbyhandler(handler,"暂不支持");
 			}
@@ -1053,9 +1056,9 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				spin_kit.setVisibility(View.VISIBLE);
 				text_status.setText(R.string.thirdpay_requesting);
 				if("bank".equals(bankType)){
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json, listener);
 				}else if("store".equals(bankType)){
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_XF, json);
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_XF, json, listener);
 				}
 			}
 		}else if(Type.equals(PaymentTypeEnum.WECHAT.getStyletype())){
@@ -1073,7 +1076,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				ll_paying_status.setVisibility(View.VISIBLE);
 				spin_kit.setVisibility(View.VISIBLE);
 				text_status.setText(R.string.thirdpay_requesting);
-				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.POS_TONG_XF, json);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.POS_TONG_XF, json, listener);
 			}else{
 				Intent intent_qr = new Intent(this, CaptureActivity.class);
 				startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
@@ -1092,7 +1095,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				ll_paying_status.setVisibility(View.VISIBLE);
 				spin_kit.setVisibility(View.VISIBLE);
 				text_status.setText(R.string.thirdpay_requesting);
-				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_XF, json);
+				AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_XF, json, listener);
 			}else{
 				Intent intent_qr = new Intent(this, CaptureActivity.class);
 				startActivityForResult(intent_qr, ConstantData.QRCODE_REQURST_QR_PAY);
@@ -1106,6 +1109,92 @@ public class ThirdPayControllerDialog extends BaseActivity{
 //		}
 
 	}
+
+	IOnTransEndListener listener = new IOnTransEndListener() {
+		@Override
+		public void onEnd(String reslutmsg) {
+			// TODO Auto-generated method stub
+			LogUtil.i("lgs", "AIDL异步返回 result = " + reslutmsg);
+			if(StringUtil.isEmpty(reslutmsg)){
+				imageview_close.setVisibility(View.GONE);
+				ll_paying_by_code.setVisibility(View.GONE);
+				ll_paying_msg.setVisibility(View.GONE);
+				ll_input_money.setVisibility(View.GONE);
+				ll_paying_status.setVisibility(View.VISIBLE);
+				spin_kit.setVisibility(View.GONE);
+				// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+				text_status.setText("银行卡支付异常！");
+				handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+				ToastUtils.sendtoastbyhandler(handler, "银行卡支付异常！");
+			}else{
+				Map<String,String> map = Utils.filterTransResult(reslutmsg);
+				OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE_SUCCESS.getOptLogCode(), map.toString());
+				LogUtil.i("lgs",map.toString());
+				String transId  = map.get("transId");
+				if ("0".equals(map.get(AppHelper.RESULT_CODE))) {
+					java.lang.reflect.Type type = new TypeToken<Map<String, String>>() {
+					}.getType();
+					try {
+						Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+						if ("00".equals(transData.get("resCode"))) {
+							imageview_close.setVisibility(View.GONE);
+							ll_paying_by_code.setVisibility(View.GONE);
+							ll_paying_msg.setVisibility(View.VISIBLE);
+							ll_input_money.setVisibility(View.GONE);
+							ll_paying_status.setVisibility(View.GONE);
+							text_confirm_query.setVisibility(View.GONE);
+							if(transId.equals(ConstantData.YHK_XF)){
+								text_paying_msg.setText("消费："+transData.get("amt")+"元成功");
+							}else if(transId.equals(ConstantData.YHK_CX)){
+								text_paying_msg.setText("撤销："+transData.get("amt")+"元成功");
+							}else if(transId.equals(ConstantData.YHK_CXYE)){
+								text_paying_msg.setText("余额为："+ArithDouble.div(ArithDouble.parseDouble(transData.get("amt")), 100));
+							}else if(transId.equals(ConstantData.YHK_TH)){
+								text_paying_msg.setText("退货退款："+transData.get("amt")+"元成功");
+							}else if(transId.equals(ConstantData.YHK_SIGN)){
+								text_paying_msg.setText("签到成功");
+							}else if(transId.equals(ConstantData.YHK_JS)){
+								text_paying_msg.setText("结算成功");
+							}else if(transId.equals(ConstantData.POS_TONG)){
+								text_paying_msg.setText("消费："+transData.get("amt")+"元成功");
+							}else if(transId.equals(ConstantData.POS_XFCX)){
+								text_paying_msg.setText("撤销："+transData.get("amt")+"元成功");
+							}
+							setFinishOnTouchOutside(true);
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+						} else {
+							imageview_close.setVisibility(View.GONE);
+							ll_paying_by_code.setVisibility(View.GONE);
+							ll_paying_msg.setVisibility(View.GONE);
+							ll_input_money.setVisibility(View.GONE);
+							ll_paying_status.setVisibility(View.VISIBLE);
+							spin_kit.setVisibility(View.GONE);
+							// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+							text_status.setText(transId+":"+transData.get("resDesc"));
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+							ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				} else {
+					String msg = "银行卡返回信息异常";
+					if (!StringUtil.isEmpty(map.get(AppHelper.RESULT_MSG))) {
+						msg = map.get(AppHelper.RESULT_MSG);
+					}
+					imageview_close.setVisibility(View.GONE);
+					ll_paying_by_code.setVisibility(View.GONE);
+					ll_paying_msg.setVisibility(View.GONE);
+					ll_input_money.setVisibility(View.GONE);
+					ll_paying_status.setVisibility(View.VISIBLE);
+					spin_kit.setVisibility(View.GONE);
+					// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+					text_status.setText(msg);
+					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+				}
+			}
+		}
+	};
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -2485,12 +2574,12 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				JSONObject json = new JSONObject();
 				if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
 					if("bank".equals(bankType)){
-						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CXYE, json);
+						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.YHK_SK, ConstantData.YHK_CXYE, json, listener);
 					}else if("store".equals(bankType)){
-						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_CXYE, json);
+						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.STORE, ConstantData.YHK_CXYE, json, listener);
 					}
 				}else if(Type.equals(ConstantData.YXLM_ID)){
-					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_CXYE, json);
+					AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.QMH, ConstantData.YHK_CXYE, json, listener);
 				}
 			}else if (MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
 				new Thread() {

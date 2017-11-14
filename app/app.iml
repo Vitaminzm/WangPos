@@ -95,8 +95,8 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="butterknife-7.0.1" level="project" />
     <orderEntry type="library" exported="" name="SDK_KoolPos_0811" level="project" />
-    <orderEntry type="library" exported="" name="sdk4upos_20161021_mix" level="project" />
     <orderEntry type="library" exported="" name="okio-1.6.0" level="project" />
+    <orderEntry type="library" exported="" name="sdk4upos_20170808_mix" level="project" />
     <orderEntry type="library" exported="" name="PosCoreSDK(0.5.20161010.1570)" level="project" />
     <orderEntry type="library" exported="" name="gson-2.6.2" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-22.1.1" level="project" />

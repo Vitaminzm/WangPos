@@ -64,6 +64,7 @@ import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.MyscollView;
 import com.ums.AppHelper;
+import com.ums.anypay.service.IOnTransEndListener;
 import com.ums.upos.sdk.exception.SdkException;
 import com.ums.upos.sdk.system.BaseSystemManager;
 import com.ums.upos.sdk.system.OnServiceStatusListener;
@@ -417,6 +418,39 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         handler.removeCallbacksAndMessages(null);
         AppConfigFile.delActivity(this);
     }
+
+    IOnTransEndListener listener = new IOnTransEndListener() {
+        @Override
+        public void onEnd(String reslutmsg) {
+            // TODO Auto-generated method stub
+            LogUtil.i("lgs", "AIDL异步返回 result = " + reslutmsg);
+            if(StringUtil.isEmpty(reslutmsg)){
+                ToastUtils.sendtoastdialogbyhandler(handler, "支付异常");
+            }else{
+                Map<String,String> map = Utils.filterTransResult(reslutmsg);
+                LogUtil.i("lgs",map.toString());
+                if ("0".equals(map.get(AppHelper.RESULT_CODE))) {
+                    java.lang.reflect.Type type =new TypeToken<Map<String, String>>(){}.getType();
+                    Map<String, String> transData = null;
+                    try {
+                        transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+                        if(!"00".equals(transData.get("resCode"))){
+                            ToastUtils.sendtoastbyhandler(handler,transData.get("resDesc"));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    String msg = "返回信息异常";
+                    if (!StringUtil.isEmpty(map.get(AppHelper.RESULT_MSG))) {
+                        msg = map.get(AppHelper.RESULT_MSG);
+                    }
+                    ToastUtils.sendtoastbyhandler(handler, "msg");
+                }
+            }
+        }
+    };
+
     public void print_last(String id, String no){
         if(MyApplication.posType.equals(ConstantData.POS_TYPE_W)){
             ToastUtils.sendtoastbyhandler(handler, "暂不支持");
@@ -487,7 +521,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         json.put("traceNo",no);
                     }
                     json.put("isNeedPrintReceipt", false);
-                    AppHelper.callTrans(MainActivity.this, ConstantData.YHK_SK, ConstantData.YHK_JYMX, json);
+                    AppHelper.callTrans(MainActivity.this, ConstantData.YHK_SK, ConstantData.YHK_JYMX, json, listener);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -499,7 +533,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         json.put("traceNo",no);
                     }
                     json.put("isNeedPrintReceipt", false);
-                    AppHelper.callTrans(MainActivity.this, ConstantData.QMH, ConstantData.YHK_JYMX, json);
+                    AppHelper.callTrans(MainActivity.this, ConstantData.QMH, ConstantData.YHK_JYMX, json, listener);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -511,7 +545,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         json.put("traceNo",no);
                     }
                     json.put("isNeedPrintReceipt", false);
-                    AppHelper.callTrans(MainActivity.this, ConstantData.POS_TONG, ConstantData.YHK_JYMX, json);
+                    AppHelper.callTrans(MainActivity.this, ConstantData.POS_TONG, ConstantData.YHK_JYMX, json, listener);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -523,7 +557,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                         json.put("traceNo",no);
                     }
                     json.put("isNeedPrintReceipt", false);
-                    AppHelper.callTrans(MainActivity.this, ConstantData.STORE, ConstantData.YHK_JYMX, json);
+                    AppHelper.callTrans(MainActivity.this, ConstantData.STORE, ConstantData.YHK_JYMX, json, listener);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

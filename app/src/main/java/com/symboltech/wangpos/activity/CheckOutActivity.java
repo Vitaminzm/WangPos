@@ -70,6 +70,7 @@ import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 import com.symboltech.zxing.app.CaptureActivity;
 import com.ums.AppHelper;
+import com.ums.anypay.service.IOnTransEndListener;
 import com.ums.upos.sdk.exception.CallServiceException;
 import com.ums.upos.sdk.exception.SdkException;
 import com.ums.upos.sdk.scanner.OnScanListener;
@@ -273,6 +274,47 @@ public class CheckOutActivity extends BaseActivity {
     private BizServiceInvoker mBizServiceInvoker;
     private ScannerManager scannerManager;
 
+    IOnTransEndListener listener = new IOnTransEndListener() {
+        @Override
+        public void onEnd(String reslutmsg) {
+            // TODO Auto-generated method stub
+            LogUtil.i("lgs", "AIDL异步返回 result = " + reslutmsg);
+            if(StringUtil.isEmpty(reslutmsg)){
+                ToastUtils.sendtoastdialogbyhandler(handler, "支付异常");
+            }else{
+                Map<String,String> map = Utils.filterTransResult(reslutmsg);
+                OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE_SUCCESS.getOptLogCode(), map.toString());
+                LogUtil.i("lgs",map.toString());
+                if("0".equals(map.get(AppHelper.RESULT_CODE))){
+                    Type type =new TypeToken<Map<String, String>>(){}.getType();
+                    try {
+                        Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+                        if("00".equals(transData.get("resCode"))){
+                            OrderBean orderBean= new OrderBean();
+                            if(!StringUtil.isEmpty(transData.get("baseAmt"))){
+                                orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(transData.get("baseAmt")));
+                            }else{
+                                orderBean.setTransAmount(CurrencyUnit.yuan2fenStr(transData.get("amt")));
+                            }
+                            orderBean.setTxnId(transData.get("extOrderNo"));
+                            orderBean.setAccountNo(transData.get("cardNo"));
+                            orderBean.setAcquId(transData.get("cardIssuerCode"));
+                            orderBean.setBatchId(transData.get("traceNo"));
+                            orderBean.setRefNo(transData.get("refNo"));
+                            Message msg = Message.obtain();
+                            msg.what = THIRD_PAY_INFO;
+                            msg.obj = orderBean;
+                            handler.sendMessage(msg);
+                        }else{
+                            ToastUtils.sendtoastdialogbyhandler(handler, transData.get("resDesc"));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    };
     @Override
     protected void initData() {
         allCoupons = new ArrayList<>();
@@ -512,10 +554,10 @@ public class CheckOutActivity extends BaseActivity {
                         }
                         if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())) {
                             OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "营销联盟收款");
-                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json);
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json, listener);
                         }else {
                             OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "银行卡收款");
-                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json);
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json, listener);
                         }
                     }
                 }
@@ -537,7 +579,7 @@ public class CheckOutActivity extends BaseActivity {
                             json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
                             json.put("extOrderNo",tradeNo);
                             OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "储值卡收款");
-                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.STORE, ConstantData.YHK_XF, json);
+                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.STORE, ConstantData.YHK_XF, json, listener);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
