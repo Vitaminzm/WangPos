@@ -486,7 +486,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 }else if (MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
                     String type = getPayTypeById(entity.getSkfsid());
                     final JSONObject json = new JSONObject();
-                    final String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+                    final String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 
                     if(StringUtil.isEmpty(type)){
                         ToastUtils.sendtoastbyhandler(handler, getString(R.string.warning_cannot_return));
@@ -1116,48 +1116,53 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
 
     IOnTransEndListener listener = new IOnTransEndListener() {
         @Override
-        public void onEnd(String reslutmsg) {
+        public void onEnd(final String reslutmsg) {
             // TODO Auto-generated method stub
             LogUtil.i("lgs", "AIDL异步返回 result = " + reslutmsg);
-            BankPayInfo entity = bankStyle.get(bankFlag);
-            if(StringUtil.isEmpty(reslutmsg)){
-                ToastUtils.sendtoastbyhandler(handler, "银行卡撤销异常！");
-            }else{
-                Map<String,String> map = Utils.filterTransResult(reslutmsg);
-                OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE_SUCCESS.getOptLogCode(), map.toString());
-                Type type =new TypeToken<Map<String, String>>(){}.getType();
-                try {
-                    Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
-                    if("00".equals(transData.get("resCode"))){
-                        OrderBean orderBean= new OrderBean();
-                        entity.setDes("true");
-                        putPayments(entity.getSkfsid(), getPayNameById(entity.getSkfsid()), getPayTypeById(entity.getSkfsid()), "-" + entity.getAmount());
-                        orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(entity.getAmount()));
-                        orderBean.setTxnId(transData.get("extOrderNo"));
-                        orderBean.setAccountNo(transData.get("cardNo"));
-                        orderBean.setAcquId(transData.get("cardIssuerCode"));
-                        orderBean.setBatchId(transData.get("traceNo"));
-                        orderBean.setRefNo(transData.get("refNo"));
-                        orderBean.setPaymentId(entity.getSkfsid());
-                        orderBean.setTransType(ConstantData.TRANS_RETURN);
-                        orderBean.setTraceId(AppConfigFile.getBillId());
-                        Intent serviceintent = new Intent(mContext, RunTimeService.class);
-                        serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
-                        serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
-                        startService(serviceintent);
-                        bankFlag += 1;
-                        if (bankFlag < bankStyle.size()) {
-                            returnBank();
-                        } else {
-                            returnAlipay();
-                        }
+            ReturnMoneyByOrderActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    BankPayInfo entity = bankStyle.get(bankFlag);
+                    if(StringUtil.isEmpty(reslutmsg)){
+                        ToastUtils.sendtoastbyhandler(handler, "银行卡撤销异常！");
                     }else{
-                        ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
+                        Map<String,String> map = Utils.filterTransResult(reslutmsg);
+                        OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE_SUCCESS.getOptLogCode(), map.toString());
+                        Type type =new TypeToken<Map<String, String>>(){}.getType();
+                        try {
+                            Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
+                            if("00".equals(transData.get("resCode"))){
+                                OrderBean orderBean= new OrderBean();
+                                entity.setDes("true");
+                                putPayments(entity.getSkfsid(), getPayNameById(entity.getSkfsid()), getPayTypeById(entity.getSkfsid()), "-" + entity.getAmount());
+                                orderBean.setAccountNo(CurrencyUnit.yuan2fenStr(entity.getAmount()));
+                                orderBean.setTxnId(transData.get("extOrderNo"));
+                                orderBean.setAccountNo(transData.get("cardNo"));
+                                orderBean.setAcquId(transData.get("cardIssuerCode"));
+                                orderBean.setBatchId(transData.get("traceNo"));
+                                orderBean.setRefNo(transData.get("refNo"));
+                                orderBean.setPaymentId(entity.getSkfsid());
+                                orderBean.setTransType(ConstantData.TRANS_RETURN);
+                                orderBean.setTraceId(AppConfigFile.getBillId());
+                                Intent serviceintent = new Intent(mContext, RunTimeService.class);
+                                serviceintent.putExtra(ConstantData.SAVE_THIRD_DATA, true);
+                                serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
+                                startService(serviceintent);
+                                bankFlag += 1;
+                                if (bankFlag < bankStyle.size()) {
+                                    returnBank();
+                                } else {
+                                    returnAlipay();
+                                }
+                            }else{
+                                ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
-            }
+            });
         }
     };
 

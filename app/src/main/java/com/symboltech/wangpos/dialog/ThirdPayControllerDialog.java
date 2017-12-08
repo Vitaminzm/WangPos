@@ -293,6 +293,8 @@ public class ThirdPayControllerDialog extends BaseActivity{
 	public static final int  TRANS_AGAIN = 1;
 	public static final int  TRANS_CANCLE = 2;
 	public static final int  TRANS_FINISH = 3;
+	public static final int  TRANS_ERR = 4;
+	public static final int  TRANS_SUCC = 5;
 	static class MyHandler extends Handler {
 		WeakReference<BaseActivity> mActivity;
 
@@ -316,12 +318,37 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				case TRANS_FINISH:
 					((ThirdPayControllerDialog)theActivity).handleTransResult(true, (String) msg.obj);
 					break;
+				case TRANS_ERR:
+					((ThirdPayControllerDialog)theActivity).transErr(msg.obj.toString());
+					break;
+				case TRANS_SUCC:
+					((ThirdPayControllerDialog)theActivity).transSucc(msg.obj.toString());
+					break;
 			}
 		}
 	}
 
 	MyHandler handler = new MyHandler(this);
 
+	public void transSucc(String  msg){
+		imageview_close.setVisibility(View.GONE);
+		ll_paying_by_code.setVisibility(View.GONE);
+		ll_paying_msg.setVisibility(View.VISIBLE);
+		ll_input_money.setVisibility(View.GONE);
+		ll_paying_status.setVisibility(View.GONE);
+		text_confirm_query.setVisibility(View.GONE);
+		text_paying_msg.setText(msg);
+	}
+	public void transErr(String msg){
+		imageview_close.setVisibility(View.GONE);
+		ll_paying_by_code.setVisibility(View.GONE);
+		ll_paying_msg.setVisibility(View.GONE);
+		ll_input_money.setVisibility(View.GONE);
+		ll_paying_status.setVisibility(View.VISIBLE);
+		spin_kit.setVisibility(View.GONE);
+		// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
+		text_status.setText(msg);
+	}
 	public void initUi(){
 		trade_no = null;
 		setFinishOnTouchOutside(true);
@@ -738,7 +765,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 					if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
 						JSONObject json = new JSONObject();
-						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 						try {
 							json.put("amt",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
 							json.put("refNo",trade_no);
@@ -758,7 +785,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 						}
 					}else if(Type.equals(PaymentTypeEnum.WECHAT.getStyletype())){
 						JSONObject json = new JSONObject();
-						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 						try {
 							json.put("amt",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
 							json.put("refNo",trade_no);
@@ -774,7 +801,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 						AppHelper.callTrans(ThirdPayControllerDialog.this, ConstantData.POS_TONG, ConstantData.YHK_TH, json, listener);
 					}else if(Type.equals(ConstantData.YXLM_ID)){
 						JSONObject json = new JSONObject();
-						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+						String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 						try {
 							json.put("amt",CurrencyUnit.yuan2fenStr(edit_money.getText().toString()));
 							json.put("refNo",trade_no);
@@ -915,7 +942,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		if(Type.equals(PaymentTypeEnum.BANK.getStyletype())){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				JSONObject json = new JSONObject();
-				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 				try {
 					json.put("orgTraceNo",edit_money.getText().toString());
 					json.put("extOrderNo", tradeNo);
@@ -933,7 +960,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		}else if((Type.equals(PaymentTypeEnum.WECHAT.getStyletype()))){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				JSONObject json = new JSONObject();
-				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 				try {
 					json.put("oldTraceNo",edit_money.getText().toString());
 					json.put("extOrderNo", tradeNo);
@@ -1015,7 +1042,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		}else if((Type.equals(ConstantData.YXLM_ID))){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				JSONObject json = new JSONObject();
-				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 				try {
 					json.put("orgTraceNo",edit_money.getText().toString());
 					json.put("extOrderNo", tradeNo);
@@ -1044,7 +1071,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 				requestCashier(CurrencyUnit.yuan2fenStr(money + ""));
 			}else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				JSONObject json = new JSONObject();
-				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 				try {
 					json.put("amt",CurrencyUnit.yuan2fenStr(money + ""));//TODO 金额格式
 					json.put("extOrderNo",tradeNo);
@@ -1064,7 +1091,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		}else if(Type.equals(PaymentTypeEnum.WECHAT.getStyletype())){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				JSONObject json = new JSONObject();
-				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 				try {
 					json.put("amt",CurrencyUnit.yuan2fenStr(money + ""));//TODO 金额格式
 					json.put("extOrderNo",tradeNo);
@@ -1084,7 +1111,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		}else if(Type.equals(ConstantData.YXLM_ID)){
 			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 				JSONObject json = new JSONObject();
-				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
+				String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
 				try {
 					json.put("amt",CurrencyUnit.yuan2fenStr(money + ""));//TODO 金额格式
 					json.put("extOrderNo",tradeNo);
@@ -1115,15 +1142,11 @@ public class ThirdPayControllerDialog extends BaseActivity{
 		public void onEnd(String reslutmsg) {
 			// TODO Auto-generated method stub
 			LogUtil.i("lgs", "AIDL异步返回 result = " + reslutmsg);
+			Message msg = Message.obtain();
 			if(StringUtil.isEmpty(reslutmsg)){
-				imageview_close.setVisibility(View.GONE);
-				ll_paying_by_code.setVisibility(View.GONE);
-				ll_paying_msg.setVisibility(View.GONE);
-				ll_input_money.setVisibility(View.GONE);
-				ll_paying_status.setVisibility(View.VISIBLE);
-				spin_kit.setVisibility(View.GONE);
-				// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
-				text_status.setText("银行卡支付异常！");
+				msg.what = TRANS_ERR;
+				msg.obj = "银行卡支付异常！";
+				handler.sendMessage(msg);
 				handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 				ToastUtils.sendtoastbyhandler(handler, "银行卡支付异常！");
 			}else{
@@ -1137,59 +1160,49 @@ public class ThirdPayControllerDialog extends BaseActivity{
 					try {
 						Map<String, String> transData = GsonUtil.jsonToObect(map.get(AppHelper.TRANS_DATA), type);
 						if ("00".equals(transData.get("resCode"))) {
-							imageview_close.setVisibility(View.GONE);
-							ll_paying_by_code.setVisibility(View.GONE);
-							ll_paying_msg.setVisibility(View.VISIBLE);
-							ll_input_money.setVisibility(View.GONE);
-							ll_paying_status.setVisibility(View.GONE);
-							text_confirm_query.setVisibility(View.GONE);
-							if(transId.equals(ConstantData.YHK_XF)){
-								text_paying_msg.setText("消费："+transData.get("amt")+"元成功");
+							String text = "";
+							if (transId.equals(ConstantData.YHK_XF)){
+								text = "消费："+transData.get("amt")+"元成功";
 							}else if(transId.equals(ConstantData.YHK_CX)){
-								text_paying_msg.setText("撤销："+transData.get("amt")+"元成功");
+								text = "撤销："+transData.get("amt")+"元成功";
 							}else if(transId.equals(ConstantData.YHK_CXYE)){
-								text_paying_msg.setText("余额为："+ArithDouble.div(ArithDouble.parseDouble(transData.get("amt")), 100));
+								text = "余额为："+ArithDouble.div(ArithDouble.parseDouble(transData.get("amt")), 100);
 							}else if(transId.equals(ConstantData.YHK_TH)){
-								text_paying_msg.setText("退货退款："+transData.get("amt")+"元成功");
+								text = "退货退款："+transData.get("amt")+"元成功";
 							}else if(transId.equals(ConstantData.YHK_SIGN)){
-								text_paying_msg.setText("签到成功");
+								text = "签到成功";
 							}else if(transId.equals(ConstantData.YHK_JS)){
-								text_paying_msg.setText("结算成功");
+								text = "结算成功";
 							}else if(transId.equals(ConstantData.POS_TONG)){
-								text_paying_msg.setText("消费："+transData.get("amt")+"元成功");
+								text = "消费："+transData.get("amt")+"元成功";
 							}else if(transId.equals(ConstantData.POS_XFCX)){
-								text_paying_msg.setText("撤销："+transData.get("amt")+"元成功");
+								text = "撤销："+transData.get("amt")+"元成功";
 							}
+							msg.what = TRANS_SUCC;
+							msg.obj = text;
+							handler.sendMessage(msg);
 							setFinishOnTouchOutside(true);
-							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
+							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 4000);
 						} else {
-							imageview_close.setVisibility(View.GONE);
-							ll_paying_by_code.setVisibility(View.GONE);
-							ll_paying_msg.setVisibility(View.GONE);
-							ll_input_money.setVisibility(View.GONE);
-							ll_paying_status.setVisibility(View.VISIBLE);
-							spin_kit.setVisibility(View.GONE);
+							msg.what = TRANS_ERR;
+							msg.obj = transId+":"+transData.get("resDesc");
+							handler.sendMessage(msg);
 							// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
-							text_status.setText(transId+":"+transData.get("resDesc"));
 							handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 							ToastUtils.sendtoastbyhandler(handler, transData.get("resDesc"));
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
+						LogUtil.i("lgs",e.toString());
 					}
 				} else {
-					String msg = "银行卡返回信息异常";
+					String msg1 = "银行卡返回信息异常";
 					if (!StringUtil.isEmpty(map.get(AppHelper.RESULT_MSG))) {
-						msg = map.get(AppHelper.RESULT_MSG);
+						msg1 = map.get(AppHelper.RESULT_MSG);
 					}
-					imageview_close.setVisibility(View.GONE);
-					ll_paying_by_code.setVisibility(View.GONE);
-					ll_paying_msg.setVisibility(View.GONE);
-					ll_input_money.setVisibility(View.GONE);
-					ll_paying_status.setVisibility(View.VISIBLE);
-					spin_kit.setVisibility(View.GONE);
-					// 交易取消（超时、手动取消、联网交易密码错、余额不足、发卡行不允许~~~）
-					text_status.setText(msg);
+					msg.what = TRANS_ERR;
+					msg.obj = msg1;
+					handler.sendMessage(msg);
 					handler.sendEmptyMessageDelayed(TRANS_AGAIN, 2000);
 				}
 			}

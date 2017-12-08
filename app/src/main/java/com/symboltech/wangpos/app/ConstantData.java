@@ -548,4 +548,6 @@ public class ConstantData {
 	public static final String YHK_JS = "结算";
 	/** 签到*/
 	public static final String YHK_SIGN = "签到";
+
+
 }

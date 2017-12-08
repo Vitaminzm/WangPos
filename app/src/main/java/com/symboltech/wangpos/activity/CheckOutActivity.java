@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.reflect.TypeToken;
 import com.symboltech.koolcloud.transmodel.OrderBean;
@@ -31,13 +32,16 @@ import com.symboltech.wangpos.dialog.AddPayinfoDialog;
 import com.symboltech.wangpos.dialog.AlipayAndWeixinPayControllerInterfaceDialog;
 import com.symboltech.wangpos.dialog.CanclePayDialog;
 import com.symboltech.wangpos.dialog.ChangeModeDialog;
+import com.symboltech.wangpos.dialog.PaySearchDialog;
 import com.symboltech.wangpos.dialog.RecordPayDialog;
 import com.symboltech.wangpos.dialog.ThirdPayDialog;
 import com.symboltech.wangpos.dialog.VerifyAuthDialog;
+import com.symboltech.wangpos.dialog.WaringDialog;
 import com.symboltech.wangpos.http.GsonUtil;
 import com.symboltech.wangpos.http.HttpActionHandle;
 import com.symboltech.wangpos.http.HttpRequestUtil;
 import com.symboltech.wangpos.interfaces.CancleAndConfirmback;
+import com.symboltech.wangpos.interfaces.DialogFinishCallBack;
 import com.symboltech.wangpos.interfaces.GeneralEditListener;
 import com.symboltech.wangpos.interfaces.KeyBoardListener;
 import com.symboltech.wangpos.log.LogUtil;
@@ -158,6 +162,8 @@ public class CheckOutActivity extends BaseActivity {
     private double payLing = 0;
     private double paymentMoney;
 
+
+    public String extOrderNo = null;
     public static final int THIRD_PAY_INFO = 1;
     public static final int ALREADY_THIRD_PAY_INFO = 2;
     public static final int PAY_SUCCESS = 900;
@@ -213,6 +219,10 @@ public class CheckOutActivity extends BaseActivity {
                     break;
                 case THIRD_PAY_INFO:
                     OrderBean orderBean = (OrderBean)msg.obj;
+                    if(isContainBank(orderBean.getTxnId(), payMentsCancle)){
+                        Toast.makeText(CheckOutActivity.this,"已经支付数据不能重复添加", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     orderBean.setPaymentId(paymentTypeAdapter.getPayType().getId());
                     orderBean.setTransType(ConstantData.TRANS_SALE);
                     orderBean.setTraceId(AppConfigFile.getBillId());
@@ -315,6 +325,8 @@ public class CheckOutActivity extends BaseActivity {
             }
         }
     };
+
+
     @Override
     protected void initData() {
         allCoupons = new ArrayList<>();
@@ -543,21 +555,45 @@ public class CheckOutActivity extends BaseActivity {
                         intent.putExtra(ConstantData.PAY_TYPE, paymentTypeAdapter.getPayType().getType());
                         startActivityForResult(intent, ConstantData.THRID_PAY_REQUEST_CODE);
                     }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-
-                        JSONObject json = new JSONObject();
-                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-                        try {
-                            json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
-                            json.put("extOrderNo",tradeNo);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())) {
-                            OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "营销联盟收款");
-                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json, listener);
-                        }else {
-                            OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "银行卡收款");
-                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json, listener);
+                        if(StringUtil.isEmpty(extOrderNo)){
+                            JSONObject json = new JSONObject();
+                            String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
+                            extOrderNo = tradeNo;
+                            try {
+                                json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                                json.put("extOrderNo",tradeNo);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())) {
+                                OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "营销联盟收款");
+                                AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json, listener);
+                            }else {
+                                OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "银行卡收款");
+                                AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json, listener);
+                            }
+                        }else{
+                            new WaringDialog(CheckOutActivity.this, new DialogFinishCallBack() {
+                                @Override
+                                public void finish(int position) {
+                                    JSONObject json = new JSONObject();
+                                    String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
+                                    extOrderNo = tradeNo;
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                                        json.put("extOrderNo",tradeNo);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    if(ConstantData.YXLM_ID.equals(paymentTypeAdapter.getPayType().getId())) {
+                                        OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "营销联盟收款");
+                                        AppHelper.callTrans(CheckOutActivity.this, ConstantData.QMH, ConstantData.YHK_XF, json, listener);
+                                    }else {
+                                        OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "银行卡收款");
+                                        AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_XF, json, listener);
+                                    }
+                                }
+                            }).show();
                         }
                     }
                 }
@@ -573,15 +609,35 @@ public class CheckOutActivity extends BaseActivity {
                     }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_K)){
                         ToastUtils.sendtoastbyhandler(handler,"暂不支持！");
                     }else if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
-                        JSONObject json = new JSONObject();
-                        String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyyMMddHHmmss") + AppConfigFile.getBillId();
-                        try {
-                            json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
-                            json.put("extOrderNo",tradeNo);
-                            OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "储值卡收款");
-                            AppHelper.callTrans(CheckOutActivity.this, ConstantData.STORE, ConstantData.YHK_XF, json, listener);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        if(StringUtil.isEmpty(extOrderNo)){
+                            JSONObject json = new JSONObject();
+                            String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
+                            extOrderNo = tradeNo;
+                            try {
+                                json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                                json.put("extOrderNo",tradeNo);
+                                OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "储值卡收款");
+                                AppHelper.callTrans(CheckOutActivity.this, ConstantData.STORE, ConstantData.YHK_XF, json, listener);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else{
+                            new WaringDialog(CheckOutActivity.this, new DialogFinishCallBack() {
+                                @Override
+                                public void finish(int position) {
+                                    JSONObject json = new JSONObject();
+                                    String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
+                                    extOrderNo = tradeNo;
+                                    try {
+                                        json.put("amt",CurrencyUnit.yuan2fenStr(paymentMoney + ""));//TODO 金额格式
+                                        json.put("extOrderNo",tradeNo);
+                                        OperateLog.getInstance().saveLog2File(OptLogEnum.BANK_TRADE.getOptLogCode(), "储值卡收款");
+                                        AppHelper.callTrans(CheckOutActivity.this, ConstantData.STORE, ConstantData.YHK_XF, json, listener);
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }).show();
                         }
                     }
                 }
@@ -930,43 +986,63 @@ public class CheckOutActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.tv_pay_search:
-                Map<String, String> map = new HashMap<String, String>();
-                map.put("billid", AppConfigFile.getBillId());
-                HttpRequestUtil.getinstance().searchPayinfo(HTTP_TASK_KEY, map, ThirdPayInfoResult.class, new HttpActionHandle<ThirdPayInfoResult>() {
+                new PaySearchDialog(CheckOutActivity.this, new DialogFinishCallBack() {
                     @Override
-                    public void handleActionError(String actionName, String errmsg) {
-                        ToastUtils.sendtoastbyhandler(handler, errmsg);
-                    }
-
-                    @Override
-                    public void handleActionSuccess(String actionName, ThirdPayInfoResult result) {
-
-                        if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
-                            if (result != null && result.getThirdPayInfo() != null && result.getThirdPayInfo().size() > 0) {
-                                Message msg = Message.obtain();
-                                msg.what = ALREADY_THIRD_PAY_INFO;
-                                msg.obj = result.getThirdPayInfo();
-                                handler.sendMessage(msg);
-                            } else {
-                                ToastUtils.sendtoastbyhandler(handler, "没有交易记录");
+                    public void finish(int position) {
+                        if(position==0){
+                            if(StringUtil.isEmpty(extOrderNo)){
+                                ToastUtils.sendtoastbyhandler(handler, "没有交易，查询失败");
+                                return;
                             }
-                        } else {
-                            ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                            JSONObject json = new JSONObject();
+                            try {
+                                json.put("extOrderNo", extOrderNo);
+                                json.put("isNeedPrintReceipt", true);
+                                AppHelper.callTrans(CheckOutActivity.this, ConstantData.YHK_SK, ConstantData.YHK_JYMX, json, listener);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else if(position==1){
+                            Map<String, String> map = new HashMap<String, String>();
+                            map.put("billid", AppConfigFile.getBillId());
+                            HttpRequestUtil.getinstance().searchPayinfo(HTTP_TASK_KEY, map, ThirdPayInfoResult.class, new HttpActionHandle<ThirdPayInfoResult>() {
+                                @Override
+                                public void handleActionError(String actionName, String errmsg) {
+                                    ToastUtils.sendtoastbyhandler(handler, errmsg);
+                                }
+
+                                @Override
+                                public void handleActionSuccess(String actionName, ThirdPayInfoResult result) {
+
+                                    if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
+                                        if (result != null && result.getThirdPayInfo() != null && result.getThirdPayInfo().size() > 0) {
+                                            Message msg = Message.obtain();
+                                            msg.what = ALREADY_THIRD_PAY_INFO;
+                                            msg.obj = result.getThirdPayInfo();
+                                            handler.sendMessage(msg);
+                                        } else {
+                                            ToastUtils.sendtoastbyhandler(handler, "没有交易记录");
+                                        }
+                                    } else {
+                                        ToastUtils.sendtoastbyhandler(handler, result.getMsg());
+                                    }
+                                }
+
+                                @Override
+                                public void handleActionStart() {
+                                    super.handleActionStart();
+                                    startwaitdialog();
+                                }
+
+                                @Override
+                                public void handleActionFinish() {
+                                    super.handleActionFinish();
+                                    closewaitdialog();
+                                }
+                            });
                         }
                     }
-
-                    @Override
-                    public void handleActionStart() {
-                        super.handleActionStart();
-                        startwaitdialog();
-                    }
-
-                    @Override
-                    public void handleActionFinish() {
-                        super.handleActionFinish();
-                        closewaitdialog();
-                    }
-                });
+                }).show();
                 break;
         }
     }
@@ -1042,6 +1118,22 @@ public class CheckOutActivity extends BaseActivity {
         for (PayMentsCancleInfo info : payMentsCancle) {
             if (info.getThridPay() != null && !StringUtil.isEmpty(info.getThridPay().getTrade_no())) {
                 if(code.equals(info.getThridPay().getTrade_no())){
+                    ret = true;
+                    break;
+                }
+            }
+        }
+        return ret;
+    }
+
+    private boolean isContainBank(String code, List<PayMentsCancleInfo> payMentsCancle){
+        boolean ret = false;
+        if(StringUtil.isEmpty(code) || payMentsCancle.size() == 0){
+            return ret;
+        }
+        for (PayMentsCancleInfo info : payMentsCancle) {
+            if (!StringUtil.isEmpty(info.getTxnid())) {
+                if(code.equals(info.getTxnid())){
                     ret = true;
                     break;
                 }

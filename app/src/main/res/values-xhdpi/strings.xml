@@ -169,10 +169,15 @@
     <string name="done">完成</string>
     <string name="edit">编辑</string>
     <string name="print_bill">打印小票</string>
+    <string name="waring_help_title">温馨提示</string>
+    <string name="waring_help">已经有过刷卡支付，如果无返回结果请先查询</string>
+    <string name="waring_help_c">是否忽略继续交易？</string>
     <string name="waring_no_coupon_msg">没有获得优惠券</string>
     <string name="waring_please_selected">请选择一张优惠券</string>
     <string name="waring_cannot_print_msg">当前券不可打印</string>
 
+
+    <string name="choice_search">选择查询</string>
     <!--选择停车牌 -->
     <string name="bing_plate">已绑定车牌</string>
     <string name="temporary_plate">临时车牌</string>
