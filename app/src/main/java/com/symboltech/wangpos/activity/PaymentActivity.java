@@ -516,7 +516,7 @@ public class PaymentActivity extends BaseActivity {
             return;
         }
         startwaitdialog();
-        new Thread(new Runnable() {
+        PaymentActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 boolean isFind = false;
@@ -550,7 +550,7 @@ public class PaymentActivity extends BaseActivity {
                     ToastUtils.sendtoastbyhandler(handler, "未找到该商品");
                 }
             }
-        }).start();
+        });
     }
 
     public void getGoodsZkl(final int position, final String price){
