@@ -115,7 +115,9 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 					callback.getPayValue((ThirdPay) msg.obj);
 				break;
 			case 7://查询
-				trade_no = (String) msg.obj;
+				if(!StringUtil.isEmpty((String) msg.obj)){
+					trade_no = (String) msg.obj;
+				}
 				ll_thirdpay_money_input.setVisibility(View.GONE);
 				ll_thirdpay_hint.setVisibility(View.VISIBLE);
 				stopPay();
@@ -414,7 +416,6 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 						ToastUtils.sendtoastbyhandler(handler, errmsg);
 						Message message=Message.obtain();
 						message.what = 7;
-						message.obj = errmsg;
 						handler.sendMessage(message);
 					}
 
@@ -429,15 +430,14 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 //								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_QUERY_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_query_success));
 //							}
 							ToastUtils.sendtoastbyhandler(handler,"支付完成");
-							AlipayAndWeixinPayControllerInterfaceDialog.this.dismiss();
-							if(callback != null){
-								ThirdPay thirdPay = new ThirdPay();
-								thirdPay.setPay_total_fee(result.getThirdpayquery().getTotal_fee());
-								thirdPay.setTrade_no(result.getThirdpayquery().getTrade_no());
-								thirdPay.setSkfsid(result.getThirdpayquery().getSkfsid());
-								callback.getPayValue(thirdPay);
-							}
-								
+							ThirdPay thirdPay = new ThirdPay();
+							thirdPay.setPay_total_fee(result.getThirdpayquery().getTotal_fee());
+							thirdPay.setTrade_no(result.getThirdpayquery().getTrade_no());
+							thirdPay.setSkfsid(result.getThirdpayquery().getSkfsid());
+							Message message=Message.obtain();
+							message.what = 6;
+							message.obj = thirdPay;
+							handler.sendMessage(message);
 						} else if (ConstantData.HTTP_RESPONSE_THIRDPAY_WAIT.equals(result.getCode())) {
 							Message message=Message.obtain();
 							message.what = 7;
@@ -706,8 +706,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 				// TODO Auto-generated method stub
 				ToastUtils.sendtoastbyhandler(handler, errmsg);
 				Message message=Message.obtain();
-				message.what = 7;
-				message.obj = errmsg;
+				message.what = 5;
 				handler.sendMessage(message);
 			}
 

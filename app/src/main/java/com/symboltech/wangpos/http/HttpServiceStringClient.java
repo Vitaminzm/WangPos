@@ -41,7 +41,7 @@ import okhttp3.Response;
 public class HttpServiceStringClient {
 	private static HttpServiceStringClient httpServiceStringRequest;
 	private static OkHttpClient httpServiceClient ;
-	private static final int TIMEOUT_MS_DEFAULT = 40 *1000;
+	private static final int TIMEOUT_MS_DEFAULT = 60 *1000;
 	private static final int MAX_RETRIES = 0;
 	private static final int BACKOFF_MULT = 0;
 

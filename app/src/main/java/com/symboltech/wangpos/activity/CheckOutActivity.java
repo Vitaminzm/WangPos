@@ -58,6 +58,7 @@ import com.symboltech.wangpos.msg.entity.SubmitGoods;
 import com.symboltech.wangpos.msg.entity.ThirdPay;
 import com.symboltech.wangpos.msg.entity.ThirdPayInfo;
 import com.symboltech.wangpos.msg.entity.WposPayInfo;
+import com.symboltech.wangpos.print.PrepareReceiptInfo;
 import com.symboltech.wangpos.result.SaveOrderResult;
 import com.symboltech.wangpos.result.ThirdPayInfoResult;
 import com.symboltech.wangpos.service.RunTimeService;
@@ -1293,12 +1294,13 @@ public class CheckOutActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+
     private void doThirdPay(String qrCode){
         AlipayAndWeixinPayControllerInterfaceDialog paydialog = new AlipayAndWeixinPayControllerInterfaceDialog(this, paymentTypeAdapter.getPayType().getId(), paytype, ConstantData.THIRD_OPERATION_PAY, qrCode, paymentMoney, true,
                 new AlipayAndWeixinPayControllerInterfaceDialog.GetPayValue() {
 
                     @Override
-                    public void getPayValue(ThirdPay value) {
+                    public void getPayValue(final ThirdPay value) {
                         LogUtil.i("lgs","--------1-------");
                         PayMentsInfo payMentsInfo = getPayInfoById(value.getSkfsid());
                         PayMentsCancleInfo info = new PayMentsCancleInfo();
@@ -1306,10 +1308,12 @@ public class CheckOutActivity extends BaseActivity {
                             info.setId(value.getSkfsid());
                             info.setName("异常支付");
                             info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
+                            value.setPay_type("支付宝");
                         }else{
                             info.setId(payMentsInfo.getId());
                             info.setName(payMentsInfo.getName());
                             info.setType(payMentsInfo.getType());
+                            value.setPay_type(payMentsInfo.getName());
                         }
                         info.setIsCancle(false);
                         info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
@@ -1319,6 +1323,24 @@ public class CheckOutActivity extends BaseActivity {
                         waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
                         text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                         edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                        try {
+                            BaseSystemManager.getInstance().deviceServiceLogin(
+                                    CheckOutActivity.this, null, "99999998",//设备ID，生产找后台配置
+                                    new OnServiceStatusListener() {
+                                        @Override
+                                        public void onStatus(int arg0) {//arg0可见ServiceResult.java
+                                            if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
+                                                MyApplication.isPrint = true;
+                                                PrepareReceiptInfo.printThirdBill(value, false, null);
+                                            }else{
+                                                ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
+                                            }
+                                        }
+                                    });
+                        } catch (SdkException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
                         //handler.sendEmptyMessage(PAY_SUCCESS);
                     }
                 });

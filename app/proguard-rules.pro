@@ -21,8 +21,11 @@
 -dontskipnonpubliclibraryclasses
 -dontpreverify
 -verbose
+-dontwarn
 -optimizations !code/simplification/arithmetic,!field/*,!class/merging/*
 
+-dontwarn com.ums.**
+-dontwarn cn.weipass.**
 -dontwarn android.support.v4.**
 -keep class android.support.v4.** { *; }
 -keep interface android.support.v4.app.** { *; }

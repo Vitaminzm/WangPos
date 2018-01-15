@@ -41,7 +41,7 @@ import okhttp3.Response;
 public class HttpStringClient {
 	private static HttpStringClient httpStringRequest;
 	private static OkHttpClient httpClient ;
-	private static final int TIMEOUT_MS_DEFAULT = 70 * 1000;
+	private static final int TIMEOUT_MS_DEFAULT = 90 * 1000;
 	private static final int MAX_RETRIES = 0;
 	private static final int BACKOFF_MULT = 0;
 
@@ -217,7 +217,8 @@ public class HttpStringClient {
 	 *
 	 * @return ObjectMapper
 	 */
-	public Gson getGson() {
+	public Gson
+	getGson() {
 		Gson gson = new GsonBuilder().serializeNulls().create();
 		return gson;
 	}

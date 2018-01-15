@@ -25,6 +25,7 @@ import com.symboltech.wangpos.msg.entity.RefundReportInfo;
 import com.symboltech.wangpos.msg.entity.ReportDetailInfo;
 import com.symboltech.wangpos.msg.entity.ReportInfo;
 import com.symboltech.wangpos.msg.entity.SaleReportInfo;
+import com.symboltech.wangpos.msg.entity.ThirdPay;
 import com.symboltech.wangpos.msg.entity.TicketFormatInfo.Tickdatas;
 import com.symboltech.wangpos.msg.entity.TicketFormatInfo.Tickdatas.TickbasicEntity;
 import com.symboltech.wangpos.msg.entity.TicketFormatInfo.Tickdatas.TickbasicEntity.ConditionindexEntity;
@@ -199,7 +200,7 @@ public class PrepareReceiptInfo {
 			}else{
 				fontConfig.setSize(FontSizeEnum.MIDDLE);
 				try {
-					printer.setPrnText("-------------------------------", fontConfig);
+					printer.setPrnText("--------------------------------------", fontConfig);
 				} catch (CallServiceException e) {
 					e.printStackTrace();
 				} catch (SdkException e) {
@@ -312,7 +313,7 @@ public class PrepareReceiptInfo {
 					fontConfig.setSize(FontSizeEnum.MIDDLE);
 				}
 				try {
-					printer.setPrnText(StringUtil.formatLString(16, textLeftAlign)+StringUtil.formatLString(10, textRightAlign.replace("	", "")), fontConfig);
+					printer.setPrnText(StringUtil.formatLString(14, textLeftAlign)+StringUtil.formatLString(10, textRightAlign.replace("	", "")), fontConfig);
 				} catch (CallServiceException e) {
 					e.printStackTrace();
 				} catch (SdkException e) {
@@ -2598,6 +2599,89 @@ public class PrepareReceiptInfo {
 		}
 		return jsonObject;
 	}
+
+	public static JSONObject printThirdBill(ThirdPay thirdpay, Boolean mend, LatticePrinter latticePrinter) {
+		PrinterManager printer = null;
+		FontConfig fontConfig = null;
+		if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
+			printer = new PrinterManager();
+			try {
+				printer.initPrinter();
+			} catch (SdkException e) {
+				e.printStackTrace();
+			} catch (CallServiceException e) {
+				e.printStackTrace();
+			}
+			fontConfig = new FontConfig();
+			fontConfig.setBold(BoldEnum.BOLD);//不加粗
+			fontConfig.setSize(FontSizeEnum.MIDDLE);//小号字体
+		}
+		JSONArray array = new JSONArray();
+		String name="";
+		String type="消费";
+		if(!StringUtil.isEmpty(thirdpay.getPay_type())){
+			name =thirdpay.getPay_type();
+		}
+		addTextJson(array, latticePrinter, FONT_DEFAULT, name + "签购单", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		if (mend) {
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "-----------补打小票-----------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		} else {
+			addDashLine(array, latticePrinter, printer, fontConfig);
+		}
+		addMultiTextJson(array, latticePrinter, FONT_DEFAULT, "收款台：" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_DESK_CODE, ""), "收款员：" + SpSaveUtils.read(MyApplication.context, ConstantData.PERSON_XTM, ""), printer, fontConfig);
+		addMultiTextJson(array, latticePrinter, FONT_DEFAULT, "小票号：" + SpSaveUtils.read(MyApplication.context, ConstantData.RECEIPT_NUMBER, ""), "交易类型：" + type, printer, fontConfig);
+		addDashLine(array, latticePrinter, printer, fontConfig);
+
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "商户名称：" + thirdpay.getShopname(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "商户编号：" + thirdpay.getShopcode(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "终端编号：" + thirdpay.getTerminalid(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "操作时间：" + thirdpay.getPaytime(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "交易单号：" + thirdpay.getOtherpayorderno(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "商户单号：" + thirdpay.getUnitpayorderno(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "交易金额：" + ArithDouble.parseDouble(thirdpay.getPay_total_fee()) / 100, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		addDashLine(array, latticePrinter, printer, fontConfig);
+		if (mend) {
+			addDashLine(array, latticePrinter, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打收款员：" + SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "补打时间：" + Utils.formatDate(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss"), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		}
+		addBlankLine(array, latticePrinter, printer, fontConfig);
+		JSONObject jsonObject = new JSONObject();
+		if(latticePrinter!= null){
+			// 真正提交打印事件
+			latticePrinter.submitPrint();
+		}else{
+			if(printer == null){
+				try {
+					jsonObject.put("page", array);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}else{
+				try {
+					printer.startPrint(new OnPrintResultListener(){
+						@Override
+						public void onPrintResult(int arg0) {//arg0可见ServiceResult.java
+							//登出，以免占用U架构服务
+							try {
+								MyApplication.isPrint = false;
+								BaseSystemManager.getInstance().deviceServiceLogout();
+							} catch (SdkException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					});
+				} catch (SdkException e) {
+					e.printStackTrace();
+				} catch (CallServiceException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return jsonObject;
+	}
+
 
 
 	public static class PrintString{

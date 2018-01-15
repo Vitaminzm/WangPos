@@ -141,7 +141,7 @@ public class PaymentActivity extends BaseActivity {
     //会员信息
     private AllMemberInfo memberBigdate;
     //用来记录哪个商品被选中
-    private int position = 0;
+    private int position = -1;
     //该店铺拥有的商品
     private List<GoodsInfo> goodinfos;
 
@@ -157,44 +157,52 @@ public class PaymentActivity extends BaseActivity {
     protected void initData() {
         cartuicontroller();
         initsalesandgoods();
-        if(isHavePriceChangeGood()){
-            keyboard = new HorizontalKeyBoard(this, this, edit_input_money,ll_keyboard, new KeyBoardListener() {
-                @Override
-                public void onComfirm() {
+//        if(isHavePriceChangeGood()){
+//
+//        }else{
+//
+//        }
+        keyboard = new HorizontalKeyBoard(this, this, edit_input_money,ll_keyboard, new KeyBoardListener() {
+            @Override
+            public void onComfirm() {
 
+            }
+
+            @Override
+            public void onCancel() {
+                position = -1;
+                edit_input_money.setText("");
+            }
+
+            @Override
+            public void onValue(String value) {
+                if(position == -1){
+                    View view = new View(PaymentActivity.this);
+                    view.setId(R.id.radio_select_good);
+                    click(view);
+                    return;
                 }
-
-                @Override
-                public void onCancel() {
-                    edit_input_money.setText("");
+                if(ArithDouble.parseDouble(value) == 0){
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.warning_no_input_format));
+                    return;
                 }
-
-                @Override
-                public void onValue(String value) {
-                    if(ArithDouble.parseDouble(value) == 0){
-                        ToastUtils.sendtoastbyhandler(handler,getString(R.string.warning_no_input_format));
-                        return;
-                    }
-                    if(ArithDouble.parseDouble(value) > 1000000){
-                        ToastUtils.sendtoastbyhandler(handler, "价格太大");
-                        return;
-                    }
-                    if(goodinfos != null && goodinfos.size() > 0){
-                        if(AppConfigFile.isOffLineMode() || memberBigdate== null){
-                            addcartgoods(value, null, position, ConstantData.GOOD_PRICE_CAN_CHANGE);
-                        }else{
-                            getGoodsZkl(position, value);
-                        }
-                        edit_input_money.setText("");
+                if(ArithDouble.parseDouble(value) > 1000000){
+                    ToastUtils.sendtoastbyhandler(handler, "价格太大");
+                    return;
+                }
+                if(goodinfos != null && goodinfos.size() > 0){
+                    if(AppConfigFile.isOffLineMode() || memberBigdate== null){
+                        addcartgoods(value, null, position, ConstantData.GOOD_PRICE_CAN_CHANGE);
                     }else{
-                        ToastUtils.sendtoastbyhandler(handler,getString(R.string.warning_no_good));
+                        getGoodsZkl(position, value);
                     }
+                    edit_input_money.setText("");
+                }else{
+                    ToastUtils.sendtoastbyhandler(handler,getString(R.string.warning_no_good));
                 }
-            });
-        }else{
-            edit_input_money.setEnabled(false);
-        }
-
+            }
+        });
+        edit_input_money.setEnabled(false);
         SwipeMenuCreator creator = new SwipeMenuCreator() {
 
             @Override
@@ -253,6 +261,15 @@ public class PaymentActivity extends BaseActivity {
                 return false;
             }
         });
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                View view = new View(PaymentActivity.this);
+                view.setId(R.id.radio_select_good);
+                click(view);
+            }
+        },500);
     }
 
     /**
@@ -320,7 +337,6 @@ public class PaymentActivity extends BaseActivity {
         boolean ret = false;
         for(int i= 0; i<goodinfos.size();i++){
             if(!goodinfos.get(i).getSpmode().trim().equals("0")){
-                position = i;
                 ret = true;
                 break;
             }

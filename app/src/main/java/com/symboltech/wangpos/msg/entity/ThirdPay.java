@@ -30,6 +30,61 @@ public class ThirdPay implements Serializable, Cloneable {
 	/** 收款方式id */
 	private String skfsid;
 
+	private String unitpayorderno;
+	private String otherpayorderno;
+	private String terminalid;
+	private String shopcode;
+	private String shopname;
+	private String paytime;
+
+	public String getUnitpayorderno() {
+		return unitpayorderno;
+	}
+
+	public void setUnitpayorderno(String unitpayorderno) {
+		this.unitpayorderno = unitpayorderno;
+	}
+
+	public String getOtherpayorderno() {
+		return otherpayorderno;
+	}
+
+	public void setOtherpayorderno(String otherpayorderno) {
+		this.otherpayorderno = otherpayorderno;
+	}
+
+	public String getTerminalid() {
+		return terminalid;
+	}
+
+	public void setTerminalid(String terminalid) {
+		this.terminalid = terminalid;
+	}
+
+	public String getPaytime() {
+		return paytime;
+	}
+
+	public void setPaytime(String paytime) {
+		this.paytime = paytime;
+	}
+
+	public String getShopcode() {
+		return shopcode;
+	}
+
+	public void setShopcode(String shopcode) {
+		this.shopcode = shopcode;
+	}
+
+	public String getShopname() {
+		return shopname;
+	}
+
+	public void setShopname(String shopname) {
+		this.shopname = shopname;
+	}
+
 	public String getTrade_no() {
 		return trade_no;
 	}
