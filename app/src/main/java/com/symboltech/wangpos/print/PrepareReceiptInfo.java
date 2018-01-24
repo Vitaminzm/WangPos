@@ -200,7 +200,7 @@ public class PrepareReceiptInfo {
 			}else{
 				fontConfig.setSize(FontSizeEnum.MIDDLE);
 				try {
-					printer.setPrnText("--------------------------------------", fontConfig);
+					printer.setPrnText("-------------------------------", fontConfig);
 				} catch (CallServiceException e) {
 					e.printStackTrace();
 				} catch (SdkException e) {
