@@ -1432,7 +1432,17 @@ public class CheckOutActivity extends BaseActivity {
                     intent_pay_detail.putExtra(ConstantData.ORDER_INFO, bill);
                     startActivity(intent_pay_detail);
                 } else {
-                    ToastUtils.sendtoastdialogbyhandler(handler, result.getMsg());
+                    if(!StringUtil.isEmpty(result.getMsg())){
+                        if(result.getMsg().contains("小票号已经使用")){
+                            ToastUtils.sendtoastbyhandler(handler, "请点击补打进行打印小票");
+                            AppConfigFile.setLast_billid(AppConfigFile.getBillId());
+                            AppConfigFile.setBillId(result.getSaveOrderInfo().getBillid());
+                            Intent intent_pay_detail = new Intent(CheckOutActivity.this, MainActivity.class);
+                            startActivity(intent_pay_detail);
+                        }else{
+                            ToastUtils.sendtoastdialogbyhandler(handler, result.getMsg());
+                        }
+                    }
                 }
             }
 
