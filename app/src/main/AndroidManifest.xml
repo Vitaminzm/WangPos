@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.symboltech.wangpos"
-    android:versionCode="1802121356"
-    android:versionName="1.0.23">
+    android:versionCode="1804091516"
+    android:versionName="1.0.24">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,14 +20,14 @@
     <uses-permission android:name="cn.koolcloud.pos.SERVICE" />
     <uses-permission android:name="com.wangpos.cashiercoreapp.coreapi" />
 
-    <application tools:replace="android:allowBackup,android:label"
+    <application
         android:name=".app.MyApplication"
         android:debuggable="false"
         android:allowBackup="false"
         android:icon="@mipmap/pos_icon"
         android:label="@string/app_namebbg"
         android:supportsRtl="true"
-
+        tools:replace="android:allowBackup,android:label"
         android:theme="@style/AppTheme" >
         <activity android:name=".activity.SplashActivity"
             android:screenOrientation="portrait"
@@ -74,7 +74,7 @@
 
         <meta-data
             android:name="pos_update_time"
-            android:value="2018年2月12日 " >
+            android:value="2018年4月9日 " >
         </meta-data>
     </application>
 

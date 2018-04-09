@@ -151,6 +151,8 @@ public class CheckOutActivity extends BaseActivity {
     //待支付金额
     private double waitPayValue;
     private HorizontalKeyBoard keyboard;
+    //补录刷卡的卡号
+    String rightcardno;
     //支付方式适配器
     private PaymentTypeHolderAdapter paymentTypeAdapter;
     private ArrayList<PayMentsInfo> paymentTypes;
@@ -1270,6 +1272,7 @@ public class CheckOutActivity extends BaseActivity {
                             PayMentsCancleInfo infobank = new PayMentsCancleInfo();
                             PayMentsInfo info = getPayInfoById(edit);
                             if(info != null){
+                                rightcardno = data.getExtras().getString("rightcardno");
                                 infobank.setId(info.getId());
                                 infobank.setName(info.getName());
                                 infobank.setType(info.getType());
@@ -1368,6 +1371,9 @@ public class CheckOutActivity extends BaseActivity {
         bill.setTotalmbjmoney(orderManjianValue+"");
         if(!StringUtil.isEmpty(crmfqmemebeno)){
             bill.setCrmfqmemebeno(crmfqmemebeno);
+        }
+        if(!StringUtil.isEmpty(rightcardno)){
+            bill.setRightcardno(rightcardno);
         }
         Map<String, String> map = new HashMap<String, String>();
         try {

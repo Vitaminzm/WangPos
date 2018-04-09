@@ -274,7 +274,7 @@ public class VerifyAuthDialog extends BaseActivity{
 	}
 
 	private boolean isVerify = false;
-	private  void verifyauthbyhttp(String rightcardno) {
+	private  void verifyauthbyhttp(final String rightcardno) {
 		if(isVerify){
 			return;
 		}
@@ -304,7 +304,11 @@ public class VerifyAuthDialog extends BaseActivity{
 					public void handleActionSuccess(String actionName, VerifyAuthResult result) {
 						if (ConstantData.HTTP_RESPONSE_OK.equals(result.getCode())) {
 							if(!StringUtil.isEmpty(result.getData()) && "1".equals(result.getData())){
-								setResult(ConstantData.VERIFY_AUTH_RESULT_CODE, null);
+								Intent intent = new Intent();
+								Bundle bundle = new Bundle();
+								bundle.putString("rightcardno", rightcardno);
+								intent.putExtras(bundle);
+								setResult(ConstantData.VERIFY_AUTH_RESULT_CODE, intent);
 								finish();
 							}else{
 								ToastUtils.sendtoastbyhandler(handler, "该授权码无权限");
