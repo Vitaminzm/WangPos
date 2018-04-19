@@ -59,7 +59,15 @@ public enum TicketFormatEnum {
 	TICKET_BUDADATE("\\[补打日期\\]"),
 	/** 换行*/
 	TICKET_ENTER("\\[换行\\]"),
-	
+	/** 活动信息开始*/
+	TICKET_ACTIVITY_BEGIN("\\[活动信息开始\\]"),
+	/** 活动信息结束*/
+	TICKET_ACTIVITY_END("\\[活动信息结束\\]"),
+	/** 会员信息开始*/
+	TICKET_MEMBER_BEGIN("\\[会员信息开始\\]"),
+	/** 会员信息结束*/
+	TICKET_MEMBER_END("\\[会员信息结束\\]"),
+
 	//--------商品信息------
 	/** 商品代码*/
 	TICKET_GOOD_CODE("\\[商品代码\\]"),

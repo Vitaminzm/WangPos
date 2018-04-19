@@ -19,6 +19,9 @@ import cn.weipass.pos.sdk.impl.WeiposImpl;
 public class AppConfigFile {
 
 	/**监测网络状态发送间隔*/
+	public static final String NETWORK_NAME = "deep";
+
+	/**监测网络状态发送间隔*/
 	public static final long NETWORK_STATUS_INTERVAL = 2 * 60 * 1000;
 
 	/**用户登录信息保存时间*/

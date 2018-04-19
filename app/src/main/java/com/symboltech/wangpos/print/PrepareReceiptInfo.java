@@ -1144,6 +1144,9 @@ public class PrepareReceiptInfo {
 									.replace(TicketFormatEnum.TICKET_SALEMAN_CODE.getLable(), bill.getSaleman())
 									.replace(TicketFormatEnum.TICKET_SALEMAN_NAME.getLable(), bill.getSalemanname())
 									.replace(TicketFormatEnum.TICKET_SALE_CODE.getLable(), bill.getSalemanxtm())
+									.replace(TicketFormatEnum.TICKET_TOTAL_MONEY.getLable(),  "\t"+formatRString(8,bill.getTotalmoney()))
+									.replace(TicketFormatEnum.TICKET_REAL_MONEY.getLable(), "\t\t" + formatRString(8, "" + ArithDouble.sub(ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), changeMoney),manjianMoney)))
+									.replace(TicketFormatEnum.TICKET_EXCHANGE.getLable(), "\t\t" + formatRString(8, bill.getChangemoney()))
 									.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 							TickbasicEntity basic = ticketFormat.getTickbasic();
 							if(basic != null){
@@ -1160,6 +1163,38 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
 										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true));
 							}
+							Pattern patternActivity = Pattern.compile(TicketFormatEnum.TICKET_ACTIVITY_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_ACTIVITY_END.getLable());
+							Matcher matcherActivity = patternActivity.matcher(tickend.getString());
+							String activityFormatall = null;
+							String activityFormat = null;
+							if(matcherActivity.find()) {
+								activityFormatall = matcherActivity.group(0);
+								activityFormat = matcherActivity.group(1);
+							}
+							if(activityFormat != null && count == 1 && bill.getMember()!= null){
+								PrintString activitytemp = new PrintString(activityFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(activitytemp.getString(), activityFormat);
+								Pattern memberActivity = Pattern.compile(TicketFormatEnum.TICKET_MEMBER_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_MEMBER_END.getLable());
+								Matcher memberInfoActivity = memberActivity.matcher(activityFormat);
+								String memberFormatall = null;
+								String memberFormat = null;
+								if(memberInfoActivity.find()) {
+									memberFormatall = memberInfoActivity.group(0);
+									memberFormat = memberInfoActivity.group(1);
+								}
+								if(memberFormat != null){
+									PrintString member = new PrintString(memberFormat).replace(TicketFormatEnum.TICKET_MEMBER_NO.getLable(), bill.getMember().getMemberno())
+											.replace(TicketFormatEnum.TICKET_MEMBER_NAME.getLable(), bill.getMember().getMembername())
+											.replace(TicketFormatEnum.TICKET_MEMBER_TEL.getLable(), bill.getMember().getPhoneno())
+											.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), bill.getMember().getMembertypename());
+									PrintString memberytemp = new PrintString(memberFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+									tickend.replace(memberytemp.getString(), member.getString());
+								}
+							}else{
+								PrintString activitytemp = new PrintString(activityFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+								tickend.replace(activitytemp.getString(), "");
+							}
+
 							String[] codes = tickend.getString().split("\n");
 							for (String code:codes){
 								addTextJson(array, latticePrinter, FONT_DEFAULT, code, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
@@ -1545,6 +1580,7 @@ public class PrepareReceiptInfo {
 	private static JSONObject getOrder(BillInfo bill, Boolean mend, Tickdatas ticketFormat, LatticePrinter latticePrinter) {
 		JSONObject jsonObject = new JSONObject();
 		if(ArithDouble.parseInt(ticketFormat.getPrintcount()) > 1){
+			//在打印即将完成是再次调用  保证打印完能停顿一下  有时间切纸
 			getOrderByCount(1, jsonObject, bill, mend, ticketFormat, latticePrinter);
 //			for(int i=1;i<ArithDouble.parseInt(ticketFormat.getPrintcount());i++){
 //				if(i == 1){

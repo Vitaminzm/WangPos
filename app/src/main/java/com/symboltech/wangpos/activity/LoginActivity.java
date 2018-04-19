@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -52,6 +54,7 @@ import com.symboltech.wangpos.utils.SpSaveUtils;
 import com.symboltech.wangpos.utils.StringUtil;
 import com.symboltech.wangpos.utils.ToastUtils;
 import com.symboltech.wangpos.utils.Utils;
+import com.symboltech.wangpos.utils.WifiUtils;
 import com.symboltech.wangpos.view.DrawableEditText;
 import com.symboltech.wangpos.view.HorizontalKeyBoard;
 
@@ -134,7 +137,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
     MyHandler handler = new MyHandler(this);
     private boolean iscashier;
     private int loginrole;
-
+    WifiUtils mWifiUtils;
 
     @Override
     protected void initData() {
@@ -174,8 +177,54 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                 }
             }).setCancelable(false).show();
         }
+        mWifiUtils = new WifiUtils(getApplicationContext());
+        if(mWifiUtils.isWifiEnabled()){
+            WifiInfo wifiInfo = mWifiUtils.getWifiInfo();
+            if(wifiInfo!= null){
+                if(!(wifiInfo.getSSID().contains(AppConfigFile.NETWORK_NAME.toLowerCase()) || wifiInfo.getSSID().contains(AppConfigFile.NETWORK_NAME.toUpperCase()))){
+                    connectRightWifi();
+                }
+            }else{
+                connectRightWifi();
+            }
+        }else {
+            mWifiUtils.openWifi();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    connectRightWifi();
+                }
+            }, 2000);
+
+        }
     }
 
+    public void connectRightWifi(){
+        mWifiUtils.startScan();
+        if(mWifiUtils.getConfigurations() != null){
+            for (WifiConfiguration configuration :
+                    mWifiUtils.getConfigurations()) {
+//                LogUtil.i("lgs", "ssid:"+configuration.SSID +"--id:"+ configuration.networkId +
+//                        "--priority" + configuration.priority + "--allowedAuthAlgorithms:"+configuration.allowedAuthAlgorithms +
+//                        "--allowedGroupCiphers:"+configuration.allowedGroupCiphers +"--allowedKeyManagement:" +configuration.allowedKeyManagement +
+//                        "--allowedAuthAlgorithms:"+configuration.allowedAuthAlgorithms
+//                        + "--allowedPairwiseCiphers:"+configuration.allowedPairwiseCiphers
+//                        +"--hiddenSSID:"+configuration.hiddenSSID
+//                        +"--wepTxKeyIndex:"+configuration.wepTxKeyIndex
+//                        +"--wepKeys:"+configuration.wepKeys[0]
+//                        +"--preSharedKey"+ configuration.preSharedKey
+//                        +"--status:"+configuration.status);
+                if(configuration.allowedKeyManagement.get(WifiConfiguration.KeyMgmt.NONE)){
+                    mWifiUtils.removeNetwork(configuration.networkId);
+                }
+//                if(configuration.SSID.contains(AppConfigFile.NETWORK_NAME.toLowerCase()) || configuration.SSID.contains(AppConfigFile.NETWORK_NAME.toUpperCase())){
+//                    mWifiUtils.connectConfiguration(configuration.networkId);
+//                    LogUtil.i("lgs", "connectRightWifi+++4");
+//                    break;
+//                }
+            }
+        }
+    }
     @Override
     protected void initView() {
         setContentView(R.layout.activity_login);
