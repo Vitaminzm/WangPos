@@ -182,12 +182,17 @@ public class PaymentActivity extends BaseActivity {
                     click(view);
                     return;
                 }
-                if(ArithDouble.parseDouble(value) == 0){
+                Double money = ArithDouble.parseDouble(value);
+                if( money == 0){
                     ToastUtils.sendtoastbyhandler(handler,getString(R.string.warning_no_input_format));
+                    edit_input_money.setText("");
+                    position = -1;
                     return;
                 }
-                if(ArithDouble.parseDouble(value) > 1000000){
-                    ToastUtils.sendtoastbyhandler(handler, "价格太大");
+                if(money > 1000000 || money<0.01){
+                    ToastUtils.sendtoastbyhandler(handler, "金额错误");
+                    edit_input_money.setText("");
+                    position = -1;
                     return;
                 }
                 if(goodinfos != null && goodinfos.size() > 0){

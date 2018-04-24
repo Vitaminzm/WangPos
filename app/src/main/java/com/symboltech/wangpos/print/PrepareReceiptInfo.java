@@ -1099,7 +1099,8 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
 										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
-										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true));
+										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true))
+										.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 							}
 							String[] codes = tickbegin.getString().split("\n");
 							for (String code:codes){
@@ -1132,25 +1133,76 @@ public class PrepareReceiptInfo {
 								PrintString coupontemp = new PrintString(couponFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
 								tickend.replace(coupontemp.getString(), "");
 							}
-							tickend.replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
-									.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
-									.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
-									.replace(TicketFormatEnum.TICKET_BILL_NO.getLable(), bill.getBillid())
-									.replace(TicketFormatEnum.TICKET_AUTH_CODE.getLable(), bill.getRandomcode())
-									.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
-									.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
-									.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), bill.getCashiername())
-									.replace(TicketFormatEnum.TICKET_CASHER_CODE.getLable(), bill.getCashierxtm())
-									.replace(TicketFormatEnum.TICKET_SALEMAN_CODE.getLable(), bill.getSaleman())
-									.replace(TicketFormatEnum.TICKET_SALEMAN_NAME.getLable(), bill.getSalemanname())
-									.replace(TicketFormatEnum.TICKET_SALE_CODE.getLable(), bill.getSalemanxtm())
-									.replace(TicketFormatEnum.TICKET_TOTAL_MONEY.getLable(),  "\t"+formatRString(8,bill.getTotalmoney()))
-									.replace(TicketFormatEnum.TICKET_REAL_MONEY.getLable(), "\t\t" + formatRString(8, "" + ArithDouble.sub(ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), changeMoney),manjianMoney)))
-									.replace(TicketFormatEnum.TICKET_EXCHANGE.getLable(), "\t\t" + formatRString(8, bill.getChangemoney()))
-									.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
+
+							if(count == 1){
+								//查找会员模版 找到操作
+								Pattern memberActivity = Pattern.compile(TicketFormatEnum.TICKET_MEMBER_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_MEMBER_END.getLable());
+								Matcher memberInfoActivity = memberActivity.matcher(tickend.getString());
+								String memberFormatall = null;
+								String memberFormat = null;
+								if(memberInfoActivity.find()) {
+									memberFormatall = memberInfoActivity.group(0);
+									memberFormat = memberInfoActivity.group(1);
+								}
+								if(memberFormat != null && bill.getMember()!= null){
+									PrintString member = new PrintString(memberFormat).replace(TicketFormatEnum.TICKET_MEMBER_NO.getLable(), bill.getMember().getMemberno())
+											.replace(TicketFormatEnum.TICKET_MEMBER_NAME.getLable(), bill.getMember().getMembername())
+											.replace(TicketFormatEnum.TICKET_MEMBER_TEL.getLable(), bill.getMember().getPhoneno())
+											.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), bill.getMember().getMembertypename());
+									PrintString memberytemp = new PrintString(memberFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+									tickend.replace(memberytemp.getString(), member.getString());
+								}else{
+									PrintString memberytemp = new PrintString(memberFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+									tickend.replace(memberytemp.getString(), "");
+								}
+								//查找活动信息 找到操作
+								Pattern patternActivity = Pattern.compile(TicketFormatEnum.TICKET_ACTIVITY_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_ACTIVITY_END.getLable());
+								Matcher matcherActivity = patternActivity.matcher(tickend.getString());
+								String activityFormatall = null;
+								String activityFormat = null;
+								if(matcherActivity.find()) {
+									activityFormatall = matcherActivity.group(0);
+									activityFormat = matcherActivity.group(1);
+								}
+								if(activityFormat != null){
+									PrintString activity = new PrintString(activityFormat).replace(TicketFormatEnum.TICKET_SHOP_CODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_CODE, ""))
+											.replace(TicketFormatEnum.TICKET_SHOP_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.SHOP_NAME, ""))
+											.replace(TicketFormatEnum.TICKET_MALL_NAME.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.MALL_NAME, ""))
+											.replace(TicketFormatEnum.TICKET_BILL_NO.getLable(), bill.getBillid())
+											.replace(TicketFormatEnum.TICKET_AUTH_CODE.getLable(), bill.getRandomcode())
+											.replace(TicketFormatEnum.TICKET_DESK_CODE.getLable(), bill.getPosno())
+											.replace(TicketFormatEnum.TICKET_CASHIER_CODE.getLable(), bill.getCashier())
+											.replace(TicketFormatEnum.TICKET_CASHIER_NAME.getLable(), bill.getCashiername())
+											.replace(TicketFormatEnum.TICKET_CASHER_CODE.getLable(), bill.getCashierxtm())
+											.replace(TicketFormatEnum.TICKET_SALEMAN_CODE.getLable(), bill.getSaleman())
+											.replace(TicketFormatEnum.TICKET_SALEMAN_NAME.getLable(), bill.getSalemanname())
+											.replace(TicketFormatEnum.TICKET_SALE_CODE.getLable(), bill.getSalemanxtm())
+											.replace(TicketFormatEnum.TICKET_TOTAL_MONEY.getLable(),  formatRString(8,bill.getTotalmoney()))
+											.replace(TicketFormatEnum.TICKET_REAL_MONEY.getLable(),  formatRString(8, "" + ArithDouble.sub(ArithDouble.add(ArithDouble.sub(ArithDouble.sub(ArithDouble.parseDouble(bill.getTotalmoney()), scoreValue), cardValue), changeMoney),manjianMoney)))
+											.replace(TicketFormatEnum.TICKET_EXCHANGE.getLable(), formatRString(8, bill.getChangemoney()))
+											.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
+									PrintString activitytemp = new PrintString(activityFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+									tickend.replace(activitytemp.getString(), activity.getString());
+								}
+							}else{
+								//去掉活动信息
+								Pattern patternActivity = Pattern.compile(TicketFormatEnum.TICKET_ACTIVITY_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_ACTIVITY_END.getLable());
+								Matcher matcherActivity = patternActivity.matcher(tickend.getString());
+								String activityFormatall = null;
+								String activityFormat = null;
+								if(matcherActivity.find()) {
+									activityFormatall = matcherActivity.group(0);
+									activityFormat = matcherActivity.group(1);
+								}
+								if(activityFormat != null){
+									PrintString activitytemp = new PrintString(activityFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
+									tickend.replace(activitytemp.getString(), "");
+								}
+							}
+
 							TickbasicEntity basic = ticketFormat.getTickbasic();
 							if(basic != null){
-								String date = Utils.formatDate( new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss");
+								String date = Utils.formatDate(new Date(System.currentTimeMillis()), "yyyy-MM-dd HH:mm:ss");
 								tickend.replace(TicketFormatEnum.TICKET_WEB.getLable(), basic.getWebsite())
 										.replace(TicketFormatEnum.TICKET_HOT_LINE.getLable(), basic.getHotline())
 										.replace(TicketFormatEnum.TICKET_SALE_DATE.getLable(), getDateTime(bill.getSaletime(), basic.getDateformat(), true))
@@ -1161,38 +1213,8 @@ public class PrepareReceiptInfo {
 										.replace(TicketFormatEnum.TICKET_BUDASALEMAN.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_NAME, ""))
 										.replace(TicketFormatEnum.TICKET_BUDASALEMANCODE.getLable(), SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""))
 										.replace(TicketFormatEnum.TICKET_BUDATIME.getLable(), getDateTime(date, basic.getTimeformat(), false))
-										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true));
-							}
-							Pattern patternActivity = Pattern.compile(TicketFormatEnum.TICKET_ACTIVITY_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_ACTIVITY_END.getLable());
-							Matcher matcherActivity = patternActivity.matcher(tickend.getString());
-							String activityFormatall = null;
-							String activityFormat = null;
-							if(matcherActivity.find()) {
-								activityFormatall = matcherActivity.group(0);
-								activityFormat = matcherActivity.group(1);
-							}
-							if(activityFormat != null && count == 1 && bill.getMember()!= null){
-								PrintString activitytemp = new PrintString(activityFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-								tickend.replace(activitytemp.getString(), activityFormat);
-								Pattern memberActivity = Pattern.compile(TicketFormatEnum.TICKET_MEMBER_BEGIN.getLable()+"(.*)"+TicketFormatEnum.TICKET_MEMBER_END.getLable());
-								Matcher memberInfoActivity = memberActivity.matcher(activityFormat);
-								String memberFormatall = null;
-								String memberFormat = null;
-								if(memberInfoActivity.find()) {
-									memberFormatall = memberInfoActivity.group(0);
-									memberFormat = memberInfoActivity.group(1);
-								}
-								if(memberFormat != null){
-									PrintString member = new PrintString(memberFormat).replace(TicketFormatEnum.TICKET_MEMBER_NO.getLable(), bill.getMember().getMemberno())
-											.replace(TicketFormatEnum.TICKET_MEMBER_NAME.getLable(), bill.getMember().getMembername())
-											.replace(TicketFormatEnum.TICKET_MEMBER_TEL.getLable(), bill.getMember().getPhoneno())
-											.replace(TicketFormatEnum.TICKET_MEMBER_TYPE.getLable(), bill.getMember().getMembertypename());
-									PrintString memberytemp = new PrintString(memberFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-									tickend.replace(memberytemp.getString(), member.getString());
-								}
-							}else{
-								PrintString activitytemp = new PrintString(activityFormatall).replace("\\[", "\\\\[").replace("\\]", "\\\\]");
-								tickend.replace(activitytemp.getString(), "");
+										.replace(TicketFormatEnum.TICKET_BUDADATE.getLable(), getDateTime(date, basic.getDateformat(), true))
+										.replace(TicketFormatEnum.TICKET_ENTER.getLable(), "\n");
 							}
 
 							String[] codes = tickend.getString().split("\n");

@@ -193,17 +193,18 @@ public class CanclePayDialog extends BaseActivity{
 		listview_canclepay.setAdapter(canclePayAdapter);
 		if(payments!=null){
 			for(int i=0;i<payments.size();i++){
-				if(!payments.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
-					if(payments.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype())
-							|| payments.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
-							||payments.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
-							||payments.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())){
-							cash = ArithDouble.add(cash, ArithDouble.parseDouble(payments.get(i).getMoney()));
+				PayMentsCancleInfo info = payments.get(i);
+				if(!info.getType().equals(PaymentTypeEnum.LING.getStyletype())){
+					if(info.getType().equals(PaymentTypeEnum.CASH.getStyletype())
+							|| info.getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
+							||info.getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
+							||info.getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype())){
+							cash = ArithDouble.add(cash, ArithDouble.parseDouble(info.getMoney()));
 					}
-					totalMoney = ArithDouble.add(totalMoney, ArithDouble.parseDouble(payments.get(i).getMoney()));
+					totalMoney = ArithDouble.add(totalMoney, ArithDouble.parseDouble(info.getMoney()));
 				}else{
-					cash = ArithDouble.sub(cash, ArithDouble.parseDouble(payments.get(i).getMoney()));
-					totalMoney = ArithDouble.sub(totalMoney, ArithDouble.parseDouble(payments.get(i).getMoney()));
+					cash = ArithDouble.sub(cash, ArithDouble.parseDouble(info.getMoney()));
+					totalMoney = ArithDouble.sub(totalMoney, ArithDouble.parseDouble(info.getMoney()));
 				}
 			}
 		}
@@ -318,11 +319,13 @@ public class CanclePayDialog extends BaseActivity{
 					return;
 				}
 				for(int i=0;i<payments.size();i++){
-					if( payments.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
-							payments.get(i).getType().equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()) ||payments.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype()) ||
-							payments.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype()) ||payments.get(i).getType().equals(PaymentTypeEnum.LING.getStyletype())){
-						if(!ConstantData.YXLM_ID.equals(payments.get(i).getId())){
-							payments.get(i).setIsCancle(true);
+					PayMentsCancleInfo info = payments.get(i);
+					String type = info.getType();
+					if( type.equals(PaymentTypeEnum.HANDRECORDED.getStyletype()) ||
+							type.equals(PaymentTypeEnum.ALIPAYRECORDED.getStyletype()) ||type.equals(PaymentTypeEnum.WECHATRECORDED.getStyletype()) ||
+							type.equals(PaymentTypeEnum.CASH.getStyletype()) ||type.equals(PaymentTypeEnum.LING.getStyletype())){
+						if(!ConstantData.YXLM_ID.equals(info.getId())){
+							info.setIsCancle(true);
 						}
 
 					}
@@ -343,7 +346,7 @@ public class CanclePayDialog extends BaseActivity{
 	private void thirdcancle(final int position) {
 		//LogUtil.i("lgs", "-----"+position);
 		isCancleCount++;
-		final PayMentsCancleInfo info = payments.get(position);
+		final PayMentsCancleInfo info = (PayMentsCancleInfo) canclePayAdapter.getItem(position);
 		Map<String, String> map = new HashMap<String, String>();
 		if(info.getId().equals(ConstantData.ALPAY_ID)) {
 			map.put("pay_type", ConstantData.PAYMODE_BY_ALIPAY+"");
@@ -417,7 +420,7 @@ public class CanclePayDialog extends BaseActivity{
 	}
 
 	public void saleVoid(int position){
-		final PayMentsCancleInfo info = payments.get(position);
+		final PayMentsCancleInfo info = (PayMentsCancleInfo) canclePayAdapter.getItem(position);//payments.get(position);
 		if(info.getType().equals(PaymentTypeEnum.ALIPAY.getStyletype()) || info.getType().equals(PaymentTypeEnum.WECHAT.getStyletype())){
 //			if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
 //				if(isCancleCount > 0){
@@ -450,8 +453,8 @@ public class CanclePayDialog extends BaseActivity{
 					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
 					return;
 				}
-				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
-						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+				if(info.getDes().equals(getString(R.string.cancled_failed))
+						||info.getDes().equals(getString(R.string.cancled))){
 					this.position = position;
 					JSONObject json = new JSONObject();
 					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
@@ -476,8 +479,8 @@ public class CanclePayDialog extends BaseActivity{
 					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
 					return;
 				}
-				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
-						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+				if(info.getDes().equals(getString(R.string.cancled_failed))
+						||info.getDes().equals(getString(R.string.cancled))){
 					isCancleCount++;
 					this.position = position;
 					innerRequestCashier(info.getTxnid());
@@ -492,8 +495,8 @@ public class CanclePayDialog extends BaseActivity{
 					return;
 				}
 
-				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
-						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+				if(info.getDes().equals(getString(R.string.cancled_failed))
+						||info.getDes().equals(getString(R.string.cancled))){
 					this.position = position;
 					SaleVoidRequest saleVoidRequest = new SaleVoidRequest(info.getTxnid());
 
@@ -538,8 +541,8 @@ public class CanclePayDialog extends BaseActivity{
 					ToastUtils.sendtoastbyhandler(handler, "撤销中，请稍后再试");
 					return;
 				}
-				if(payments.get(position).getDes().equals(getString(R.string.cancled_failed))
-						||payments.get(position).getDes().equals(getString(R.string.cancled))){
+				if(info.getDes().equals(getString(R.string.cancled_failed))
+						||info.getDes().equals(getString(R.string.cancled))){
 					this.position = position;
 					JSONObject json = new JSONObject();
 					String tradeNo = Utils.formatDate(new Date(System.currentTimeMillis()), "yyMMddHHmmss") + Utils.randomString(6);
@@ -570,7 +573,7 @@ public class CanclePayDialog extends BaseActivity{
 			CanclePayDialog.this.runOnUiThread(new Runnable() {
 				@Override
 				public void run() {
-					PayMentsCancleInfo info = payments.get(position);
+					PayMentsCancleInfo info = (PayMentsCancleInfo) canclePayAdapter.getItem(position);
 					isCancleCount--;
 					if(StringUtil.isEmpty(reslutmsg)){
 						info.setDes(getString(R.string.cancled_failed));
@@ -594,7 +597,7 @@ public class CanclePayDialog extends BaseActivity{
 								info.setIsCancle(true);
 								info.setDes(getString(R.string.cancled_pay));
 								canclePayAdapter.notifyDataSetChanged();
-								orderBean.setPaymentId(payments.get(position).getId());
+								orderBean.setPaymentId(info.getId());
 								orderBean.setTransType(ConstantData.TRANS_REVOKE);
 								orderBean.setTraceId(AppConfigFile.getBillId());
 								Intent serviceintent = new Intent(mContext, RunTimeService.class);
@@ -619,7 +622,7 @@ public class CanclePayDialog extends BaseActivity{
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(Activity.RESULT_OK == resultCode){
 			if(AppHelper.TRANS_REQUEST_CODE == requestCode){
-				PayMentsCancleInfo info = payments.get(position);
+				PayMentsCancleInfo info = (PayMentsCancleInfo) canclePayAdapter.getItem(position);
 				isCancleCount--;
 				if (null != data) {
 					StringBuilder result = new StringBuilder();
@@ -640,7 +643,7 @@ public class CanclePayDialog extends BaseActivity{
 							info.setIsCancle(true);
 							info.setDes(getString(R.string.cancled_pay));
 							canclePayAdapter.notifyDataSetChanged();
-							orderBean.setPaymentId(payments.get(position).getId());
+							orderBean.setPaymentId(info.getId());
 							orderBean.setTransType(ConstantData.TRANS_REVOKE);
 							orderBean.setTraceId(AppConfigFile.getBillId());
 							Intent serviceintent = new Intent(mContext, RunTimeService.class);
