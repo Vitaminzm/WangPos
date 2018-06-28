@@ -1012,7 +1012,7 @@ public class ReturnMoneyByOrderActivity extends BaseActivity implements AdapterV
                 } else if (PaymentTypeEnum.COUPON.getStyletype().equals(type)) {
                     couponMoney = ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage()));
                     coupon = info;
-                }else if (PaymentTypeEnum.SCORE.getStyletype().equals(type)) {
+                }else if (PaymentTypeEnum.SCORE.getStyletype().equals(type) && !ConstantData.BERRERZK_ID.equals(info.getId())) {
                     scoreMoney = ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage()));
                    deduction = info;
                 }

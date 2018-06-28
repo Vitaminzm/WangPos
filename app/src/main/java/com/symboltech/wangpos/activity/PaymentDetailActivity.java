@@ -255,8 +255,8 @@ public class PaymentDetailActivity extends BaseActivity {
                 }else{
                     addPayTypeInfo(info.getName(), ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage())));
                 }
-            } else if (info.getType().equals(PaymentTypeEnum.SCORE.getStyletype())) {
-                scoreDeduction = ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage()));
+            } else if (info.getType().equals(PaymentTypeEnum.SCORE.getStyletype()) && !ConstantData.BERRERZK_ID.equals(info.getId())) {
+                scoreDeduction = ArithDouble.add(scoreDeduction,  ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage())));
                 if(scoreDeduction > 0){
                     text_score_deduction.setText("" + scoreDeduction);
                     ll_score_deduction.setVisibility(View.VISIBLE);

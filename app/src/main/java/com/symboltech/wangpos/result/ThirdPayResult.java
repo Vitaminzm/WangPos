@@ -4,6 +4,8 @@ package com.symboltech.wangpos.result;
 import com.google.gson.annotations.SerializedName;
 import com.symboltech.wangpos.msg.entity.ThirdPay;
 
+import java.util.List;
+
 /** 
 * @author  cwi-apst E-mail: 26873204@qq.com
 * @date 创建时间：2015年11月4日 下午2:26:21 
@@ -12,13 +14,13 @@ import com.symboltech.wangpos.msg.entity.ThirdPay;
 public class ThirdPayResult extends BaseResult{
 
 	@SerializedName("data")
-	private ThirdPay thirdpay;
+	private List<ThirdPay> thirdpay;
 
-	public ThirdPay getThirdpay() {
+	public List<ThirdPay> getThirdpay() {
 		return thirdpay;
 	}
 
-	public void setThirdpay(ThirdPay thirdpay) {
+	public void setThirdpay(List<ThirdPay> thirdpay) {
 		this.thirdpay = thirdpay;
 	}
 }

@@ -120,17 +120,17 @@
                 android:textColor="@drawable/btn_font_color_selector"
                 android:text="@string/look_member"/>
             <TextView
-                android:id="@+id/radio_add_score_good"
+                android:id="@+id/radio_add_good"
                 android:layout_width="wrap_content"
+                android:button="@null"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:button="@null"
-                android:layout_marginLeft="@dimen/margin_rv"
-                android:drawableTop="@drawable/btn_add_score_good_selector"
+                android:drawableTop="@drawable/btn_select_good_selector"
                 android:drawablePadding="@dimen/margin_ov"
+                android:layout_marginLeft="@dimen/margin_rv"
                 android:textSize="@dimen/font_size_tf"
                 android:textColor="@drawable/btn_font_color_selector"
-                android:text="@string/add_score_good"/>
+                android:text="@string/add_good"/>
             <TextView
                 android:id="@+id/radio_add_salesman"
                 android:layout_width="wrap_content"
@@ -144,17 +144,19 @@
                 android:textSize="@dimen/font_size_tf"
                 android:text="@string/add_saleman"/>
             <TextView
-                android:id="@+id/radio_add_good"
+                android:id="@+id/radio_add_score_good"
                 android:layout_width="wrap_content"
-                android:button="@null"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:drawableTop="@drawable/btn_select_good_selector"
-                android:drawablePadding="@dimen/margin_ov"
+                android:button="@null"
                 android:layout_marginLeft="@dimen/margin_rv"
+                android:drawableTop="@drawable/btn_add_score_good_selector"
+                android:drawablePadding="@dimen/margin_ov"
                 android:textSize="@dimen/font_size_tf"
                 android:textColor="@drawable/btn_font_color_selector"
-                android:text="@string/add_good"/>
+                android:text="@string/add_score_good"/>
+
+
         </LinearLayout>
     </HorizontalScrollView >
 

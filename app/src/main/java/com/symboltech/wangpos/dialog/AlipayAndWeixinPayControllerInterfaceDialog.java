@@ -33,6 +33,7 @@ import com.symboltech.wangpos.utils.Utils;
 import com.symboltech.wangpos.view.TextScrollView;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,6 +72,10 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 	private double money;
 	private boolean isrunning = true;
 
+	public static final int PAY_FAILED = 5;
+	public static final int PAY_SUCCEED = 6;
+	public static final int PAY_WAIT = 7;
+
 	private GetPayValue callback;
 	/** refresh UI By handler */
 	public Handler handler = new Handler() {
@@ -95,7 +100,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 			case 4:
 				AlipayAndWeixinPayControllerInterfaceDialog.this.dismiss();
 				break;
-			case 5://失败
+			case PAY_FAILED://失败
 				ll_thirdpay_money_input.setVisibility(View.GONE);
 				ll_thirdpay_hint.setVisibility(View.VISIBLE);
 				ll_thirdpay_paying_result.setVisibility(View.VISIBLE);
@@ -105,16 +110,16 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 				tv_paying_enter.setVisibility(View.VISIBLE);
 				tv_thirdpay_paying_title.setText((String) msg.obj);
 				break;
-			case 6://成功
+			case PAY_SUCCEED://成功
 				ll_thirdpay_money_input.setVisibility(View.GONE);
 				ll_thirdpay_hint.setVisibility(View.VISIBLE);
 				ll_thirdpay_paying_result.setVisibility(View.GONE);
 				stopPay();
 				handler.sendEmptyMessageDelayed(4, 1000 * 2);
 				if(callback != null)
-					callback.getPayValue((ThirdPay) msg.obj);
+					callback.getPayValue((List<ThirdPay>) msg.obj);
 				break;
-			case 7://查询
+			case PAY_WAIT://查询
 				if(!StringUtil.isEmpty((String) msg.obj)){
 					trade_no = (String) msg.obj;
 				}
@@ -415,7 +420,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 						// TODO Auto-generated method stub
 						ToastUtils.sendtoastbyhandler(handler, errmsg);
 						Message message=Message.obtain();
-						message.what = 7;
+						message.what = PAY_WAIT;
 						handler.sendMessage(message);
 					}
 
@@ -435,12 +440,12 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 							thirdPay.setTrade_no(result.getThirdpayquery().getTrade_no());
 							thirdPay.setSkfsid(result.getThirdpayquery().getSkfsid());
 							Message message=Message.obtain();
-							message.what = 6;
+							message.what = PAY_SUCCEED;
 							message.obj = thirdPay;
 							handler.sendMessage(message);
 						} else if (ConstantData.HTTP_RESPONSE_THIRDPAY_WAIT.equals(result.getCode())) {
 							Message message=Message.obtain();
-							message.what = 7;
+							message.what = PAY_WAIT;
 							message.obj = result.getThirdpayquery().getTrade_no();
 							handler.sendMessage(message);
 						} else {
@@ -451,7 +456,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 //								OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_QUERY_FAILED.getOptLogCode(), context.getString(R.string.wechat_query_failed));
 //							}
 							Message message=Message.obtain();
-							message.what = 5;
+							message.what = PAY_FAILED;
 							message.obj = result.getMsg();
 							handler.sendMessage(message);
 						}
@@ -510,7 +515,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 						// TODO Auto-generated method stub
 						ToastUtils.sendtoastbyhandler(handler, errmsg);
 						Message message=Message.obtain();
-						message.what = 5;
+						message.what = PAY_FAILED;
 						message.obj = errmsg;
 						handler.sendMessage(message);
 					}
@@ -601,7 +606,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 						// TODO Auto-generated method stub
 						ToastUtils.sendtoastbyhandler(handler, errmsg);
 						Message message=Message.obtain();
-						message.what = 5;
+						message.what = PAY_FAILED;
 						message.obj = errmsg;
 						handler.sendMessage(message);
 					}
@@ -706,7 +711,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 				// TODO Auto-generated method stub
 				ToastUtils.sendtoastbyhandler(handler, errmsg);
 				Message message=Message.obtain();
-				message.what = 5;
+				message.what = PAY_FAILED;
 				handler.sendMessage(message);
 			}
 
@@ -721,13 +726,13 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 //						OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_TRADE_SUCCESS.getOptLogCode(), context.getString(R.string.wechat_trade_success));
 //					}
 					Message message=Message.obtain();
-					message.what = 6;
+					message.what = PAY_SUCCEED;
 					message.obj = result.getThirdpay();
 					handler.sendMessage(message);
 				} else if (ConstantData.HTTP_RESPONSE_THIRDPAY_WAIT.equals(result.getCode())) {
 					Message message=Message.obtain();
-					message.what = 7;
-					message.obj = result.getThirdpay().getTrade_no();
+					message.what = PAY_WAIT;
+					message.obj = result.getThirdpay().get(0).getTrade_no();
 					handler.sendMessage(message);
 				} else {
 						OperateLog.getInstance().saveLog2File(OptLogEnum.ALIPAY_TRADE_FAILED.getOptLogCode(), context.getString(R.string.alipay_trade_failed));
@@ -737,7 +742,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 //						OperateLog.getInstance().saveLog2File(OptLogEnum.WECHAT_TRADE_FAILED.getOptLogCode(), context.getString(R.string.wechat_trade_failed));
 //					}
 					Message message=Message.obtain();
-					message.what = 5;
+					message.what = PAY_FAILED;
 					message.obj = result.getMsg();
 					handler.sendMessage(message);
 				}
@@ -760,7 +765,7 @@ public class AlipayAndWeixinPayControllerInterfaceDialog extends BaseDialog impl
 	}
 
 	public interface GetPayValue{
-		public void getPayValue(ThirdPay value);
+		public void getPayValue(List<ThirdPay> value);
 	}
 	
 	@Override

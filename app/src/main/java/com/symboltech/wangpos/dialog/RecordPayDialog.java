@@ -26,7 +26,7 @@ import java.util.List;
 public class RecordPayDialog extends BaseDialog implements View.OnClickListener {
 	private Context context;
 	private LinearLayout ll_weichat_record, ll_alipay_record, ll_bankcode_record, ll_yipay_record,
-						ll_bank_record, ll_store_record, ll_yxlm_record;
+						ll_bank_record, ll_store_record, ll_yxlm_record, ll_rhyh_record;
 	private GeneralEditListener finishcallback;
 
 	private String payId;
@@ -63,6 +63,8 @@ public class RecordPayDialog extends BaseDialog implements View.OnClickListener 
 		ll_store_record.setOnClickListener(this);
 		ll_yxlm_record = (LinearLayout) findViewById(R.id.ll_yxlm_record);
 		ll_yxlm_record.setOnClickListener(this);
+		ll_rhyh_record = (LinearLayout) findViewById(R.id.ll_rhyh_record);
+		ll_rhyh_record.setOnClickListener(this);
 		if(!isContain(ConstantData.WECHAT_ID)){
 			ll_weichat_record.setBackgroundResource(R.drawable.btn_gray_bg);
 			ll_weichat_record.setEnabled(false);
@@ -90,6 +92,10 @@ public class RecordPayDialog extends BaseDialog implements View.OnClickListener 
 		if(!isContain(ConstantData.YXLM_ID)){
 			ll_yxlm_record.setBackgroundResource(R.drawable.btn_gray_bg);
 			ll_yxlm_record.setEnabled(false);
+		}
+		if (!isContain(ConstantData.RHYH_ID)) {
+			ll_rhyh_record.setBackgroundResource(R.drawable.btn_gray_bg);
+			ll_rhyh_record.setEnabled(false);
 		}
 	}
 
@@ -121,6 +127,10 @@ public class RecordPayDialog extends BaseDialog implements View.OnClickListener 
 			case R.id.ll_yxlm_record:
 				payId = ConstantData.YXLM_ID;
 				break;
+			case R.id.ll_rhyh_record:
+				payId = ConstantData.RHYH_ID;
+				break;
+			default:break;
 		}
 		if(isContain(payId)){
 			finishcallback.editinput(payId);

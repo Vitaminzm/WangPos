@@ -81,6 +81,8 @@ public class PaymentActivity extends BaseActivity {
     TextView radio_look_member;
     @Bind(R.id.radio_add_score_good)
     TextView radio_add_score_good;
+    @Bind(R.id.radio_add_salesman)
+    TextView radio_add_salesman;
     @Bind(R.id.ll_used_score)
     LinearLayout ll_used_score;
 
@@ -283,6 +285,10 @@ public class PaymentActivity extends BaseActivity {
      */
     private void cartuicontroller(){
         enterFlag = getIntent().getIntExtra(ConstantData.ENTER_CASHIER_WAY_FLAG, ConstantData.ENTER_CASHIER_BY_ACCOUNTS);
+        radio_add_score_good.setEnabled(false);
+        radio_add_score_good.setVisibility(View.GONE);
+        radio_add_salesman.setEnabled(false);
+        radio_add_salesman.setVisibility(View.GONE);
         if(enterFlag == ConstantData.ENTER_CASHIER_BY_ACCOUNTS){
             radio_add_score_good.setVisibility(View.GONE);
             radio_look_member.setVisibility(View.GONE);

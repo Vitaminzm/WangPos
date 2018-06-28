@@ -195,20 +195,23 @@ public class CheckOutActivity extends BaseActivity {
 
                         @Override
                         public void doConfirm(String num) {
-                            for (ThirdPayInfo thirdPayInfo : thirdPayInfoList) {
-                                if (!isContain(thirdPayInfo.getAuth_code(), payMentsCancle)) {
-                                    PayMentsCancleInfo info = new PayMentsCancleInfo();
-                                    info.setId(thirdPayInfo.getSkfsid());
-                                    info.setName(getPayNameById(thirdPayInfo.getSkfsid()));
-                                    info.setType(getPayTypeById(thirdPayInfo.getSkfsid()));
-                                    info.setIsCancle(false);
-                                    info.setMoney(thirdPayInfo.getJe());
 
-                                    ThirdPay value = new ThirdPay();
-                                    value.setTrade_no(thirdPayInfo.getAuth_code());
-                                    info.setThridPay(value);
-                                    info.setOverage("0");
-                                    addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
+                            if (!isContain(thirdPayInfoList, payMentsCancle)) {
+                                for (ThirdPayInfo thirdPayInfo : thirdPayInfoList) {
+                                    if(ArithDouble.parseDouble(thirdPayInfo.getJe())> 0){
+                                        PayMentsCancleInfo info = new PayMentsCancleInfo();
+                                        info.setId(thirdPayInfo.getSkfsid());
+                                        info.setName(getPayNameById(thirdPayInfo.getSkfsid()));
+                                        info.setType(getPayTypeById(thirdPayInfo.getSkfsid()));
+                                        info.setIsCancle(false);
+                                        info.setMoney(thirdPayInfo.getJe());
+
+                                        ThirdPay value = new ThirdPay();
+                                        value.setTrade_no(thirdPayInfo.getAuth_code());
+                                        info.setThridPay(value);
+                                        info.setOverage("0");
+                                        addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
+                                    }
                                 }
                             }
                             waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
@@ -226,7 +229,22 @@ public class CheckOutActivity extends BaseActivity {
                         Toast.makeText(CheckOutActivity.this,"已经支付数据不能重复添加", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    orderBean.setPaymentId(paymentTypeAdapter.getPayType().getId());
+                    PayMentsInfo payMentsInfo = paymentTypeAdapter.getPayType();
+
+                    if(!StringUtil.isEmpty(orderBean.getPaymentName())){
+                        if(orderBean.getPaymentName().contains("银行卡收款")){
+                            LogUtil.i("lgs","1-------------");
+                            payMentsInfo = getPayInfoByType(PaymentTypeEnum.BANK.getStyletype());
+                        }else if(orderBean.getPaymentName().contains("预付卡")){
+                            LogUtil.i("lgs","2-------------");
+                            payMentsInfo = getPayInfoByType(PaymentTypeEnum.STORE.getStyletype());
+                        }
+                    }
+                    if(payMentsInfo == null){
+                        Toast.makeText(CheckOutActivity.this,"系统异常，请联系管理员", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    orderBean.setPaymentId(payMentsInfo.getId());
                     orderBean.setTransType(ConstantData.TRANS_SALE);
                     orderBean.setTraceId(AppConfigFile.getBillId());
                     Intent serviceintent = new Intent(mContext, RunTimeService.class);
@@ -234,9 +252,9 @@ public class CheckOutActivity extends BaseActivity {
                     serviceintent.putExtra(ConstantData.THIRD_DATA, orderBean);
                     startService(serviceintent);
                     PayMentsCancleInfo infobank = new PayMentsCancleInfo();
-                    infobank.setId(paymentTypeAdapter.getPayType().getId());
-                    infobank.setName(paymentTypeAdapter.getPayType().getName());
-                    infobank.setType(paymentTypeAdapter.getPayType().getType());
+                    infobank.setId(payMentsInfo.getId());
+                    infobank.setName(payMentsInfo.getName());
+                    infobank.setType(payMentsInfo.getType());
                     infobank.setIsCancle(false);
                     infobank.setTxnid(orderBean.getTxnId());
                     infobank.setTraceNo(orderBean.getBatchId());
@@ -314,6 +332,7 @@ public class CheckOutActivity extends BaseActivity {
                             orderBean.setAcquId(transData.get("cardIssuerCode"));
                             orderBean.setBatchId(transData.get("traceNo"));
                             orderBean.setRefNo(transData.get("refNo"));
+                            orderBean.setPaymentName(map.get("appName"));
                             Message msg = Message.obtain();
                             msg.what = THIRD_PAY_INFO;
                             msg.obj = orderBean;
@@ -1113,16 +1132,18 @@ public class CheckOutActivity extends BaseActivity {
         commitOrder();
     }
 
-    private boolean isContain(String code, List<PayMentsCancleInfo> payMentsCancle){
+    private boolean isContain(List<ThirdPayInfo> data, List<PayMentsCancleInfo> payMentsCancle){
         boolean ret = false;
-        if(StringUtil.isEmpty(code) || payMentsCancle.size() == 0){
+        if(data== null || data.size() == 0 || payMentsCancle.size() == 0){
             return ret;
         }
         for (PayMentsCancleInfo info : payMentsCancle) {
             if (info.getThridPay() != null && !StringUtil.isEmpty(info.getThridPay().getTrade_no())) {
-                if(code.equals(info.getThridPay().getTrade_no())){
-                    ret = true;
-                    break;
+                for(ThirdPayInfo thirdPayInfo: data){
+                    if(thirdPayInfo.getAuth_code().equals(info.getThridPay().getTrade_no())) {
+                        ret = true;
+                        break;
+                    }
                 }
             }
         }
@@ -1244,6 +1265,7 @@ public class CheckOutActivity extends BaseActivity {
                                 orderBean.setAcquId(transData.get("cardIssuerCode"));
                                 orderBean.setBatchId(transData.get("traceNo"));
                                 orderBean.setRefNo(transData.get("refNo"));
+                                orderBean.setPaymentName(map.get("appName"));
                                 Message msg = Message.obtain();
                                 msg.what = THIRD_PAY_INFO;
                                 msg.obj = orderBean;
@@ -1303,29 +1325,33 @@ public class CheckOutActivity extends BaseActivity {
                 new AlipayAndWeixinPayControllerInterfaceDialog.GetPayValue() {
 
                     @Override
-                    public void getPayValue(final ThirdPay value) {
+                    public void getPayValue(final List<ThirdPay> dataList) {
                         LogUtil.i("lgs","--------1-------");
-                        PayMentsInfo payMentsInfo = getPayInfoById(value.getSkfsid());
-                        PayMentsCancleInfo info = new PayMentsCancleInfo();
-                        if(payMentsInfo == null){
-                            info.setId(value.getSkfsid());
-                            info.setName("异常支付");
-                            info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
-                            value.setPay_type("支付宝");
-                        }else{
-                            info.setId(payMentsInfo.getId());
-                            info.setName(payMentsInfo.getName());
-                            info.setType(payMentsInfo.getType());
-                            value.setPay_type(payMentsInfo.getName());
+                        for(ThirdPay value:dataList){
+                            if(ArithDouble.parseDouble(value.getPay_total_fee()) > 0){
+                                PayMentsInfo payMentsInfo = getPayInfoById(value.getSkfsid());
+                                PayMentsCancleInfo info = new PayMentsCancleInfo();
+                                if(payMentsInfo == null){
+                                    info.setId(value.getSkfsid());
+                                    info.setName("异常支付");
+                                    info.setType(PaymentTypeEnum.ALIPAY.getStyletype());
+                                    value.setPay_type("异常支付");
+                                }else{
+                                    info.setId(payMentsInfo.getId());
+                                    info.setName(payMentsInfo.getName());
+                                    info.setType(payMentsInfo.getType());
+                                    value.setPay_type(payMentsInfo.getName());
+                                }
+                                info.setIsCancle(false);
+                                info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
+                                info.setThridPay(value);
+                                info.setOverage("0");
+                                addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
+                                waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
+                                text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                                edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
+                            }
                         }
-                        info.setIsCancle(false);
-                        info.setMoney(String.valueOf(ArithDouble.parseDouble(value.getPay_total_fee()) / 100));
-                        info.setThridPay(value);
-                        info.setOverage("0");
-                        addPayTypeInfo(PaymentTypeEnum.ALIPAY, 0, 0, null, info);
-                        waitPayValue = ArithDouble.sub(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderManjianValue), ArithDouble.add(orderScore, orderCoupon)), paymentTypeInfoadapter.getPayMoney());
-                        text_wait_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
-                        edit_input_money.setText(MoneyAccuracyUtils.getmoneybytwo(waitPayValue));
                         try {
                             BaseSystemManager.getInstance().deviceServiceLogin(
                                     CheckOutActivity.this, null, "99999998",//设备ID，生产找后台配置
@@ -1334,7 +1360,7 @@ public class CheckOutActivity extends BaseActivity {
                                         public void onStatus(int arg0) {//arg0可见ServiceResult.java
                                             if (0 == arg0 || 2 == arg0 || 100 == arg0) {//0：登录成功，有相关参数；2：登录成功，无相关参数；100：重复登录。
                                                 MyApplication.isPrint = true;
-                                                PrepareReceiptInfo.printThirdBill(value, false, null);
+                                                PrepareReceiptInfo.printThirdBill(dataList, false, null);
                                             }else{
                                                 ToastUtils.sendtoastbyhandler(handler, "打印登录失败");
                                             }
@@ -1368,7 +1394,7 @@ public class CheckOutActivity extends BaseActivity {
         }
         bill.setPaymentslist(payments);
         bill.setExchange(exchangeInfo);
-        bill.setTotalmbjmoney(orderManjianValue+"");
+        bill.setTotalmbjmoney(orderManjianValue + "");
         if(!StringUtil.isEmpty(crmfqmemebeno)){
             bill.setCrmfqmemebeno(crmfqmemebeno);
         }
@@ -1531,19 +1557,13 @@ public class CheckOutActivity extends BaseActivity {
                     }
                 }else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.BANK.getStyletype())
                         || paymentslist.get(i).getType().equals(PaymentTypeEnum.STORE.getStyletype())){
-//                    if(!AppConfigFile.isOffLineMode()){
-//                    }
                     paymentTypeAdapter.add(paymentslist.get(i));
+//                    if(!ConstantData.YDHB_ID.equals(paymentslist.get(i).getId())){
+//                    }
                 }else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.CASH.getStyletype())){
-//                    if(ConstantData.YXLM_ID.equals(paymentslist.get(i).getId())){
-//                        if(!AppConfigFile.isOffLineMode()){
-//                            paymentTypeAdapter.add(paymentslist.get(i));
-//                        }
-//                    }else{
-                        paymentTypeAdapter.setPayTpye(paymentslist.get(i));
-                        paymentTypeAdapter.notifyDataSetChanged();
+                    paymentTypeAdapter.setPayTpye(paymentslist.get(i));
+                    paymentTypeAdapter.notifyDataSetChanged();
                     paymentTypeAdapter.add(paymentslist.get(i));
-//                    }
                 }
 //                else if(paymentslist.get(i).getType().equals(PaymentTypeEnum.HANDRECORDED.getStyletype())
 //                        || paymentslist.get(i).getType().equals(PaymentTypeEnum.WECHATRECORDED.getStyletype())
@@ -1592,6 +1612,17 @@ public class CheckOutActivity extends BaseActivity {
         return null;
     }
 
+    private PayMentsInfo getPayInfoByType(String type){
+        List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
+        if(paymentslist == null)
+            return null;
+        for (int i = 0; i < paymentslist.size(); i++) {
+            if (paymentslist.get(i).getType().equals(type)) {
+                return paymentslist.get(i);
+            }
+        }
+        return null;
+    }
     private String getPayTypeById(String id){
         List<PayMentsInfo> paymentslist = (List<PayMentsInfo>) SpSaveUtils.getObject(mContext, ConstantData.PAYMENTSLIST);
         if(paymentslist == null)

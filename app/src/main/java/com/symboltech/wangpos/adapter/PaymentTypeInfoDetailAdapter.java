@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.symboltech.wangpos.R;
+import com.symboltech.wangpos.app.ConstantData;
 import com.symboltech.wangpos.msg.entity.PayMentsInfo;
 import com.symboltech.wangpos.utils.PaymentTypeEnum;
 
@@ -36,7 +37,9 @@ public class PaymentTypeInfoDetailAdapter extends BaseAdapter {
 		if(flag){
 			this.paymentsInfo = new ArrayList<PayMentsInfo>();
 			for(PayMentsInfo data :datas){
-				if(!data.getType().equals(PaymentTypeEnum.COUPON) || !data.getType().equals(PaymentTypeEnum.SCORE)){
+				if(!data.getType().equals(PaymentTypeEnum.COUPON.getStyletype()) || !data.getType().equals(PaymentTypeEnum.SCORE.getStyletype())){
+					paymentsInfo.add(data);
+				}else if(data.getType().equals(PaymentTypeEnum.SCORE.getStyletype()) && ConstantData.BERRERZK_ID.equals(data.getId())){
 					paymentsInfo.add(data);
 				}
 			}

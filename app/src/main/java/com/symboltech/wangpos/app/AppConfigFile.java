@@ -40,7 +40,7 @@ public class AppConfigFile {
 	public static final int OPERATE_LOG_SIZE = 50;
 
 	/**授权码*/
-	public static final String AUTH_CODE = "123654";
+	public static final String AUTH_CODE = "072018";
 	/** activity manange list */
 	public static List<Activity> activityList = new LinkedList<Activity>();
 	//private static  String host_config = "192.168.28.234:82";//239

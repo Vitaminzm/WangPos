@@ -383,6 +383,7 @@
     <string name="offline">脱机</string>
     <string name="sale">销售</string>
     <string name="trans">交易</string>
+    <string name="rhyh_pay">融合优惠补打</string>
     <string name="signin">签到</string>
     <string name="bankprint">银行卡补打</string>
     <string name="posprint">条码付补打</string>

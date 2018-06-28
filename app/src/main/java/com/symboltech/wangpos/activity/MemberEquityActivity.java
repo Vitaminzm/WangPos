@@ -489,7 +489,7 @@ public class MemberEquityActivity extends BaseActivity {
         }
         sendAdapter.notifyItemChanged(position);
         text_coupon_count.setText(couponList.size() + "");
-        text_total_money.setText(orderCoupon+"");
+        text_total_money.setText(orderCoupon + "");
         tv_waitpay.setText(ArithDouble.sub(ArithDouble.sub(orderTotleValue, orderScore), orderCoupon)+"");
     }
 
@@ -614,7 +614,13 @@ public class MemberEquityActivity extends BaseActivity {
         }
         for (int i = 0; i < paymentslist.size(); i++) {
             if (paymentslist.get(i).getType().equals(typeEnum.getStyletype())) {
-                return paymentslist.get(i).getId();
+                if(PaymentTypeEnum.SCORE == typeEnum){
+                    if(ConstantData.BERRERZK_ID.equals(paymentslist.get(i).getId())){
+                        return paymentslist.get(i).getId();
+                    }
+                }else{
+                    return paymentslist.get(i).getId();
+                }
             }
         }
         return null;

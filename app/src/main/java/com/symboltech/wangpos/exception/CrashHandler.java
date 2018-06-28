@@ -14,6 +14,7 @@ import com.symboltech.wangpos.http.HttpServiceStringClient;
 import com.symboltech.wangpos.log.LogUtil;
 import com.symboltech.wangpos.log.OperateLog;
 import com.symboltech.wangpos.utils.OptLogEnum;
+import com.symboltech.wangpos.utils.Utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -90,7 +91,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		String result = writer.toString();
 		sb.append(result);
 		LogUtil.i("lgs", sb.toString());
-		OperateLog.getInstance().saveLog2File(OptLogEnum.ERROR_OPT.getOptLogCode(), sb.toString());
+		OperateLog.getInstance().saveLog2File(OptLogEnum.ERROR_OPT.getOptLogCode(), Utils.getAppVersionCode(mContext)+Utils.getAppVersionName(mContext)+sb.toString());
 		return true;
 	}
 

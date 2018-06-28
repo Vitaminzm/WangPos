@@ -1053,7 +1053,7 @@ public class PrepareReceiptInfo {
 					if(cardPay == null){
 						cardPay = "优惠券";
 					}
-				}else if (PaymentTypeEnum.getpaymentstyle(info.getType()) == PaymentTypeEnum.SCORE) {
+				}else if (PaymentTypeEnum.getpaymentstyle(info.getType()) == PaymentTypeEnum.SCORE && !ConstantData.BERRERZK_ID.equals(info.getId())) {
 					scorePay = info.getName();
 					scoreValue = ArithDouble.add(scoreValue, ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage())));
 					if(scorePay == null){
@@ -1323,6 +1323,8 @@ public class PrepareReceiptInfo {
 								for(PayMentsInfo infos:bill.getPaymentslist()){
 									if (PaymentTypeEnum.getpaymentstyle(infos.getType()) != PaymentTypeEnum.SCORE && PaymentTypeEnum.getpaymentstyle(infos.getType()) != PaymentTypeEnum.COUPON) {
 										//builder.append(format(infos.getName()) +formatRString(8,infos.getMoney())+"\n");
+										builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, infos.getMoney().replace("	", ""))+"\n");
+									}else if(PaymentTypeEnum.getpaymentstyle(infos.getType()) == PaymentTypeEnum.SCORE && ConstantData.BERRERZK_ID.equals(infos.getId())){
 										builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, infos.getMoney().replace("	", ""))+"\n");
 									}
 
@@ -1687,7 +1689,7 @@ public class PrepareReceiptInfo {
 				if (PaymentTypeEnum.getpaymentstyle(info.getType()) == PaymentTypeEnum.COUPON) {
 					cardValue = ArithDouble.add(cardValue, ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()),
 							ArithDouble.parseDouble(info.getOverage())));
-				} else if (PaymentTypeEnum.getpaymentstyle(info.getType()) == PaymentTypeEnum.SCORE) {
+				} else if (PaymentTypeEnum.getpaymentstyle(info.getType()) == PaymentTypeEnum.SCORE  && !ConstantData.BERRERZK_ID.equals(info.getId())) {
 					score = ArithDouble.add(score, ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()),
 							ArithDouble.parseDouble(info.getOverage())));
 				}
@@ -1726,6 +1728,8 @@ public class PrepareReceiptInfo {
 					} else {
 						addMultiTextJson(array, latticePrinter, FONT_DEFAULT, info.getName(), ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage())) + unit, printer, fontConfig);
 					}
+				}else if(PaymentTypeEnum.getpaymentstyle(info.getType()) == PaymentTypeEnum.COUPON && !ConstantData.BERRERZK_ID.equals(info.getId())){
+					addMultiTextJson(array, latticePrinter, FONT_DEFAULT, info.getName(), ArithDouble.sub(ArithDouble.parseDouble(info.getMoney()), ArithDouble.parseDouble(info.getOverage())) + unit, printer, fontConfig);
 				}
 			}
 		}
@@ -1937,7 +1941,7 @@ public class PrepareReceiptInfo {
 					} catch (Exception e) {
 					}
 				}
-				if(PaymentTypeEnum.SCORE.equals(info.getType())) {
+				if(PaymentTypeEnum.SCORE.equals(info.getType()) && !ConstantData.BERRERZK_ID.equals(info.getId())) {
 					try {
 						BigDecimal decimal = new BigDecimal(info.getMoney());
 						deductionValue = Math.abs(decimal.setScale(2, RoundingMode.HALF_UP).doubleValue());
@@ -2140,7 +2144,7 @@ public class PrepareReceiptInfo {
 							}else{
 //								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_NAME.getLable(), ""+scorePay)
 //										.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable(), "\t" +formatRString(8, ""+scoreValue));
-								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable(), StringUtil.formatLString(16, "积分抵扣") + StringUtil.formatLString(10, "折扣:-" + deductionValue));
+								moneys.replace(TicketFormatEnum.TICKET_DUDUC_SOCRE_MONEY.getLable(), StringUtil.formatLString(16, "积分抵扣") + StringUtil.formatLString(10, "折扣:" + deductionValue));
 							}
 
 
@@ -2180,7 +2184,7 @@ public class PrepareReceiptInfo {
 								StringBuilder builder = new StringBuilder();
 								for(PayMentsInfo infos:bill.getPaymentslist()){
 									String type = infos.getType();
-									if(PaymentTypeEnum.COUPON.equals(type) || PaymentTypeEnum.SCORE.equals(type))
+									if(PaymentTypeEnum.COUPON.equals(type) || (PaymentTypeEnum.SCORE.equals(type) && !ConstantData.BERRERZK_ID.equals(infos.getId())))
 										continue;
 									builder.append(StringUtil.formatLString(16, infos.getName())+StringUtil.formatLString(10, infos.getMoney().replace("	", ""))+"\n");
 									//builder.append(format(infos.getName()) +formatRString(8,infos.getMoney())+"\n");
@@ -2551,7 +2555,7 @@ public class PrepareReceiptInfo {
 		addMultiTextJson(array, latticePrinter, FONT_DEFAULT, "实退：", MoneyAccuracyUtils.getmoneybytwo(realMoney) + unit, printer, fontConfig);
 		for (PayMentsInfo info : bill.getPaymentslist()) {
 			String type = info.getType();
-			if (PaymentTypeEnum.COUPON.equals(type) || PaymentTypeEnum.SCORE.equals(type)
+			if (PaymentTypeEnum.COUPON.equals(type) || (PaymentTypeEnum.SCORE.equals(type)&& !ConstantData.BERRERZK_ID.equals(info.getId()))
 					|| PaymentTypeEnum.RECORDED_CAREDUCTION.equals(type)
 					|| PaymentTypeEnum.ALLWANCE_COMPENSATION.equals(type))
 				continue;
@@ -2658,7 +2662,7 @@ public class PrepareReceiptInfo {
 		return jsonObject;
 	}
 
-	public static JSONObject printThirdBill(ThirdPay thirdpay, Boolean mend, LatticePrinter latticePrinter) {
+	public static JSONObject printThirdBill(List<ThirdPay> thirdPayList, Boolean mend, LatticePrinter latticePrinter) {
 		PrinterManager printer = null;
 		FontConfig fontConfig = null;
 		if(MyApplication.posType.equals(ConstantData.POS_TYPE_Y)){
@@ -2674,13 +2678,24 @@ public class PrepareReceiptInfo {
 			fontConfig.setBold(BoldEnum.BOLD);//不加粗
 			fontConfig.setSize(FontSizeEnum.MIDDLE);//小号字体
 		}
+		ThirdPay thirdpay = thirdPayList.get(0);
 		JSONArray array = new JSONArray();
 		String name="";
 		String type="消费";
 		if(!StringUtil.isEmpty(thirdpay.getPay_type())){
 			name =thirdpay.getPay_type();
 		}
-		addTextJson(array, latticePrinter, FONT_DEFAULT, name + "签购单", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		boolean isMore = false;
+		if(thirdPayList.size()>1){
+			isMore = true;
+			if(isBetter(thirdPayList)){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, "Better购签购单", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			}else{
+				addTextJson(array, latticePrinter, FONT_DEFAULT,  name+"签购单", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			}
+		}else{
+			addTextJson(array, latticePrinter, FONT_DEFAULT,  name+"签购单", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		}
 		if (mend) {
 			addTextJson(array, latticePrinter, FONT_DEFAULT, "-----------补打小票-----------", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		} else {
@@ -2696,7 +2711,18 @@ public class PrepareReceiptInfo {
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "操作时间：" + thirdpay.getPaytime(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "交易单号：" + thirdpay.getOtherpayorderno(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addTextJson(array, latticePrinter, FONT_DEFAULT, "商户单号：" + thirdpay.getUnitpayorderno(), KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
-		addTextJson(array, latticePrinter, FONT_DEFAULT, "交易金额：" + ArithDouble.parseDouble(thirdpay.getPay_total_fee()) / 100, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		double amount = 0;
+		if(isMore){
+			addTextJson(array, latticePrinter, FONT_DEFAULT, "支付详情", KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+		}
+		for(ThirdPay thirdPay: thirdPayList){
+			double money = ArithDouble.parseDouble(thirdPay.getPay_total_fee()) / 100;
+			amount = ArithDouble.add(amount, money);
+			if(isMore && money> 0){
+				addTextJson(array, latticePrinter, FONT_DEFAULT, thirdPay.getPay_type()+"：" + money, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
+			}
+		}
+		addTextJson(array, latticePrinter, FONT_DEFAULT, "总计金额：" +amount, KposPrinterManager.CONTENT_ALIGN_LEFT, printer, fontConfig);
 		addDashLine(array, latticePrinter, printer, fontConfig);
 		if (mend) {
 			addDashLine(array, latticePrinter, printer, fontConfig);
@@ -2740,6 +2766,16 @@ public class PrepareReceiptInfo {
 		return jsonObject;
 	}
 
+	public static boolean isBetter(List<ThirdPay> thirdPayList){
+		boolean ret =  false;
+		for(ThirdPay thirdPay:thirdPayList){
+			if(thirdPay.getSkfsid().equals("75")|| thirdPay.getSkfsid().equals("76")){
+				ret =true;
+				break;
+			}
+		}
+		return ret;
+	}
 
 
 	public static class PrintString{

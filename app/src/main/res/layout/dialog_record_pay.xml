@@ -197,8 +197,7 @@
         </LinearLayout>
 
         <LinearLayout
-            android:visibility="invisible"
-            android:id="@+id/ll_pay_jiaoyi"
+            android:id="@+id/ll_rhyh_record"
             android:layout_width="@dimen/height_ttz"
             android:layout_height="@dimen/height_ez"
             android:layout_marginBottom="8dp"
@@ -209,7 +208,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:text="@string/trans"
+                android:text="@string/rhyh_pay"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_size_rz" />
         </LinearLayout>

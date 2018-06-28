@@ -547,6 +547,12 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener,
                         MyApplication.setCashierId(result.getLogininfo().getPerson_id());
                         MyApplication.startTask();
                     }
+
+                    Intent service = new Intent(getApplicationContext(), RunTimeService.class);
+                    service.putExtra(ConstantData.UPDATE_STATUS, true);
+                    service.putExtra(ConstantData.CASHIER_ID, SpSaveUtils.read(MyApplication.context, ConstantData.CASHIER_ID, ""));
+                    startService(service);
+
                     startforcashier();
                 } else {
                     ToastUtils.sendtoastbyhandler(handler, result.getMsg());

@@ -122,6 +122,9 @@ public class ConstantData {
 	/**支付宝id*/
 	public static final String ALPAY_ID = "68";
 
+	/**better购折扣id*/
+	public static final String BERRERZK_ID = "76";
+
 	/**微信id*/
 	public static final String WECHAT_ID = "63";
 
@@ -133,6 +136,12 @@ public class ConstantData {
 
 	/**营销联盟id*/
 	public static final String YXLM_ID = "69";
+
+	/**融合支付补录id*/
+	public static final String RHYH_ID = "77";
+
+//	/**移动和包id*/
+//	public static final String YDHB_ID = "70";
 
 	/**在线状态*/
 	public static final int ONLINE_STATE = 0;

@@ -1367,7 +1367,7 @@ public class ThirdPayControllerDialog extends BaseActivity{
 								}
 							}, 1000);
 						}else if (ConstantData.HTTP_RESPONSE_THIRDPAY_WAIT.equals(result.getCode())){
-							trade_no = result.getThirdpay().getTrade_no();
+							trade_no = result.getThirdpay().get(0).getTrade_no();
 							ThirdPayControllerDialog.this.runOnUiThread(new Runnable() {
 								@Override
 								public void run() {
